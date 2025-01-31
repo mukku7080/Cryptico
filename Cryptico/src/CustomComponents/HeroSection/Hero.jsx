@@ -10,7 +10,7 @@ import Dashborad1 from '../SMDashborad/Dashborad1';
 const Hero = () => {
     return (
         <>
-            <Container maxW={'container.xl'} bg={'#f5f7fa'} mb={10}>
+            <Container maxW={'container.xl'}  mb={10}>
                 <Dashborad1 />
                 {/* Section-2  -------------------------------------------------------------------------------------*/}
                 <Box display={'flex'} justifyContent={'center'} flexDirection={'column'} alignItems={'center'} gap={5}>

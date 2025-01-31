@@ -14,7 +14,7 @@ const Section4 = () => {
 
 
                     {/* LeftSection Start----------------------------------------------------------------- */}
-                    <Card flex={'1'} boxShadow={'none'} w={'auto'} bg={'#F7F7F7'}>
+                    <Card flex={'1'} boxShadow={'none'} w={'auto'} >
                         <CardBody>
 
                             <Flex flex={1} gap={5} direction={'column'}  >
@@ -27,7 +27,7 @@ const Section4 = () => {
                                 <Flex gap={5} wrap={{ base: 'wrap', sm: 'nowrap' }}>
 
                                     {items.map((data, index) => (
-                                        <Box key={index} maxW={'82px'} minH={'82px'} bg={'white'} display={'flex'} alignItems={'center'} borderRadius={'8px'} justifyContent={'center'} flexDirection={'column'} >
+                                        <Box key={index} maxW={'82px'} minH={'82px'} display={'flex'} alignItems={'center'} borderRadius={'8px'} justifyContent={'center'} flexDirection={'column'} >
                                             <Image src={data.imgsrc} alt={data.title} w={'100%'} maxH={'40px'} maxW={'40px'} />
                                             <Box as='p' fontSize={'10px'} minW={'66px'} textAlign={'center'} p={1}>{data.txt}</Box>
                                         </Box>
@@ -61,7 +61,7 @@ const Section4 = () => {
                     {/* Right Side Section------------------------------------------------------------------------ */}
 
 
-                    <Card boxShadow={'none'} flex={'1'} bg={'#f7f7f7'}>
+                    <Card boxShadow={'none'} flex={'1'} >
                         <CardBody >
 
                             {/* <Box flex={1}> */}
@@ -97,14 +97,14 @@ const Section4 = () => {
 
                     <Accordion defaultActiveKey="" flush >
                         <Accordion.Item eventKey="0" >
-                            <Accordion.Header style={{ color: 'orange', fontWeight:'800'}} >What is Cryptico</Accordion.Header>
-                            <Accordion.Body style={{ backgroundColor: '#f7f7f7' }}  >
+                            <Accordion.Header  >What is Cryptico</Accordion.Header>
+                            <Accordion.Body  >
                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                             </Accordion.Body>
                         </Accordion.Item>
                         <Accordion.Item eventKey="1">
                             <Accordion.Header>How to invest in Cryptico</Accordion.Header>
-                            <Accordion.Body style={{ backgroundColor: '#f7f7f7' }}>
+                            <Accordion.Body >
                                 Another content goes here...
                             </Accordion.Body>
                         </Accordion.Item>

@@ -1,15 +1,22 @@
-import { Box, Icon, Button, Collapse, Flex, IconButton, Popover, PopoverContent, Stack, Text, useDisclosure, PopoverTrigger, useColorModeValue, Center, Image } from '@chakra-ui/react'
-import React from 'react'
+import { Box, Icon, Button, Collapse, Flex, IconButton, Popover, PopoverContent, Stack, Text, useDisclosure, PopoverTrigger, useColorModeValue, Center, Image, useColorMode } from '@chakra-ui/react'
+import React, { useState } from 'react'
 import { AiOutlineMenu, AiOutlineClose } from 'react-icons/ai'
 import { FaArrowDown, FaArrowRight } from 'react-icons/fa';
 import { BiChevronRight, BiChevronDown } from "react-icons/bi";
 import { IoMenuOutline, IoCloseOutline } from "react-icons/io5";
 import { Link } from 'react-router-dom';
+import { MdDarkMode } from "react-icons/md";
+import { CiLight } from "react-icons/ci";
 
 const Navbarnew = () => {
 
 
     const { isOpen, onToggle } = useDisclosure();
+    const { toggleColorMode } = useColorMode();
+    const bgColor = useColorModeValue("gray.100", "gray.900");
+    const textColor = useColorModeValue("black", "white");
+
+    const [isdark, setDark] = useState(false);
 
 
     return (
@@ -60,6 +67,18 @@ const Navbarnew = () => {
                     <Button as={Link} to='/signup' padding={'0px 32px'} bgColor={'#ffb11a'} >
                         Sign Up
                     </Button>
+                    <Button onClick={() => {
+                        setDark(!isdark)
+                            toggleColorMode();
+                    }} boxSize={10}
+                    bg={'orange'}>
+                        {
+                            isdark ? <Icon as={CiLight} boxSize={6} ></Icon> :
+                                <Icon as={MdDarkMode} boxSize={6} ></Icon>
+                        }
+                    </Button>
+                    {/* <Button onClick={toggleColorMode}>toogle</Button> */}
+
 
 
                 </Stack>

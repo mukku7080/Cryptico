@@ -9,7 +9,7 @@ import Hero from './CustomComponents/HeroSection/Hero'
 import ProductsCard from './CustomComponents/Cards/ProductsCard'
 import ProductsCard1 from './CustomComponents/Cards/ProductsCard1'
 import Section3 from './CustomComponents/HeroSection/Section3'
-import { Container, Flex, Box } from '@chakra-ui/react'
+import { Container, useColorModeValue } from '@chakra-ui/react'
 import SMDashboard from './CustomComponents/SMDashborad/SMDashboard'
 import Section4 from './CustomComponents/HeroSection/Section4'
 import CryptoAccordion from './CustomComponents/Accordian/CryptoAccordion'
@@ -22,13 +22,14 @@ import { Route, Routes } from 'react-router-dom'
 
 function App() {
   const [count, setCount] = useState(0)
+  const bgColor = useColorModeValue("#f5f7fa", "gray.900");
 
   return (
     <>
 
 
 
-      <Container minW={'100%'} margin={0} padding={0} bg={'#f5f7fa'}>
+      <Container minW={'100%'} margin={0} padding={0} bg={bgColor}>
 
 
 

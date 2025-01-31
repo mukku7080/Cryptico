@@ -37,12 +37,12 @@ const Login = () => {
                         <Card mt={{ base: 0, md: 7, lg: 5 }}>
                             <Flex justifyContent={'space-between'} px={3} alignItems={'center'}>
                                 <Heading size={'md'} fontWeight={'500'}>Welcome to Cryptico</Heading>
-                                <Button leftIcon={<CgArrowsExchange />} bg={'white'} color={'orange'}>Signup</Button>
+                                <Button as={Link} leftIcon={<CgArrowsExchange />} bg={'transparent'} color={'orange'}>Signup</Button>
                             </Flex>
                             <Divider opacity={0.1} />
                             <Flex pr={3}>
-                                <Button bg={'white'} _hover={{ borderBottom: '1px solid orange', textDecoration: 'none' }} as={Link} onClick={() => setMobile(false)}>Email</Button>
-                                <Button bg={'white'} _hover={{ borderBottom: '1px solid orange', textDecoration: 'none' }} as={Link} onClick={() => setMobile(true)}>Mobile Number</Button>
+                                <Button bg={'transparent'} _hover={{ borderBottom: '1px solid orange', textDecoration: 'none' }} as={Link} onClick={() => setMobile(false)}>Email</Button>
+                                <Button bg={'transparent'} _hover={{ borderBottom: '1px solid orange', textDecoration: 'none' }} as={Link} onClick={() => setMobile(true)}>Mobile Number</Button>
                             </Flex>
                             <CardBody>
                                 <Box maxW="md" borderRadius="md">
@@ -86,7 +86,7 @@ const Login = () => {
                                                 </FormControl>
 
 
-                                                <Link color={'orange'} bg={'white'} display={'flex'} justifyContent={'flex-end'}> Forgot Password ?</Link>
+                                                <Link color={'orange'} display={'flex'} justifyContent={'flex-end'}> Forgot Password ?</Link>
                                                 {/* Submit Button */}
                                                 <Button type="submit" bg={'orange'} width="full" mt={5} >
                                                     Log in

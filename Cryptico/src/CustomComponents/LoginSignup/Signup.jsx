@@ -37,12 +37,12 @@ const Signup = () => {
                     <Card>
                         <Flex justifyContent={'space-between'} px={3} alignItems={'center'}>
                             <Heading size={'md'} fontWeight={'500'}>Create Account</Heading>
-                            <Button leftIcon={<CgArrowsExchange />} bg={'white'} color={'orange'}>Log in</Button>
+                            <Button leftIcon={<CgArrowsExchange />} bg={'transparent'} color={'orange'}>Log in</Button>
                         </Flex>
                         <Divider opacity={0.1} />
                         <Flex pr={3}>
-                            <Button bg={'white'} _hover={{ borderBottom: '1px solid orange', textDecoration: 'none' }} as={Link} onClick={() => setMobile(false)}>Email</Button>
-                            <Button bg={'white'} _hover={{ borderBottom: '1px solid orange', textDecoration: 'none' }} as={Link} onClick={() => setMobile(true)}>Mobile Number</Button>
+                            <Button bg={'transparent'} _hover={{ borderBottom: '1px solid orange', textDecoration: 'none' }} as={Link} onClick={() => setMobile(false)}>Email</Button>
+                            <Button bg={'transparent'} _hover={{ borderBottom: '1px solid orange', textDecoration: 'none' }} as={Link} onClick={() => setMobile(true)}>Mobile Number</Button>
                         </Flex>
                         <CardBody>
                             <Box maxW="md" borderRadius="md">

@@ -30,8 +30,8 @@ const Dashborad1 = () => {
                     {/* LeftSide dashboard */}
                     <Card>
                         <Box display={'flex'} gap={3}>
-                            <Button as={Link} bg={'white'} _hover={{ borderBottom: '1px solid orange', textDecoration: 'none' }}  >Hot Derivatives</Button>
-                            <Button as={Link} bg={'white'} _hover={{ borderBottom: '1px solid orange', textDecoration: 'none' }}>Hot Coins</Button>
+                            <Button as={Link} bg={'transparent'} _hover={{ borderBottom: '1px solid orange', textDecoration: 'none' }}  >Hot Derivatives</Button>
+                            <Button as={Link} bg={'transparent'} _hover={{ borderBottom: '1px solid orange', textDecoration: 'none' }}>Hot Coins</Button>
 
                         </Box>
                         <Divider opacity={0.1} marginTop={'0px'} />

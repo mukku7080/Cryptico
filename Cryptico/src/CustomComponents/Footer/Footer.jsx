@@ -1,5 +1,5 @@
 import React from 'react'
-import { Container, Flex, Text, Box, Link, Divider, Center, Image, Icon, Circle } from '@chakra-ui/react'
+import { Container, Flex, Text, Box, Link, Divider, Center, Image, Icon, Circle, useColorModeValue } from '@chakra-ui/react'
 import { FaInstagram, FaLink, FaTelegramPlane, FaLinkedinIn, FaFacebookF, FaYoutube, FaApple, FaPlay } from "react-icons/fa";
 
 
@@ -7,9 +7,11 @@ const Footer = () => {
   const sociallink = [FaLink, FaLinkedinIn, FaTelegramPlane, FaInstagram, FaFacebookF, FaYoutube];
 
   const downloadLInk = [FaApple, FaYoutube]
+  const bgColor = useColorModeValue("#f5f7fa", "gray.900");
+  const textColor = useColorModeValue("gray.600", "gray.200");
 
   return (
-    <Container maxW={'container.xxl'} bg='#f5f7fa' height={'auto'} display={'flex'} justifyContent={'center'} >
+    <Container maxW={'container.xxl'} bg={bgColor} height={'auto'} display={'flex'} justifyContent={'center'} >
       {/* mainFlex */}
 
 
@@ -27,7 +29,7 @@ const Footer = () => {
 
 
             <Flex display={{ base: 'none', sm: 'none', md: 'flex' }}>
-              {sociallink.map((icon,index) => (
+              {sociallink.map((icon, index) => (
 
 
                 <Circle key={index} size={6} bgColor={'white'} border={'1px solid #ffffff99'} mb={3}>
@@ -109,7 +111,7 @@ const Footer = () => {
             }}
 
           >
-            {sociallink.map((icon,index) => (
+            {sociallink.map((icon, index) => (
 
 
               <Circle key={index} size={6} bgColor={'white'} border={'1px solid #ffffff99'} mb={3}>
