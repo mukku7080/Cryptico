@@ -1,4 +1,4 @@
-import { Card, CardBody, Divider, Flex, Heading, Icon, Image, Link, } from '@chakra-ui/react'
+import { Card, CardBody, Divider, Flex, Heading, Icon, Image, Link, useColorModeValue } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { CgArrowsExchange } from "react-icons/cg";
 import { useFormik } from "formik";
@@ -18,8 +18,12 @@ import { FaApple, FaTelegramPlane } from "react-icons/fa";
 
 const Loginnew = () => {
 
+
+    const txtcolor = useColorModeValue('black', 'white');
+    const bgcolor = useColorModeValue('gray.100', 'gray.700');
+
     const validationSchema = Yup.object({
-        email: Yup.string().email("invalid email").required("*email is required"),
+        email: Yup.string().email("invalid email").required("*field is required"),
         password: Yup.string().min(6, "Minimum 6 characters").required("*Password is required"),
 
     });
@@ -44,7 +48,7 @@ const Loginnew = () => {
 
 
     return (
-        <Box minH={'90vh'} display={'flex'} justifyContent={'center'} alignItems={'center'}>
+        <Box minH={'100vh'} display={'flex'} justifyContent={'center'} alignItems={'center'}>
 
             <Flex maxW={'container.xxl'} justifyContent={'center'} my={10} >
                 <Card borderRadius={'none'} >
@@ -84,9 +88,9 @@ const Loginnew = () => {
                                             {/* user Field */}
 
                                             <FormControl isInvalid={errors.email && touched.email} mb={3}>
-                                                <FormLabel color={'gray'}  >Email</FormLabel>
-                                                <Input name="email" placeholder="Email" bg="gray.100"  // Light gray background
-                                                    _focus={{ bg: "white" }}
+                                                <FormLabel color={'gray'}  >Email/Number</FormLabel>
+                                                <Input name="email" placeholder="Email or Number" bg={bgcolor}  // Light gray background
+                                                    _focus={{ bgcolor }}
                                                     value={values.email}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur} />
@@ -98,8 +102,8 @@ const Loginnew = () => {
                                             {/* password Field */}
                                             <FormControl isInvalid={errors.password && touched.password} mb={3}>
                                                 <FormLabel color={'gray'}>Password</FormLabel>
-                                                <Input name="password" type="password" placeholder="Passwrod" bg="gray.100"  // Light gray background
-                                                    _focus={{ bg: "white" }}
+                                                <Input name="password" type="password" placeholder="Passwrod" bg={bgcolor}  // Light gray background
+                                                    _focus={{ bgcolor }}
                                                     value={values.password}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur} />

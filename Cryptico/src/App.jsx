@@ -21,6 +21,9 @@ import Login from './CustomComponents/LoginSignup/Login'
 import { Route, Routes } from 'react-router-dom'
 import Signupnew from './CustomComponents/LoginSignup/Signupnew'
 import Loginnew from './CustomComponents/LoginSignup/Loginnew'
+import UserDashboard from './CustomComponents/Afterlogin/UserDashboard'
+import OTPInput from './CustomComponents/LoginSignup/OtpInput'
+import Numberwithotp from './CustomComponents/LoginSignup/Numberwithotp'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -38,11 +41,15 @@ function App() {
         <Navbarnew />
 
 
+
         <Routes>
+          <Route path="/number-verification" element={<Numberwithotp />} />
           <Route path='/' element={<Hero />}></Route>
           <Route path='/login' element={<Loginnew />}></Route>
           <Route path='/signup' element={<Signupnew />}></Route>
         </Routes>
+
+        {/* <UserDashboard /> */}
 
 
         <Footer />

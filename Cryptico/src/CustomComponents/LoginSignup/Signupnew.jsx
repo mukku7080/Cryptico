@@ -1,4 +1,4 @@
-import { Card, CardBody, Divider, Flex, Heading, Icon, Image, Link } from '@chakra-ui/react'
+import { Card, CardBody, Divider, Flex, Heading, Icon, Image, Link, useColorModeValue } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { CgArrowsExchange } from "react-icons/cg";
 import { useFormik } from "formik";
@@ -14,9 +14,13 @@ import {
 } from "@chakra-ui/react";
 import { FcGoogle } from "react-icons/fc";
 import { FaApple, FaTelegramPlane } from "react-icons/fa";
+import OTPInput from './OtpInput';
 
 
 const Signupnew = () => {
+    const [issignup, setSignup] = useState(false);
+    const bgcolor = useColorModeValue('gray.100', 'gray.700');
+
 
 
     const validationSchema = Yup.object({
@@ -44,7 +48,9 @@ const Signupnew = () => {
         onSubmit: (values, action) => {
 
             console.log(values);
+            setSignup(true);
             action.resetForm();
+
 
         }
 
@@ -76,10 +82,11 @@ const Signupnew = () => {
 
 
     return (
-        <Box minH={'90vh'} display={'flex'} justifyContent={'center'} alignItems={'center'}>
+        <Box minH={'100vh'} display={'flex'} justifyContent={'center'} alignItems={'center'}>
 
             <Flex maxW={'container.xxl'} justifyContent={'center'} my={10} >
                 <Card borderRadius={'none'} >
+
 
                     <Flex minW={{ base: 'container', sm: 'container.sm', md: 'container.md', lg: 'container.lg' }} direction={{ base: 'column', sm: 'column', md: 'row' }}  >
 
@@ -105,142 +112,145 @@ const Signupnew = () => {
 
                                 <Box as='p' color={'gray'} maxW={'400px'} px={3} >Welcome aboard! Your gateway to peer-to-peer crypto trading starts here.</Box>
                                 <Divider color={'gray'} opacity={0.5} />
-                                <Flex pr={3} justifyContent={'center'}>
+                                {/* <Flex pr={3} justifyContent={'center'}>
                                     <Button color={'gray'} bg={'transparent'} _hover={{ borderBottom: '1px solid orange', textDecoration: 'none' }} as={Link} onClick={() => setMobile(false)}>Email</Button>
                                     <Button color={'gray'} bg={'transparent'} _hover={{ borderBottom: '1px solid orange', textDecoration: 'none' }} as={Link} onClick={() => setMobile(true)}>Mobile Number</Button>
-                                </Flex>
+                                </Flex> */}
                                 <CardBody display={'flex'} justifyContent={'center'}>
                                     <Box maxW="md" borderRadius="md"  >
+                                        {issignup ?
+                                            <OTPInput verification={"Email"} />
+                                            :
 
-                                        <form onSubmit={(e) => {
-                                            e.preventDefault();
-                                            handleSubmit();
-                                        }} >
-                                            {/* user Field */}
-                                            {
-                                                ismobile ?
+                                            <form onSubmit={(e) => {
+                                                e.preventDefault();
+                                                handleSubmit();
+                                            }} >
+                                                {/* user Field */}
+                                                {
+                                                    ismobile ?
 
-                                                    <FormControl isInvalid={errors.mobile && touched.mobile} mb={3}>
-                                                        <FormLabel color={'gray'}  >Mobile</FormLabel>
-                                                        <Input as={Input} name="mobile" placeholder="+91" bg="gray.100" border="none"  // Light gray background
-                                                            _focus={{ bg: "white" }}
-                                                            value={values.mobile}
-                                                            onChange={handleChange}
-                                                            onBlur={handleBlur} />
-                                                        <FormErrorMessage>{errors.mobile}</FormErrorMessage>
-                                                    </FormControl>
-                                                    :
+                                                        <FormControl isInvalid={errors.mobile && touched.mobile} mb={3}>
+                                                            <FormLabel color={'gray'}  >Mobile</FormLabel>
+                                                            <Input as={Input} name="mobile" placeholder="+91" bg={bgcolor}   // Light gray background
+                                                                _focus={{ bgcolor }}
+                                                                value={values.mobile}
+                                                                onChange={handleChange}
+                                                                onBlur={handleBlur} />
+                                                            <FormErrorMessage>{errors.mobile}</FormErrorMessage>
+                                                        </FormControl>
+                                                        :
 
-                                                    <FormControl isInvalid={errors.email && touched.email} mb={3}>
-                                                        <FormLabel color={'gray'}  >Email</FormLabel>
-                                                        <Input name="email" placeholder="Email" bg="gray.100" border="none"  // Light gray background
-                                                            _focus={{ bg: "white" }}
-                                                            value={values.email}
-                                                            onChange={handleChange}
-                                                            onBlur={handleBlur} />
-                                                        <FormErrorMessage>{errors.email}</FormErrorMessage>
-                                                    </FormControl>
+                                                        <FormControl isInvalid={errors.email && touched.email} mb={3}>
+                                                            <FormLabel color={'gray'}  >Email</FormLabel>
+                                                            <Input name="email" placeholder="Email" bg={bgcolor}  // Light gray background
+                                                                _focus={{ bgcolor }}
+                                                                value={values.email}
+                                                                onChange={handleChange}
+                                                                onBlur={handleBlur} />
+                                                            <FormErrorMessage>{errors.email}</FormErrorMessage>
+                                                        </FormControl>
 
-                                            }
+                                                }
 
-                                            {/* password Field */}
-                                            <FormControl isInvalid={errors.password && touched.password} mb={3}>
-                                                <FormLabel color={'gray'}>Password</FormLabel>
-                                                <Input
-                                                    name="password"
-                                                    type="password"
-                                                    placeholder="Passwrod"
-                                                    bg="gray.100"
-                                                    _focus={{ bg: "white" }}
-                                                    value={values.password}
-                                                    onChange={(e) => {
-                                                        handleChange(e);
-                                                        validatePassword(e.target.value);
+                                                {/* password Field */}
+                                                <FormControl isInvalid={errors.password && touched.password} mb={3}>
+                                                    <FormLabel color={'gray'}>Password</FormLabel>
+                                                    <Input
+                                                        name="password"
+                                                        type="password"
+                                                        placeholder="Passwrod"
+                                                        bg={bgcolor}
+                                                        _focus={{ bgcolor }}
+                                                        value={values.password}
+                                                        onChange={(e) => {
+                                                            handleChange(e);
+                                                            validatePassword(e.target.value);
 
-                                                    }}
-                                                    onFocus={() => setShow(true)}
-                                                    onBlur={(e) => {
+                                                        }}
+                                                        onFocus={() => setShow(true)}
+                                                        onBlur={(e) => {
 
-                                                        handleBlur(e);
-                                                        setShow(false);
-                                                    }}
+                                                            handleBlur(e);
+                                                            setShow(false);
+                                                        }}
 
-                                                />
-                                                <FormErrorMessage>{errors.password}</FormErrorMessage>
-                                            </FormControl>
-
-
-
-                                            {/* Chekboxsection--------------------------------------------------------------------------- */}
-
-
-                                            {
-
-                                                isshow &&
-                                                <Flex color={'gray'} mb={3} >
-                                                    <Flex flex={1} direction={'column'}>
-
-                                                        <Checkbox fontSize={'10px'} isChecked={validations.length} colorScheme="green">
+                                                    />
+                                                    <FormErrorMessage>{errors.password}</FormErrorMessage>
+                                                </FormControl>
 
 
-                                                            <Box fontSize={'12px'}>
 
-                                                                Above eight characters
-                                                            </Box>
-                                                        </Checkbox>
-                                                        <Checkbox fontSize={'10px'} isChecked={validations.lowercase} colorScheme="green">
-                                                            <Box fontSize={'12px'}>
+                                                {/* Chekboxsection--------------------------------------------------------------------------- */}
 
-                                                                Includes one lowercase letter
-                                                            </Box>
-                                                        </Checkbox>
-                                                        <Checkbox isChecked={validations.uppercase} colorScheme="green">
-                                                            <Box fontSize={'12px'}>
 
-                                                                Includes one uppercase letter
-                                                            </Box>
-                                                        </Checkbox>
+                                                {
+
+                                                    isshow &&
+                                                    <Flex color={'gray'} mb={3} >
+                                                        <Flex flex={1} direction={'column'}>
+
+                                                            <Checkbox fontSize={'10px'} isChecked={validations.length} colorScheme="green">
+
+
+                                                                <Box fontSize={'12px'}>
+
+                                                                    Above eight characters
+                                                                </Box>
+                                                            </Checkbox>
+                                                            <Checkbox fontSize={'10px'} isChecked={validations.lowercase} colorScheme="green">
+                                                                <Box fontSize={'12px'}>
+
+                                                                    Includes one lowercase letter
+                                                                </Box>
+                                                            </Checkbox>
+                                                            <Checkbox isChecked={validations.uppercase} colorScheme="green">
+                                                                <Box fontSize={'12px'}>
+
+                                                                    Includes one uppercase letter
+                                                                </Box>
+                                                            </Checkbox>
+                                                        </Flex>
+
+                                                        <Flex flex={1} direction={'column'}>
+
+
+                                                            <Checkbox isChecked={validations.number} colorScheme="green" >
+                                                                <Box fontSize={'12px'}>
+
+                                                                    Includes one number
+                                                                </Box>
+                                                            </Checkbox>
+                                                            <Checkbox isChecked={validations.specialChar} colorScheme="green">
+                                                                <Box fontSize={'12px'}>
+
+                                                                    Includes one special character
+                                                                </Box>
+                                                            </Checkbox>
+                                                        </Flex>
+
+
                                                     </Flex>
+                                                }
 
-                                                    <Flex flex={1} direction={'column'}>
-
-
-                                                        <Checkbox isChecked={validations.number} colorScheme="green" >
-                                                            <Box fontSize={'12px'}>
-
-                                                                Includes one number
-                                                            </Box>
-                                                        </Checkbox>
-                                                        <Checkbox isChecked={validations.specialChar} colorScheme="green">
-                                                            <Box fontSize={'12px'}>
-
-                                                                Includes one special character
-                                                            </Box>
-                                                        </Checkbox>
-                                                    </Flex>
+                                                {/* Confirmpassword */}
 
 
-                                                </Flex>
-                                            }
+                                                <FormControl isInvalid={errors.cpass && touched.cpass} mb={3}>
+                                                    <FormLabel color={'gray'}>Conform password</FormLabel>
+                                                    <Input as={Input} name="cpass" type="password" placeholder="" bg={bgcolor}  // Light gray background
+                                                        _focus={{ bgcolor }}
+                                                        value={values.cpass}
+                                                        onChange={handleChange}
+                                                        onBlur={handleBlur} />
 
-                                            {/* Confirmpassword */}
+                                                    <FormErrorMessage>{errors.cpass}</FormErrorMessage>
 
-
-                                            <FormControl isInvalid={errors.cpass && touched.cpass} mb={3}>
-                                                <FormLabel color={'gray'}>Conform password</FormLabel>
-                                                <Input as={Input} name="cpass" type="password" placeholder="" bg="gray.100"  // Light gray background
-                                                    _focus={{ bg: "white" }}
-                                                    value={values.cpass}
-                                                    onChange={handleChange}
-                                                    onBlur={handleBlur} />
-
-                                                <FormErrorMessage>{errors.cpass}</FormErrorMessage>
-
-                                            </FormControl>
+                                                </FormControl>
 
 
-                                            {/* Referal Field */}
-                                            {/* <FormControl mb={3}>
+                                                {/* Referal Field */}
+                                                {/* <FormControl mb={3}>
                                                 <FormLabel color={'gray'}>ReferalCode (Optional)</FormLabel>
                                                 <Input name="referal" type="" placeholder="" bg="gray.100"  // Light gray background
                                                     _focus={{ bg: "white" }}
@@ -249,23 +259,24 @@ const Signupnew = () => {
                                                     onBlur={handleBlur} />
                                             </FormControl> */}
 
-                                            {/* CheckBox */}
+                                                {/* CheckBox */}
 
 
-                                            <FormControl isInvalid={errors.ts && touched.ts}>
+                                                <FormControl isInvalid={errors.ts && touched.ts}>
 
-                                                <Checkbox mt={5} name='ts' isChecked={values.ts} onChange={handleChange} onBlur={handleBlur} ><Box fontSize={'10px'} color={'gray'}  >
-                                                    By clicking “Create Account”, you agree to  <Box as='span' fontSize={'12px'} color={'orange'}>Terms of Service</Box>  and <Box as='span' fontSize={'12px'} color={'orange'}>Privacy Policy</Box>
-                                                </Box>
-                                                </Checkbox>
-                                                <FormErrorMessage>{errors.ts}</FormErrorMessage>
+                                                    <Checkbox mt={5} name='ts' isChecked={values.ts} onChange={handleChange} onBlur={handleBlur} ><Box fontSize={'10px'} color={'gray'}  >
+                                                        By clicking “Create Account”, you agree to  <Box as='span' fontSize={'12px'} color={'orange'}>Terms of Service</Box>  and <Box as='span' fontSize={'12px'} color={'orange'}>Privacy Policy</Box>
+                                                    </Box>
+                                                    </Checkbox>
+                                                    <FormErrorMessage>{errors.ts}</FormErrorMessage>
 
-                                            </FormControl>
-                                            {/* Submit Button */}
-                                            <Button type="submit" bg={'orange'} width="full" mt={5}  >
-                                                Sign up
-                                            </Button>
-                                        </form>
+                                                </FormControl>
+                                                {/* Submit Button */}
+                                                <Button type="submit" bg={'orange'} width="full" mt={5}   >
+                                                    Sign up
+                                                </Button>
+                                            </form>
+                                        }
 
                                     </Box>
 
@@ -297,6 +308,7 @@ const Signupnew = () => {
 
 
                     </Flex>
+
                 </Card>
             </Flex>
         </Box>

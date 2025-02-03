@@ -4,12 +4,18 @@ import { AiOutlineMenu, AiOutlineClose } from 'react-icons/ai'
 import { FaArrowDown, FaArrowRight } from 'react-icons/fa';
 import { BiChevronRight, BiChevronDown } from "react-icons/bi";
 import { IoMenuOutline, IoCloseOutline } from "react-icons/io5";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { MdDarkMode } from "react-icons/md";
 import { CiLight } from "react-icons/ci";
 
 const Navbarnew = () => {
 
+    const navigate = useNavigate();
+
+
+    const navigateTo = () => {
+        navigate("/")
+    }
 
     const { isOpen, onToggle } = useDisclosure();
     const { toggleColorMode } = useColorMode();
@@ -28,7 +34,7 @@ const Navbarnew = () => {
 
                 {/* NavSection */}
                 <Flex  >
-                    <Center mr={{ lg: '5', xl: '10' }}>
+                    <Center mr={{ lg: '5', xl: '10' }} onClick={navigateTo} cursor={'pointer'}>
                         <Image src='imagelogo/cryptico.png' w={'60px'} h={'50px'} mx={0}></Image>
                         <Text
                             fontSize={'2xl'}
@@ -69,10 +75,10 @@ const Navbarnew = () => {
                     </Button>
                     <Button onClick={() => {
                         setDark(!isdark)
-                            toggleColorMode();
+                        toggleColorMode();
                     }} boxSize={10}
-                    bg={'orange'}
-                    borderRadius={'full'}>
+                        bg={'orange'}
+                        borderRadius={'full'}>
                         {
                             isdark ? <Icon as={CiLight} boxSize={6} ></Icon> :
                                 <Icon as={MdDarkMode} boxSize={6} ></Icon>
