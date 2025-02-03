@@ -11,7 +11,7 @@ const Footer = () => {
   const textColor = useColorModeValue("gray.600", "gray.200");
 
   return (
-    <Container maxW={'container.xxl'} bg={bgColor} height={'auto'} display={'flex'} justifyContent={'center'} >
+    <Container maxW={'container.xxl'} bg={bgColor} height={'auto'} display={'flex'} justifyContent={'center'} borderTop={'1px solid #ccc'}>
       {/* mainFlex */}
 
 
@@ -28,7 +28,7 @@ const Footer = () => {
             <Image src='imagelogo/cryptico.png' w={'160px'} h={'150px'} mx={0}></Image>
 
 
-            <Flex display={{ base: 'none', sm: 'none', md: 'flex' }}>
+            <Flex display={{ base: 'none', sm: 'none', md: 'flex' }} gap={3}>
               {sociallink.map((icon, index) => (
 
 

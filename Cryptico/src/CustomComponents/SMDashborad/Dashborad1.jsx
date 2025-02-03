@@ -59,10 +59,10 @@ const Dashborad1 = () => {
                                                 </Flex>
 
                                             </GridItem>
-                                            <GridItem>{cdata.price}</GridItem>
-                                            <GridItem>{cdata.change}</GridItem>
-                                            <GridItem> <Image src={cdata.chart} maxW={'80px'} maxH={'40px'}></Image></GridItem>
-                                            <GridItem><Button variant='outline' color={'orange'}>Trade</Button></GridItem>
+                                            <GridItem key={index}>{cdata.price}</GridItem>
+                                            <GridItem key={index}>{cdata.change}</GridItem>
+                                            <GridItem key={index}> <Image src={cdata.chart} maxW={'80px'} maxH={'40px'}></Image></GridItem>
+                                            <GridItem key={index}><Button variant='outline' color={'orange'}>Trade</Button></GridItem>
 
                                         </>
 
@@ -103,8 +103,8 @@ const Dashborad1 = () => {
                                                 </Flex>
 
                                             </GridItem>
-                                            <GridItem>{cdata.price}</GridItem>
-                                            <GridItem>{cdata.change}</GridItem>
+                                            <GridItem key={index}>{cdata.price}</GridItem>
+                                            <GridItem key={index}>{cdata.change}</GridItem>
 
 
                                         </>
@@ -134,8 +134,8 @@ const Dashborad1 = () => {
                                                 </Flex>
 
                                             </GridItem>
-                                            <GridItem>{cdata.price}</GridItem>
-                                            <GridItem>{cdata.change}</GridItem>
+                                            <GridItem key={index}>{cdata.price}</GridItem>
+                                            <GridItem key={index}>{cdata.change}</GridItem>
 
 
                                         </>

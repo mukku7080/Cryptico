@@ -71,7 +71,8 @@ const Navbarnew = () => {
                         setDark(!isdark)
                             toggleColorMode();
                     }} boxSize={10}
-                    bg={'orange'}>
+                    bg={'orange'}
+                    borderRadius={'full'}>
                         {
                             isdark ? <Icon as={CiLight} boxSize={6} ></Icon> :
                                 <Icon as={MdDarkMode} boxSize={6} ></Icon>

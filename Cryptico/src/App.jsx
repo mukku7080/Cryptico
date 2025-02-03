@@ -19,6 +19,8 @@ import Dashborad1 from './CustomComponents/SMDashborad/Dashborad1'
 import Signup from './CustomComponents/LoginSignup/Signup'
 import Login from './CustomComponents/LoginSignup/Login'
 import { Route, Routes } from 'react-router-dom'
+import Signupnew from './CustomComponents/LoginSignup/Signupnew'
+import Loginnew from './CustomComponents/LoginSignup/Loginnew'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -29,7 +31,7 @@ function App() {
 
 
 
-      <Container minW={'100%'} margin={0} padding={0} bg={bgColor}>
+      <Container maxW={'container.xxl'} margin={0} padding={0} bg={bgColor}>
 
 
 
@@ -38,8 +40,8 @@ function App() {
 
         <Routes>
           <Route path='/' element={<Hero />}></Route>
-          <Route path='/login' element={<Login />}></Route>
-          <Route path='/signup' element={<Signup />}></Route>
+          <Route path='/login' element={<Loginnew />}></Route>
+          <Route path='/signup' element={<Signupnew />}></Route>
         </Routes>
 
 

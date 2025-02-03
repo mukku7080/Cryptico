@@ -1,16 +1,24 @@
 import React from 'react'
 import CardComponent from '../Cards/CardComponent'
-import { Box, Button, Container, Flex, Heading } from '@chakra-ui/react'
+import { Box, Button, Container, Flex, Heading, useColorModeValue } from '@chakra-ui/react'
 import Section3 from './Section3'
 import { RiArrowRightDoubleLine } from "react-icons/ri";
 import Section4 from './Section4';
 import SMDashboard from '../SMDashborad/SMDashboard';
 import Dashborad1 from '../SMDashborad/Dashborad1';
+import Section1 from './Section1';
 
 const Hero = () => {
+
+    const txtcolor = useColorModeValue('black', 'white');
+    const bgcolor = useColorModeValue('linear-gradient(96.76deg, rgba(255, 247, 230, .2) 13.68%, rgba(255, 202, 99, .2) 38.25%, rgba(255, 240, 208, .2) 81.97%), #fff;', 'gray')
     return (
         <>
-            <Container maxW={'container.xl'}  mb={10}>
+            <Section1 />
+            <Container maxW={'container.xl'} mb={10}>
+
+
+
                 <Dashborad1 />
                 {/* Section-2  -------------------------------------------------------------------------------------*/}
                 <Box display={'flex'} justifyContent={'center'} flexDirection={'column'} alignItems={'center'} gap={5}>
@@ -46,9 +54,9 @@ const Hero = () => {
                 {/* Embark on Your Crypto Journey Today! */}
 
             </Container>
-            <Box w={'100%'} minH={'200px'} bg={'linear-gradient(96.76deg, rgba(255, 247, 230, .2) 13.68%, rgba(255, 202, 99, .2) 38.25%, rgba(255, 240, 208, .2) 81.97%), #fff;'} display={'flex'} justifyContent={'center'} alignItems={'center'}>
+            <Box w={'100%'} minH={'200px'} bg={bgcolor} display={'flex'} justifyContent={'center'} alignItems={'center'}>
                 <Flex direction={'column'} w={'100%'} gap={5}>
-                    <Heading size={'md'} display={'flex'} justifyContent={'center'}>Embark on Your Crypto Journey Today!</Heading>
+                    <Heading size={'md'} display={'flex'} justifyContent={'center'} color={txtcolor}>Embark on Your Crypto Journey Today!</Heading>
                     <Box display={'flex'} justifyContent={'center'}>
 
                         <Button size={'md'} bg={'orange'} rightIcon={<RiArrowRightDoubleLine />}>Sign Up Now</Button>
