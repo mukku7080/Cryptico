@@ -19,8 +19,6 @@ import { FaApple, FaTelegramPlane } from "react-icons/fa";
 const Login = () => {
 
     const [ismobile, setMobile] = useState(false);
-
-
     const validationSchema = Yup.object({
         email: Yup.string().required("email is required"),
         password: Yup.string().min(6, "Minimum 6 characters").required("Password is required"),

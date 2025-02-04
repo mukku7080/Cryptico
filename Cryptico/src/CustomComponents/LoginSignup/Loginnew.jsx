@@ -50,10 +50,10 @@ const Loginnew = () => {
     return (
         <Box minH={'100vh'} display={'flex'} justifyContent={'center'} alignItems={'center'}>
 
-            <Flex maxW={'container.xxl'} justifyContent={'center'} my={10} >
-                <Card borderRadius={'none'} >
+            <Flex maxW={'container.xxl'} justifyContent={'center'}  >
+                <Card borderRadius={'none'}  >
 
-                    <Flex minW={{ base: 'container', sm: 'container.sm', md: 'container.md', lg: 'container.lg' }} direction={{ base: 'column', sm: 'column', md: 'row' }}  >
+                    <Flex minW={{ base: 'container', sm: '500px', md: 'container.md', lg: 'container.lg' }} direction={{ base: 'column', sm: 'column', md: 'row' }}  >
 
 
                         <Box flex={1}
@@ -67,9 +67,10 @@ const Loginnew = () => {
                         </Box>
 
 
-                        <Box flex={1} >
+                        <Box flex={1}
+                         >
 
-                            <Card borderRadius={'none'}>
+                            <Card borderRadius={'none'} >
                                 <Flex justifyContent={'space-between'} px={3} alignItems={'center'} mt={5}>
                                     <Heading size={'lg'} fontWeight={'500'}>Login</Heading>
                                     <Button leftIcon={<CgArrowsExchange />} bg={'transparent'} color={'orange'}>Sign up</Button>

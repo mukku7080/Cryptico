@@ -44,11 +44,6 @@ const Footer = () => {
           </Box>
 
 
-
-
-
-
-
           <Box flex={{ base: "1 0 100%", lg: "1" }} display={'flex'} flexDirection={'column'} alignItems={'center'} color={'white'} gap={2} textAlign={'center'}>
             <Text as='h1' fontSize={'2xl'} fontWeight={'500'} color={'#ffb11a'} >About</Text>
 

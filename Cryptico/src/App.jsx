@@ -43,10 +43,11 @@ function App() {
 
 
         <Routes>
-          <Route path="/number-verification" element={<Numberwithotp />} />
           <Route path='/' element={<Hero />}></Route>
           <Route path='/login' element={<Loginnew />}></Route>
           <Route path='/signup' element={<Signupnew />}></Route>
+          <Route path="/number-verification" element={<Numberwithotp />} />
+          <Route path="/userd" element={<UserDashboard />} />
         </Routes>
 
         {/* <UserDashboard /> */}

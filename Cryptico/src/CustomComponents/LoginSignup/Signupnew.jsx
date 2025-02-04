@@ -88,7 +88,7 @@ const Signupnew = () => {
                 <Card borderRadius={'none'} >
 
 
-                    <Flex minW={{ base: 'container', sm: 'container.sm', md: 'container.md', lg: 'container.lg' }} direction={{ base: 'column', sm: 'column', md: 'row' }}  >
+                    <Flex minW={{ base: 'container', sm: '500px', md: 'container.md', lg: 'container.lg' }} direction={{ base: 'column', sm: 'column', md: 'row' }}  >
 
 
                         <Box flex={1}
