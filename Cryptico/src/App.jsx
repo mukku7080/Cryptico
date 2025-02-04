@@ -47,7 +47,7 @@ function App() {
           <Route path='/login' element={<Loginnew />}></Route>
           <Route path='/signup' element={<Signupnew />}></Route>
           <Route path="/number-verification" element={<Numberwithotp />} />
-          <Route path="/userd" element={<UserDashboard />} />
+          <Route path="/user-dashboard" element={<UserDashboard />} />
         </Routes>
 
         {/* <UserDashboard /> */}

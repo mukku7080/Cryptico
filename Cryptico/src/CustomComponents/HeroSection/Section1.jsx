@@ -9,7 +9,7 @@ const Section1 = () => {
         <>
 
 
-            <Box w={'container.xxl'} bg={'black'} display={'flex'} justifyContent={'center'} flexDirection={'column'} gap={10} alignItems={'center'} minH={'450px'}>
+            <Box w={'container.xxl'} bg={'black'} display={'flex'} justifyContent={'center'} flexDirection={'column'} gap={10} alignItems={'center'} minH={'450px'} >
                 <Flex
                     gap={10}
                     direction={{ base: 'column', sm: 'column', md: 'column', lg: 'row', xl: 'row' }} minW={'80%'}
@@ -50,8 +50,8 @@ const Section1 = () => {
 
                                     {items.map((data, index) => (
                                         <Box key={index} maxW={'82px'} minH={'82px'} display={'flex'} alignItems={'center'} borderRadius={'8px'} justifyContent={'center'} flexDirection={'column'} >
-                                            <Image src={data.imgsrc} alt={data.title} w={'100%'} maxH={'40px'} maxW={'40px'} />
-                                            <Box as='p' fontSize={'10px'} minW={'66px'} textAlign={'center'} p={1}>{data.txt}</Box>
+                                            <Image src={data.imgsrc} alt={data.title} w={'100%'} maxH={'40px'} bg={'white'} maxW={'40px'} />
+                                            <Box as='p' fontSize={'10px'} minW={'66px'} textAlign={'center'} color={'white'} p={1}>{data.txt}</Box>
                                         </Box>
 
                                     ))}
@@ -64,10 +64,10 @@ const Section1 = () => {
                                     </Box>
 
 
-                                    <Box display={'flex'} flexDirection={'column'} gap={2} justifyContent={'center'}>
+                                    <Box display={'flex'} flexDirection={'column'} gap={0} justifyContent={'center'}>
 
                                         <Box as='p' fontSize={'10px'} color={'gray'}>Scan Now to Download</Box>
-                                        <Box as='p' color={'black'}>iOS & Android</Box>
+                                        <Box as='p' color={'gray'}>iOS & Android</Box>
                                     </Box>
                                 </Flex>
 

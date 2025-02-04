@@ -23,6 +23,9 @@ function OTPInput({ verification }) {
         if (verification == 'Email') {
             navigate('/number-verification');
         }
+        if (verification == 'Mobile') {
+            navigate('/user-dashboard');
+        }
 
     }
 
@@ -60,7 +63,7 @@ function OTPInput({ verification }) {
             <Button
                 colorScheme="orange"
                 isDisabled={otp.length !== 4}
-                onClick={ handleSubmit}
+                onClick={handleSubmit}
             >
                 Submit OTP
             </Button>

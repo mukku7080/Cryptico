@@ -12,6 +12,7 @@ import {
     Input,
     Checkbox
 } from "@chakra-ui/react";
+import { useNavigate } from 'react-router-dom';
 import { FcGoogle } from "react-icons/fc";
 import { FaApple, FaTelegramPlane } from "react-icons/fa";
 
@@ -21,6 +22,8 @@ const Loginnew = () => {
 
     const txtcolor = useColorModeValue('black', 'white');
     const bgcolor = useColorModeValue('gray.100', 'gray.700');
+
+    const navigate = useNavigate();
 
     const validationSchema = Yup.object({
         email: Yup.string().email("invalid email").required("*field is required"),
@@ -39,6 +42,7 @@ const Loginnew = () => {
 
             console.log(values);
             action.resetForm();
+            navigate("/user-dashboard");
 
         }
 
@@ -59,7 +63,7 @@ const Loginnew = () => {
                         <Box flex={1}
                             display={'flex'}
                             justifyContent={'center'} alignItems={'center'}
-                            bgImage={'https://bitrader-next.thetork.com/images/account/1.png'}
+                            bgImage={'https://images.pexels.com/photos/6765368/pexels-photo-6765368.jpeg?auto=compress&cs=tinysrgb&w=600'}
                             bgSize={'cover'} bgPosition={'center'}
                             bgRepeat={'no-repeat'}
                         >
@@ -68,7 +72,7 @@ const Loginnew = () => {
 
 
                         <Box flex={1}
-                         >
+                        >
 
                             <Card borderRadius={'none'} >
                                 <Flex justifyContent={'space-between'} px={3} alignItems={'center'} mt={5}>
@@ -131,7 +135,13 @@ const Loginnew = () => {
                                                 <Link mt={3} color={'orange'} display={'flex'} justifyContent={'flex-end'}> Forgot Password ?</Link>
                                             </Flex>
                                             {/* Submit Button */}
-                                            <Button type="submit" bg={'orange'} width="full" mt={5}  >
+                                            <Button
+                                                type="submit"
+                                                bg={'orange'}
+                                                width="full" mt={5}
+
+
+                                            >
                                                 Login
                                             </Button>
                                         </form>

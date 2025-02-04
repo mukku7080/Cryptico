@@ -4,7 +4,7 @@ import {
     MenuList,
     MenuItem,
     Icon,
-    Image, Link
+    Image, Link, useColorModeValue
 } from '@chakra-ui/react'
 import React, { useState } from 'react';
 import { FaArrowTrendUp } from "react-icons/fa6";
@@ -22,6 +22,9 @@ import { LuUpload } from "react-icons/lu";
 
 const UserDashboard = () => {
 
+    const bgcolor = useColorModeValue('gray.100', 'gray.700');
+
+
 
     const [tag, setTag] = useState("Trade History");
     const [istoogle, setToogle] = useState(false);
@@ -33,7 +36,7 @@ const UserDashboard = () => {
     return (
         <Flex maxW={'container.xxl'} bg={''} justifyContent={'center'} alignItems={'center'} direction={'column'} gap={10} my={10}>
 
-            <Flex minW={'90%'} bg={''} direction={'column'} gap={10} mx={5}>
+            <Flex minW={'80%'} bg={''} direction={'column'} gap={10} mx={5}>
 
 
 
@@ -43,8 +46,8 @@ const UserDashboard = () => {
                     <GridItem bg={'wite'} colSpan={{ base: 3, md: 3, lg: 3, xl: 1 }} >
                         <Card h={{ md: '50px', lg: '50px', xl: '150px' }} borderRadius={0} bg={'transparent'} boxShadow={'none'} direction={'row'} display={'flex'} justifyContent={'start'}>
 
-                            <Heading size={'md'} display={'flex'} alignItems={'center'} > {tag}</Heading>
-                            <Flex justify={'flex-end'} flex={{ base: 1, md: 'auto' }} display={{ base: 'flex', md: 'flex', lg: 'flex', xl: 'none' }} pr={{ base: '20px', sm: '20px', md: '20px', lg: '0px' }} >
+                            <Heading size={'lg'} display={'flex'} alignItems={'center'} > {tag}</Heading>
+                            <Flex justify={'flex-end'} flex={{ base: 1, md: 'auto' }} display={{ base: 'flex', md: 'flex', lg: 'none', xl: 'none' }} pr={{ base: '20px', sm: '20px', md: '20px', lg: '0px' }} gap={5} >
 
                                 <Button
                                     rightIcon={istoogle ? <MdKeyboardArrowDown /> : <MdKeyboardArrowRight />}
@@ -54,8 +57,8 @@ const UserDashboard = () => {
                                     }}
                                     display={{ base: 'flex', sm: 'flex', md: 'flex', lg: 'none', xl: 'none' }}
                                     aria-label={'Toggle Action'}
-                                colorScheme='orange'
-                                    
+                                    colorScheme='orange'
+
                                 >
                                     Action
                                 </Button>
@@ -93,7 +96,7 @@ const UserDashboard = () => {
 
                             <Flex gap={5}>
                                 <Box>
-                                <Image src='imagelogo/phoneverify.png' h={'50px' } w={'50px'}/>
+                                    <Image src='imagelogo/phoneverify.png' h={'50px'} w={'50px'} />
                                 </Box>
                                 <Flex direction={'column'}>
                                     <Box color={'red'}>
@@ -111,17 +114,17 @@ const UserDashboard = () => {
                     <GridItem display={{ base: 'none', md: 'block' }}>
                         <Card h={'150px'} borderRadius={0} display={{ base: 'none', md: 'flex' }} direction={'column'} justifyContent={'center'} alignItems={'center'} boxShadow={'lg'}>
 
-                        <Flex gap={5} mx={5}>
+                            <Flex gap={5} mx={5}>
                                 <Box>
-                                <Image src='imagelogo/eaglesecure.png' h={'50px' } w={'50px'}/>
+                                    <Image src='imagelogo/eaglesecure.png' h={'50px'} w={'50px'} />
                                 </Box>
                                 <Flex direction={'column'}>
                                     <Box color={'red'}>
 
-                                    2FA Not Enabled
+                                        2FA Not Enabled
                                     </Box>
                                     <Box maxW={'300px'}>
-                                    Enabling two-factor authentication is great way to secure your account.
+                                        Enabling two-factor authentication is great way to secure your account.
                                     </Box>
                                     <Link color={'orange'}>Setup 2FA Now</Link>
                                 </Flex>
@@ -149,8 +152,8 @@ const UserDashboard = () => {
                     <GridItem >
                         <Card borderRadius={0} display={{ base: 'none', sm: 'none', md: 'none', lg: 'flex' }} justifyContent={'center'} boxShadow={'lg'}>
 
-                            <Flex justifyContent={'center'} alignItems={'center'} direction={'column'} my={5} mx={5}>
-                                <Flex direction={'column'} gap={5} borderRight={'1px solid rgba(128, 128, 128, 0.3)'}>
+                            <Flex justifyContent={'center'} alignItems={'center'} direction={'column'} my={5}>
+                                <Flex justifyContent={'center'} alignItems={'center'} direction={'column'} gap={5} width={'100%'} maxH={'80%'}>
 
 
                                     {
@@ -159,9 +162,13 @@ const UserDashboard = () => {
 
 
                                             <Button
+                                                width={'90%'}
                                                 borderRadius={'none'}
                                                 border={'0px'} bg={'transparent'}
                                                 key={index} p={7}
+                                                px={20}
+
+
                                                 justifyContent="flex-start"
                                                 _hover={{
                                                     bg: 'linear-gradient(90deg, rgba(236,240,155,0.7875525210084033) 24%, rgba(247,241,175,0.9864320728291317) 78%)',
@@ -183,10 +190,10 @@ const UserDashboard = () => {
 
 
                                 </Flex>
-                                <Divider />
+                                <Divider width={'80%'} />
 
 
-                                <Flex direction={'column'} gap={0}  >
+                                <Flex direction={'column'} gap={0} width={'100%'} justifyContent={'center'} alignItems={'center'} >
 
 
                                     {
@@ -196,8 +203,10 @@ const UserDashboard = () => {
 
                                             <Button
                                                 borderRadius={'none'}
+                                                width={'90%'}
                                                 border={'0px'} bg={'transparent'}
                                                 key={index} p={7}
+                                                px={20}
                                                 justifyContent="flex-start"
                                                 _hover={{
                                                     bg: 'linear-gradient(90deg, rgba(236,240,155,0.7875525210084033) 24%, rgba(247,241,175,0.9864320728291317) 78%)',
@@ -233,7 +242,7 @@ const UserDashboard = () => {
                     <GridItem colSpan={{ base: 4, sm: 4, md: 4, lg: 3 }}>
                         <Card borderRadius={0} p={10} gap={4} boxShadow={'lg'}>
                             <Box>You are viewing all trades for the last 3 days</Box>
-                            <Flex border={'1px solid rgba(128, 128, 128, 0.3)'} p={1} justifyContent={'space-between'} bgColor={'#f7f7f7'} boxShadow={'lg'} borderRadius={'5px'}>
+                            <Flex border={'1px solid rgba(128, 128, 128, 0.3)'} py={1} px={3} justifyContent={'space-between'} bgColor={bgcolor} boxShadow={'lg'} borderRadius={'5px'}>
                                 <Box fontWeight={500} display={'flex'} alignItems={'center'} justifyContent={'center'}>
                                     Filter
                                 </Box>
@@ -241,7 +250,7 @@ const UserDashboard = () => {
                                     <UserDrware />
                                 </Box>
                             </Flex>
-                            <Flex border={'1px solid rgba(128, 128, 128, 0.3)'} p={1} justifyContent={'space-between'} bgColor={'#f7f7f7'} boxShadow={'lg'} borderRadius={'5px'}>
+                            <Flex border={'1px solid rgba(128, 128, 128, 0.3)'} py={1} px={3} justifyContent={'space-between'} bgColor={bgcolor} boxShadow={'lg'} borderRadius={'5px'}>
                                 <Box fontWeight={500} display={'flex'} alignItems={'center'} justifyContent={'center'} color={'gray'}>
                                     Export Trades
                                 </Box>
@@ -253,7 +262,7 @@ const UserDashboard = () => {
                                 </Box>
                             </Flex>
 
-                            <Flex border={'1px solid rgba(128, 128, 128, 0.3)'} p={3} justifyContent={'space-between'} bgColor={'#f7f7f7'} boxShadow={'lg'} borderRadius={'5px'}>
+                            <Flex border={'1px solid rgba(128, 128, 128, 0.3)'} p={3} justifyContent={'space-between'} bgColor={bgcolor} boxShadow={'lg'} borderRadius={'5px'}>
                                 <Box fontWeight={500} display={'flex'} alignItems={'center'} justifyContent={'center'} color={'gray'}>
                                     Completed Trades:
                                     0% (trades out of 0)
@@ -262,7 +271,7 @@ const UserDashboard = () => {
                             </Flex>
                             <Flex direction={'column'} border={'1px solid rgba(128, 128, 128, 0.3)'} >
 
-                                <Flex justifyContent={'space-between'} minH={'105px'} bg={'#f7f7f7'} borderBottom={'1px solid rgba(128, 128, 128, 0.3)'} px={2}>
+                                <Flex justifyContent={'space-between'} minH={'105px'} bg={bgcolor} borderBottom={'1px solid rgba(128, 128, 128, 0.3)'} px={3}>
                                     <Flex fontWeight={500} alignItems={'center'} justifyContent={'center'} color={'gray'}>
                                         My Past Trades
                                     </Flex>
@@ -313,21 +322,69 @@ const Mobilecollapse1 = () => {
             <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={1} width={'full'} transition="all 0.5s ease-in-out"   >
 
                 <GridItem>
-                    <Card display={{ base: 'flex', sm: 'flex', md: 'none', lg: 'none' }} h={'100px'} borderRadius={0}>
+                    <Card display={{ base: 'flex', sm: 'flex', md: 'none', lg: 'none' }} h={'100px'} direction={'column'} justifyContent={'center'} alignItems={''} boxShadow={'lg'} borderRadius={0} >
 
-                        2
+
+
+
+                        <Flex gap={10} mx={5}>
+                            <Box>
+                                <Image src='imagelogo/Master.png' h={'50px'} w={'50px'} />
+                            </Box>
+                            <Flex direction={'column'}>
+                                <Box>
+
+                                    Account Level : 1
+
+                                </Box>
+                                <Box>
+                                    Account Limit: 87022.8
+
+                                </Box>
+                            </Flex>
+                        </Flex>
+
+
                     </Card>
                 </GridItem>
                 <GridItem>
-                    <Card display={{ base: 'flex', sm: 'flex', md: 'none', lg: 'none' }} h={'100px'} borderRadius={0}>
+                    <Card display={{ base: 'flex', sm: 'flex', md: 'none', lg: 'none' }} h={'100px'} borderRadius={0} direction={'column'} justifyContent={'center'} alignItems={''} boxShadow={'lg'}>
 
-                        3
+                        <Flex gap={10} mx={5}>
+                            <Box>
+                                <Image src='imagelogo/phoneverify.png' h={'50px'} w={'50px'} />
+                            </Box>
+                            <Flex direction={'column'}>
+                                <Box color={'red'}>
+
+                                    Phone Number Not Verified
+                                </Box>
+                                <Box>
+                                    Take a minute to verify your number
+                                </Box>
+                                <Link color={'orange'}>verify</Link>
+                            </Flex>
+                        </Flex>
                     </Card>
                 </GridItem>
                 <GridItem>
-                    <Card display={{ base: 'flex', sm: 'flex', md: 'none', lg: 'none' }} h={'100px'} borderRadius={0}>
+                    <Card display={{ base: 'flex', sm: 'flex', md: 'none', lg: 'none' }} h={'100px'} borderRadius={0} direction={'column'} justifyContent={'center'} alignItems={''} boxShadow={'lg'}>
 
-                        4
+                        <Flex gap={10} mx={5}>
+                            <Box display={'flex'} alignItems={'center'}>
+                                <Image src='imagelogo/eaglesecure.png' h={'50px'} w={'50px'} />
+                            </Box>
+                            <Flex direction={'column'}>
+                                <Box color={'red'}>
+
+                                    2FA Not Enabled
+                                </Box>
+                                <Box maxW={'300px'}>
+                                    Enabling two-factor authentication is great way to secure your account.
+                                </Box>
+                                <Link color={'orange'}>Setup 2FA Now</Link>
+                            </Flex>
+                        </Flex>
                     </Card>
                 </GridItem>
             </Grid>
@@ -345,8 +402,8 @@ const Mobilecollapse2 = () => {
 
             <Card borderRadius={0} display={{ base: 'flex', sm: 'flex', md: 'flex', lg: 'none' }} justifyContent={'center'} width={'full'}>
 
-                <Flex justifyContent={'center'} alignItems={'center'} m={10}>
-                    <Flex direction={'column'} gap={5} borderRight={'1px solid #212121'}>
+                <Flex justifyContent={'start'} alignItems={'center'} >
+                    <Flex direction={'column'} gap={5} m={4} width={'100%'} >
 
 
                         {
@@ -357,10 +414,10 @@ const Mobilecollapse2 = () => {
 
 
                                 <Button
-
+                                    width={'100%'}
                                     borderRadius={'none'}
                                     border={'0px'} bg={'transparent'}
-                                    key={index} p={7}
+                                    key={index}
                                     justifyContent="flex-start"
                                     _hover={{
                                         bg: 'linear-gradient(90deg, rgba(236,240,155,0.7875525210084033) 24%, rgba(247,241,175,0.9864320728291317) 78%)',

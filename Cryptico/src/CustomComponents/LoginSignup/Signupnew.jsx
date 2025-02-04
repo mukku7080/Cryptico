@@ -94,7 +94,7 @@ const Signupnew = () => {
                         <Box flex={1}
                             display={'flex'}
                             justifyContent={'center'} alignItems={'center'}
-                            bgImage={'https://bitrader-next.thetork.com/images/account/1.png'}
+                            bgImage={'https://images.pexels.com/photos/6765372/pexels-photo-6765372.jpeg?auto=compress&cs=tinysrgb&w=600'}
                             bgSize={'cover'} bgPosition={'center'}
                             bgRepeat={'no-repeat'}
                         >
