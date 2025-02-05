@@ -15,9 +15,14 @@ import {
 import { FcGoogle } from "react-icons/fc";
 import { FaApple, FaTelegramPlane } from "react-icons/fa";
 import OTPInput from './OtpInput';
+import { useAuth } from '../AuthContext/AuthProvider';
 
 
 const Signupnew = () => {
+
+
+
+
     const [issignup, setSignup] = useState(false);
     const bgcolor = useColorModeValue('gray.100', 'gray.700');
 
@@ -50,6 +55,7 @@ const Signupnew = () => {
             console.log(values);
             setSignup(true);
             action.resetForm();
+
 
 
         }
@@ -119,7 +125,7 @@ const Signupnew = () => {
                                 <CardBody display={'flex'} justifyContent={'center'}>
                                     <Box maxW="md" borderRadius="md"  >
                                         {issignup ?
-                                            <OTPInput verification={"Email"} />
+                                            <OTPInput verification={"Email"} email={values.email} />
                                             :
 
                                             <form onSubmit={(e) => {

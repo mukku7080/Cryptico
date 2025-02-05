@@ -24,6 +24,8 @@ import Loginnew from './CustomComponents/LoginSignup/Loginnew'
 import UserDashboard from './CustomComponents/Afterlogin/UserDashboard'
 import OTPInput from './CustomComponents/LoginSignup/OtpInput'
 import Numberwithotp from './CustomComponents/LoginSignup/Numberwithotp'
+import { AuthProvider } from './CustomComponents/AuthContext/AuthProvider'
+import Profile from './CustomComponents/Afterlogin/Profile'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -34,31 +36,37 @@ function App() {
 
 
 
-      <Container maxW={'container.xxl'} margin={0} padding={0} bg={bgColor}>
+      <AuthProvider>
+
+        <Container maxW={'container.xxl'} margin={0} padding={0} bg={bgColor}>
+
+
+          <Navbarnew />
 
 
 
-        <Navbarnew />
+          <Routes>
+            <Route path='/' element={<Hero />}></Route>
+            <Route path='/login' element={<Loginnew />}></Route>
+            <Route path='/signup' element={<Signupnew />}></Route>
+            <Route path="/number-verification" element={<Numberwithotp />} />
+            <Route path="/user-dashboard" element={<UserDashboard />} />
+            <Route path="/profile" element={<Profile />} />
+
+          </Routes>
+
+          {/* <CryptoAccordion />
+          <br /><br />
+          <CryptoAccordion /> */}
+
+
+          <Footer />
 
 
 
-        <Routes>
-          <Route path='/' element={<Hero />}></Route>
-          <Route path='/login' element={<Loginnew />}></Route>
-          <Route path='/signup' element={<Signupnew />}></Route>
-          <Route path="/number-verification" element={<Numberwithotp />} />
-          <Route path="/user-dashboard" element={<UserDashboard />} />
-        </Routes>
 
-        {/* <UserDashboard /> */}
-
-
-        <Footer />
-
-
-
-
-      </Container>
+        </Container>
+      </AuthProvider>
 
     </>
   )

@@ -1,37 +1,117 @@
-import Accordion from 'react-bootstrap/Accordion';
-import 'bootstrap/dist/css/bootstrap.min.css'
+import {
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
+  Box,
+  Button,
+  Badge,
+  Flex,
+  Image,
+  Menu,
+  MenuList,
+  MenuButton,
+  MenuItem
+} from '@chakra-ui/react'
+import { useState } from 'react';
+import { MdKeyboardArrowDown, MdKeyboardArrowRight } from "react-icons/md";
 
-function CryptoAccordion() {
+function CryptoAccordion({ title, btn1, btn2, isOptionButton }) {
+
+  const [option, setOption] = useState(cryptoOption[0].name);
   return (
-    <></>
+    <Accordion defaultIndex={[0]} allowMultiple gap={10} width={'100%'}  >
 
-    // <Accordion>
-    //   <Accordion.Item eventKey="0">
-    //     <Accordion.Header>Accordion Item #1</Accordion.Header>
-    //     <Accordion.Body>
-    //       Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-    //       eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-    //       minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-    //       aliquip ex ea commodo consequat. Duis aute irure dolor in
-    //       reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-    //       pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-    //       culpa qui officia deserunt mollit anim id est laborum.
-    //     </Accordion.Body>
-    //   </Accordion.Item>
-    //   <Accordion.Item eventKey="1">
-    //     <Accordion.Header>Accordion Item #2</Accordion.Header>
-    //     <Accordion.Body>
-    //       Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-    //       eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-    //       minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-    //       aliquip ex ea commodo consequat. Duis aute irure dolor in
-    //       reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-    //       pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-    //       culpa qui officia deserunt mollit anim id est laborum.
-    //     </Accordion.Body>
-    //   </Accordion.Item>
-    // </Accordion>
+
+      <AccordionItem  >
+        <h2>
+          <AccordionButton>
+            <Box as='span' flex='1' fontSize={'lg'} fontWeight={600} textAlign='left' p={5}>
+              {title}
+            </Box>
+            <AccordionIcon />
+          </AccordionButton>
+
+        </h2>
+        <AccordionPanel mt={5}>
+          <Box width={'full'} borderBottom={'1px solid #dcdcdc'} display={'flex'} justifyContent={'space-between'} >
+            <Flex>
+              <Button
+                bg={'transparent'}
+                borderRadius={0}
+                rightIcon={<Mybadge />}
+                _hover={{ bg: 'orange' }}
+              >
+                {btn1}
+              </Button>
+              <Button
+                bg={'transparent'}
+                borderRadius={0}
+                rightIcon={<Mybadge />}
+                _hover={{ bg: 'orange' }}
+              >
+                {btn2}
+              </Button>
+            </Flex>
+            {
+              isOptionButton &&
+              <Menu>
+              {/* <MenuButton as={Button} colorScheme='orange' display={{base:'flex',md:'none'}}>
+              <MdKeyboardArrowDown />
+              </MenuButton> */}
+                <MenuButton as={Button} variant={'outline'} borderRadius={0}  border={'1px solid #dcdcdc'} rightIcon={<MdKeyboardArrowDown />} >
+                  {option}
+
+                </MenuButton>
+                <MenuList borderRadius={0}>
+                  {cryptoOption.map((data, index) => (
+                    <>
+                      <MenuItem key={index} onClick={() => setOption(data.name)} color={'gray'}>{data.name}</MenuItem>
+                    </>
+                  ))}
+
+                </MenuList>
+              </Menu>
+            }
+
+          </Box>
+          <Box display={'flex'}
+            justifyContent={'center'}
+            alignItems={'center'}
+
+
+
+          >
+            <Image p={5} src='imagelogo/cryptico.png' w={'200px'} h={'160px'}></Image>
+          </Box>
+        </AccordionPanel>
+      </AccordionItem>
+    </Accordion>
   );
 }
+
+const Mybadge = () => {
+  return (
+
+    <Badge
+
+      borderRadius="full"
+      bg="orange"
+      color="white"
+      px={2}
+    >
+      1
+    </Badge>
+  )
+}
+
+const cryptoOption = [
+  { name: 'All CryptoCurrencies' },
+  { name: 'Bitcoin' },
+  { name: 'Ethereum' },
+  { name: 'USDC' },
+  { name: 'Tether' },
+]
 
 export default CryptoAccordion;

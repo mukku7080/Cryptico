@@ -7,16 +7,13 @@ import { IoMenuOutline, IoCloseOutline } from "react-icons/io5";
 import { Link, useNavigate } from 'react-router-dom';
 import { MdDarkMode } from "react-icons/md";
 import { CiLight } from "react-icons/ci";
+import { useAuth } from '../AuthContext/AuthProvider';
+import UserAvatar from '../Afterlogin/UserAvatar';
 
 const Navbarnew = () => {
-
+    const { user } = useAuth();
     const navigate = useNavigate();
-
-
-    const navigateTo = () => {
-        navigate("/")
-    }
-
+    const navigateTo = () => { navigate("/") }
     const { isOpen, onToggle } = useDisclosure();
     const { toggleColorMode } = useColorMode();
     const bgColor = useColorModeValue("gray.100", "gray.900");
@@ -66,13 +63,21 @@ const Navbarnew = () => {
 
                 {/* ButtonSection */}
                 <Stack justify={'flex-end'} direction={'row'} spacing={6} display={{ base: 'none', md: 'none', lg: 'none', xl: 'flex' }}>
-                    <Button as={Link} to='/login' padding={'0px 32px'} borderColor={'#ffffff99'} variant={'ghost'} color={'white'} _hover={{ color: 'black', bgColor: '#ffb11a' }}>
-                        Log In
-                    </Button>
+                    {
+                        (user==null )?
+                        <>
 
-                    <Button as={Link} to='/signup' padding={'0px 32px'} bgColor={'#ffb11a'} >
-                        Sign Up
-                    </Button>
+                            <Button as={Link} to='/login' padding={'0px 32px'} borderColor={'#ffffff99'} variant={'ghost'} color={'white'} _hover={{ color: 'black', bgColor: '#ffb11a' }}>
+                                Log In
+                            </Button>
+
+                            <Button as={Link} to='/signup' padding={'0px 32px'} bgColor={'#ffb11a'} >
+                                Sign Up
+                            </Button>
+                        </>
+                        :
+                        <UserAvatar/>
+                    }
                     <Button onClick={() => {
                         setDark(!isdark)
                         toggleColorMode();

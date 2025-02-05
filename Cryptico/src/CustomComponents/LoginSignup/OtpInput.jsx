@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import { HStack, PinInput, PinInputField, Button, Text, VStack, Box } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../AuthContext/AuthProvider";
 
 
-function OTPInput({ verification }) {
+function OTPInput({ verification, email }) {
     const [otp, setOtp] = useState("");
+    const { login } = useAuth()
     const [timeLeft, setTimeLeft] = useState(120); // 2 minutes (120 seconds)
     const [isResendDisabled, setIsResendDisabled] = useState(true);
+    console.log(email)
 
     // Timer Effect
     useEffect(() => {
@@ -24,7 +27,10 @@ function OTPInput({ verification }) {
             navigate('/number-verification');
         }
         if (verification == 'Mobile') {
+
             navigate('/user-dashboard');
+            login(email);
+            console.log(email.value);
         }
 
     }

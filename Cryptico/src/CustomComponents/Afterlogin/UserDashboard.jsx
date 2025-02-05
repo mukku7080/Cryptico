@@ -36,7 +36,12 @@ const UserDashboard = () => {
     return (
         <Flex maxW={'container.xxl'} bg={''} justifyContent={'center'} alignItems={'center'} direction={'column'} gap={10} my={10}>
 
-            <Flex minW={'80%'} bg={''} direction={'column'} gap={10} mx={5}>
+            <Flex
+            // minW={'80%'}
+            maxW={{ base: "auto",lg:'none' ,xl: "80%" }}
+            minW={{ base: "70%",lg:'80%' ,xl: "none" }}
+             
+                bg={''} direction={'column'} gap={10} mx={5}>
 
 
 
@@ -44,7 +49,7 @@ const UserDashboard = () => {
                 {/* First Grid Row---------------------------------------------------------------------- */}
                 <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)", lg: "repeat(3, 1fr)", xl: "repeat(4, 1fr)" }} gap={5} width={'full'} transition="all 0.5s ease-in-out" >
                     <GridItem bg={'wite'} colSpan={{ base: 3, md: 3, lg: 3, xl: 1 }} >
-                        <Card h={{ md: '50px', lg: '50px', xl: '150px' }} borderRadius={0} bg={'transparent'} boxShadow={'none'} direction={'row'} display={'flex'} justifyContent={'start'}>
+                        <Card h={{ md: '50px', lg: '50px', xl: '150px' }} borderRadius={0} bg={'transparent'} boxShadow={'none'} border={'1px solid rgba(128, 128, 128, 0.05)'} direction={'row'} display={'flex'} justifyContent={'start'}>
 
                             <Heading size={'lg'} display={'flex'} alignItems={'center'} > {tag}</Heading>
                             <Flex justify={'flex-end'} flex={{ base: 1, md: 'auto' }} display={{ base: 'flex', md: 'flex', lg: 'none', xl: 'none' }} pr={{ base: '20px', sm: '20px', md: '20px', lg: '0px' }} gap={5} >
@@ -80,8 +85,8 @@ const UserDashboard = () => {
                     </GridItem>
 
 
-                    <GridItem display={{ base: 'none', md: 'block' }}>
-                        <Card h={'150px'} borderRadius={0} display={{ base: 'none', md: 'flex' }} direction={'column'} justifyContent={'center'} alignItems={'center'} boxShadow={'lg'}>
+                    <GridItem display={{ base: 'none', md: 'none', lg: 'block' }}>
+                        <Card h={'150px'} borderRadius={0} display={{ base: 'none', md: 'none', lg: 'flex' }} direction={'column'} justifyContent={'center'} alignItems={'center'} boxShadow={'lg'}>
 
                             <Box>
                                 Account Level : 1
@@ -91,8 +96,8 @@ const UserDashboard = () => {
                             </Box>
                         </Card>
                     </GridItem>
-                    <GridItem display={{ base: 'none', md: 'block' }}>
-                        <Card h={'150px'} borderRadius={0} display={{ base: 'none', md: 'flex' }} direction={'column'} justifyContent={'center'} alignItems={'center'} boxShadow={'lg'}>
+                    <GridItem display={{ base: 'none', md: 'none', lg: 'block' }}>
+                        <Card h={'150px'} borderRadius={0} display={{ base: 'none', md: 'none', lg: 'flex' }} direction={'column'} justifyContent={'center'} alignItems={'center'} boxShadow={'lg'}>
 
                             <Flex gap={5}>
                                 <Box>
@@ -111,8 +116,8 @@ const UserDashboard = () => {
                             </Flex>
                         </Card>
                     </GridItem>
-                    <GridItem display={{ base: 'none', md: 'block' }}>
-                        <Card h={'150px'} borderRadius={0} display={{ base: 'none', md: 'flex' }} direction={'column'} justifyContent={'center'} alignItems={'center'} boxShadow={'lg'}>
+                    <GridItem display={{ base: 'none', md: 'none', lg: 'block' }}>
+                        <Card h={'150px'} borderRadius={0} display={{ base: 'none', md: 'none', lg: 'flex' }} direction={'column'} justifyContent={'center'} alignItems={'center'} boxShadow={'lg'}>
 
                             <Flex gap={5} mx={5}>
                                 <Box>
@@ -276,12 +281,18 @@ const UserDashboard = () => {
                                         My Past Trades
                                     </Flex>
                                     <Flex alignItems={'center'} justifyContent={'center'} gap={2}>
-                                        <Button colorScheme='orange' rightIcon={<MdOutlineFileDownload />}>
+                                        <Button colorScheme='orange' display={{ base: 'flex', sm: 'flex', md: 'none' }}>
+                                            <LuUpload />
+                                        </Button>
+                                        <Button colorScheme='orange' display={{ base: 'flex', sm: 'flex', md: 'none' }}>
+                                            <MdOutlineContentCopy />
+                                        </Button>
+                                        <Button colorScheme='orange' rightIcon={<LuUpload />} display={{ base: 'none', sm: 'none', md: 'flex' }}>
 
                                             Export Trades
 
                                         </Button>
-                                        <Button colorScheme='orange' rightIcon={<MdOutlineContentCopy />}>
+                                        <Button colorScheme='orange' rightIcon={<MdOutlineContentCopy />} display={{ base: 'none', sm: 'none', md: 'flex' }}>
 
                                             Copy Details
 
@@ -319,10 +330,10 @@ const Mobilecollapse1 = () => {
     return (
 
         <>
-            <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={1} width={'full'} transition="all 0.5s ease-in-out"   >
+            <Grid templateColumns={{ base: "1fr", md: "1fr" }} gap={1} width={'full'} transition="all 0.5s ease-in-out"   >
 
                 <GridItem>
-                    <Card display={{ base: 'flex', sm: 'flex', md: 'none', lg: 'none' }} h={'100px'} direction={'column'} justifyContent={'center'} alignItems={''} boxShadow={'lg'} borderRadius={0} >
+                    <Card display={{ base: 'flex', sm: 'flex', md: 'flex', lg: 'none' }} h={'100px'} direction={'column'} justifyContent={'center'} alignItems={''} boxShadow={'lg'} borderRadius={0} >
 
 
 
@@ -348,7 +359,7 @@ const Mobilecollapse1 = () => {
                     </Card>
                 </GridItem>
                 <GridItem>
-                    <Card display={{ base: 'flex', sm: 'flex', md: 'none', lg: 'none' }} h={'100px'} borderRadius={0} direction={'column'} justifyContent={'center'} alignItems={''} boxShadow={'lg'}>
+                    <Card display={{ base: 'flex', sm: 'flex', md: 'flex', lg: 'none' }} h={'100px'} borderRadius={0} direction={'column'} justifyContent={'center'} alignItems={''} boxShadow={'lg'}>
 
                         <Flex gap={10} mx={5}>
                             <Box>
@@ -368,7 +379,7 @@ const Mobilecollapse1 = () => {
                     </Card>
                 </GridItem>
                 <GridItem>
-                    <Card display={{ base: 'flex', sm: 'flex', md: 'none', lg: 'none' }} h={'100px'} borderRadius={0} direction={'column'} justifyContent={'center'} alignItems={''} boxShadow={'lg'}>
+                    <Card display={{ base: 'flex', sm: 'flex', md: 'flex', lg: 'none' }} h={'100px'} borderRadius={0} direction={'column'} justifyContent={'center'} alignItems={''} boxShadow={'lg'}>
 
                         <Flex gap={10} mx={5}>
                             <Box display={'flex'} alignItems={'center'}>
