@@ -35,8 +35,8 @@ function CryptoAccordion({ title, btn1, btn2, isOptionButton }) {
 
         </h2>
         <AccordionPanel mt={5}>
-          <Box width={'full'} borderBottom={'1px solid #dcdcdc'} display={'flex'} justifyContent={'space-between'} >
-            <Flex>
+          <Box width={'full'} borderBottom={'1px solid #dcdcdc'} display={'flex'} flexWrap={'wrap'} justifyContent={'space-between'} >
+            <Flex >
               <Button
                 bg={'transparent'}
                 borderRadius={0}
@@ -57,10 +57,8 @@ function CryptoAccordion({ title, btn1, btn2, isOptionButton }) {
             {
               isOptionButton &&
               <Menu>
-              {/* <MenuButton as={Button} colorScheme='orange' display={{base:'flex',md:'none'}}>
-              <MdKeyboardArrowDown />
-              </MenuButton> */}
-                <MenuButton as={Button} variant={'outline'} borderRadius={0}  border={'1px solid #dcdcdc'} rightIcon={<MdKeyboardArrowDown />} >
+
+                <MenuButton as={Button} variant={'outline'} display={{base:'none',md:'flex'}} borderRadius={0} border={'1px solid #dcdcdc'} rightIcon={<MdKeyboardArrowDown />}  >
                   {option}
 
                 </MenuButton>
@@ -76,14 +74,35 @@ function CryptoAccordion({ title, btn1, btn2, isOptionButton }) {
             }
 
           </Box>
+
+          <Box width={'full'} borderBottom={'1px solid #dcdcdc'} display={{base:'flex',md:'none'}} flexWrap={'wrap'} justifyContent={'space-between'} py={2} >
+           
+            {
+              isOptionButton &&
+              <Menu>
+
+                <MenuButton as={Button} variant={'outline'} display={{base:'flex',md:'none'}} borderRadius={0} border={'1px solid #dcdcdc'} rightIcon={<MdKeyboardArrowDown />} width={'100%'}  >
+                  {option}
+
+                </MenuButton>
+                <MenuList borderRadius={0} >
+                  {cryptoOption.map((data, index) => (
+                    <>
+                      <MenuItem key={index} onClick={() => setOption(data.name)} color={'gray'} width={'full'}>{data.name}</MenuItem>
+                    </>
+                  ))}
+
+                </MenuList>
+              </Menu>
+            }
+
+          </Box>
           <Box display={'flex'}
             justifyContent={'center'}
             alignItems={'center'}
-
-
-
           >
-            <Image p={5} src='imagelogo/cryptico.png' w={'200px'} h={'160px'}></Image>
+            <Image p={5} src='imagelogo/cryptico.png' w={'200px'} h={'160px'} opacity={0.1}></Image>
+            
           </Box>
         </AccordionPanel>
       </AccordionItem>
