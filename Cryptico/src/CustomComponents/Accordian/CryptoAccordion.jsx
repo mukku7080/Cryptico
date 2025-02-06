@@ -36,11 +36,11 @@ function CryptoAccordion({ title, btn1, btn2, isOptionButton }) {
         </h2>
         <AccordionPanel mt={5}>
           <Box width={'full'} borderBottom={'1px solid #dcdcdc'} display={'flex'} flexWrap={'wrap'} justifyContent={'space-between'} >
-            <Flex >
+            <Flex wrap={'wrap'} >
               <Button
                 bg={'transparent'}
                 borderRadius={0}
-                rightIcon={<Mybadge />}
+                rightIcon={<Mybadge bgcolor={'orange'} />}
                 _hover={{ bg: 'orange' }}
               >
                 {btn1}
@@ -48,7 +48,7 @@ function CryptoAccordion({ title, btn1, btn2, isOptionButton }) {
               <Button
                 bg={'transparent'}
                 borderRadius={0}
-                rightIcon={<Mybadge />}
+                rightIcon={<Mybadge bgcolor={'orange'} />}
                 _hover={{ bg: 'orange' }}
               >
                 {btn2}
@@ -74,6 +74,8 @@ function CryptoAccordion({ title, btn1, btn2, isOptionButton }) {
             }
 
           </Box>
+
+          {/* for small screen dorpdow button */}
 
           <Box width={'full'} borderBottom={'1px solid #dcdcdc'} display={{base:'flex',md:'none'}} flexWrap={'wrap'} justifyContent={'space-between'} py={2} >
            
@@ -110,13 +112,13 @@ function CryptoAccordion({ title, btn1, btn2, isOptionButton }) {
   );
 }
 
-const Mybadge = () => {
+export const Mybadge = ({bgcolor}) => {
   return (
 
     <Badge
 
       borderRadius="full"
-      bg="orange"
+      bg={bgcolor}
       color="white"
       px={2}
     >

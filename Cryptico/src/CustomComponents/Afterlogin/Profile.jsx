@@ -2,7 +2,10 @@ import React from 'react'
 import {
     Box, Button, Card, Flex, Grid, GridItem, Heading,
     useColorModeValue,
-    Avatar
+    Avatar,
+    Link,
+    Badge,
+
 } from '@chakra-ui/react'
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { HiMiniArrowPath } from "react-icons/hi2";
@@ -15,7 +18,7 @@ import { IoMenuOutline, IoCloseOutline, IoColorFilter } from "react-icons/io5";
 import UserDrware from '../Drwares/UserDrware';
 import { LuUpload } from "react-icons/lu";
 import { FaPhoneAlt, FaEnvelope, FaUserCircle, FaMapMarkerAlt } from "react-icons/fa";
-import CryptoAccordion from '../Accordian/CryptoAccordion';
+import CryptoAccordion, { Mybadge } from '../Accordian/CryptoAccordion';
 import { IoEyeOutline } from "react-icons/io5";
 import { MdModeEdit } from "react-icons/md";
 import { FaTwitter, FaFacebook } from "react-icons/fa";
@@ -27,11 +30,11 @@ const Profile = () => {
         <>
             <Flex w={'container.xxl'} justifyContent={'center'} alignItems={'center'} my={10} >
                 <Flex w={{ base: '95%', md: '90%', lg: '80%', xl: '70%' }} direction={'column'} gap={5}>
-                    <Grid templateColumns={'repeat(4,1fr)'} gap={5}>
+                    <Grid templateColumns={{ base: 'repeat(1,1fr)', md: 'repeat(4,1fr)' }} rowGap={4} gap={{ md: 5 }}>
 
 
                         <GridItem colSpan={1} >
-                            <Card borderRadius={0} p={4}>
+                            <Card borderRadius={0} p={6}>
                                 <Flex alignItems={'center'} justifyContent={'center'} direction={'column'} gap={5}>
                                     <Avatar name='Mukesh rai' size={'xl'}></Avatar>
 
@@ -42,11 +45,11 @@ const Profile = () => {
                         </GridItem>
                         <GridItem colSpan={3}  >
                             <Card width={'full'} h={'full'} p={4} borderRadius={'none'}>
-                                <Flex justifyContent={'space-between'} alignItems={'center'}>
+                                <Flex justifyContent={'space-between'} alignItems={'center'} mx={2} direction={{base:'column',sm:'row',md:'row'}} gap={5}>
 
-                                    <Flex direction={'column'} gap={4} color={'gray'} >
+                                    <Flex direction={'column'} gap={4} color={'gray'}  alignItems={{base:'center',sm:'start'}} >
                                         <Heading size={'lg'}> User_Name</Heading>
-                                        <Box>Trus:Block</Box>
+                                        <Box>Trust:Block</Box>
                                         <Flex gap={3}>
                                             <Box display={'flex'} alignItems={'center'}>
 
@@ -57,19 +60,33 @@ const Profile = () => {
                                                 Seen 21 our ago
                                             </Box>
                                         </Flex>
-                                        <Flex gap={10}>
-                                            <Box> Positive</Box>
-                                            <Box> Negative</Box>
+                                        <Flex gap={5}  >
+                                            <Box border={'1px solid #228B22'} py={2} px={5} position={'relative'} color={'#228B22'}>  Feedback
+                                                <Box as='span' position={'absolute'} top={-3} right={-3} >
+
+                                                    <Mybadge bgcolor={'#228B22'} />
+                                                </Box>
+
+                                            </Box>
+                                            <Box border={'1px solid #B22222'} py={2} px={5} position={'relative'} color={'#B22222'}>
+
+                                                Feedback
+                                                <Box as='span' position={'absolute'} top={-3} right={-3} >
+
+                                                    <Mybadge bgcolor={'#B22222'} />
+                                                </Box>
+
+                                            </Box>
                                         </Flex>
 
                                     </Flex>
-                                    <Flex gap={5}>
-                                    {
-                                        socialIcons.map((data,index)=>(
+                                    <Flex gap={5} direction={{ base: 'row', sm:'column',lg: 'row' }}>
+                                        {
+                                            socialIcons.map((data, index) => (
 
-                                        <Button borderRadius={0} colorScheme='blue' >{data.icon}</Button>
-                                        ))
-                                    }
+                                                <Button key={index} as={Link} href={data.link} borderRadius={0} bg={data.color} >{data.icon}</Button>
+                                            ))
+                                        }
 
                                     </Flex>
                                 </Flex>
@@ -112,7 +129,7 @@ const Profile = () => {
                                         {userDetails.map((data, index) => (
                                             <>
                                                 <Box key={index} py={2} px={3}>
-                                                    <Flex gap={5}>
+                                                    <Flex gap={5} justifyContent={'space-between'}>
                                                         <Box display={'flex'} fontWeight={550} justifyContent={'center'} alignItems={'center'}>
 
                                                             {data.label}
@@ -187,9 +204,9 @@ const userDetails = [
 ];
 
 const socialIcons = [
-    { name: "Twitter", icon: <FaTwitter  color='white'/>, link: "https://twitter.com" },
-    { name: "Facebook", icon: <FaFacebook color='white' />, link: "https://facebook.com" },
-    { name: "Email", icon: <FaEnvelope color='white' />, link: "mailto:example@example.com" }
+    { name: "Twitter", icon: <FaTwitter color='white' />, link: "https://twitter.com", color: '#55acee' },
+    { name: "Facebook", icon: <FaFacebook color='white' />, link: "https://facebook.com", color: '#3b5998' },
+    { name: "Email", icon: <FaEnvelope color='white' />, link: "mailto:example@example.com", color: '#444444' }
 ];
 
 

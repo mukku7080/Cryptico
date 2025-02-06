@@ -1,9 +1,5 @@
 import {
-    Box, Button, ButtonGroup, Card, Collapse, Divider, Flex, Grid, GridItem, Heading, IconButton, useDisclosure, Menu,
-    MenuButton,
-    MenuList,
-    MenuItem,
-    Icon,
+    Box, Button, Card, Collapse, Divider, Flex, Grid, GridItem, Heading, IconButton, useDisclosure,
     Image, Link, useColorModeValue
 } from '@chakra-ui/react'
 import React, { useState } from 'react';
@@ -15,8 +11,9 @@ import { MdOutlineFileDownload, MdKeyboardArrowRight, MdKeyboardArrowDown, MdOut
 import { BsLightningCharge } from "react-icons/bs";
 import { PiChecks } from "react-icons/pi";
 import { IoMenuOutline, IoCloseOutline, IoColorFilter } from "react-icons/io5";
-import UserDrware from '../Drwares/UserDrware';
-import { LuUpload } from "react-icons/lu";
+import TradeHistory from './TradeHistory';
+import RecentTradeHistory from './RecentTradeHistory';
+import RecentTradePartnerAccordian from '../../Accordian/RecentTradePartnerAccordian';
 
 
 
@@ -37,10 +34,10 @@ const UserDashboard = () => {
         <Flex maxW={'container.xxl'} bg={''} justifyContent={'center'} alignItems={'center'} direction={'column'} gap={10} my={10}>
 
             <Flex
-            // minW={'80%'}
-            maxW={{ base: "auto",lg:'none' ,xl: "80%" }}
-            minW={{ base: "70%",lg:'80%' ,xl: "none" }}
-             
+                // minW={'80%'}
+                maxW={{ base: "auto", lg: 'none', xl: "80%" }}
+                minW={{ base: "90%",sm:'90%', lg: '80%', xl: "none" }}
+
                 bg={''} direction={'column'} gap={10} mx={5}>
 
 
@@ -120,7 +117,7 @@ const UserDashboard = () => {
                         <Card h={'150px'} borderRadius={0} display={{ base: 'none', md: 'none', lg: 'flex' }} direction={'column'} justifyContent={'center'} alignItems={'center'} boxShadow={'lg'}>
 
                             <Flex gap={5} mx={5}>
-                                <Box>
+                                <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
                                     <Image src='imagelogo/eaglesecure.png' h={'50px'} w={'50px'} />
                                 </Box>
                                 <Flex direction={'column'}>
@@ -245,72 +242,12 @@ const UserDashboard = () => {
                     {/* Right Side Content ------------------------------------------------------------------------- */}
 
                     <GridItem colSpan={{ base: 4, sm: 4, md: 4, lg: 3 }}>
-                        <Card borderRadius={0} p={10} gap={4} boxShadow={'lg'}>
-                            <Box>You are viewing all trades for the last 3 days</Box>
-                            <Flex border={'1px solid rgba(128, 128, 128, 0.3)'} py={1} px={3} justifyContent={'space-between'} bgColor={bgcolor} boxShadow={'lg'} borderRadius={'5px'}>
-                                <Box fontWeight={500} display={'flex'} alignItems={'center'} justifyContent={'center'}>
-                                    Filter
-                                </Box>
-                                <Box display={'flex'} alignItems={'center'} justifyContent={'center'}>
-                                    <UserDrware />
-                                </Box>
-                            </Flex>
-                            <Flex border={'1px solid rgba(128, 128, 128, 0.3)'} py={1} px={3} justifyContent={'space-between'} bgColor={bgcolor} boxShadow={'lg'} borderRadius={'5px'}>
-                                <Box fontWeight={500} display={'flex'} alignItems={'center'} justifyContent={'center'} color={'gray'}>
-                                    Export Trades
-                                </Box>
-                                <Box display={'flex'} alignItems={'center'} justifyContent={'center'}>
-                                    <Button colorScheme='orange'>
 
-                                        <LuUpload />
-                                    </Button>
-                                </Box>
-                            </Flex>
+                        <RecentTradeHistory />
 
-                            <Flex border={'1px solid rgba(128, 128, 128, 0.3)'} p={3} justifyContent={'space-between'} bgColor={bgcolor} boxShadow={'lg'} borderRadius={'5px'}>
-                                <Box fontWeight={500} display={'flex'} alignItems={'center'} justifyContent={'center'} color={'gray'}>
-                                    Completed Trades:
-                                    0% (trades out of 0)
-                                </Box>
+                        {/* <TradeHistory /> */}
+                        {/* <RecentTradePartnerAccordian /> */}
 
-                            </Flex>
-                            <Flex direction={'column'} border={'1px solid rgba(128, 128, 128, 0.3)'} >
-
-                                <Flex justifyContent={'space-between'} minH={'105px'} bg={bgcolor} borderBottom={'1px solid rgba(128, 128, 128, 0.3)'} px={3}>
-                                    <Flex fontWeight={500} alignItems={'center'} justifyContent={'center'} color={'gray'}>
-                                        My Past Trades
-                                    </Flex>
-                                    <Flex alignItems={'center'} justifyContent={'center'} gap={2}>
-                                        <Button colorScheme='orange' display={{ base: 'flex', sm: 'flex', md: 'none' }}>
-                                            <LuUpload />
-                                        </Button>
-                                        <Button colorScheme='orange' display={{ base: 'flex', sm: 'flex', md: 'none' }}>
-                                            <MdOutlineContentCopy />
-                                        </Button>
-                                        <Button colorScheme='orange' rightIcon={<LuUpload />} display={{ base: 'none', sm: 'none', md: 'flex' }}>
-
-                                            Export Trades
-
-                                        </Button>
-                                        <Button colorScheme='orange' rightIcon={<MdOutlineContentCopy />} display={{ base: 'none', sm: 'none', md: 'flex' }}>
-
-                                            Copy Details
-
-                                        </Button>
-                                    </Flex>
-                                </Flex>
-                                <Box display={'flex'} flexDirection={'column'} alignItems={'center'} justifyContent={'center'} p={20}>
-                                    <Image src='imagelogo/cryptico.png' maxH={'200px'} maxW={'200px'} ></Image>
-                                    <Box as='p' color={'gray'}>
-                                        You haven't traded yet.
-                                    </Box>
-                                    <Link color={'orange'}> ! Start Trading Now ! </Link>
-                                </Box>
-
-                            </Flex>
-
-
-                        </Card>
                     </GridItem>
                     {/* Right Side Content End------------------------------------------------------------------------- */}
 
