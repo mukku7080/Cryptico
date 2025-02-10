@@ -15,18 +15,19 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { FcGoogle } from "react-icons/fc";
 import { FaApple, FaTelegramPlane } from "react-icons/fa";
-import { useAuth } from '../AuthContext/AuthProvider';
+// import { useAuth } from '../AuthContext/AuthProvider';
 import axios from 'axios';
+import { useAuth } from '../../Context/AuthContext';
 
 
 const Loginnew = () => {
 
+    const { handleLogin } = useAuth();
 
     const txtcolor = useColorModeValue('black', 'white');
     const bgcolor = useColorModeValue('gray.100', 'gray.700');
 
 
-    const { login } = useAuth();
 
     const navigate = useNavigate();
 
@@ -46,28 +47,16 @@ const Loginnew = () => {
         onSubmit: async (values, action) => {
 
             try {
-
-                const res = await axios.post('http://192.168.29.109:7000/api/login',
-                    {
-                        username: values.email,
-                        password: values.password
-                    }).then((Response) => {
-
-                        localStorage.setItem("authToken", Response.data.token);
-                        axios.defaults.headers.common["Authorization"] = `Bearer ${Response.data.token}`;
-                        navigate("/user-dashboard");
-
-                    })
-
+                await handleLogin(values);
+                navigate("/user-dashboard");
             }
             catch (err) {
-                console.log("error:", err.res ? err.res.data : err.message);
+                console.log("Login Failded:", err);
             }
 
 
             console.log(values);
             action.resetForm();
-            // login(values.email);
 
 
         }

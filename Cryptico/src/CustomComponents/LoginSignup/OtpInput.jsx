@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { HStack, PinInput, PinInputField, Button, Text, VStack, Box } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../AuthContext/AuthProvider";
 import axios from "axios";
+import { useAuth } from "../../Context/AuthContext";
 
 
 function OTPInput({ verification, email }) {
     const [otp, setOtp] = useState("");
-    const { login } = useAuth()
+    const { handleVerifyEmailOtp } = useAuth();
     const [timeLeft, setTimeLeft] = useState(120); // 2 minutes (120 seconds)
     const [isResendDisabled, setIsResendDisabled] = useState(true);
 
@@ -22,19 +22,14 @@ function OTPInput({ verification, email }) {
     }, [timeLeft]);
     const navigate = useNavigate("");
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (verification == 'Email') {
 
 
             try {
 
-                const res = axios.post('http://192.168.29.109:7000/api/verify-email-otp',
-                    {
-
-                        otp
-                    }
-                )
-                if (res.status === 200) {
+                const res = await handleVerifyEmailOtp({ otp });
+                if (res.status === "success") {
 
                     navigate('/number-verification');
                 }

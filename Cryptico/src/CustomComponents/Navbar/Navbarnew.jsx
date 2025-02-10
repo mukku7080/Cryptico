@@ -7,7 +7,6 @@ import { IoMenuOutline, IoCloseOutline } from "react-icons/io5";
 import { Link, useNavigate } from 'react-router-dom';
 import { MdDarkMode } from "react-icons/md";
 import { CiLight } from "react-icons/ci";
-import { useAuth } from '../AuthContext/AuthProvider';
 import UserAvatar from '../Afterlogin/UserAvatar';
 
 const Navbarnew = () => {

@@ -1,5 +1,4 @@
 import { Avatar, AvatarBadge, Badge, Menu, MenuButton, MenuList, MenuItem, Button, Flex, Box, IconButton } from "@chakra-ui/react";
-import { useAuth } from "../AuthContext/AuthProvider";
 import { MdKeyboardArrowDown, MdKeyboardArrowRight } from "react-icons/md";
 import { useState, useEffect } from "react";
 import { FaUser, FaCreditCard, FaCog, FaHistory, FaUsers, FaGift, FaExchangeAlt, FaComments, FaSignOutAlt } from "react-icons/fa";
@@ -7,19 +6,28 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 import NotificationBell from "./Notificationbell";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useAuth } from "../../Context/AuthContext";
 
 
 const UserAvatar = () => {
-    const { user } = useAuth();
     const navigate = useNavigate();
+    const { handleLogout } = useAuth();
     const Logout = async () => {
         try {
-            const res = axios.delete('http://192.168.29.109:7000/api/logout').then((Response) => {
-                localStorage.removeItem('authToken');
+            // const res = axios.delete('http://192.168.29.109:7000/api/logout').then((Response) => {
+            //     localStorage.removeItem('authToken');
+            //     localStorage.setItem('authToken', null)
+            //     navigate('/');
+            //     window.location.reload();
+            // })
+
+            const res = await handleLogout();
+            if (res.status === 'success') {
                 localStorage.setItem('authToken', null)
                 navigate('/');
                 window.location.reload();
-            })
+            }
+
         }
         catch (err) {
             console.log("Error:", err.res ? err.res.data : err.message);

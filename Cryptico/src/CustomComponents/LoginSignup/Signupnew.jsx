@@ -16,11 +16,14 @@ import axios from 'axios'
 import { FcGoogle } from "react-icons/fc";
 import { FaApple, FaTelegramPlane } from "react-icons/fa";
 import OTPInput from './OtpInput';
-import { useAuth } from '../AuthContext/AuthProvider';
+// import { useAuth } from '../AuthContext/AuthProvider';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../Context/AuthContext';
 
 
 const Signupnew = () => {
+
+    const { handleSignup, handleEmailOtp } = useAuth();
 
 
     const [email, setEmail] = useState("");
@@ -59,34 +62,21 @@ const Signupnew = () => {
         validationSchema,
         onSubmit: async (values, action) => {
             try {
-                const res = await axios.post('http://192.168.29.109:7000/api/register', {
-                    email: values.email,
-                    password: values.password,
-                });
-
-
-                if (res.status === 201) {
+                const res = await handleSignup(values);
+                console.log(res.token);
+                if (res.status === "success") {
                     try {
-                        setToken(res.data.token);
-                        localStorage.setItem("authToken", res.data.token);
-                        axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
+                        setToken(res.token);                        
                         setSignup(true);
-                        const otpResposne = await axios.post('http://192.168.29.109:7000/api/send-email-otp');
+                        const otpResposne = await handleEmailOtp();
                         console.log(otpResposne.data)
 
                     }
                     catch (err) {
                         console.log("error:", err.otpResposne ? err.otpResposne.data : err.message);
                     }
-
-
                 }
 
-
-                console.log(values);
-                // setEmail(values.email);
-                // setPass(values.password);
-                // setSignup(true);
                 action.resetForm();
             }
             catch (err) {
