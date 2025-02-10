@@ -5,11 +5,29 @@ import { useState, useEffect } from "react";
 import { FaUser, FaCreditCard, FaCog, FaHistory, FaUsers, FaGift, FaExchangeAlt, FaComments, FaSignOutAlt } from "react-icons/fa";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import NotificationBell from "./Notificationbell";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 
 const UserAvatar = () => {
     const { user } = useAuth();
-    console.log(user)
+    const navigate = useNavigate();
+    const Logout = async () => {
+        try {
+            const res = axios.delete('http://192.168.29.109:7000/api/logout').then((Response) => {
+                localStorage.removeItem('authToken');
+                localStorage.setItem('authToken', null)
+                navigate('/');
+                window.location.reload();
+            })
+        }
+        catch (err) {
+            console.log("Error:", err.res ? err.res.data : err.message);
+        }
+
+
+    }
+
 
 
 
@@ -34,6 +52,12 @@ const UserAvatar = () => {
                             key={index}
                             icon={item.icon}
                             color={'gray.500'}
+                            onClick={() => {
+                                // navigate(`${item.to}`);
+                                if (item.name == "Log Out") {
+                                    Logout();
+                                }
+                            }}
                             _hover={{ borderRight: '1px solid orange', bg: 'linear-gradient(90deg, rgba(236,240,155,0.7875525210084033) 24%, rgba(247,241,175,0.9864320728291317) 78%)' }}>
                             {item.name}
                         </MenuItem>
@@ -51,15 +75,15 @@ const UserAvatar = () => {
 
 
 const menuItems = [
-    { name: "My Profile", icon: <FaUser /> },
-    { name: "Payment Methods", icon: <FaCreditCard /> },
-    { name: "Settings", icon: <FaCog /> },
-    { name: "Trade History", icon: <FaHistory /> },
-    { name: "Trade Partners", icon: <FaUsers /> },
-    { name: "Invite a Friend", icon: <FaGift /> },
-    { name: "My Transactions", icon: <FaExchangeAlt /> },
-    { name: "Join Cryptico Community", icon: <FaComments /> },
-    { name: "Log Out", icon: <FaSignOutAlt /> },
+    { name: "My Profile", icon: <FaUser />, to: 'profile' },
+    { name: "Payment Methods", icon: <FaCreditCard />, to: 'paymentMethod' },
+    { name: "Settings", icon: <FaCog />, to: 'settings' },
+    { name: "Trade History", icon: <FaHistory />, to: 'tradehistory' },
+    { name: "Trade Partners", icon: <FaUsers />, to: 'tradeParters' },
+    { name: "Invite a Friend", icon: <FaGift />, to: 'iFriend' },
+    { name: "My Transactions", icon: <FaExchangeAlt />, to: 'myTransactions' },
+    { name: "Join Cryptico Community", icon: <FaComments />, to: 'cryptoComunity' },
+    { name: "Log Out", icon: <FaSignOutAlt />, to: '/' },
 ];
 
 export default UserAvatar;

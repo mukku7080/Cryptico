@@ -4,6 +4,7 @@ import { CiMenuKebab } from "react-icons/ci";
 import { MdOutlineCancel } from "react-icons/md";
 import { IoMdCheckmark } from "react-icons/io";
 import RecentTradePartnerAccordian from '../../Accordian/RecentTradePartnerAccordian';
+import PaginatedList from '../../Pagination/Pagination';
 const now = new Date();
 
 const RecentTradeHistory = () => {
@@ -61,14 +62,14 @@ const RecentTradeHistory = () => {
                                 {
                                     data.status ?
 
-                                        <Flex gap={2} alignItems={'center'} color={'green'}>
+                                        <Flex gap={2} alignItems={'center'} color={'#6B8E23'}>
                                             <Box display={'flex'} alignItems='center'>
                                                 <IoMdCheckmark />
                                             </Box>
                                             <Box  >Successfull</Box>
                                         </Flex>
                                         :
-                                        <Flex gap={2} alignItems={'center'} color={'red'}>
+                                        <Flex gap={2} alignItems={'center'} color={'#B76E79'}>
                                             <Box display={'flex'} alignItems='center'>
                                                 <MdOutlineCancel />
                                             </Box>
@@ -106,12 +107,19 @@ const RecentTradeHistory = () => {
                 ))}
 
 
+                {/* pagination componente */}
+
+                <PaginatedList />
+
             </Card>
 
+            {/* for large Screen End */}
 
-            <Card borderRadius={0} p={{base:5,sm:10}} gap={4} boxShadow={'lg'} display={{ base: 'flex', md: 'none' }}>
+
+            {/* for small screen */}
+            <Card borderRadius={0} p={{ base: 5, sm: 10 }} gap={4} boxShadow={'lg'} display={{ base: 'flex', md: 'none' }}>
                 {
-                    user.map((data,index) => (
+                    user.map((data, index) => (
 
                         <>
 
@@ -119,8 +127,10 @@ const RecentTradeHistory = () => {
                         </>
                     ))
                 }
-
+                {/* <PaginatedList /> */}
             </Card>
+            {/* for small screen End */}
+
         </>
     )
 }

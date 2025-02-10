@@ -48,8 +48,8 @@ const Dashborad1 = () => {
                                     {cryptoData.map((cdata, index) => (
 
 
-                                        <>
-                                            <GridItem colSpan={2} key={index}>
+                                        < >
+                                            <GridItem  colSpan={2} key={index}>
                                                 <Flex>
 
                                                     <Image src={cdata.img} boxSize={10} display="inline-block" mt={-1.5} />

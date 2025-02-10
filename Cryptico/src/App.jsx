@@ -26,6 +26,10 @@ import OTPInput from './CustomComponents/LoginSignup/OtpInput'
 import Numberwithotp from './CustomComponents/LoginSignup/Numberwithotp'
 import { AuthProvider } from './CustomComponents/AuthContext/AuthProvider'
 import Profile from './CustomComponents/Afterlogin/Profile'
+import TradeHistory from './CustomComponents/Afterlogin/UserDashboard/TradeHistory'
+import RecentTradeHistory from './CustomComponents/Afterlogin/UserDashboard/RecentTradeHistory'
+import PaymentMethod from './CustomComponents/Afterlogin/UserDashboard/PaymentMethod'
+import ProtectedRoute from './CustomComponents/AuthContext/ProtectedRoute'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -50,14 +54,18 @@ function App() {
             <Route path='/login' element={<Loginnew />}></Route>
             <Route path='/signup' element={<Signupnew />}></Route>
             <Route path="/number-verification" element={<Numberwithotp />} />
-            <Route path="/user-dashboard" element={<UserDashboard />} />
+            <Route path="/user-dashboard" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} >
+              <Route index element={<TradeHistory />} />
+              <Route path="tradehistory" element={<TradeHistory />} />
+              <Route path="recentTradePartners" element={<RecentTradeHistory />} />
+            </Route>
             <Route path="/profile" element={<Profile />} />
+            <Route path="/paymentMethod" element={<PaymentMethod />} />
+
 
           </Routes>
 
-          {/* <CryptoAccordion />
-          <br /><br />
-          <CryptoAccordion /> */}
+
 
 
           <Footer />

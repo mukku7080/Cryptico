@@ -25,7 +25,7 @@ const Footer = () => {
 
           <Box flex={{ base: "1 0 100%", lg: "1" }} display={'flex'} flexDirection={'column'} alignItems={'center'} color={'white'} gap={5} textAlign={'center'}>
 
-            <Image src='imagelogo/cryptico.png' w={'160px'} h={'150px'} mx={0}></Image>
+            <Image src='/imagelogo/cryptico.png' w={'160px'} h={'150px'} mx={0}></Image>
 
 
             <Flex display={{ base: 'none', sm: 'none', md: 'flex' }} gap={3}>

@@ -14,12 +14,14 @@ import { IoMenuOutline, IoCloseOutline, IoColorFilter } from "react-icons/io5";
 import TradeHistory from './TradeHistory';
 import RecentTradeHistory from './RecentTradeHistory';
 import RecentTradePartnerAccordian from '../../Accordian/RecentTradePartnerAccordian';
+import { Outlet, useNavigate } from 'react-router-dom';
 
 
 
 const UserDashboard = () => {
 
     const bgcolor = useColorModeValue('gray.100', 'gray.700');
+    const navigate = useNavigate();
 
 
 
@@ -36,7 +38,7 @@ const UserDashboard = () => {
             <Flex
                 // minW={'80%'}
                 maxW={{ base: "auto", lg: 'none', xl: "80%" }}
-                minW={{ base: "90%",sm:'90%', lg: '80%', xl: "none" }}
+                minW={{ base: "90%", sm: '90%', lg: '80%', xl: "none" }}
 
                 bg={''} direction={'column'} gap={10} mx={5}>
 
@@ -96,16 +98,16 @@ const UserDashboard = () => {
                     <GridItem display={{ base: 'none', md: 'none', lg: 'block' }}>
                         <Card h={'150px'} borderRadius={0} display={{ base: 'none', md: 'none', lg: 'flex' }} direction={'column'} justifyContent={'center'} alignItems={'center'} boxShadow={'lg'}>
 
-                            <Flex gap={5}>
-                                <Box>
-                                    <Image src='imagelogo/phoneverify.png' h={'50px'} w={'50px'} />
+                            <Flex gap={5} mx={1} >
+                                <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
+                                    <Image src='/imagelogo/phoneverify.png' h={'50px'} w={'50px'} />
                                 </Box>
                                 <Flex direction={'column'}>
                                     <Box color={'red'}>
 
                                         Phone Number Not Verified
                                     </Box>
-                                    <Box>
+                                    <Box maxW={{ md: '300px', xl: '200px' }}>
                                         Take a minute to verify your number
                                     </Box>
                                     <Link color={'orange'}>verify</Link>
@@ -116,17 +118,17 @@ const UserDashboard = () => {
                     <GridItem display={{ base: 'none', md: 'none', lg: 'block' }}>
                         <Card h={'150px'} borderRadius={0} display={{ base: 'none', md: 'none', lg: 'flex' }} direction={'column'} justifyContent={'center'} alignItems={'center'} boxShadow={'lg'}>
 
-                            <Flex gap={5} mx={5}>
+                            <Flex gap={5} mx={1}>
                                 <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
-                                    <Image src='imagelogo/eaglesecure.png' h={'50px'} w={'50px'} />
+                                    <Image src='/imagelogo/eaglesecure.png' h={'50px'} w={'50px'} />
                                 </Box>
                                 <Flex direction={'column'}>
                                     <Box color={'red'}>
 
                                         2FA Not Enabled
                                     </Box>
-                                    <Box maxW={'300px'}>
-                                        Enabling two-factor authentication is great way to secure your account.
+                                    <Box maxW={'200px'}>
+                                        Enabling 2FA  is great way to secure your account.
                                     </Box>
                                     <Link color={'orange'}>Setup 2FA Now</Link>
                                 </Flex>
@@ -163,7 +165,9 @@ const UserDashboard = () => {
 
 
 
-                                            <Button
+
+                                            <Button as={Button}
+                                                // to={data.to}
                                                 width={'90%'}
                                                 borderRadius={'none'}
                                                 border={'0px'} bg={'transparent'}
@@ -171,12 +175,17 @@ const UserDashboard = () => {
                                                 px={20}
 
 
+
                                                 justifyContent="flex-start"
                                                 _hover={{
                                                     bg: 'linear-gradient(90deg, rgba(236,240,155,0.7875525210084033) 24%, rgba(247,241,175,0.9864320728291317) 78%)',
                                                     borderRight: '1px solid black'
                                                 }}
-                                                onClick={() => setTag(data.btn_name)}
+                                                onClick={() => {
+                                                    setTag(data.btn_name);
+                                                    navigate(`${data.to}`);
+
+                                                }}
 
                                             >
                                                 <Flex align="center" gap={2}>
@@ -230,6 +239,7 @@ const UserDashboard = () => {
 
 
 
+
                                 </Flex>
 
 
@@ -239,16 +249,22 @@ const UserDashboard = () => {
                         </Card>
                     </GridItem>
                     {/* Left Side Nav End ------------------------------------------------------------------------- */}
+
+
+
+
                     {/* Right Side Content ------------------------------------------------------------------------- */}
-
                     <GridItem colSpan={{ base: 4, sm: 4, md: 4, lg: 3 }}>
+                        <Outlet />
 
-                        <RecentTradeHistory />
+
+                        {/* <RecentTradeHistory /> */}
 
                         {/* <TradeHistory /> */}
                         {/* <RecentTradePartnerAccordian /> */}
 
                     </GridItem>
+
                     {/* Right Side Content End------------------------------------------------------------------------- */}
 
                 </Grid>
@@ -277,7 +293,7 @@ const Mobilecollapse1 = () => {
 
                         <Flex gap={10} mx={5}>
                             <Box>
-                                <Image src='imagelogo/Master.png' h={'50px'} w={'50px'} />
+                                <Image src='/imagelogo/Master.png' h={'50px'} w={'50px'} />
                             </Box>
                             <Flex direction={'column'}>
                                 <Box>
@@ -299,15 +315,19 @@ const Mobilecollapse1 = () => {
                     <Card display={{ base: 'flex', sm: 'flex', md: 'flex', lg: 'none' }} h={'100px'} borderRadius={0} direction={'column'} justifyContent={'center'} alignItems={''} boxShadow={'lg'}>
 
                         <Flex gap={10} mx={5}>
-                            <Box>
-                                <Image src='imagelogo/phoneverify.png' h={'50px'} w={'50px'} />
+                            <Box display={'flex'} alignItems={'center'} justifyContent={'center'}>
+                                <Image src='/imagelogo/phoneverify.png' h={'50px'} w={'50px'} />
                             </Box>
                             <Flex direction={'column'}>
                                 <Box color={'red'}>
 
                                     Phone Number Not Verified
                                 </Box>
-                                <Box>
+                                <Box sx={{
+                                    "@media screen and (max-width: 420px)": {
+                                        fontSize: '12px'
+                                    }
+                                }}>
                                     Take a minute to verify your number
                                 </Box>
                                 <Link color={'orange'}>verify</Link>
@@ -320,14 +340,18 @@ const Mobilecollapse1 = () => {
 
                         <Flex gap={10} mx={5}>
                             <Box display={'flex'} alignItems={'center'}>
-                                <Image src='imagelogo/eaglesecure.png' h={'50px'} w={'50px'} />
+                                <Image src='/imagelogo/eaglesecure.png' h={'50px'} w={'50px'} />
                             </Box>
                             <Flex direction={'column'}>
                                 <Box color={'red'}>
 
                                     2FA Not Enabled
                                 </Box>
-                                <Box maxW={'300px'}>
+                                <Box maxW={'300px'} sx={{
+                                    "@media screen and (max-width: 420px)": {
+                                        fontSize: '12px'
+                                    }
+                                }}>
                                     Enabling two-factor authentication is great way to secure your account.
                                 </Box>
                                 <Link color={'orange'}>Setup 2FA Now</Link>
@@ -404,31 +428,43 @@ const Mobilecollapse2 = () => {
 const userOption = [
     {
         icon: <FaArrowTrendUp />,
-        btn_name: "Trade History"
+        btn_name: "Trade History",
+        to: 'tradehistory'
     },
     {
         icon: <HiMiniArrowPath />,
-        btn_name: "Recent Trade Partners"
+        btn_name: "Recent Trade Partners",
+        to: 'recentTradePartners'
+
     },
     {
         icon: <IoBagOutline />,
-        btn_name: " My Offers"
+        btn_name: " My Offers",
+        to: 'myOffers'
+
     },
     {
         icon: <LiaHandPointRightSolid />,
-        btn_name: "Favorite Offers"
+        btn_name: "Favorite Offers",
+        to: 'favoriteOffers'
+
     },
     {
         icon: <MdOutlineFileDownload />,
-        btn_name: "Trade Statistics"
+        btn_name: "Trade Statistics",
+        to: 'tradeStatistics'
+
     },
     {
         icon: <BsLightningCharge />,
-        btn_name: "Trader Program Badges"
+        btn_name: "Trader Program Badges",
+        to: 'tpBadges'
     },
     {
         icon: <PiChecks />,
-        btn_name: "Invite a Friend"
+        btn_name: "Invite a Friend",
+        to: 'iFriend'
+
     },
 ]
 

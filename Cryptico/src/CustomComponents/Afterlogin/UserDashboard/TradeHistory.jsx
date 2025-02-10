@@ -68,7 +68,7 @@ const TradeHistory = () => {
                         </Flex>
                     </Flex>
                     <Box display={'flex'} flexDirection={'column'} alignItems={'center'} justifyContent={'center'} p={20}>
-                        <Image src='imagelogo/cryptico.png' maxH={'200px'} maxW={'200px'} ></Image>
+                        <Image src='/imagelogo/cryptico.png' maxH={'200px'} maxW={'200px'} ></Image>
                         <Box as='p' color={'gray'}>
                             You haven't traded yet.
                         </Box>

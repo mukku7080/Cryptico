@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { HStack, PinInput, PinInputField, Button, Text, VStack, Box } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext/AuthProvider";
+import axios from "axios";
 
 
 function OTPInput({ verification, email }) {
@@ -9,7 +10,6 @@ function OTPInput({ verification, email }) {
     const { login } = useAuth()
     const [timeLeft, setTimeLeft] = useState(120); // 2 minutes (120 seconds)
     const [isResendDisabled, setIsResendDisabled] = useState(true);
-    console.log(email)
 
     // Timer Effect
     useEffect(() => {
@@ -24,12 +24,29 @@ function OTPInput({ verification, email }) {
 
     const handleSubmit = () => {
         if (verification == 'Email') {
-            navigate('/number-verification');
+
+
+            try {
+
+                const res = axios.post('http://192.168.29.109:7000/api/verify-email-otp',
+                    {
+
+                        otp
+                    }
+                )
+                if (res.status === 200) {
+
+                    navigate('/number-verification');
+                }
+            }
+            catch (err) {
+                console.log("Error:", err.res ? err.res.data : err.message);
+            }
         }
         if (verification == 'Mobile') {
 
             navigate('/user-dashboard');
-            login(email);
+            // login(email);
             console.log(email.value);
         }
 
@@ -40,6 +57,9 @@ function OTPInput({ verification, email }) {
         setTimeLeft(120); // Reset timer to 2 minutes
         setIsResendDisabled(true);
         setOtp(""); // Clear OTP input
+        const res = axios.post('http://192.168.29.109:7000/api/send-email-otp',
+            otp
+        )
         console.log("OTP Resent!");
     };
 
@@ -61,6 +81,8 @@ function OTPInput({ verification, email }) {
                     <PinInputField />
                     <PinInputField />
                     <PinInputField />
+                    <PinInputField />
+                    <PinInputField />
                 </PinInput>
             </HStack>
 
@@ -68,7 +90,7 @@ function OTPInput({ verification, email }) {
 
             <Button
                 colorScheme="orange"
-                isDisabled={otp.length !== 4}
+                isDisabled={otp.length !== 6}
                 onClick={handleSubmit}
             >
                 Submit OTP

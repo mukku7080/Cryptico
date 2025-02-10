@@ -12,14 +12,21 @@ import {
     Input,
     Checkbox
 } from "@chakra-ui/react";
+import axios from 'axios'
 import { FcGoogle } from "react-icons/fc";
 import { FaApple, FaTelegramPlane } from "react-icons/fa";
 import OTPInput from './OtpInput';
 import { useAuth } from '../AuthContext/AuthProvider';
+import { useNavigate } from 'react-router-dom';
 
 
 const Signupnew = () => {
 
+
+    const [email, setEmail] = useState("");
+    const [pass, setPass] = useState("");
+    const [token, setToken] = useState("");
+    const navigate = useNavigate();
 
 
 
@@ -50,11 +57,42 @@ const Signupnew = () => {
             ts: false
         },
         validationSchema,
-        onSubmit: (values, action) => {
+        onSubmit: async (values, action) => {
+            try {
+                const res = await axios.post('http://192.168.29.109:7000/api/register', {
+                    email: values.email,
+                    password: values.password,
+                });
 
-            console.log(values);
-            setSignup(true);
-            action.resetForm();
+
+                if (res.status === 201) {
+                    try {
+                        setToken(res.data.token);
+                        localStorage.setItem("authToken", res.data.token);
+                        axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
+                        setSignup(true);
+                        const otpResposne = await axios.post('http://192.168.29.109:7000/api/send-email-otp');
+                        console.log(otpResposne.data)
+
+                    }
+                    catch (err) {
+                        console.log("error:", err.otpResposne ? err.otpResposne.data : err.message);
+                    }
+
+
+                }
+
+
+                console.log(values);
+                // setEmail(values.email);
+                // setPass(values.password);
+                // setSignup(true);
+                action.resetForm();
+            }
+            catch (err) {
+                console.log("error:", err.res ? err.res.data : err.message);
+            }
+
 
 
 
@@ -113,7 +151,7 @@ const Signupnew = () => {
                             <Card borderRadius={'none'}>
                                 <Flex justifyContent={'space-between'} px={3} alignItems={'center'} mt={5}>
                                     <Heading size={'lg'} fontWeight={'500'}>Register</Heading>
-                                    <Button leftIcon={<CgArrowsExchange />} bg={'transparent'} color={'orange'}>Log in</Button>
+                                    <Button leftIcon={<CgArrowsExchange />} bg={'transparent'} color={'orange'} onClick={() => navigate('/login')}>Log in</Button>
                                 </Flex>
 
                                 <Box as='p' color={'gray'} maxW={'400px'} px={3} >Welcome aboard! Your gateway to peer-to-peer crypto trading starts here.</Box>

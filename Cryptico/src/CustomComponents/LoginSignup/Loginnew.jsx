@@ -15,6 +15,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { FcGoogle } from "react-icons/fc";
 import { FaApple, FaTelegramPlane } from "react-icons/fa";
+import { useAuth } from '../AuthContext/AuthProvider';
+import axios from 'axios';
 
 
 const Loginnew = () => {
@@ -22,6 +24,9 @@ const Loginnew = () => {
 
     const txtcolor = useColorModeValue('black', 'white');
     const bgcolor = useColorModeValue('gray.100', 'gray.700');
+
+
+    const { login } = useAuth();
 
     const navigate = useNavigate();
 
@@ -38,11 +43,32 @@ const Loginnew = () => {
 
         },
         validationSchema,
-        onSubmit: (values, action) => {
+        onSubmit: async (values, action) => {
+
+            try {
+
+                const res = await axios.post('http://192.168.29.109:7000/api/login',
+                    {
+                        username: values.email,
+                        password: values.password
+                    }).then((Response) => {
+
+                        localStorage.setItem("authToken", Response.data.token);
+                        axios.defaults.headers.common["Authorization"] = `Bearer ${Response.data.token}`;
+                        navigate("/user-dashboard");
+
+                    })
+
+            }
+            catch (err) {
+                console.log("error:", err.res ? err.res.data : err.message);
+            }
+
 
             console.log(values);
             action.resetForm();
-            navigate("/user-dashboard");
+            // login(values.email);
+
 
         }
 
@@ -77,7 +103,7 @@ const Loginnew = () => {
                             <Card borderRadius={'none'} >
                                 <Flex justifyContent={'space-between'} px={3} alignItems={'center'} mt={5}>
                                     <Heading size={'lg'} fontWeight={'500'}>Login</Heading>
-                                    <Button leftIcon={<CgArrowsExchange />} bg={'transparent'} color={'orange'}>Sign up</Button>
+                                    <Button leftIcon={<CgArrowsExchange />} bg={'transparent'} color={'orange'} onClick={() => navigate('/signup')}>Sign up</Button>
                                 </Flex>
 
                                 <Box as='p' color={'gray'} maxW={'400px'} px={3} mt={5}  >Ready to Make Waves in Crypto? Let’s revolutionize your trading journey.</Box>
