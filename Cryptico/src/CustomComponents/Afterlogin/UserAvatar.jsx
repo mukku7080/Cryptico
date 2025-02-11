@@ -14,16 +14,9 @@ const UserAvatar = () => {
     const { handleLogout } = useAuth();
     const Logout = async () => {
         try {
-            // const res = axios.delete('http://192.168.29.109:7000/api/logout').then((Response) => {
-            //     localStorage.removeItem('authToken');
-            //     localStorage.setItem('authToken', null)
-            //     navigate('/');
-            //     window.location.reload();
-            // })
 
             const res = await handleLogout();
             if (res.status === 'success') {
-                localStorage.setItem('authToken', null)
                 navigate('/');
                 window.location.reload();
             }
@@ -35,13 +28,6 @@ const UserAvatar = () => {
 
 
     }
-
-
-
-
-
-
-
     return (
         <Flex justifyContent={'center'} alignItems={'center'} gap={3}>
             <Box as="span" fontSize={'10px'}> Mukesh rai <br />5000.00 INR</Box>
@@ -61,9 +47,12 @@ const UserAvatar = () => {
                             icon={item.icon}
                             color={'gray.500'}
                             onClick={() => {
-                                // navigate(`${item.to}`);
                                 if (item.name == "Log Out") {
                                     Logout();
+                                }
+                                else {
+                                    navigate(`${item.to}`);
+
                                 }
                             }}
                             _hover={{ borderRight: '1px solid orange', bg: 'linear-gradient(90deg, rgba(236,240,155,0.7875525210084033) 24%, rgba(247,241,175,0.9864320728291317) 78%)' }}>

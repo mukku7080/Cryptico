@@ -63,7 +63,7 @@ const Navbarnew = () => {
                 {/* ButtonSection */}
                 <Stack justify={'flex-end'} direction={'row'} spacing={6} display={{ base: 'none', md: 'none', lg: 'none', xl: 'flex' }}>
                     {
-                        (token == "null") ?
+                        token ? <UserAvatar /> :
                             <>
 
                                 <Button as={Link} to='/login' padding={'0px 32px'} borderColor={'#ffffff99'} variant={'ghost'} color={'white'} _hover={{ color: 'black', bgColor: '#ffb11a' }}>
@@ -74,8 +74,7 @@ const Navbarnew = () => {
                                     Sign Up
                                 </Button>
                             </>
-                            :
-                            <UserAvatar />
+
                     }
                     <Button onClick={() => {
                         setDark(!isdark)
