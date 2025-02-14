@@ -1,13 +1,24 @@
-import { Box, Icon, Button, Collapse, Flex, IconButton, Popover, PopoverContent, Stack, Text, useDisclosure, PopoverTrigger, useColorModeValue, Center, Image, useColorMode } from '@chakra-ui/react'
+import { Box, Icon, Button, Collapse, Flex, IconButton, Popover, PopoverContent, Stack, Text, useDisclosure, PopoverTrigger, useColorModeValue, Center, Image, useColorMode, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { AiOutlineMenu, AiOutlineClose } from 'react-icons/ai'
 import { FaArrowDown, FaArrowRight } from 'react-icons/fa';
+import { FaArrowTrendUp } from "react-icons/fa6";
 import { BiChevronRight, BiChevronDown } from "react-icons/bi";
-import { IoMenuOutline, IoCloseOutline } from "react-icons/io5";
+import { IoMenuOutline, IoCloseOutline, IoBagOutline } from "react-icons/io5";
 import { Link, useNavigate } from 'react-router-dom';
-import { MdDarkMode } from "react-icons/md";
-import { CiLight } from "react-icons/ci";
+import { HiMiniArrowPath } from "react-icons/hi2";
+import { LiaHandPointRightSolid } from "react-icons/lia";
+
+import { MdDarkMode, MdOutlineFileDownload, MdKeyboardDoubleArrowDown } from "react-icons/md";
+import { BsLightningCharge, BsQrCode } from "react-icons/bs";
+import { CiLight, CiWallet } from "react-icons/ci";
+import { GrTransaction } from "react-icons/gr";
+import { SiConvertio } from "react-icons/si";
+import { PiChecks } from "react-icons/pi";
+
+
 import UserAvatar from '../Afterlogin/UserAvatar';
+import PaymentDropdown from '../Dropdown/PaymentDropdown';
 
 const Navbarnew = () => {
     // const { user } = useAuth();
@@ -49,7 +60,7 @@ const Navbarnew = () => {
 
                     <Center>
 
-                        <Flex display={{ base: 'none', md: 'none', lg: 'none', xl: 'flex' }}>
+                        <Flex display={{ base: 'none', md: 'none', lg: 'none', xl: 'flex' }} >
                             <DesktopNav />
 
                         </Flex>
@@ -60,8 +71,8 @@ const Navbarnew = () => {
 
                 </Flex>
 
-                {/* ButtonSection */}
-                <Stack justify={'flex-end'} direction={'row'} spacing={6} display={{ base: 'none', md: 'none', lg: 'none', xl: 'flex' }}>
+                {/*Login & Logout ButtonSection */}
+                <Stack justify={'flex-end'} direction={'row'} spacing={6} display={{ base: 'none', md: 'none', lg: 'none', xl: 'flex' }} gap={10}>
                     {
                         token ? <UserAvatar /> :
                             <>
@@ -92,6 +103,8 @@ const Navbarnew = () => {
 
 
                 </Stack>
+                {/*Login & Logout ButtonSection end */}
+
 
                 {/* ToggleIcon */}
                 <Flex justify={'flex-end'} flex={{ base: 1, md: 'auto' }} display={{ base: 'flex', md: 'flex', lg: 'flex', xl: 'none' }} pr={{ base: '20px', sm: '20px', md: '20px', lg: '0px' }}>
@@ -109,6 +122,8 @@ const Navbarnew = () => {
                     />
 
                 </Flex>
+                {/* ToggleIcon End */}
+
 
 
 
@@ -125,13 +140,18 @@ const Navbarnew = () => {
 
 
 const DesktopNav = () => {
+    const bgColor = useColorModeValue("gray.100", "gray.900");
+    const textColor = useColorModeValue("black", "white");
+    const [isMenuOpen, setMenuOpen] = useState(false);
+    const navigate = useNavigate();
+
     return (
 
         <>
-            <Stack direction={'row'} spacing={{ lg: '2', xl: '10' }}>
+            <Stack direction={'row'} spacing={{ lg: '2', xl: '10' }} >
                 {
                     NAV_ITEMS.map((navitem) => (
-                        <Box key={navitem.label}>
+                        <Box key={navitem.label} display={'flex'} justifyContent={'center'} >
                             <Popover trigger='hover' placement='bottom-start'>
                                 <PopoverTrigger>
                                     <Box
@@ -140,15 +160,26 @@ const DesktopNav = () => {
                                         fontSize={'sm'}
                                         fontWeight={'medium'}
                                         color={'white'}
+                                        display={'flex'}
+                                        alignItems={'center'}
+                                        justifyContent={'center'}
+                                        textDecoration={'underline'}
+
 
                                     >
                                         {navitem.label}
+                                        <Flex alignItems={'center'} justifyContent={'center'}>
+
+                                            {/* <Icon mt={1} color={'orange'} w={5} h={5} as={MdKeyboardDoubleArrowDown} /> */}
+                                        </Flex>
                                     </Box>
+
+
                                 </PopoverTrigger>
                                 {navitem.children && (
 
                                     <PopoverContent>
-                                        <Stack>
+                                        <Stack gap={5} borderRadius={0}>
 
 
                                             {
@@ -170,29 +201,80 @@ const DesktopNav = () => {
                     ))
                 }
 
+                <Button size={'sm'} bg={'transparent'} color={'white'} _hover={{bgColor:'transparent'}} onClick={()=>navigate('/createOffers')}>Create an Offer</Button>
+                {/* DashboardButton */}
+                <Menu isOpen={isMenuOpen} >
+                    <MenuButton as={Button} variant="ghost" borderRadius={'none'} p={0} color={'white'} _hover={{ bg: "transparent" }}
+                        _focus={{ bg: "transparent", boxShadow: "none" }}
+                        _active={{ bg: "transparent" }}
+                        size={'sm'}
+                        onMouseEnter={() => setMenuOpen(true)}
+                        onMouseLeave={() => setMenuOpen(false)}
+
+
+                        onClick={() => navigate('/user-dashboard')}
+                    >
+                        Dashboard
+                    </MenuButton>
+                    <MenuList borderRadius={0}
+                        onMouseEnter={() => setMenuOpen(true)}
+                        onMouseLeave={() => setMenuOpen(false)}
+
+                    >
+                        {userOption.map((item, index) => (
+                            <MenuItem
+                                key={index}
+                                icon={item.icon}
+                                color={textColor}
+                                onClick={() => {
+                                    if (item.name == "Log Out") {
+                                        Logout();
+                                    }
+                                    else {
+                                        navigate(`${item.to}`);
+
+                                    }
+                                }}
+                                _hover={{ borderRight: '1px solid orange', bg: 'linear-gradient(90deg, rgba(236,240,155,0.7875525210084033) 24%, rgba(247,241,175,0.9864320728291317) 78%)' }}>
+                                {item.btn_name}
+                            </MenuItem>
+                        ))}
+                    </MenuList>
+                </Menu>
+
             </Stack>
         </>
     )
 }
 
 
-const DesktopSubNav = ({ label, href, subLabel }) => {
+const DesktopSubNav = ({ label, href, logo, subLabel, icon }) => {
+    const bgColor = useColorModeValue("gray.100", "gray.900");
+    const textColor = useColorModeValue("black", "white");
     return (
         <Box
+
             as="a"
             href={href}
-            color={'black'}
+            color={textColor}
             role={'group'}
             display={'block'}
             p={2}
             rounded={'md'}
-            _hover={{}}>
-            <Stack direction={'row'} align={'center'}>
+            _hover={{ bg: 'gray.200' }}>
+            <Flex direction={'row'} align={'center'} gap={4}>
+                {logo &&
 
-                <Box>
+                    <Image boxSize={10} src={logo}></Image>
+                }
+                {icon &&
+                    <Flex >{icon}</Flex>
+                }
+
+                <Box >
                     <Text
                         transition={'all .3s ease'}
-                        _groupHover={{ color: '#c8f051' }}
+                        _groupHover={{ color: 'orange' }}
                         fontWeight={500}>
                         {label}
                     </Text>
@@ -206,9 +288,9 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
                     justify={'flex-end'}
                     align={'center'}
                     flex={1}>
-                    <Icon color={'#c8f051'} w={5} h={5} as={BiChevronRight} />
+                    <Icon color={'orange'} w={5} h={5} as={BiChevronRight} />
                 </Flex>
-            </Stack>
+            </Flex>
         </Box>
     )
 }
@@ -224,11 +306,11 @@ const MobileNav = () => {
 
 
             <Stack justify={'flex-start'} direction={'row'} spacing={6} mt={5} >
-                <Button as={'a'} href='#' variant={'outline'} borderRadius={'32px'} bg={'black'} color={'white'} _hover={{ color: 'black', bgColor: 'white' }}>
-                    Sign In
+                <Button as={Link} to='/login' padding={'0px 32px'} bgColor={'#ffb11a'} >
+                    Log In
                 </Button>
 
-                <Button as={'a'} href='#' bgColor={'#c8f051'} borderRadius={'32px'}>
+                <Button as={Link} to='/signup' padding={'0px 32px'} bgColor={'#ffb11a'} >
                     Sign Up
                 </Button>
 
@@ -295,121 +377,150 @@ const MobileNavItem = ({ label, children, href }) => {
 
 const NAV_ITEMS = [
     {
-        label: 'Buy Crypto',
+        label: 'Buy',
         children: [
             {
-                label: 'Buy',
-                subLabel: 'Trending Design to inspire you',
+                label: 'Buy Bitcoin',
+                logo: 'https://cryptologos.cc/logos/thumbs/bitcoin.png?v=040',
+                subLabel: 'Search for offer to buy Bitcoin',
                 href: '#',
             },
             {
-                label: 'Sell',
-                subLabel: 'Up-and-coming Designers',
-                href: '#',
-            },
-        ],
-    },
-    {
-        label: 'Market',
-        href: '#',
-    },
-    {
-        label: 'Trade',
-        children: [
-            {
-                label: 'About',
-                subLabel: 'know every thing about us',
+                label: 'Buy Tether',
+                logo: 'https://cryptologos.cc/logos/thumbs/ethereum.png?v=040',
+                subLabel: 'Search for offer to buy Tether',
                 href: '#',
             },
             {
-                label: 'Carrers',
-                subLabel: 'crypto is future',
+                label: 'Buy Ethereum',
+                logo: 'https://cryptologos.cc/logos/thumbs/usd-coin.png?v=040',
+                subLabel: 'Search for offer to buy Ethereum',
+                href: '#',
+            }, {
+                label: 'Buy USDC',
+                logo: 'https://cryptologos.cc/logos/thumbs/tether.png?v=040',
+                subLabel: 'Search for offer to buy USDC',
                 href: '#',
             },
         ],
     },
 
     {
-        label: 'Tools',
+        label: 'Sell',
         children: [
             {
-                label: 'About',
-                subLabel: 'know every thing about us',
+                label: 'Sell Bitcoin',
+                logo: 'https://cryptologos.cc/logos/thumbs/bitcoin.png?v=040',
+                subLabel: 'Search for offer to buy Bitcoin',
                 href: '#',
             },
             {
-                label: 'Carrers',
-                subLabel: 'crypto is future',
+                label: 'Sell Tether',
+                logo: 'https://cryptologos.cc/logos/thumbs/ethereum.png?v=040',
+                subLabel: 'Search for offer to buy Tether',
+                href: '#',
+            },
+            {
+                label: 'Sell Ethereum',
+                logo: 'https://cryptologos.cc/logos/thumbs/usd-coin.png?v=040',
+                subLabel: 'Search for offer to buy Ethereum',
+                href: '#',
+            }, {
+                label: 'Sell USDC',
+                logo: 'https://cryptologos.cc/logos/thumbs/tether.png?v=040',
+                subLabel: 'Search for offer to buy USDC',
                 href: '#',
             },
         ],
     },
+    // {
+    //     label: 'Create an Offer',
+    //     to: 'createOffers'
+
+    // },
+
     {
-        label: 'Finance',
+        label: 'wallet',
         children: [
             {
-                label: 'About',
-                subLabel: 'know every thing about us',
+                label: 'Balance',
+                icon: <CiWallet />,
+                subLabel: 'Check you Crypto balacnce in Cryptico',
                 href: '#',
             },
             {
-                label: 'Carrers',
-                subLabel: 'crypto is future',
+                label: 'Lightining',
+                icon: <BsLightningCharge />,
+                subLabel: 'send and revice BTC with lightining speed and low fee',
+                href: '#',
+            },
+            {
+                label: 'Transaction',
+                icon: <GrTransaction />,
+                subLabel: 'check your account transaction history',
+                href: '#',
+            }, {
+                label: 'Address',
+                icon: <BsQrCode />,
+                subLabel: 'use you wallet address to recieve crypto',
+                href: '#',
+            },
+            {
+                label: 'Convert',
+                icon: <SiConvertio />,
+                subLabel: 'convert fund from one to another cypto',
                 href: '#',
             },
         ],
     },
-    {
-        label: 'Reward',
-        children: [
-            {
-                label: 'About',
-                subLabel: 'know every thing about us',
-                href: '#',
-            },
-            {
-                label: 'Carrers',
-                subLabel: 'crypto is future',
-                href: '#',
-            },
-        ],
-    },
-    {
-        label: 'Learn',
-        children: [
-            {
-                label: 'About',
-                subLabel: 'know every thing about us',
-                href: '#',
-            },
-            {
-                label: 'Carrers',
-                subLabel: 'crypto is future',
-                href: '#',
-            },
-        ],
-    },
-    {
-        label: 'Reward Hub',
-        href: '#',
-    },
-    {
-        label: 'More',
-        children: [
-            {
-                label: 'About',
-                subLabel: 'know every thing about us',
-                href: '#',
-            },
-            {
-                label: 'Carrers',
-                subLabel: 'crypto is future',
-                href: '#',
-            },
-        ],
-    },
+
+
+
 
 
 ];
+
+const userOption = [
+    {
+        icon: <FaArrowTrendUp />,
+        btn_name: "Trade History",
+        to: 'tradehistory'
+    },
+    {
+        icon: <HiMiniArrowPath />,
+        btn_name: "Recent Trade Partners",
+        to: 'recentTradePartners'
+
+    },
+    {
+        icon: <IoBagOutline />,
+        btn_name: " My Offers",
+        to: 'myOffers'
+
+    },
+    {
+        icon: <LiaHandPointRightSolid />,
+        btn_name: "Favorite Offers",
+        to: 'favoriteOffers'
+
+    },
+    {
+        icon: <MdOutlineFileDownload />,
+        btn_name: "Trade Statistics",
+        to: 'tradeStatistics'
+
+    },
+    {
+        icon: <BsLightningCharge />,
+        btn_name: "Trader Program Badges",
+        to: 'tpBadges'
+    },
+    {
+        icon: <PiChecks />,
+        btn_name: "Invite a Friend",
+        to: 'iFriend'
+
+    },
+]
 
 export default Navbarnew

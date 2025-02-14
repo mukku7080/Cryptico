@@ -16,6 +16,8 @@ import PaymentMethod from './CustomComponents/Afterlogin/UserDashboard/PaymentMe
 import ProtectedRoute from './CustomComponents/AuthContext/ProtectedRoute'
 import { AuthProvider } from './Context/AuthContext'
 import Buy from './CustomComponents/Buy&Sell/Buy'
+import CreateOffers from './CustomComponents/Offers/CreateOffers'
+import UserProvider from './Context/userContext'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -27,40 +29,43 @@ function App() {
 
 
       <AuthProvider>
+        <UserProvider>
 
-        <Container maxW={'container.xxl'} margin={0} padding={0} bg={bgColor}>
-
-
-          <Navbarnew />
+          <Container maxW={'container.xxl'} margin={0} padding={0} bg={bgColor}>
 
 
-
-          <Routes>
-            <Route path='/' element={<Hero />}></Route>
-            <Route path='/login' element={<Loginnew />}></Route>
-            <Route path='/signup' element={<Signupnew />}></Route>
-            <Route path="/number-verification" element={<ProtectedRoute><Numberwithotp /></ProtectedRoute>} />
-            <Route path="/user-dashboard" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} >
-              <Route index element={<TradeHistory />} />
-              <Route path="tradehistory" element={<TradeHistory />} />
-              <Route path="recentTradePartners" element={<RecentTradeHistory />} />
-            </Route>
-            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-            <Route path="/paymentMethod" element={<ProtectedRoute><PaymentMethod /></ProtectedRoute>} />
-            <Route path='/buy' element={<Buy />} />
-
-          </Routes>
-          {/* <Outlet /> */}
+            <Navbarnew />
 
 
 
+            <Routes>
+              <Route path='/' element={<Hero />}></Route>
+              <Route path='/login' element={<Loginnew />}></Route>
+              <Route path='/signup' element={<Signupnew />}></Route>
+              <Route path="/number-verification" element={<ProtectedRoute><Numberwithotp /></ProtectedRoute>} />
+              <Route path="/user-dashboard" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} >
+                <Route index element={<TradeHistory />} />
+                <Route path="tradehistory" element={<TradeHistory />} />
+                <Route path="recentTradePartners" element={<RecentTradeHistory />} />
+              </Route>
+              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+              <Route path="/paymentMethod" element={<ProtectedRoute><PaymentMethod /></ProtectedRoute>} />
+              <Route path='/buy' element={<Buy />} />
+              <Route path='/createOffers' element={<ProtectedRoute><CreateOffers /></ProtectedRoute>} />
 
-          <Footer />
+            </Routes>
 
 
 
 
-        </Container>
+            <Footer />
+
+
+
+
+          </Container>
+        </UserProvider>
+
       </AuthProvider>
 
     </>

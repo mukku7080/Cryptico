@@ -1,5 +1,5 @@
 import axios from 'axios';
-const api_url = 'http://192.168.29.109:7000/api';
+const api_url = 'https://api.onnbit.com/api';
 
 export const axiosInstance = axios.create({
 
@@ -10,7 +10,6 @@ export const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem("authToken");
-        console.log(token);
         if (token) {
             config.headers["Authorization"] = `Bearer ${token}`;
         }

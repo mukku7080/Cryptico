@@ -10,7 +10,7 @@ import {
     FormLabel,
     FormErrorMessage,
     Input,
-    Checkbox
+    Checkbox, useToast
 } from "@chakra-ui/react";
 import axios from 'axios'
 import { FcGoogle } from "react-icons/fc";
@@ -23,12 +23,14 @@ import { useAuth } from '../../Context/AuthContext';
 
 const Signupnew = () => {
 
-    const { handleSignup, handleEmailOtp } = useAuth();
+    const { handleSignup, handleEmailOtp, handleSignupWithGoogle, error } = useAuth();
+    const toast = useToast();
 
 
     const [email, setEmail] = useState("");
     const [pass, setPass] = useState("");
     const [token, setToken] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
 
@@ -62,13 +64,34 @@ const Signupnew = () => {
         validationSchema,
         onSubmit: async (values, action) => {
             try {
+                setIsLoading(true);
                 const res = await handleSignup(values);
                 console.log(res.token);
                 if (res.status === "success") {
                     try {
-                        setToken(res.token);                        
+
+                        setToken(res.token);
                         setSignup(true);
+                        toast({
+                            title: "Email OTP Sent",
+                            description: "OTP has been sent on your email..",
+                            status: "warning",
+                            duration: 5000,
+                            isClosable: true,
+                            position: "top-right",
+                        });
                         const otpResposne = await handleEmailOtp();
+                        if (otpResposne.status === 'success') {
+                            toast({
+                                title: "Email Verified Successfully",
+                                description: "Your Email has been verified..",
+                                status: "warning",
+                                duration: 5000,
+                                isClosable: true,
+                                position: "top-right",
+                            });
+
+                        }
                         console.log(otpResposne.data)
 
                     }
@@ -77,10 +100,22 @@ const Signupnew = () => {
                     }
                 }
 
+
                 action.resetForm();
             }
             catch (err) {
+                toast({
+                    title: "Signup Failed",
+                    description: error.message || "An error occurred during signup.",
+                    status: "error",
+                    duration: 5000,
+                    isClosable: true,
+                    position: "top-right",
+                });
                 console.log("error:", err.res ? err.res.data : err.message);
+            }
+            finally {
+                setIsLoading(false);
             }
 
 
@@ -112,9 +147,6 @@ const Signupnew = () => {
     };
     const allValid = Object.values(validations).every(Boolean);
     const [isshow, setShow] = useState(false);
-
-
-
     return (
         <Box minH={'100vh'} display={'flex'} justifyContent={'center'} alignItems={'center'}>
 
@@ -144,7 +176,7 @@ const Signupnew = () => {
                                     <Button leftIcon={<CgArrowsExchange />} bg={'transparent'} color={'orange'} onClick={() => navigate('/login')}>Log in</Button>
                                 </Flex>
 
-                                <Box as='p' color={'gray'} maxW={'400px'} px={3} >Welcome aboard! Your gateway to peer-to-peer crypto trading starts here.</Box>
+                                <Box as='p' color={'gray'} maxW={'400px'} px={3} my={3} >Welcome aboard! Your gateway to peer-to-peer crypto trading starts here.</Box>
                                 <Divider color={'gray'} opacity={0.5} />
                                 {/* <Flex pr={3} justifyContent={'center'}>
                                     <Button color={'gray'} bg={'transparent'} _hover={{ borderBottom: '1px solid orange', textDecoration: 'none' }} as={Link} onClick={() => setMobile(false)}>Email</Button>
@@ -183,7 +215,12 @@ const Signupnew = () => {
                                                                 onChange={handleChange}
                                                                 onBlur={handleBlur} />
                                                             <FormErrorMessage>{errors.email}</FormErrorMessage>
+                                                            {error &&
+                                                                <>
+                                                                    <Box m={3} as='p' color={'red'}>{error.message}</Box>
+                                                                </>}
                                                         </FormControl>
+
 
                                                 }
 
@@ -283,19 +320,6 @@ const Signupnew = () => {
                                                 </FormControl>
 
 
-                                                {/* Referal Field */}
-                                                {/* <FormControl mb={3}>
-                                                <FormLabel color={'gray'}>ReferalCode (Optional)</FormLabel>
-                                                <Input name="referal" type="" placeholder="" bg="gray.100"  // Light gray background
-                                                    _focus={{ bg: "white" }}
-                                                    value={values.referal}
-                                                    onChange={handleChange}
-                                                    onBlur={handleBlur} />
-                                            </FormControl> */}
-
-                                                {/* CheckBox */}
-
-
                                                 <FormControl isInvalid={errors.ts && touched.ts}>
 
                                                     <Checkbox mt={5} name='ts' isChecked={values.ts} onChange={handleChange} onBlur={handleBlur} ><Box fontSize={'10px'} color={'gray'}  >
@@ -306,9 +330,17 @@ const Signupnew = () => {
 
                                                 </FormControl>
                                                 {/* Submit Button */}
-                                                <Button type="submit" bg={'orange'} width="full" mt={5}   >
+                                                <Button isLoading={isLoading}
+                                                    loadingText='Loading'
+                                                    type="submit" bg={'orange'}
+                                                    width="full"
+                                                    mt={5}
+                                                    _hover={{ bg: 'orange.500' }}
+
+                                                >
                                                     Sign up
                                                 </Button>
+
                                             </form>
                                         }
 
@@ -324,7 +356,7 @@ const Signupnew = () => {
 
                                 <Flex my={5} justifyContent={'center'} gap={10}>
                                     <Button variant={'outline'} boxSize={10}>
-                                        <Icon as={FcGoogle} boxSize={6}></Icon>
+                                        <Icon as={FcGoogle} onClick={async () => await handleSignupWithGoogle()} boxSize={6}></Icon>
                                     </Button>
                                     <Button variant={'outline'} boxSize={10}>
                                         <Icon as={FaApple} boxSize={6}></Icon>
@@ -350,6 +382,9 @@ const Signupnew = () => {
 
     )
 }
+
+
+
 
 export default Signupnew
 

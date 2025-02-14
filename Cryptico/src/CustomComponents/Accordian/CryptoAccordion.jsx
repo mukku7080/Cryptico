@@ -58,7 +58,7 @@ function CryptoAccordion({ title, btn1, btn2, isOptionButton }) {
               isOptionButton &&
               <Menu>
 
-                <MenuButton as={Button} variant={'outline'} display={{base:'none',md:'flex'}} borderRadius={0} border={'1px solid #dcdcdc'} rightIcon={<MdKeyboardArrowDown />}  >
+                <MenuButton as={Button} variant={'outline'} display={{ base: 'none', md: 'flex' }} borderRadius={0} border={'1px solid #dcdcdc'} rightIcon={<MdKeyboardArrowDown />}  >
                   {option}
 
                 </MenuButton>
@@ -77,13 +77,13 @@ function CryptoAccordion({ title, btn1, btn2, isOptionButton }) {
 
           {/* for small screen dorpdow button */}
 
-          <Box width={'full'} borderBottom={'1px solid #dcdcdc'} display={{base:'flex',md:'none'}} flexWrap={'wrap'} justifyContent={'space-between'} py={2} >
-           
+          <Box width={'full'} borderBottom={'1px solid #dcdcdc'} display={{ base: 'flex', md: 'none' }} flexWrap={'wrap'} justifyContent={'space-between'} py={2} >
+
             {
               isOptionButton &&
               <Menu>
 
-                <MenuButton as={Button} variant={'outline'} display={{base:'flex',md:'none'}} borderRadius={0} border={'1px solid #dcdcdc'} rightIcon={<MdKeyboardArrowDown />} width={'100%'}  >
+                <MenuButton as={Button} variant={'outline'} display={{ base: 'flex', md: 'none' }} borderRadius={0} border={'1px solid #dcdcdc'} rightIcon={<MdKeyboardArrowDown />} width={'100%'}  >
                   {option}
 
                 </MenuButton>
@@ -104,7 +104,7 @@ function CryptoAccordion({ title, btn1, btn2, isOptionButton }) {
             alignItems={'center'}
           >
             <Image p={5} src='imagelogo/cryptico.png' w={'200px'} h={'160px'} opacity={0.1}></Image>
-            
+
           </Box>
         </AccordionPanel>
       </AccordionItem>
@@ -112,7 +112,7 @@ function CryptoAccordion({ title, btn1, btn2, isOptionButton }) {
   );
 }
 
-export const Mybadge = ({bgcolor}) => {
+export const Mybadge = ({ bgcolor }) => {
   return (
 
     <Badge

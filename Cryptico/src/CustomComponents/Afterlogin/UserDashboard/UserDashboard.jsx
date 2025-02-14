@@ -2,19 +2,17 @@ import {
     Box, Button, Card, Collapse, Divider, Flex, Grid, GridItem, Heading, IconButton, useDisclosure,
     Image, Link, useColorModeValue
 } from '@chakra-ui/react'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { HiMiniArrowPath } from "react-icons/hi2";
 import { IoBagOutline } from "react-icons/io5";
 import { LiaHandPointRightSolid } from "react-icons/lia";
-import { MdOutlineFileDownload, MdKeyboardArrowRight, MdKeyboardArrowDown, MdOutlineContentCopy } from "react-icons/md";
+import { MdOutlineFileDownload, MdKeyboardArrowRight, MdKeyboardArrowDown} from "react-icons/md";
 import { BsLightningCharge } from "react-icons/bs";
 import { PiChecks } from "react-icons/pi";
-import { IoMenuOutline, IoCloseOutline, IoColorFilter } from "react-icons/io5";
-import TradeHistory from './TradeHistory';
-import RecentTradeHistory from './RecentTradeHistory';
-import RecentTradePartnerAccordian from '../../Accordian/RecentTradePartnerAccordian';
+import { IoMenuOutline, IoCloseOutline } from "react-icons/io5";
 import { Outlet, useNavigate } from 'react-router-dom';
+import { useUser } from '../../../Context/userContext';
 
 
 
@@ -22,16 +20,15 @@ const UserDashboard = () => {
 
     const bgcolor = useColorModeValue('gray.100', 'gray.700');
     const navigate = useNavigate();
-
-
-
     const [tag, setTag] = useState("Trade History");
     const [istoogle, setToogle] = useState(false);
-
     const { isOpen, onToggle } = useDisclosure();
     const { isOpen: isOpen1, onToggle: onToggle1 } = useDisclosure();
+    const { user, error, handleUserDetail } = useUser();
+    useEffect(() => {
+        const res = handleUserDetail();
 
-
+    }, []);
     return (
         <Flex maxW={'container.xxl'} bg={''} justifyContent={'center'} alignItems={'center'} direction={'column'} gap={10} my={10}>
 

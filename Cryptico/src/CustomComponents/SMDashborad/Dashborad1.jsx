@@ -39,17 +39,17 @@ const Dashborad1 = () => {
 
                             <Box flex={1.2}>
                                 <Grid templateColumns={'repeat(6,1fr)'} templateRows={'repeat(2,1fr)'} columnGap={10} rowGap={1}>
-                                    <GridItem fontSize={'14px'} color={'gray'} colSpan={2} >Trading Pairs</GridItem>
-                                    <GridItem fontSize={'14px'} color={'gray'} >Last Traded Price</GridItem>
-                                    <GridItem fontSize={'14px'} color={'gray'} >24H Change</GridItem>
-                                    <GridItem fontSize={'14px'} color={'gray'} >Chart</GridItem>
-                                    <GridItem fontSize={'14px'} color={'gray'} >Trade</GridItem>
+                                    <GridItem fontSize={'14px'} color={'gray'} mb={5} colSpan={2} pl={10} >Trading Pairs</GridItem>
+                                    <GridItem fontSize={'14px'} color={'gray'} mb={5}>Last Traded Price</GridItem>
+                                    <GridItem fontSize={'14px'} color={'gray'} mb={5}>24H Change</GridItem>
+                                    <GridItem fontSize={'14px'} color={'gray'} mb={5}>Chart</GridItem>
+                                    <GridItem fontSize={'14px'} color={'gray'} mb={5}>Trade</GridItem>
 
                                     {cryptoData.map((cdata, index) => (
 
 
                                         < >
-                                            <GridItem  colSpan={2} key={index}>
+                                            <GridItem colSpan={2} key={index} mb={5}>
                                                 <Flex>
 
                                                     <Image src={cdata.img} boxSize={10} display="inline-block" mt={-1.5} />
@@ -58,11 +58,12 @@ const Dashborad1 = () => {
 
                                                 </Flex>
 
+
                                             </GridItem>
-                                            <GridItem key={index}>{cdata.price}</GridItem>
-                                            <GridItem key={index}>{cdata.change}</GridItem>
-                                            <GridItem key={index}> <Image src={cdata.chart} maxW={'80px'} maxH={'40px'}></Image></GridItem>
-                                            <GridItem key={index}><Button variant='outline' color={'orange'}>Trade</Button></GridItem>
+                                            <GridItem key={index} mb={5}>{cdata.price}</GridItem>
+                                            <GridItem key={index} mb={5}>{cdata.change}</GridItem>
+                                            <GridItem key={index} mb={5}> <Image src={cdata.chart} maxW={'80px'} maxH={'40px'}></Image></GridItem>
+                                            <GridItem key={index} mb={5}><Button variant='outline' color={'orange'}>Trade</Button></GridItem>
 
                                         </>
 
@@ -82,9 +83,9 @@ const Dashborad1 = () => {
                     <Card>
                         <CardBody>
 
-                            <Heading size={'md'}>Top Gainers</Heading>
+                            <Heading size={'md'} >Top Gainers</Heading>
 
-                            <Divider opacity={0.5} />
+                            <Divider opacity={0.5} my={3} />
                             <Box flex={.8} >
                                 <Grid templateColumns={'repeat(4,1fr)'} templateRows={'repeat(2,1fr)'} gap={8}>
 
@@ -115,8 +116,8 @@ const Dashborad1 = () => {
 
 
                                 </Grid>
-                                <Heading mt={5} size={'md'}>New Listing</Heading>
-                                <Divider opacity={0.5} />
+                                <Heading mt={5} size={'md'} >New Listing</Heading>
+                                <Divider opacity={0.5} my={3} />
                                 <Grid templateColumns={'repeat(4,1fr)'} templateRows={'repeat(2,1fr)'} gap={8}>
 
 

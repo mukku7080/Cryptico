@@ -1,4 +1,3 @@
-
 import { axiosInstance } from "./axiosInstance";
 
 export const login = async ({ email, password }) => {
@@ -7,6 +6,28 @@ export const login = async ({ email, password }) => {
             username: email,
             password: password
         });
+        return response.data;
+    }
+    catch (error) {
+        throw error.response ? error.response.data : error;
+    }
+
+};
+
+export const loginWithGoogle = async () => {
+    try {    
+        window.location.href = 'https://api.onnbit.com/api/auth/redirect';
+        return response.data;
+    }
+    catch (error) {
+        throw error.response ? error.response.data : error;
+    }
+
+};
+
+export const SignupWithGoogle = async () => {
+    try {        
+        window.location.href = 'https://api.onnbit.com/api/auth/redirect';
         return response.data;
     }
     catch (error) {

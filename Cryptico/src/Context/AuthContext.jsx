@@ -1,11 +1,14 @@
 import React, { createContext, useContext, useEffect } from 'react'
-import { login, signup, logout, emailOtp, verifyEmailOtp } from '../api/authService';
+import { login, signup, logout, emailOtp, verifyEmailOtp, loginWithGoogle, SignupWithGoogle } from '../api/authService';
+import { useNavigate } from 'react-router-dom';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
 
     const [user, setUser] = React.useState(null);
+    const [error, setError] = React.useState(null);
+    const navigate = useNavigate('');
 
     useEffect(() => {
         const token = localStorage.getItem("authToken");
@@ -32,6 +35,34 @@ export const AuthProvider = ({ children }) => {
         }
 
     };
+    const handleLoginWithGoogle = async () => {
+        try {
+
+            const data = loginWithGoogle();
+            localStorage.setItem("authToken", data.token);
+            setUser(data.user);
+        }
+        catch (error) {
+            console.error("Login error:", error);
+            alert(error.message || "Login failed");
+
+        }
+
+    };
+    const handleSignupWithGoogle = async () => {
+        try {
+
+            const data = SignupWithGoogle();
+            localStorage.setItem("authToken", data.token);
+            setUser(data.user);
+        }
+        catch (error) {
+            console.error("Login error:", error);
+            alert(error.message || "Login failed");
+
+        }
+
+    };
 
 
     const handleSignup = async ({ email, password }) => {
@@ -43,7 +74,9 @@ export const AuthProvider = ({ children }) => {
             return data;
         }
         catch (error) {
+            setError(error);
             console.error("Signup error:", error);
+            return error;
         }
     };
     const handleEmailOtp = async () => {
@@ -59,7 +92,7 @@ export const AuthProvider = ({ children }) => {
     }
     const handleVerifyEmailOtp = async ({ otp }) => {
         try {
-            const data = await verifyEmailOtp({otp});
+            const data = await verifyEmailOtp({ otp });
             return data;
         }
         catch (error) {
@@ -83,7 +116,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, handleLogin, handleSignup, handleLogout, handleEmailOtp, handleVerifyEmailOtp }}>
+        <AuthContext.Provider value={{ user, handleLogin, handleSignup, handleLogout, handleEmailOtp, handleVerifyEmailOtp, handleLoginWithGoogle, handleSignupWithGoogle, error }}>
             {children}
         </AuthContext.Provider>
     );

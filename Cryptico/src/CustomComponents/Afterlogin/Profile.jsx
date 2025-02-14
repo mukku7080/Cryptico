@@ -7,16 +7,7 @@ import {
     Badge,
 
 } from '@chakra-ui/react'
-import { FaArrowTrendUp } from "react-icons/fa6";
-import { HiMiniArrowPath } from "react-icons/hi2";
-import { IoBagOutline } from "react-icons/io5";
-import { LiaHandPointRightSolid } from "react-icons/lia";
-import { MdOutlineFileDownload, MdKeyboardArrowRight, MdKeyboardArrowDown, MdOutlineContentCopy } from "react-icons/md";
-import { BsLightningCharge } from "react-icons/bs";
-import { PiChecks } from "react-icons/pi";
-import { IoMenuOutline, IoCloseOutline, IoColorFilter } from "react-icons/io5";
-import UserDrware from '../Drwares/UserDrware';
-import { LuUpload } from "react-icons/lu";
+
 import { FaPhoneAlt, FaEnvelope, FaUserCircle, FaMapMarkerAlt } from "react-icons/fa";
 import CryptoAccordion, { Mybadge } from '../Accordian/CryptoAccordion';
 import { IoEyeOutline } from "react-icons/io5";
@@ -45,9 +36,9 @@ const Profile = () => {
                         </GridItem>
                         <GridItem colSpan={3}  >
                             <Card width={'full'} h={'full'} p={4} borderRadius={'none'}>
-                                <Flex justifyContent={'space-between'} alignItems={'center'} mx={2} direction={{base:'column',sm:'row',md:'row'}} gap={5}>
+                                <Flex justifyContent={'space-between'} alignItems={'center'} mx={2} direction={{ base: 'column', sm: 'row', md: 'row' }} gap={5}>
 
-                                    <Flex direction={'column'} gap={4} color={'gray'}  alignItems={{base:'center',sm:'start'}} >
+                                    <Flex direction={'column'} gap={4} color={'gray'} alignItems={{ base: 'center', sm: 'start' }} >
                                         <Heading size={'lg'}> User_Name</Heading>
                                         <Box>Trust:Block</Box>
                                         <Flex gap={3}>
@@ -80,7 +71,7 @@ const Profile = () => {
                                         </Flex>
 
                                     </Flex>
-                                    <Flex gap={5} direction={{ base: 'row', sm:'column',lg: 'row' }}>
+                                    <Flex gap={5} direction={{ base: 'row', sm: 'column', lg: 'row' }}>
                                         {
                                             socialIcons.map((data, index) => (
 

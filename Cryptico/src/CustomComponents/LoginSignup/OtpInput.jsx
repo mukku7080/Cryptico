@@ -1,15 +1,17 @@
 import { useState, useEffect } from "react";
-import { HStack, PinInput, PinInputField, Button, Text, VStack, Box } from "@chakra-ui/react";
+import { HStack, PinInput, PinInputField, Button, Text, VStack, Box, useToast } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../../Context/AuthContext";
 
 
+
 function OTPInput({ verification, email }) {
     const [otp, setOtp] = useState("");
-    const { handleVerifyEmailOtp } = useAuth();
+    const { handleVerifyEmailOtp, handleEmailOtp } = useAuth();
     const [timeLeft, setTimeLeft] = useState(120); // 2 minutes (120 seconds)
     const [isResendDisabled, setIsResendDisabled] = useState(true);
+    const toast = useToast()
 
     // Timer Effect
     useEffect(() => {
@@ -25,13 +27,12 @@ function OTPInput({ verification, email }) {
     const handleSubmit = async () => {
         if (verification == 'Email') {
 
-
             try {
 
                 const res = await handleVerifyEmailOtp({ otp });
                 if (res.status === "success") {
 
-                    navigate('/number-verification');
+                    navigate('/user-dashboard');
                 }
             }
             catch (err) {
@@ -52,9 +53,17 @@ function OTPInput({ verification, email }) {
         setTimeLeft(120); // Reset timer to 2 minutes
         setIsResendDisabled(true);
         setOtp(""); // Clear OTP input
-        const res = axios.post('http://192.168.29.109:7000/api/send-email-otp',
-            otp
-        )
+        const res = handleEmailOtp();
+        if (res.status === 'success') {
+            toast({
+                title: "Otp Resent Successfully",
+                status: "warning",
+                duration: 4000,
+                isClosable: true,
+                position: "top-right",
+            });
+
+        }
         console.log("OTP Resent!");
     };
 

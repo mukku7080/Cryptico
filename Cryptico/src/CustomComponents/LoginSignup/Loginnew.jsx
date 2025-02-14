@@ -1,4 +1,4 @@
-import { Card, CardBody, Divider, Flex, Heading, Icon, Image, Link, useColorModeValue } from '@chakra-ui/react'
+import { Card, CardBody, Divider, Flex, Heading, Icon, Image, Link, useColorModeValue, useToast } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { CgArrowsExchange } from "react-icons/cg";
 import { useFormik } from "formik";
@@ -10,7 +10,7 @@ import {
     FormLabel,
     FormErrorMessage,
     Input,
-    Checkbox
+    Checkbox, Toast
 } from "@chakra-ui/react";
 import { useNavigate } from 'react-router-dom';
 import { FcGoogle } from "react-icons/fc";
@@ -22,9 +22,13 @@ import { useAuth } from '../../Context/AuthContext';
 
 const Loginnew = () => {
 
-    const { handleLogin } = useAuth();
+    const { handleLogin, handleLoginWithGoogle } = useAuth();
+    const toast = useToast();
+    const [isLoading, setIsLoading] = useState(false);
+
 
     const txtcolor = useColorModeValue('black', 'white');
+
     const bgcolor = useColorModeValue('gray.100', 'gray.700');
 
 
@@ -47,15 +51,33 @@ const Loginnew = () => {
         onSubmit: async (values, action) => {
 
             try {
-                await handleLogin(values);
+                setIsLoading(true);
+                const res = await handleLogin(values);
+                toast({
+                    title: "Login Successfuly",
+                    description: "Enjoy our Service",
+                    status: "success",
+                    duration: 5000,
+                    isClosable: true,
+                    position: "top-right",
+                });
+
                 navigate("/user-dashboard");
             }
             catch (err) {
+                toast({
+                    title: "Something Went Wrong",
+                    description: "plz check you credential",
+                    status: "error",
+                    duration: 5000,
+                    isClosable: true,
+                    position: "top-right",
+                });
                 console.log("Login Failded:", err);
             }
-
-
-            console.log(values);
+            finally {
+                setIsLoading(false);
+            }
             action.resetForm();
 
 
@@ -95,7 +117,7 @@ const Loginnew = () => {
                                     <Button leftIcon={<CgArrowsExchange />} bg={'transparent'} color={'orange'} onClick={() => navigate('/signup')}>Sign up</Button>
                                 </Flex>
 
-                                <Box as='p' color={'gray'} maxW={'400px'} px={3} mt={5}  >Ready to Make Waves in Crypto? Let’s revolutionize your trading journey.</Box>
+                                <Box as='p' color={'gray'} maxW={'400px'} px={3} mt={5} my={3}  >Ready to Make Waves in Crypto? Let’s revolutionize your trading journey.</Box>
                                 <Divider color={'gray'} opacity={0.5} />
 
                                 <CardBody display={'flex'} justifyContent={'center'}>
@@ -151,13 +173,15 @@ const Loginnew = () => {
                                             </Flex>
                                             {/* Submit Button */}
                                             <Button
-                                                type="submit"
-                                                bg={'orange'}
-                                                width="full" mt={5}
+                                                isLoading={isLoading}
+                                                loadingText='Loading'
+                                                type="submit" bg={'orange'}
+                                                width="full"
+                                                mt={5}
+                                                _hover={{ bg: 'orange.500' }}>
 
-
-                                            >
                                                 Login
+
                                             </Button>
                                         </form>
 
@@ -172,7 +196,7 @@ const Loginnew = () => {
                                 </Flex>
 
                                 <Flex my={5} justifyContent={'center'} gap={10}>
-                                    <Button variant={'outline'} boxSize={10}>
+                                    <Button variant={'outline'} boxSize={10} onClick={async () => await handleLoginWithGoogle()}>
                                         <Icon as={FcGoogle} boxSize={6}></Icon>
                                     </Button>
                                     <Button variant={'outline'} boxSize={10}>
