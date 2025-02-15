@@ -1,4 +1,4 @@
-import { Card, CardBody, Divider, Flex, Heading, Icon, Image, Link, useColorModeValue, useToast } from '@chakra-ui/react'
+import { Card, CardBody, Divider, Flex, Heading, Icon, Image, InputGroup, IconButton, Link, useColorModeValue, useToast } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { CgArrowsExchange } from "react-icons/cg";
 import { useFormik } from "formik";
@@ -10,9 +10,13 @@ import {
     FormLabel,
     FormErrorMessage,
     Input,
-    Checkbox, Toast
+    Checkbox, Toast,
+    InputRightElement
+
 } from "@chakra-ui/react";
 import { useNavigate } from 'react-router-dom';
+import { IoMdEyeOff, IoMdEye } from "react-icons/io";
+
 import { FcGoogle } from "react-icons/fc";
 import { FaApple, FaTelegramPlane } from "react-icons/fa";
 // import { useAuth } from '../AuthContext/AuthProvider';
@@ -24,11 +28,9 @@ const Loginnew = () => {
 
     const { handleLogin, handleLoginWithGoogle } = useAuth();
     const toast = useToast();
+    const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-
-
     const txtcolor = useColorModeValue('black', 'white');
-
     const bgcolor = useColorModeValue('gray.100', 'gray.700');
 
 
@@ -57,7 +59,7 @@ const Loginnew = () => {
                     title: "Login Successfuly",
                     description: "Enjoy our Service",
                     status: "success",
-                    duration: 5000,
+                    duration: 1000,
                     isClosable: true,
                     position: "top-right",
                 });
@@ -144,11 +146,27 @@ const Loginnew = () => {
                                             {/* password Field */}
                                             <FormControl isInvalid={errors.password && touched.password} mb={3}>
                                                 <FormLabel color={'gray'}>Password</FormLabel>
-                                                <Input name="password" type="password" placeholder="Passwrod" bg={bgcolor}  // Light gray background
-                                                    _focus={{ bgcolor }}
-                                                    value={values.password}
-                                                    onChange={handleChange}
-                                                    onBlur={handleBlur} />
+                                                <InputGroup>
+
+                                                    <Input name="password" type={showPassword ? "text" : "password"}
+                                                        placeholder="Passwrod" bg={bgcolor}  // Light gray background
+                                                        _focus={{ bgcolor }}
+                                                        value={values.password}
+                                                        onChange={handleChange}
+                                                        onBlur={handleBlur} />
+
+                                                    <InputRightElement>
+                                                        <IconButton
+                                                            bg={'transparent'}
+                                                            h="1.75rem"
+                                                            size=""
+                                                            onClick={() => setShowPassword((prev) => !prev)}
+                                                            icon={showPassword ? <IoMdEye /> : <IoMdEyeOff />}
+                                                            aria-label="Toggle Password Visibility"
+                                                            _hover={{ bg: 'transparent' }}
+                                                        />
+                                                    </InputRightElement>
+                                                </InputGroup>
                                                 <FormErrorMessage>{errors.password}</FormErrorMessage>
                                             </FormControl>
 

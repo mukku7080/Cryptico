@@ -15,7 +15,7 @@ export const login = async ({ email, password }) => {
 };
 
 export const loginWithGoogle = async () => {
-    try {    
+    try {
         window.location.href = 'https://api.onnbit.com/api/auth/redirect';
         return response.data;
     }
@@ -26,7 +26,7 @@ export const loginWithGoogle = async () => {
 };
 
 export const SignupWithGoogle = async () => {
-    try {        
+    try {
         window.location.href = 'https://api.onnbit.com/api/auth/redirect';
         return response.data;
     }
@@ -52,7 +52,9 @@ export const signup = async ({ email, password }) => {
 
 export const emailOtp = async () => {
     try {
-        await axiosInstance.post('/send-email-otp');
+        const response = await axiosInstance.post('/send-email-otp');
+
+        return response.data;
     }
     catch (error) {
         throw error.response ? error.response.data : error;
@@ -62,7 +64,8 @@ export const emailOtp = async () => {
 export const verifyEmailOtp = async ({ otp }) => {
     try {
         const response = await axiosInstance.post('/verify-email-otp', { otp });
-        return response.data;
+        console.log(response);
+        return response;
     }
     catch (error) {
         throw error.response ? error.response.data : error;

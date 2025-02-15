@@ -1,4 +1,4 @@
-import { Card, CardBody, Divider, Flex, Heading, Icon, Image, Link, useColorModeValue } from '@chakra-ui/react'
+import { Card, CardBody, Divider, Flex, Heading, Icon, Image, InputGroup, InputRightElement, IconButton, useColorModeValue } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { CgArrowsExchange } from "react-icons/cg";
 import { useFormik } from "formik";
@@ -14,11 +14,13 @@ import {
 } from "@chakra-ui/react";
 import axios from 'axios'
 import { FcGoogle } from "react-icons/fc";
+import { IoMdEyeOff, IoMdEye } from "react-icons/io";
 import { FaApple, FaTelegramPlane } from "react-icons/fa";
 import OTPInput from './OtpInput';
 // import { useAuth } from '../AuthContext/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../Context/AuthContext';
+
 
 
 const Signupnew = () => {
@@ -30,6 +32,8 @@ const Signupnew = () => {
     const [email, setEmail] = useState("");
     const [pass, setPass] = useState("");
     const [token, setToken] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
@@ -66,7 +70,6 @@ const Signupnew = () => {
             try {
                 setIsLoading(true);
                 const res = await handleSignup(values);
-                console.log(res.token);
                 if (res.status === "success") {
                     try {
 
@@ -81,19 +84,6 @@ const Signupnew = () => {
                             position: "top-right",
                         });
                         const otpResposne = await handleEmailOtp();
-                        if (otpResposne.status === 'success') {
-                            toast({
-                                title: "Email Verified Successfully",
-                                description: "Your Email has been verified..",
-                                status: "warning",
-                                duration: 5000,
-                                isClosable: true,
-                                position: "top-right",
-                            });
-
-                        }
-                        console.log(otpResposne.data)
-
                     }
                     catch (err) {
                         console.log("error:", err.otpResposne ? err.otpResposne.data : err.message);
@@ -227,26 +217,40 @@ const Signupnew = () => {
                                                 {/* password Field */}
                                                 <FormControl isInvalid={errors.password && touched.password} mb={3}>
                                                     <FormLabel color={'gray'}>Password</FormLabel>
-                                                    <Input
-                                                        name="password"
-                                                        type="password"
-                                                        placeholder="Passwrod"
-                                                        bg={bgcolor}
-                                                        _focus={{ bgcolor }}
-                                                        value={values.password}
-                                                        onChange={(e) => {
-                                                            handleChange(e);
-                                                            validatePassword(e.target.value);
+                                                    <InputGroup>
 
-                                                        }}
-                                                        onFocus={() => setShow(true)}
-                                                        onBlur={(e) => {
+                                                        <Input
+                                                            name="password"
+                                                            type={showPassword ? "text" : "password"}
+                                                            placeholder="Passwrod"
+                                                            bg={bgcolor}
+                                                            _focus={{ bgcolor }}
+                                                            value={values.password}
+                                                            onChange={(e) => {
+                                                                handleChange(e);
+                                                                validatePassword(e.target.value);
 
-                                                            handleBlur(e);
-                                                            setShow(false);
-                                                        }}
+                                                            }}
+                                                            onFocus={() => setShow(true)}
+                                                            onBlur={(e) => {
 
-                                                    />
+                                                                handleBlur(e);
+                                                                setShow(false);
+                                                            }}
+
+                                                        />
+                                                        <InputRightElement>
+                                                            <IconButton
+                                                                bg={'transparent'}
+                                                                h="1.75rem"
+                                                                size=""
+                                                                onClick={() => setShowPassword((prev) => !prev)}
+                                                                icon={showPassword ? <IoMdEye /> : <IoMdEyeOff />}
+                                                                aria-label="Toggle Password Visibility"
+                                                                _hover={{ bg: 'transparent' }}
+                                                            />
+                                                        </InputRightElement>
+                                                    </InputGroup>
                                                     <FormErrorMessage>{errors.password}</FormErrorMessage>
                                                 </FormControl>
 

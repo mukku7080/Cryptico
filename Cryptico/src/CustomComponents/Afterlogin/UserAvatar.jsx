@@ -37,16 +37,16 @@ const UserAvatar = () => {
                 <Box as="span" fontSize={'10px'}> {user == null ? "loading...." : user.email} <br />5000.00 INR</Box>
 
                 <Menu  >
-                    <MenuButton as={Button} variant="ghost" borderRadius={'none'} p={0} rightIcon={<MdKeyboardArrowDown color="orange" />} _hover={{ bg: "transparent" }}
+                    <MenuButton as={Button} variant="ghost" borderRadius={'none'} p={0} rightIcon={<MdKeyboardArrowDown color="white" />} _hover={{ bg: "transparent" }}
                         _focus={{ bg: "transparent", boxShadow: "none" }}
                         _active={{ bg: "transparent" }}
                     >
                         {user ? (
-                            <Avatar name={user.email} size="sm" src="" />
+                            <Avatar border={'1px solid white'} name={user.name ? user.name : user.email} size="sm" src={user.profile_image} />
                         ) : (
                             <Spinner size="xs" color="white" />
                         )}
-                      
+
                     </MenuButton>
                     <MenuList borderRadius={0}>
                         {menuItems.map((item, index) => (

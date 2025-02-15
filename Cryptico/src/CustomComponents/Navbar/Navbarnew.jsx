@@ -1,15 +1,12 @@
 import { Box, Icon, Button, Collapse, Flex, IconButton, Popover, PopoverContent, Stack, Text, useDisclosure, PopoverTrigger, useColorModeValue, Center, Image, useColorMode, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react'
 import React, { useState } from 'react'
-import { AiOutlineMenu, AiOutlineClose } from 'react-icons/ai'
-import { FaArrowDown, FaArrowRight } from 'react-icons/fa';
 import { FaArrowTrendUp } from "react-icons/fa6";
-import { BiChevronRight, BiChevronDown } from "react-icons/bi";
+import { BiChevronRight } from "react-icons/bi";
 import { IoMenuOutline, IoCloseOutline, IoBagOutline } from "react-icons/io5";
 import { Link, useNavigate } from 'react-router-dom';
 import { HiMiniArrowPath } from "react-icons/hi2";
 import { LiaHandPointRightSolid } from "react-icons/lia";
-
-import { MdDarkMode, MdOutlineFileDownload, MdKeyboardDoubleArrowDown } from "react-icons/md";
+import { MdDarkMode, MdOutlineFileDownload } from "react-icons/md";
 import { BsLightningCharge, BsQrCode } from "react-icons/bs";
 import { CiLight, CiWallet } from "react-icons/ci";
 import { GrTransaction } from "react-icons/gr";
@@ -145,6 +142,7 @@ const DesktopNav = () => {
     const [isMenuOpen, setMenuOpen] = useState(false);
     const navigate = useNavigate();
 
+
     return (
 
         <>
@@ -155,6 +153,7 @@ const DesktopNav = () => {
                             <Popover trigger='hover' placement='bottom-start'>
                                 <PopoverTrigger>
                                     <Box
+                                        onClick={() => navigate(navitem.locate)}
                                         as={'a'}
                                         href={navitem.href ?? '#'}
                                         fontSize={'sm'}
@@ -201,7 +200,7 @@ const DesktopNav = () => {
                     ))
                 }
 
-                <Button size={'sm'} bg={'transparent'} color={'white'} _hover={{bgColor:'transparent'}} onClick={()=>navigate('/createOffers')}>Create an Offer</Button>
+                <Button size={'sm'} bg={'transparent'} color={'white'} _hover={{ bgColor: 'transparent' }} onClick={() => navigate('/createOffers')}>Create an Offer</Button>
                 {/* DashboardButton */}
                 <Menu isOpen={isMenuOpen} >
                     <MenuButton as={Button} variant="ghost" borderRadius={'none'} p={0} color={'white'} _hover={{ bg: "transparent" }}
@@ -210,6 +209,7 @@ const DesktopNav = () => {
                         size={'sm'}
                         onMouseEnter={() => setMenuOpen(true)}
                         onMouseLeave={() => setMenuOpen(false)}
+                        textDecoration={'underline'}
 
 
                         onClick={() => navigate('/user-dashboard')}
@@ -378,6 +378,7 @@ const MobileNavItem = ({ label, children, href }) => {
 const NAV_ITEMS = [
     {
         label: 'Buy',
+        locate: '/buy',
         children: [
             {
                 label: 'Buy Bitcoin',
@@ -407,6 +408,7 @@ const NAV_ITEMS = [
 
     {
         label: 'Sell',
+        locate: '/sell',
         children: [
             {
                 label: 'Sell Bitcoin',
@@ -440,34 +442,35 @@ const NAV_ITEMS = [
     // },
 
     {
-        label: 'wallet',
+        label: 'Wallet',
+        locate: '',
         children: [
             {
                 label: 'Balance',
-                icon: <CiWallet />,
+                icon: <CiWallet size={20} />,
                 subLabel: 'Check you Crypto balacnce in Cryptico',
                 href: '#',
             },
             {
                 label: 'Lightining',
-                icon: <BsLightningCharge />,
+                icon: <BsLightningCharge size={20} />,
                 subLabel: 'send and revice BTC with lightining speed and low fee',
                 href: '#',
             },
             {
                 label: 'Transaction',
-                icon: <GrTransaction />,
+                icon: <GrTransaction size={20} />,
                 subLabel: 'check your account transaction history',
                 href: '#',
             }, {
                 label: 'Address',
-                icon: <BsQrCode />,
+                icon: <BsQrCode size={20} />,
                 subLabel: 'use you wallet address to recieve crypto',
                 href: '#',
             },
             {
                 label: 'Convert',
-                icon: <SiConvertio />,
+                icon: <SiConvertio size={20} />,
                 subLabel: 'convert fund from one to another cypto',
                 href: '#',
             },

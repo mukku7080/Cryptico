@@ -50,13 +50,13 @@ const CreateOffers = () => {
                     minW={{ base: '95%', md: '90%', lg: '80%', xl: '70%' }}
                     maxW={{ base: '95%', md: '90%', lg: '80%', xl: '70%' }}
                 >
-                    <Flex maxW={'90%'} minW={'80%'} w={'100%'}>
-                        <Flex width={'50%'} direction={'column'} p={10} gap={10}>
+                    <Flex w={'100%'} direction={{ base: 'column', md: 'row' }} >
+                        <Flex width={{ base: '100%', md: '50%' }} direction={'column'} p={{ base: 2, sm: 4, md: 6, lg: 8, xl: 10 }} gap={10}>
 
                             <Heading size={'md'}>Create an Offer to Sell Bitcoin</Heading>
                             <Steper />
                             <Heading size={'md'}>Choose Your Crypto Currency</Heading>
-                            <Flex gap={5} flexWrap={{ base: 'wrap', lg: 'nowrap' }}>
+                            <Flex gap={5} flexWrap={{ base: 'wrap', lg: 'wrap' }}>
 
                                 {cryptoOption.map((data, index) => (
 
@@ -132,7 +132,7 @@ const CreateOffers = () => {
                                 <OfferLocation />
                             </Flex>
                         </Flex>
-                        <Flex width={'50%'}>
+                        <Flex width={{ base: '100%', md: '50%' }}>
                             <Flex w={'full'} direction={'column'} gap={5}
                                 sx={
                                     {

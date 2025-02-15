@@ -2,28 +2,23 @@ import React from 'react'
 
 import {
     Box, Button, Card, Flex, Grid, GridItem, Heading,
-    useColorModeValue,
-    Avatar,
-    Link,
-    Badge,
     Tooltip, Menu, MenuButton, MenuItem, MenuList,
     Image,
     Input,
     InputGroup,
     InputRightElement,
     Divider,
-    Switch,
-    InputLeftElement
+    Switch
 
 } from '@chakra-ui/react';
 import { FaArrowTrendUp } from "react-icons/fa6";
 
-import { FaPhoneAlt, FaEnvelope, FaUserCircle, FaMapMarkerAlt } from "react-icons/fa";
 import { FaCheck } from "react-icons/fa6";
 import { MdOutlineWatchLater } from "react-icons/md";
 import { FaRegThumbsUp } from "react-icons/fa";
 import { AiOutlineExclamationCircle } from "react-icons/ai";
-import { MdKeyboardArrowDown, MdKeyboardArrowRight } from "react-icons/md";
+import { MdKeyboardArrowDown } from "react-icons/md";
+import { CiStar } from "react-icons/ci";
 import { useState } from 'react';
 import PaymentDropdown from '../Dropdown/PaymentDropdown';
 import CurrencyDropdown from '../Dropdown/CurrencyDropdown';
@@ -39,25 +34,25 @@ const Buy = () => {
     return (
         <>
             <Flex w={'container.xxl'} justifyContent={'center'} alignItems={'center'} my={10} >
-                <Flex w={{ base: '95%', md: '90%', lg: '80%', xl: '70%' }} direction={'column'} gap={5}>
-                    <Grid templateColumns={{ base: 'repeat(1,1fr)', sm: 'repeat(1,1fr)', md: 'repeat(1,1fr)', lg: 'repeat(1,1fr)', xl: 'repeat(4, 1fr)' }} rowGap={4} gap={{ xl: 5 }} w={'100%'} >
+                <Flex w={{ base: '95%', md: '98%', lg: '95%', xl: '80%' }} gap={5}>
+                    <Grid templateColumns={{ base: 'repeat(1,1fr)', lg: 'repeat(4,1fr)' }} w={'100%'} rowGap={4} gap={5} display={'flex'} justifyContent={'center'} flexDirection={{ base: 'column', md: 'column', lg: 'row' }} >
                         {/* Left Side nav column */}
 
-                        <GridItem colSpan={1} bg={''}  >
+                        <GridItem colSpan={1} bg={''}   >
                             <Flex width={'full'} gap={{ base: 5, xl: 5 }} direction={{ base: 'column', md: 'row', lg: 'row', xl: 'column' }}>
                                 <Flex w={'full'} direction={'column'}>
-                                    <Card boxShadow={'lg'} borderRadius={0} border={'1px solid #dcdcdc'} h={{ md: 'full', xl: 'auto' }} p={8} gap={5}>
+                                    <Card boxShadow={'lg'} borderRadius={0} border={'1px solid #dcdcdc'} h={{ md: 'full', xl: 'auto' }} p={{ base: 4, sm: 4, md: 6, xl: 8 }} gap={5}>
 
                                         <Menu >
 
-                                            <MenuButton as={Button} variant={'outline'} display={{ base: 'none', md: 'flex' }}  borderRadius={0} border={'1px solid #dcdcdc'} rightIcon={<MdKeyboardArrowDown />}  >
+                                            <MenuButton as={Button} variant={'outline'} display={{ base: 'none', md: 'flex' }} borderRadius={0} border={'1px solid #dcdcdc'} rightIcon={<MdKeyboardArrowDown />}  >
                                                 <Flex gap={2}>
                                                     <Image boxSize={5} src={logo}></Image>
                                                     {option}
                                                 </Flex>
 
                                             </MenuButton>
-                                            <MenuList borderRadius={0} p={2} >
+                                            <MenuList borderRadius={0} p={2}  >
                                                 {cryptoOption.map((data, index) => (
                                                     <>
                                                         <MenuItem key={index} onClick={() => {
@@ -159,155 +154,182 @@ const Buy = () => {
                         </GridItem>
                         {/* Left Side nav column end */}
 
+
+                        {/* RightSide start */}
+
                         <GridItem colSpan={3} bg={''}>
-                            <Flex w={'full'} direction={'column'} gap={5}>
-                                <Card borderRadius={0} gap={5} p={2}>
+                            <Flex minW={'full'} direction={'column'} gap={5}>
+                                <Card borderRadius={0} gap={5} p={2} >
+                                    <Flex direction={'column'} py={5} px={2} gap={5}>
 
-                                    {/* <CryptoAccordion title={'Active Offers'} btn1={'Buy Crypto'} btn2={'Sell Crypto'} isOptionButton={true} /> */}
-                                    <Heading size={'lg'}>Buy BitCoin (BTC)</Heading>
-                                    <Box as='p' fontWeight={500} color={'gray'} fontSize={'18px'}>Buy Bitcoin with over 500 payment methods to choose from, including bank transfers, online wallets, and gift cards.</Box>
-                                    <Flex direction={'column'}>
+                                        <Heading size={'lg'}>Buy Bitcoin (BTC).</Heading>
+                                        <Box as='p' fontWeight={500} color={'gray'} fontSize={'18px'}>Buy Bitcoin with over 500 payment methods to choose from, including bank transfers, online wallets, and gift cards.</Box>
+                                        <Flex direction={'column'}>
 
-                                        <Box bg={'orange.500'} fontWeight={500} borderTopRadius={'4px'} p={2}>Promoted Offers</Box>
-                                        <Button display={'flex'} width={'120px'} variant={'outline'} alignSelf={'end'} colorScheme='orange' borderRadius={'none'} leftIcon={<AiOutlineExclamationCircle />}>Take Tour</Button>
-                                    </Flex>
+                                            <Box bg={'orange.500'} fontWeight={500} borderTopRadius={'4px'} p={2}>Promoted Offers</Box>
+                                            <Button display={'flex'} width={'120px'} variant={'outline'} alignSelf={'end'} colorScheme='orange' size={'sm'} borderRadius={'none'} leftIcon={<AiOutlineExclamationCircle />}>Take Tour</Button>
+                                        </Flex>
 
-                                    <Flex>
-                                        <Flex direction={'column'} w={'full'} borderLeft={'1px solid #dcdcdc'} borderRight={'1px solid #dcdcdc'} borderTop={'none'}>
+                                        <Flex>
+                                            <Flex direction={'column'} w={'full'} borderLeft={'1px solid #dcdcdc'} borderRight={'1px solid #dcdcdc'} borderTop={'none'}>
 
-                                            {/* Table Heading */}
+                                                {/* Table Heading */}
 
-                                            <Flex w={'full'} bg={'gray.200'} p={4}>
+                                                <Flex w={'full'} bg={'gray.200'} p={4} fontWeight={500}>
 
-                                                <Flex flex={1} >
-                                                    <Box>Buy From</Box>
-                                                </Flex>
-                                                <Flex flex={1} >
-                                                    <Box>Pay With</Box>
-                                                </Flex>
-                                                <Flex flex={1} >
-                                                    <Box>Avg. trade speed</Box>
-                                                </Flex>
-                                                <Flex flex={1}>
-                                                    <Flex>
-
-                                                        <Box>Price per Bitcoin</Box>
+                                                    <Flex flex={1} >
+                                                        <Box>Buy From</Box>
                                                     </Flex>
-                                                    <Flex flex={1} justifyContent={'end'}>
-                                                        <Box>sort by</Box>
+                                                    <Flex flex={1} >
+                                                        <Box display={{ base: 'none', md: 'flex' }}>Pay with</Box>
+                                                    </Flex>
+                                                    <Flex flex={1} display={{ base: 'none', md: 'flex' }}  >
+                                                        <Box display={{ base: 'none', md: 'flex' }}>Avg. trade speed</Box>
+                                                    </Flex>
+                                                    <Flex flex={1} wrap={{ base: 'wrap', sm: 'nowrap' }} gap={4}>
+                                                        <Flex>
+
+                                                            <Box>Price per Bitcoin</Box>
+                                                        </Flex>
+                                                        <Flex flex={1} justifyContent={'end'}>
+
+
+                                                            <Menu >
+                                                                <MenuButton
+                                                                    as={Button}
+                                                                    size='sm'
+                                                                    rightIcon={<MdKeyboardArrowDown />}
+                                                                >
+                                                                    Sort by
+                                                                </MenuButton>
+                                                                <MenuList borderRadius={0}>
+                                                                    {
+                                                                        sortby.map((data, index) => (
+
+                                                                            <MenuItem key={index} _hover={{bg:'blue.100'}}>{data.lable}</MenuItem>
+                                                                        ))
+                                                                    }
+                                                                </MenuList>
+                                                            </Menu>
+
+
+                                                        </Flex>
                                                     </Flex>
                                                 </Flex>
-                                            </Flex>
-                                            {/* Table Heading End */}
+                                                {/* Table Heading End */}
 
 
 
-                                            {/* Offer Details */}
-                                            <Flex w={'full'} p={4} borderBottom={'1px solid #dcdcdc'}>
+                                                {/* Offer Details */}
+                                                <Flex w={'full'} p={4} borderBottom={'1px solid #dcdcdc'}>
 
-                                                {/* Buy from */}
-                                                <Flex direction={'column'} flex={1} >
-                                                    <Box>
-                                                        Forever1145
-                                                    </Box>
-                                                    <Flex gap={2} p={2}>
-                                                        <Box color={'green'} display={'flex'} alignItems={'center'}>
-
-                                                            <FaRegThumbsUp />
-                                                        </Box>
-                                                        <Box> 5421</Box>
-                                                    </Flex>
-                                                    <Box>Seen 1 minute ago</Box>
-
-
-                                                </Flex>
-
-                                                {/* Pay With */}
-                                                <Flex direction={'column'} flex={1} >
-                                                    <Flex fontWeight={600} gap={2}>
+                                                    {/* Buy from */}
+                                                    <Flex direction={'column'} flex={1} >
                                                         <Box>
-                                                            Bhim
+                                                            Forever1145
                                                         </Box>
-                                                        <Flex border={'1px solid green'} color={'green'} px={2} fontSize={'10px'} fontWeight={'bold'} gap={2} justifyContent={'center'} alignItems={'center'}>
-                                                            <FaCheck />
-                                                            <Box as='span'>
+                                                        <Flex gap={2} p={2}>
+                                                            <Box color={'green'} display={'flex'} alignItems={'center'}>
 
-                                                                VERIFIED
+                                                                <FaRegThumbsUp />
+                                                            </Box>
+                                                            <Box> 5421</Box>
+                                                        </Flex>
+                                                        <Box>Seen 1 minute ago</Box>
+
+
+                                                    </Flex>
+
+                                                    {/* Pay With */}
+                                                    <Flex direction={'column'} flex={1} display={{ base: 'none', md: 'flex' }} >
+                                                        <Flex fontWeight={600} gap={2}>
+                                                            <Box>
+                                                                Bhim
+                                                            </Box>
+                                                            <Flex border={'1px solid green'} color={'green'} px={2} fontSize={'10px'} fontWeight={'bold'} gap={2} justifyContent={'center'} alignItems={'center'}>
+                                                                <FaCheck />
+                                                                <Box as='span'>
+
+                                                                    VERIFIED
+                                                                </Box>
+                                                            </Flex>
+                                                        </Flex>
+                                                        <Flex color={'gray'}> Only For Indian Traders</Flex>
+                                                    </Flex>
+                                                    {/* Trade speed */}
+                                                    <Flex flex={1} display={{ base: 'none', md: 'flex' }}>
+                                                        <Flex gap={2} color={'gray'}>
+                                                            <Box as='span'>2 min</Box>
+                                                            <Box display={'flex'} mt={1} alignItems={''} justifyContent={'center'}>
+
+                                                                <MdOutlineWatchLater />
                                                             </Box>
                                                         </Flex>
                                                     </Flex>
-                                                    <Flex color={'gray'}> Only For Indian Traders</Flex>
-                                                </Flex>
-                                                {/* Trade speed */}
-                                                <Flex flex={1} >
-                                                    <Flex gap={2} color={'gray'}>
-                                                        <Box as='span'>2 min</Box>
-                                                        <Box display={'flex'} mt={1} alignItems={''} justifyContent={'center'}>
 
-                                                            <MdOutlineWatchLater />
-                                                        </Box>
-                                                    </Flex>
-                                                </Flex>
+                                                    {/* pricePerBitcoin */}
+                                                    <Flex flex={1} justifyContent={'center'} alignItems={'center'}>
+                                                        <Flex direction={'column'} justifyContent={'end'} alignContent={'flex-end'} alignItems={'end'} gap={2}>
 
-                                                {/* pricePerBitcoin */}
-                                                <Flex flex={1}>
-                                                    <Flex direction={'column'} justifyContent={'end'} alignContent={'flex-end'} alignItems={'end'}>
+                                                            <Heading size={'md'} >9,199,002.07 INR</Heading>
+                                                            <Flex gap={3} fontSize={'14px'}>
+                                                                <Box>1 USD=0.93 USD of BTC</Box>
+                                                                <Flex display={'flex'} alignItems={'center'} gap={1}>
+                                                                    <FaArrowTrendUp />
+                                                                    <Box>8%</Box>
+                                                                    <Box>
+                                                                        <Tooltip label='Current Market Price Indicator' fontSize='md' color={'gray'} placement={'bottom'} bg={'white'} p={4}>
+                                                                            <Box as='span'>
 
-                                                        <Heading size={'md'}>9,199,002.07 INR</Heading>
-                                                        <Flex gap={2}>
-                                                            <Box>1 USD=0.93 USD of BTC</Box>
-                                                            <Flex display={'flex'} alignItems={'center'}>
-                                                                <FaArrowTrendUp />
-                                                                <Box>8%</Box>
-                                                                <Box>
-                                                                    <Tooltip label='hi its me' fontSize='md' placement={'bottom'} bg={'gray.200'}>
-                                                                        <Box as='span'>
+                                                                                <AiOutlineExclamationCircle />
+                                                                            </Box>
+                                                                        </Tooltip>
+                                                                    </Box>
 
-                                                                            <AiOutlineExclamationCircle />
-                                                                        </Box>
-                                                                    </Tooltip>
-                                                                </Box>
+
+                                                                </Flex>
 
 
                                                             </Flex>
 
+                                                            <Flex gap={4}>
+                                                                <Flex direction={'column'} fontSize={'13px'}>
 
+                                                                    <Box>
+
+                                                                        Min purchase: 4,000 INR
+                                                                    </Box>
+                                                                    <Box>
+
+                                                                        Max purchase: 33,297 INR
+                                                                    </Box>
+                                                                </Flex>
+                                                                <Flex alignItems={'center'} gap={2} flexDirection={'column'}>
+                                                                    <Button size={'sm'} variant='outline' bg={'transparent'}><CiStar /></Button>
+                                                                    <Button size={'sm'} bg={'orange'}>Buy</Button>
+                                                                </Flex>
+
+                                                            </Flex>
                                                         </Flex>
 
-                                                        <Flex gap={1}>
-                                                            <Flex direction={'column'}>
 
-                                                                <Box>
-
-                                                                    Min purchase: 4,000 INR
-                                                                </Box>
-                                                                <Box>
-
-                                                                    Max purchase: 33,297 INR
-                                                                </Box>
-                                                            </Flex>
-                                                            <Flex alignItems={'center'}>
-                                                                <Button size={'sm'} bg={'orange'}>Buy</Button>
-                                                            </Flex>
-
-                                                        </Flex>
                                                     </Flex>
-
-
                                                 </Flex>
                                             </Flex>
                                         </Flex>
                                     </Flex>
+
                                 </Card>
                                 <Card borderRadius={0}>
 
-                                    {/* <CryptoAccordion title={'Feedback'} btn1={'From Crypto Buyers'} btn2={'From Crypto Sellers'} /> */}
                                 </Card>
 
 
                             </Flex>
 
                         </GridItem>
+                        {/* RightSide end */}
+
                     </Grid>
 
                 </Flex>
@@ -318,9 +340,17 @@ const Buy = () => {
 }
 
 const cryptoOption = [
-    { name: 'Bitcoin',  logo: 'https://cryptologos.cc/logos/thumbs/bitcoin.png?v=040' },
+    { name: 'Bitcoin', logo: 'https://cryptologos.cc/logos/thumbs/bitcoin.png?v=040' },
     { name: 'Ethereum', logo: 'https://cryptologos.cc/logos/thumbs/ethereum.png?v=040' },
     { name: 'USDC', logo: 'https://cryptologos.cc/logos/thumbs/usd-coin.png?v=040' },
     { name: 'Tether', logo: 'https://cryptologos.cc/logos/thumbs/tether.png?v=040' },
+]
+
+
+const sortby = [
+    { lable: 'Price:Lowest to Highest' },
+    { lable: 'Price:Highest to Lowest' },
+    { lable: 'Avg. Trade Speed: Fastest to Slowest' },
+    { lable: 'Avg. Trade Speed: Fastest to Slowest' },
 ]
 export default Buy

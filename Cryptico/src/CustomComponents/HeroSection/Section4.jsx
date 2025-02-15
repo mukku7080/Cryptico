@@ -1,7 +1,7 @@
-import { AbsoluteCenter, Box, Card, CardBody, Flex, Heading, Image } from '@chakra-ui/react'
-import React from 'react'
-import CryptoAccordion from '../Accordian/CryptoAccordion';
-import Accordion from 'react-bootstrap/Accordion';
+import { AbsoluteCenter, Box, Card, CardBody, Flex, Heading, Image } from '@chakra-ui/react';
+import React from 'react';
+import FaqAccordion from '../Accordian/FaqAccordian';
+
 
 
 const Section4 = () => {
@@ -93,9 +93,11 @@ const Section4 = () => {
                     gap={2}
                 >
 
-                    <Heading size={'lg'} fontWeight={'500'} mb={8}>FAQs</Heading>
+                    <Heading size={'lg'} fontWeight={'500'} mt={20} pl={6}>FAQs</Heading>
 
-                    <Accordion defaultActiveKey="" flush >
+
+                    <FaqAccordion />
+                    {/* <Accordion defaultActiveKey="" flush >
                         <Accordion.Item eventKey="0" >
                             <Accordion.Header  >What is Cryptico</Accordion.Header>
                             <Accordion.Body  >
@@ -108,7 +110,7 @@ const Section4 = () => {
                                 Another content goes here...
                             </Accordion.Body>
                         </Accordion.Item>
-                    </Accordion>
+                    </Accordion> */}
                 </Box>
 
 

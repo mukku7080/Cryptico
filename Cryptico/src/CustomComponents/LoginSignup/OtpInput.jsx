@@ -30,13 +30,29 @@ function OTPInput({ verification, email }) {
             try {
 
                 const res = await handleVerifyEmailOtp({ otp });
-                if (res.status === "success") {
+                console.log(res.status);
+                toast({
+                    title: "Email Verified",
+                    description: "Successfully Registered",
+                    status: "success",
+                    duration: 2000,
+                    isClosable: true,
+                    position: "top-right",
+                });
 
-                    navigate('/user-dashboard');
-                }
+                navigate('/user-dashboard');
+
             }
-            catch (err) {
-                console.log("Error:", err.res ? err.res.data : err.message);
+            catch (error) {
+
+                toast({
+                    title: "error",
+                    description: "Invalid OTP",
+                    status: "error",
+                    duration: 4000,
+                    isClosable: true,
+                    position: "bottom",
+                });
             }
         }
         if (verification == 'Mobile') {
@@ -49,22 +65,38 @@ function OTPInput({ verification, email }) {
     }
 
     // Handle Resend OTP
+
     const handleResendOTP = () => {
         setTimeLeft(120); // Reset timer to 2 minutes
         setIsResendDisabled(true);
         setOtp(""); // Clear OTP input
-        const res = handleEmailOtp();
-        if (res.status === 'success') {
+        try {
+
+            const res = handleEmailOtp();
+            if (res.status === 'success') {
+                toast({
+                    title: "Otp Resent Successfully",
+                    status: "warning",
+                    duration: 4000,
+                    isClosable: true,
+                    position: "top-right",
+                });
+
+            }
+            console.log("OTP Resent!");
+        }
+        catch (error) {
             toast({
-                title: "Otp Resent Successfully",
-                status: "warning",
+                title: { error },
+                status: "error",
                 duration: 4000,
                 isClosable: true,
                 position: "top-right",
             });
 
+            console.log("Error:", error.message);
+
         }
-        console.log("OTP Resent!");
     };
 
     // Format timer display (MM:SS)

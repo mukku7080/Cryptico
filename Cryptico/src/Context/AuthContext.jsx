@@ -14,7 +14,6 @@ export const AuthProvider = ({ children }) => {
         const token = localStorage.getItem("authToken");
         if (token) {
             setUser({ token });
-            // axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
         }
     }, [])
@@ -39,6 +38,7 @@ export const AuthProvider = ({ children }) => {
         try {
 
             const data = loginWithGoogle();
+            console.log(data);
             localStorage.setItem("authToken", data.token);
             setUser(data.user);
         }
@@ -59,12 +59,8 @@ export const AuthProvider = ({ children }) => {
         catch (error) {
             console.error("Login error:", error);
             alert(error.message || "Login failed");
-
         }
-
     };
-
-
     const handleSignup = async ({ email, password }) => {
         try {
 
@@ -81,19 +77,19 @@ export const AuthProvider = ({ children }) => {
     };
     const handleEmailOtp = async () => {
         try {
-            const data = await emailOtp();
-            return data;
+            const response = await emailOtp();
+            return response;
         }
         catch (error) {
             console.error("otp error:", error);
-
         }
 
     }
     const handleVerifyEmailOtp = async ({ otp }) => {
         try {
-            const data = await verifyEmailOtp({ otp });
-            return data;
+            const response = await verifyEmailOtp({ otp });
+            console.log(response);
+            return response;
         }
         catch (error) {
             console.error("otp error:", error);

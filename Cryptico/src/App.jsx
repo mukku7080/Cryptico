@@ -18,6 +18,8 @@ import { AuthProvider } from './Context/AuthContext'
 import Buy from './CustomComponents/Buy&Sell/Buy'
 import CreateOffers from './CustomComponents/Offers/CreateOffers'
 import UserProvider from './Context/userContext'
+import Sell from './CustomComponents/Buy&Sell/Sell'
+import Redirect from './CustomComponents/LoginSignup/Redirect'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -50,11 +52,12 @@ function App() {
               </Route>
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/paymentMethod" element={<ProtectedRoute><PaymentMethod /></ProtectedRoute>} />
-              <Route path='/buy' element={<Buy />} />
+              <Route path='/buy' element={<ProtectedRoute><Buy /></ProtectedRoute>} />
+              <Route path='/sell' element={<ProtectedRoute><Sell /></ProtectedRoute>} />
               <Route path='/createOffers' element={<ProtectedRoute><CreateOffers /></ProtectedRoute>} />
+              <Route path='/redirect' element={<Redirect/>}></Route>
 
             </Routes>
-
 
 
 
