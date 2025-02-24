@@ -29,12 +29,17 @@ const CurrencyDropdown = () => {
         <>
             <Menu placement="bottom-end">
                 <MenuButton
-                    bg="orange.500"
-                    color="white"
-                    borderRadius={0}
-                    _hover={{ bg: "orange.600" }}
-                    _expanded={{ bg: "orange.400" }}
-                    px={4}
+                    as={Button}
+                    bg={'transparent'}
+                    borderRadius={5}
+                    _hover={{ bg: "transparent" }}
+                    size={'sm'}
+                    minW={{ base: "auto", md: "100px" }} // Ensures it doesn't shrink too much
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="space-between"
+                    rightIcon={<MdKeyboardArrowDown />}
+
                 >
                     {option}
                 </MenuButton>

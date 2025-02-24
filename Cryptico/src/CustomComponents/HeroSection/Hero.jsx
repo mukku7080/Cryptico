@@ -14,8 +14,11 @@ const Hero = () => {
     const bgcolor = useColorModeValue('linear-gradient(96.76deg, rgba(255, 247, 230, .2) 13.68%, rgba(255, 202, 99, .2) 38.25%, rgba(255, 240, 208, .2) 81.97%), #fff;', 'gray')
     return (
         <>
+        <Flex direction={'column'} marginTop={'50px'}>
+        
+
             <Section1 />
-            <Container maxW={'container.xl'} mb={10}>
+            <Container maxW={'container.xl'} mb={10} >
 
 
 
@@ -63,6 +66,8 @@ const Hero = () => {
                     </Box>
                 </Flex>
             </Box>
+        </Flex>
+
 
         </>
     )

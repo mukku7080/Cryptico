@@ -5,6 +5,9 @@ import {
     Avatar,
     Link,
     Badge,
+    Spinner,
+    Image,
+    Divider
 
 } from '@chakra-ui/react'
 
@@ -13,33 +16,55 @@ import CryptoAccordion, { Mybadge } from '../Accordian/CryptoAccordion';
 import { IoEyeOutline } from "react-icons/io5";
 import { MdModeEdit } from "react-icons/md";
 import { FaTwitter, FaFacebook } from "react-icons/fa";
+import { useUser } from '../../Context/userContext';
+import { MdOutlineThumbUp, MdOutlineThumbDownAlt } from "react-icons/md";
+import { PiUserCircleThin } from "react-icons/pi";
 
 
 
 const Profile = () => {
+
+    const { user } = useUser();
     return (
         <>
-            <Flex w={'container.xxl'} justifyContent={'center'} alignItems={'center'} my={10} >
-                <Flex w={{ base: '95%', md: '90%', lg: '80%', xl: '70%' }} direction={'column'} gap={5}>
-                    <Grid templateColumns={{ base: 'repeat(1,1fr)', md: 'repeat(4,1fr)' }} rowGap={4} gap={{ md: 5 }}>
+            <Flex w={'container.xxl'} justifyContent={'center'} alignItems={'center'} my={10} marginTop={'50px'} >
+                <Flex
+                    maxW={{ base: "95%", sm: '90%', lg: '95%', xl: "90%" }}
+                    minW={{ base: "90%", sm: '90%', lg: '90%', xl: "90%" }}
+                    w={'full'}
+                    direction={'column'}
+                    gap={5}
+                    mt={10}>
+                    <Grid templateColumns={{ base: 'repeat(1,1fr)', sm: 'repeat(1,1fr)', md: 'repeat(1,1fr)', lg: 'repeat(1,1fr)', xl: 'repeat(4, 1fr)' }} rowGap={4} gap={{ xl: 5 }} w={'100%'}>
 
 
                         <GridItem colSpan={1} >
-                            <Card borderRadius={0} p={6}>
-                                <Flex alignItems={'center'} justifyContent={'center'} direction={'column'} gap={5}>
-                                    <Avatar name='Mukesh rai' size={'xl'}></Avatar>
+                            <Card borderRadius={5} py={4}>
+                                <Flex alignItems={'center'} gap={2} pl={5} mb={5}>
+                                    <Box boxSize={3} bg={'green.400'} borderRadius={'50%'}></Box> Active Now
+                                </Flex>
+                                <Flex alignItems={'center'} justifyContent={'center'} direction={'column'} gap={2}>
+                                    {user ? (<Avatar name={user.name ? user.name : user.email} src={user.Profile} size={'xl'} />) : (<Spinner size={'xl'} />)
 
-                                    <Button colorScheme='orange' rightIcon={<MdModeEdit />}> Change Profile Picture</Button>
+                                    }
+                                    <Heading size={'lg'}> User_Name</Heading>
+                                    <Flex gap={3} alignItems={'center'}>
+                                        India
+                                        <Image boxSize={8} src='https://www.svgrepo.com/show/401651/flag-for-india.svg'></Image>
+                                    </Flex>
+
+
+
+                                    <Button bg={'transparent'} _hover={{ bg: 'transparent' }} rightIcon={<MdModeEdit />}> Edit Profile</Button>
                                 </Flex>
                             </Card>
 
                         </GridItem>
                         <GridItem colSpan={3}  >
-                            <Card width={'full'} h={'full'} p={4} borderRadius={'none'}>
-                                <Flex justifyContent={'space-between'} alignItems={'center'} mx={2} direction={{ base: 'column', sm: 'row', md: 'row' }} gap={5}>
+                            <Card width={'full'} h={'full'} p={1} borderRadius={5}>
+                                {/* <Flex justifyContent={'space-between'} alignItems={'center'} mx={2} direction={{ base: 'column', sm: 'row', md: 'row' }} gap={5}>
 
                                     <Flex direction={'column'} gap={4} color={'gray'} alignItems={{ base: 'center', sm: 'start' }} >
-                                        <Heading size={'lg'}> User_Name</Heading>
                                         <Box>Trust:Block</Box>
                                         <Flex gap={3}>
                                             <Box display={'flex'} alignItems={'center'}>
@@ -80,7 +105,8 @@ const Profile = () => {
                                         }
 
                                     </Flex>
-                                </Flex>
+                                </Flex> */}
+                                <UserDetails />
                             </Card>
 
                         </GridItem>
@@ -92,7 +118,7 @@ const Profile = () => {
                         <GridItem colSpan={1} bg={''}  >
                             <Flex width={'full'} gap={{ base: 5, xl: 5 }} direction={{ base: 'column', md: 'row', lg: 'row', xl: 'column' }}>
                                 <Flex w={'full'} direction={'column'}>
-                                    <Card boxShadow={'lg'} borderRadius={0} border={'1px solid #dcdcdc'} h={{ md: 'full', xl: 'auto' }}>
+                                    <Card boxShadow={'lg'} borderRadius={5} border={'1px solid #dcdcdc'} h={{ md: 'full', xl: 'auto' }}>
 
                                         <Box py={2} px={3} borderBottom={'1px solid #dcdcdc'} fontWeight={600} bg={'#f7f7f7'} w={'full'}>Verification</Box>
                                         {verificationStatus.map((data, index) => (
@@ -114,7 +140,7 @@ const Profile = () => {
                                 </Flex>
 
                                 <Flex w={'full'} direction={'column'}>
-                                    <Card boxShadow={'lg'} border={'1px solid #dcdcdc'} borderRadius={0}>
+                                    <Card boxShadow={'lg'} border={'1px solid #dcdcdc'} borderRadius={5}>
 
                                         <Box py={2} px={3} borderBottom={'1px solid #dcdcdc'} fontWeight={600} bg={'#f7f7f7'} w={'full'}>Info</Box>
                                         {userDetails.map((data, index) => (
@@ -140,11 +166,11 @@ const Profile = () => {
 
                         <GridItem colSpan={3} bg={''}>
                             <Flex w={'full'} direction={'column'} gap={5}>
-                                <Card borderRadius={0} gap={5}>
+                                <Card borderRadius={5} gap={5}>
 
                                     <CryptoAccordion title={'Active Offers'} btn1={'Buy Crypto'} btn2={'Sell Crypto'} isOptionButton={true} />
                                 </Card>
-                                <Card borderRadius={0}>
+                                <Card borderRadius={5}>
 
                                     <CryptoAccordion title={'Feedback'} btn1={'From Crypto Buyers'} btn2={'From Crypto Sellers'} />
                                 </Card>
@@ -160,6 +186,105 @@ const Profile = () => {
     )
 }
 
+const UserDetails = () => {
+    return (
+        <Flex direction={'column'} gap={5}>
+            <Flex justifyContent={'end'} >
+
+                <Box fontSize={'12px'} bg={'orange.200'} px={2} borderTopRightRadius={5}>For 30 days range</Box>
+            </Flex>
+            <Flex justifyContent={'space-between'}  gap={5} direction={{ base: 'column', md: 'row' }} >
+
+                <Flex gap={{ base: 5,sm:10, lg: 20 }} w={'full'} flex={1} justifyContent={'space-around'} >
+
+                    <Flex direction={'column'} gap={5} >
+                        {/*positive Feedback */}
+                        <Flex bg={'green.100'} borderRadius={5} direction={'column'} gap={2} py={2}>
+                            <Flex alignItems={'center'} justifyContent={'space-between'} gap={5} px={3} w={'200px'} color={'green.600'} >
+                                <Box as='p' fontWeight={700} >+18</Box>
+                                <MdOutlineThumbUp />
+
+                            </Flex>
+                            <Box px={3} fontSize={'12px'} color={'green.600'} fontWeight={500}>Positive Feedback</Box>
+
+                        </Flex>
+                        {/*Negative Feedback */}
+
+                        <Flex bg={'red.100'} borderRadius={5} direction={'column'} gap={2} py={2}>
+                            <Flex alignItems={'center'} justifyContent={'space-between'} gap={5} px={3} w={'200px'} color={'red.600'} >
+                                <Box as='p' fontWeight={700} >-8</Box>
+                                <MdOutlineThumbDownAlt />
+
+                            </Flex>
+                            <Box px={3} fontSize={'12px'} color={'red.600'} fontWeight={500}>Negative Feedback</Box>
+
+                        </Flex>
+
+                    </Flex>
+                    <Flex direction={'column'} gap={10}>
+                        <Flex direction={'column'}  ><Box color={'gray.500'} fontSize={'14px'} textAlign={{ base: 'end', md: 'start' }}>Trades Released</Box><Box textAlign={{ base: 'end', md: 'start' }}>1256</Box></Flex>
+                        <Flex direction={'column'}  ><Box color={'gray.500'} fontSize={'14px'} textAlign={{ base: 'end', md: 'start' }}>Trades Partners</Box><Box textAlign={{ base: 'end', md: 'start' }}>1256</Box></Flex>
+
+                    </Flex>
+                </Flex>
+                <Divider border={'1px solid #dcdcdc'} display={{ base: 'block', md: 'none' }} />
+                <Flex gap={{ base: 5,sm:10, lg: 20 }} w={'full'} flex={1} justifyContent={'space-around'}>
+                    {/* userDetail1 */}
+                    <Flex direction={'column'} gap={4}  >
+
+                        {
+                            userValueDetail1.map((data, index) => (
+
+                                <Flex key={index} direction={'column'}>
+                                    <Box fontSize={'12px'} color={'gray.500'}>{data.label}</Box>
+                                    <Flex alignItems={'center'} >
+                                        <Box>
+
+                                            <PiUserCircleThin size={'30px'} />
+                                        </Box>
+
+                                        <Box >{data.value}</Box>
+                                    </Flex>
+                                </Flex>
+                            ))
+                        }
+                    </Flex>
+
+                    {/* UserDetail2 */}
+                    <Flex direction={'column'} gap={4} >
+
+                        {
+                            userValueDetail2.map((data, index) => (
+
+                                <Flex key={index} direction={'column'} >
+                                    <Box fontSize={'12px'} color={'gray.500'} textAlign={{ base: 'end', md: 'start' }} >{data.label}</Box>
+                                    <Flex justifyContent={{ base: 'end', md: 'start' }} alignItems={'center'} >
+                                        <Box>{data.value}</Box>
+                                    </Flex>
+                                </Flex>
+                            ))
+                        }
+                    </Flex>
+
+
+
+                </Flex>
+            </Flex>
+        </Flex>
+    )
+}
+
+const userValueDetail1 = [
+    { label: "Trusted By", value: "17 USERS" },
+    { label: "Blocked By", value: "0 USERS" },
+    { label: "Has Blocked", value: "5 USERS" },
+]
+const userValueDetail2 = [
+    { label: "Trade Success", value: "99.3%" },
+    { label: "AVG. TIME TO PAYMENT", value: "6m 20s" },
+    { label: "AVG. TIME TO RELEASE", value: "3m 51s" },
+    { label: "TRADE VOLUME", value: "150000-5000000 USD" },
+]
 
 const verificationStatus = [
     {

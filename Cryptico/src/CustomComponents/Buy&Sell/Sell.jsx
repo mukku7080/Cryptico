@@ -33,8 +33,8 @@ const Sell = () => {
 
     return (
         <>
-            <Flex w={'container.xxl'} justifyContent={'center'} alignItems={'center'} my={10} >
-                <Flex w={{ base: '95%', md: '98%', lg: '95%', xl: '80%' }} gap={5}>
+            <Flex w={'container.xxl'} justifyContent={'center'} alignItems={'center'} my={10} marginTop={'50px'} minH={'90vh'} >
+                <Flex w={{ base: '95%', md: '98%', lg: '95%', xl: '80%' }} gap={5} mt={10}>
                     <Grid templateColumns={{ base: 'repeat(1,1fr)', lg: 'repeat(4,1fr)' }} w={'100%'} rowGap={4} gap={5} display={'flex'} justifyContent={'center'} flexDirection={{ base: 'column', md: 'column', lg: 'row' }} >
                         {/* Left Side nav column */}
 

@@ -27,14 +27,19 @@ import OfferLocation from '../Dropdown/OfferLocation';
 import TraderLocation from '../Dropdown/TraderLocation';
 
 const Buy = () => {
-    const [isDisabled, setIsDisabled] = useState(true); // Switch state
+    // const [isDisabled, setIsDisabled] = useState(true); // Switch state
     const [option, setOption] = useState(cryptoOption[0].name);
     const [logo, setlogo] = useState(cryptoOption[0].logo);
 
     return (
         <>
-            <Flex w={'container.xxl'} justifyContent={'center'} alignItems={'center'} my={10} >
-                <Flex w={{ base: '95%', md: '98%', lg: '95%', xl: '80%' }} gap={5}>
+            <Flex maxW={'container.xxl'} justifyContent={'center'} alignItems={'center'} my={10} marginTop={'50px'} minH={'90vh'} >
+                <Flex
+                    // w={{ base: '95%', md: '98%', lg: '95%', xl: '80%' }}
+                    maxW={{ base: "auto", lg: 'none', xl: "80%" }}
+                    minW={{ base: "90%", sm: '90%', lg: '80%', xl: "none" }}
+                    gap={5}
+                    mt={10}>
                     <Grid templateColumns={{ base: 'repeat(1,1fr)', lg: 'repeat(4,1fr)' }} w={'100%'} rowGap={4} gap={5} display={'flex'} justifyContent={'center'} flexDirection={{ base: 'column', md: 'column', lg: 'row' }} >
                         {/* Left Side nav column */}
 
@@ -112,12 +117,12 @@ const Buy = () => {
                                                     <Box>Trader Location</Box>
                                                     <Box display={'flex'} alignItems={'center'}><AiOutlineExclamationCircle /></Box>
                                                 </Flex>
-                                                <Flex alignItems={'center'}>
+                                                {/* <Flex alignItems={'center'}>
                                                     <Switch colorScheme='orange' onChange={() => setIsDisabled((prev) => !prev)} />
 
-                                                </Flex>
+                                                </Flex> */}
                                             </Flex>
-                                            <TraderLocation isDisabled={isDisabled} />
+                                            <TraderLocation />
 
                                             <Flex gap={2} justifyContent={'space-between'}>
                                                 <Flex gap={2}>
@@ -206,7 +211,7 @@ const Buy = () => {
                                                                     {
                                                                         sortby.map((data, index) => (
 
-                                                                            <MenuItem key={index} _hover={{bg:'blue.100'}}>{data.lable}</MenuItem>
+                                                                            <MenuItem key={index} _hover={{ bg: 'blue.100' }}>{data.lable}</MenuItem>
                                                                         ))
                                                                     }
                                                                 </MenuList>

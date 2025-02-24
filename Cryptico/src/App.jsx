@@ -3,7 +3,7 @@ import './App.css'
 import Navbarnew from './CustomComponents/Navbar/Navbarnew'
 import Footer from './CustomComponents/Footer/Footer'
 import Hero from './CustomComponents/HeroSection/Hero'
-import { Container, useColorModeValue } from '@chakra-ui/react'
+import { Container, Flex, Box,useColorModeValue } from '@chakra-ui/react'
 import { Outlet, Route, Routes } from 'react-router-dom'
 import Signupnew from './CustomComponents/LoginSignup/Signupnew'
 import Loginnew from './CustomComponents/LoginSignup/Loginnew'
@@ -20,6 +20,9 @@ import CreateOffers from './CustomComponents/Offers/CreateOffers'
 import UserProvider from './Context/userContext'
 import Sell from './CustomComponents/Buy&Sell/Sell'
 import Redirect from './CustomComponents/LoginSignup/Redirect'
+import Wallet from './CustomComponents/Wallet/Wallet'
+import BuyNew from './CustomComponents/Buy&Sell/BuyNew'
+// import ForgetPassword from './CustomComponents/LoginSignup/ForgetPassword'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -34,9 +37,12 @@ function App() {
         <UserProvider>
 
           <Container maxW={'container.xxl'} margin={0} padding={0} bg={bgColor}>
+            <Box position={'fixed'} top={0} left={0} right={0}  zIndex={1}>
+
+              <Navbarnew />
+            </Box>
 
 
-            <Navbarnew />
 
 
 
@@ -52,10 +58,11 @@ function App() {
               </Route>
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/paymentMethod" element={<ProtectedRoute><PaymentMethod /></ProtectedRoute>} />
-              <Route path='/buy' element={<ProtectedRoute><Buy /></ProtectedRoute>} />
+              <Route path='/buy' element={<ProtectedRoute><BuyNew /></ProtectedRoute>} />
               <Route path='/sell' element={<ProtectedRoute><Sell /></ProtectedRoute>} />
               <Route path='/createOffers' element={<ProtectedRoute><CreateOffers /></ProtectedRoute>} />
-              <Route path='/redirect' element={<Redirect/>}></Route>
+              <Route path='/redirect' element={<Redirect />}></Route>
+              <Route path='/wallet' element={<Wallet />}></Route>
 
             </Routes>
 

@@ -15,7 +15,7 @@ const Footer = () => {
       {/* mainFlex */}
 
 
-      <Flex maxW={'container.xl'} direction={'column'} align={'center'} justifyContent={'center'} height={'100%'}>
+      <Flex maxW={'container.xxl'} direction={'column'} align={'center'} justifyContent={'center'} height={'100%'}>
 
 
 

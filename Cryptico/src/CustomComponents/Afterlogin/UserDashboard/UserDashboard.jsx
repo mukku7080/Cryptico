@@ -30,14 +30,15 @@ const UserDashboard = () => {
 
     }, []);
     return (
-        <Flex maxW={'container.xxl'} bg={''} justifyContent={'center'} alignItems={'center'} direction={'column'} gap={10} my={10}>
+        <Flex maxW={'container.xxl'} bg={''} justifyContent={'center'} alignItems={'center'} direction={'column'} gap={10} my={10} marginTop={'50px'}>
 
             <Flex
                 // minW={'80%'}
                 maxW={{ base: "auto", lg: 'none', xl: "80%" }}
                 minW={{ base: "90%", sm: '90%', lg: '80%', xl: "none" }}
+                mt={10}
 
-                bg={''} direction={'column'} gap={10} mx={5}>
+                bg={''} direction={'column'} gap={5} mx={5}>
 
 
 

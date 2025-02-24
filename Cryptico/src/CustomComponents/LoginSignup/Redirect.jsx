@@ -28,7 +28,6 @@ const Redirect = () => {
 
                     // Redirect after 3 seconds
                     setTimeout(() => {
-                        alert("My dashboard");
                         window.location.href = "/user-dashboard";
                     }, 3000);
                 } else {

@@ -30,7 +30,7 @@ const PaymentDropdown = () => {
                 rightIcon={<MdKeyboardArrowDown />}
                 bg="orange.500"
                 color="white"
-                borderRadius={0}
+                borderRadius={5}
                 _hover={{ bg: "orange.600" }}
                 _expanded={{ bg: "orange.400" }}
             >

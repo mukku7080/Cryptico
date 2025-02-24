@@ -43,12 +43,13 @@ const CreateOffers = () => {
 
     return (
         <>
-            <Flex W={'container.xxl'} justifyContent={'center'} alignItems={'center'} my={10}>
+            <Flex W={'container.xxl'} justifyContent={'center'} alignItems={'center'} my={10} marginTop={'50px'}>
 
 
                 <Flex
                     minW={{ base: '95%', md: '90%', lg: '80%', xl: '70%' }}
                     maxW={{ base: '95%', md: '90%', lg: '80%', xl: '70%' }}
+                    mt ={10}
                 >
                     <Flex w={'100%'} direction={{ base: 'column', md: 'row' }} >
                         <Flex width={{ base: '100%', md: '50%' }} direction={'column'} p={{ base: 2, sm: 4, md: 6, lg: 8, xl: 10 }} gap={10}>

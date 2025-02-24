@@ -34,7 +34,7 @@ const UserAvatar = () => {
     return (
         <Flex justifyContent={'center'} alignItems={'center'} gap={10}>
             <Flex gap={2} alignItems={'center'}>
-                <Box as="span" fontSize={'10px'}> {user == null ? "loading...." : user.email} <br />5000.00 INR</Box>
+                <Box as="span" fontSize={'10px'} textAlign={'end'}> {user == null ? "loading...." : user.email} <br />5000.00 INR</Box>
 
                 <Menu  >
                     <MenuButton as={Button} variant="ghost" borderRadius={'none'} p={0} rightIcon={<MdKeyboardArrowDown color="white" />} _hover={{ bg: "transparent" }}

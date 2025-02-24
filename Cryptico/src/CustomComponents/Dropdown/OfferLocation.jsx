@@ -32,7 +32,7 @@ const OfferLocation = () => {
                 <MenuButton
                     as={Button}
                     rightIcon={<MdKeyboardArrowDown />}
-                    borderRadius={0}
+                    borderRadius={5}
 
                 >
                     <Flex>

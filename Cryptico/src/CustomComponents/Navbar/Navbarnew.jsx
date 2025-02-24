@@ -30,8 +30,8 @@ const Navbarnew = () => {
 
 
     return (
-        <Box as='nav' bg={'#17181E'} >
-            <Flex maxW={'container.xxl'} width={{ md: '100%', lg: '100%' }} padding={'0 18px'} bg={'black'} color={'white'} minH={'48px'} align={'center'} justifyContent={'space-between'} >
+        <Box as='nav' bg={'#17181E'}  >
+            <Flex maxW={'container.xxl'} width={{ md: '100%', lg: '100%' }} px={20} bg={'black'} color={'white'} minH={'48px'} align={'center'} justifyContent={'space-between'} py={2} >
 
 
 
@@ -443,7 +443,7 @@ const NAV_ITEMS = [
 
     {
         label: 'Wallet',
-        locate: '',
+        locate: '/wallet',
         children: [
             {
                 label: 'Balance',
