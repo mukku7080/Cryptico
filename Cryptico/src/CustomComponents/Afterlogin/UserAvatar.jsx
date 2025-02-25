@@ -1,8 +1,12 @@
-import { Avatar, AvatarBadge, Badge, Menu, MenuButton, MenuList, MenuItem, Button, Flex, Box, IconButton, Spinner } from "@chakra-ui/react";
+import { Avatar, AvatarBadge, Badge, Menu, MenuButton, useColorModeValue, useColorMode, Icon, MenuList, MenuItem, Button, Flex, Box, IconButton, Spinner } from "@chakra-ui/react";
 import { MdKeyboardArrowDown, MdKeyboardArrowRight } from "react-icons/md";
 import { useState, useEffect } from "react";
 import { FaUser, FaCreditCard, FaCog, FaHistory, FaUsers, FaGift, FaExchangeAlt, FaComments, FaSignOutAlt } from "react-icons/fa";
 import { IoMdNotificationsOutline } from "react-icons/io";
+import { MdDarkMode, MdOutlineFileDownload } from "react-icons/md";
+
+import { CiLight, CiWallet } from "react-icons/ci";
+
 import NotificationBell from "./Notificationbell";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -14,6 +18,11 @@ const UserAvatar = () => {
     const navigate = useNavigate();
     const { handleLogout } = useAuth();
     const { user } = useUser();
+    const { toggleColorMode } = useColorMode();
+    const bgColor = useColorModeValue("gray.100", "gray.900");
+    const textColor = useColorModeValue("black", "white");
+    const [isdark, setDark] = useState(false);
+
 
     const Logout = async () => {
         try {
@@ -49,6 +58,22 @@ const UserAvatar = () => {
 
                     </MenuButton>
                     <MenuList borderRadius={0}>
+                        <MenuItem bg={'none'} display={'flex'} justifyContent={'end'}>
+
+                            <Button onClick={() => {
+                                setDark(!isdark)
+                                toggleColorMode();
+                            }} boxSize={10}
+                                bg={'orange'}
+                                borderRadius={'full'}
+                            >
+
+                                {
+                                    isdark ? <Icon as={CiLight} boxSize={6} ></Icon> :
+                                        <Icon as={MdDarkMode} boxSize={6} ></Icon>
+                                }
+                            </Button>
+                        </MenuItem>
                         {menuItems.map((item, index) => (
                             <MenuItem
                                 key={index}

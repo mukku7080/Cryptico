@@ -7,7 +7,7 @@ import { FaArrowTrendUp } from "react-icons/fa6";
 import { HiMiniArrowPath } from "react-icons/hi2";
 import { IoBagOutline } from "react-icons/io5";
 import { LiaHandPointRightSolid } from "react-icons/lia";
-import { MdOutlineFileDownload, MdKeyboardArrowRight, MdKeyboardArrowDown} from "react-icons/md";
+import { MdOutlineFileDownload, MdKeyboardArrowRight, MdKeyboardArrowDown } from "react-icons/md";
 import { BsLightningCharge } from "react-icons/bs";
 import { PiChecks } from "react-icons/pi";
 import { IoMenuOutline, IoCloseOutline } from "react-icons/io5";
@@ -19,8 +19,8 @@ import { useUser } from '../../../Context/userContext';
 const UserDashboard = () => {
 
     const bgcolor = useColorModeValue('gray.100', 'gray.700');
-    const navigate = useNavigate();
     const [tag, setTag] = useState("Trade History");
+    const navigate = useNavigate();
     const [istoogle, setToogle] = useState(false);
     const { isOpen, onToggle } = useDisclosure();
     const { isOpen: isOpen1, onToggle: onToggle1 } = useDisclosure();
@@ -34,8 +34,8 @@ const UserDashboard = () => {
 
             <Flex
                 // minW={'80%'}
-                maxW={{ base: "auto", lg: 'none', xl: "80%" }}
-                minW={{ base: "90%", sm: '90%', lg: '80%', xl: "none" }}
+                maxW={{ base: "90%", lg: '90%', xl: "90%" }}
+                minW={{ base: "90%", sm: '90%', lg: '90%', xl: "90%" }}
                 mt={10}
 
                 bg={''} direction={'column'} gap={5} mx={5}>
@@ -46,7 +46,7 @@ const UserDashboard = () => {
                 {/* First Grid Row---------------------------------------------------------------------- */}
                 <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)", lg: "repeat(3, 1fr)", xl: "repeat(4, 1fr)" }} gap={5} width={'full'} transition="all 0.5s ease-in-out" >
                     <GridItem bg={'wite'} colSpan={{ base: 3, md: 3, lg: 3, xl: 1 }} >
-                        <Card h={{ md: '50px', lg: '50px', xl: '150px' }} borderRadius={0} bg={'transparent'} boxShadow={'none'} border={'1px solid rgba(128, 128, 128, 0.05)'} direction={'row'} display={'flex'} justifyContent={'start'}>
+                        <Card h={{ md: '50px', lg: '50px', xl: '120px' }} borderRadius={0} bg={'transparent'} boxShadow={'none'} border={'1px solid rgba(128, 128, 128, 0.05)'} direction={'row'} display={'flex'} justifyContent={'start'}>
 
                             <Heading size={'lg'} display={'flex'} alignItems={'center'} > {tag}</Heading>
                             <Flex justify={'flex-end'} flex={{ base: 1, md: 'auto' }} display={{ base: 'flex', md: 'flex', lg: 'none', xl: 'none' }} pr={{ base: '20px', sm: '20px', md: '20px', lg: '0px' }} gap={5} >
@@ -83,7 +83,7 @@ const UserDashboard = () => {
 
 
                     <GridItem display={{ base: 'none', md: 'none', lg: 'block' }}>
-                        <Card h={'150px'} borderRadius={0} display={{ base: 'none', md: 'none', lg: 'flex' }} direction={'column'} justifyContent={'center'} alignItems={'center'} boxShadow={'lg'}>
+                        <Card h={'120px'} borderRadius={0} display={{ base: 'none', md: 'none', lg: 'flex' }} direction={'column'} justifyContent={'center'} alignItems={'center'} boxShadow={'lg'}>
 
                             <Box>
                                 Account Level : 1
@@ -94,7 +94,7 @@ const UserDashboard = () => {
                         </Card>
                     </GridItem>
                     <GridItem display={{ base: 'none', md: 'none', lg: 'block' }}>
-                        <Card h={'150px'} borderRadius={0} display={{ base: 'none', md: 'none', lg: 'flex' }} direction={'column'} justifyContent={'center'} alignItems={'center'} boxShadow={'lg'}>
+                        <Card h={'120px'} borderRadius={0} display={{ base: 'none', md: 'none', lg: 'flex' }} direction={'column'} justifyContent={'center'} alignItems={'center'} boxShadow={'lg'}>
 
                             <Flex gap={5} mx={1} >
                                 <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
@@ -114,7 +114,7 @@ const UserDashboard = () => {
                         </Card>
                     </GridItem>
                     <GridItem display={{ base: 'none', md: 'none', lg: 'block' }}>
-                        <Card h={'150px'} borderRadius={0} display={{ base: 'none', md: 'none', lg: 'flex' }} direction={'column'} justifyContent={'center'} alignItems={'center'} boxShadow={'lg'}>
+                        <Card h={'120px'} borderRadius={0} display={{ base: 'none', md: 'none', lg: 'flex' }} direction={'column'} justifyContent={'center'} alignItems={'center'} boxShadow={'lg'}>
 
                             <Flex gap={5} mx={1}>
                                 <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
@@ -152,10 +152,10 @@ const UserDashboard = () => {
 
                     {/* Left Side Nav ------------------------------------------------------------------------- */}
                     <GridItem >
-                        <Card borderRadius={0} display={{ base: 'none', sm: 'none', md: 'none', lg: 'flex' }} justifyContent={'center'} boxShadow={'lg'}>
+                        <Card borderRadius={0} display={{ base: 'none', sm: 'none', md: 'none', lg: 'flex' }} justifyContent={'center'} boxShadow={'lg'} >
 
-                            <Flex justifyContent={'center'} alignItems={'center'} direction={'column'} my={5}>
-                                <Flex justifyContent={'center'} alignItems={'center'} direction={'column'} gap={5} width={'100%'} maxH={'80%'}>
+                            <Flex justifyContent={'center'} alignItems={'center'} direction={'column'} my={5} >
+                                <Flex justifyContent={'center'} alignItems={'center'} direction={'column'} gap={5} width={'100%'} maxH={'80%'}  >
 
 
                                     {
@@ -168,7 +168,7 @@ const UserDashboard = () => {
                                                 // to={data.to}
                                                 width={'90%'}
                                                 borderRadius={'none'}
-                                                border={'0px'} bg={'transparent'}
+                                                border={'1px solid #dcdcdc'} bg={'transparent'}
                                                 key={index} p={7}
                                                 px={20}
 
@@ -420,6 +420,9 @@ const Mobilecollapse2 = () => {
 
 
 }
+
+
+
 
 
 

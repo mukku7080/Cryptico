@@ -84,17 +84,20 @@ const Navbarnew = () => {
                             </>
 
                     }
-                    <Button onClick={() => {
-                        setDark(!isdark)
-                        toggleColorMode();
-                    }} boxSize={10}
-                        bg={'orange'}
-                        borderRadius={'full'}>
-                        {
-                            isdark ? <Icon as={CiLight} boxSize={6} ></Icon> :
-                                <Icon as={MdDarkMode} boxSize={6} ></Icon>
-                        }
-                    </Button>
+                    {
+                        token ? '':<Button onClick={() => {
+                            setDark(!isdark)
+                            toggleColorMode();
+                        }} boxSize={10}
+                            bg={'orange'}
+                            borderRadius={'full'}>
+                            {
+                                isdark ? <Icon as={CiLight} boxSize={6} ></Icon> :
+                                    <Icon as={MdDarkMode} boxSize={6} ></Icon>
+                            }
+                        </Button>
+                    }
+
                     {/* <Button onClick={toggleColorMode}>toogle</Button> */}
 
 
@@ -377,7 +380,7 @@ const MobileNavItem = ({ label, children, href }) => {
 
 const NAV_ITEMS = [
     {
-        label: 'Buy',
+        label: <Button variant={'outline'} borderRadius={0} color={'white'} size={'sm'} px={4} _hover={{ bg: 'transparent' }}>Buy</Button>,
         locate: '/buy',
         children: [
             {
@@ -407,7 +410,7 @@ const NAV_ITEMS = [
     },
 
     {
-        label: 'Sell',
+        label: <Button variant={'outline'} borderRadius={0} color={'white'} size={'sm'} px={4} _hover={{ bg: 'transparent' }}>Sell</Button>,
         locate: '/sell',
         children: [
             {
