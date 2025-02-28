@@ -41,9 +41,9 @@ const UserAvatar = () => {
 
     }
     return (
-        <Flex justifyContent={'center'} alignItems={'center'} gap={10}>
+        <Flex justifyContent={'center'} alignItems={'center'} gap={5}>
             <Flex gap={2} alignItems={'center'}>
-                <Box as="span" fontSize={'10px'} textAlign={'end'}> {user == null ? "loading...." : user.email} <br />5000.00 INR</Box>
+                <Box display={{ base: 'none', sm: 'flex' }} as="span" fontSize={'10px'} textAlign={'end'}> {user == null ? "loading...." : user.email} <br />5000.00 INR</Box>
 
                 <Menu  >
                     <MenuButton as={Button} variant="ghost" borderRadius={'none'} p={0} rightIcon={<MdKeyboardArrowDown color="white" />} _hover={{ bg: "transparent" }}
@@ -59,20 +59,25 @@ const UserAvatar = () => {
                     </MenuButton>
                     <MenuList borderRadius={0}>
                         <MenuItem bg={'none'} display={'flex'} justifyContent={'end'}>
+                            <Flex justifyContent={'space-between'} alignItems={'center'} w={'100%'} p={1} >
 
-                            <Button onClick={() => {
-                                setDark(!isdark)
-                                toggleColorMode();
-                            }} boxSize={10}
-                                bg={'orange'}
-                                borderRadius={'full'}
-                            >
+                                <Button onClick={() => {
+                                    setDark(!isdark)
+                                    toggleColorMode();
+                                }} boxSize={6}
+                                    bg={bgColor}
+                                    borderRadius={'full'}
+                                > 
 
-                                {
-                                    isdark ? <Icon as={CiLight} boxSize={6} ></Icon> :
-                                        <Icon as={MdDarkMode} boxSize={6} ></Icon>
-                                }
-                            </Button>
+                                    {
+                                        isdark ? <Icon as={CiLight} boxSize={4} ></Icon> :
+                                            <Icon as={MdDarkMode} boxSize={4} ></Icon>
+                                    }
+                                </Button>
+                                <Box as="p" color={'gray'}>Switch Mode</Box>
+
+                            </Flex>
+
                         </MenuItem>
                         {menuItems.map((item, index) => (
                             <MenuItem
@@ -97,8 +102,10 @@ const UserAvatar = () => {
             </Flex>
 
 
+            <Flex display={{ base: 'none', lg: 'flex' }} >
 
-            <NotificationBell />
+                <NotificationBell />
+            </Flex>
 
 
         </Flex>

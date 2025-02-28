@@ -16,15 +16,16 @@ import {
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { IoMdSearch } from "react-icons/io";
 import { IoLocationOutline } from "react-icons/io5";
+import { useOtherDetail } from "../../Context/otherContext";
 
 const OfferLocation = () => {
-
+      const {data} = useOtherDetail();
 
     const [searchTerm, setSearchTerm] = useState("");
     const [btnName, setBtnName] = useState(location[0]);
 
-    const filteredItems = location.filter((location) =>
-        location.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredItems = (data||[]).filter((location) =>
+        location.currency_name.toLowerCase().includes(searchTerm.toLowerCase())
     );
     return (
         <>
@@ -67,8 +68,8 @@ const OfferLocation = () => {
                     <VStack align="stretch" spacing={1}>
                         {filteredItems.length > 0 ? (
                             filteredItems.map((location, index) => (
-                                <MenuItem key={index} _hover={{ bg: "blue.100" }} onClick={() => setBtnName(location)}>
-                                    {location}
+                                <MenuItem key={index} _hover={{ bg: "blue.100" }} onClick={() => setBtnName(location.currency_name)}>
+                                    {location.currency_name}
                                 </MenuItem>
                             ))
                         ) : (

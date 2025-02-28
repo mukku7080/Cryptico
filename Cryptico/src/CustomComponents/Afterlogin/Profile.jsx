@@ -19,6 +19,7 @@ import { FaTwitter, FaFacebook } from "react-icons/fa";
 import { useUser } from '../../Context/userContext';
 import { MdOutlineThumbUp, MdOutlineThumbDownAlt } from "react-icons/md";
 import { PiUserCircleThin } from "react-icons/pi";
+import BuySellWithNotification from '../Buy&Sell/BuySellWithNotification';
 
 
 
@@ -27,14 +28,17 @@ const Profile = () => {
     const { user } = useUser();
     return (
         <>
-            <Flex w={'container.xxl'} justifyContent={'center'} alignItems={'center'} my={10} marginTop={'50px'} >
+            <Flex w={'container.xxl'} justifyContent={'center'} alignItems={'center'} my={10} marginTop={'54px'} direction={'column'} >
+                <BuySellWithNotification />
                 <Flex
                     maxW={{ base: "95%", sm: '90%', lg: '95%', xl: "90%" }}
                     minW={{ base: "90%", sm: '90%', lg: '90%', xl: "90%" }}
                     w={'full'}
                     direction={'column'}
                     gap={5}
-                    mt={10}>
+                    mt={{ base: 20, lg: 10 }}
+
+                >
                     <Grid templateColumns={{ base: 'repeat(1,1fr)', sm: 'repeat(1,1fr)', md: 'repeat(1,1fr)', lg: 'repeat(1,1fr)', xl: 'repeat(4, 1fr)' }} rowGap={4} gap={{ xl: 5 }} w={'100%'}>
 
 
@@ -193,9 +197,9 @@ const UserDetails = () => {
 
                 <Box fontSize={'12px'} bg={'orange.200'} px={2} borderTopRightRadius={5}>For 30 days range</Box>
             </Flex>
-            <Flex justifyContent={'space-between'}  gap={5} direction={{ base: 'column', md: 'row' }} >
+            <Flex justifyContent={'space-between'} gap={5} direction={{ base: 'column', md: 'row' }} >
 
-                <Flex gap={{ base: 5,sm:10, lg: 20 }} w={'full'} flex={1} justifyContent={'space-around'} >
+                <Flex gap={{ base: 5, sm: 10, lg: 20 }} w={'full'} flex={1} justifyContent={'space-around'} >
 
                     <Flex direction={'column'} gap={5} >
                         {/*positive Feedback */}
@@ -228,7 +232,7 @@ const UserDetails = () => {
                     </Flex>
                 </Flex>
                 <Divider border={'1px solid #dcdcdc'} display={{ base: 'block', md: 'none' }} />
-                <Flex gap={{ base: 5,sm:10, lg: 20 }} w={'full'} flex={1} justifyContent={'space-around'}>
+                <Flex gap={{ base: 5, sm: 10, lg: 20 }} w={'full'} flex={1} justifyContent={'space-around'}>
                     {/* userDetail1 */}
                     <Flex direction={'column'} gap={4}  >
 

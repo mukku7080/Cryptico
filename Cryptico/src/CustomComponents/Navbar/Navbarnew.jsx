@@ -1,4 +1,13 @@
-import { Box, Icon, Button, Collapse, Flex, IconButton, Popover, PopoverContent, Stack, Text, useDisclosure, PopoverTrigger, useColorModeValue, Center, Image, useColorMode, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react'
+import {
+    Box, Icon, Button, Collapse, Flex, IconButton, Popover, PopoverContent, Stack, Text, useDisclosure, PopoverTrigger, useColorModeValue, Center, Image, useColorMode, Menu, MenuButton, MenuItem, MenuList,
+    Drawer,
+    DrawerBody,
+    DrawerFooter,
+    DrawerHeader,
+    DrawerOverlay,
+    DrawerContent,
+    DrawerCloseButton,
+} from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { BiChevronRight } from "react-icons/bi";
@@ -30,18 +39,45 @@ const Navbarnew = () => {
 
 
     return (
-        <Box as='nav' bg={'#17181E'}  >
-            <Flex maxW={'container.xxl'} width={{ md: '100%', lg: '100%' }} px={20} bg={'black'} color={'white'} minH={'48px'} align={'center'} justifyContent={'space-between'} py={2} >
+        <Flex as='nav' bg={'#17181E'} maxW={'container.xxl'} justifyContent={'center'} alignItems={'center'} direction={'column'}  >
+            <Flex
+                maxW={{ base: "90%", lg: '90%', xl: "90%" }}
+                minW={{ base: "90%", sm: '90%', lg: '90%', xl: "90%" }}
+                bg={'black'}
+                color={'white'}
+                minH={'48px'}
+                align={'center'}
+                justifyContent={'space-between'}
+                py={2} >
 
 
 
 
                 {/* NavSection */}
-                <Flex  >
+                <Flex gap={2} >
+                    {/* ToggleIcon */}
+                    <Flex flex={{ base: 1, md: 'auto' }} alignItems={'center'} display={{ base: 'flex', md: 'flex', lg: 'none', xl: 'none' }} >
+
+                        {/* <IconButton
+
+                            onClick={onToggle}
+                            color={'white'}
+                            size={'sm'}
+                            fontFamily={'heading'}
+                            fontSize={'4xl'}
+                            icon={isOpen ? <IoCloseOutline /> : <IoMenuOutline />}
+                            variant={'outline'}
+                            aria-label={'Toggle Navigation'}
+
+                        /> */}
+                        <MobileNav />
+
+                    </Flex>
+                    {/* ToggleIcon End */}
                     <Center mr={{ lg: '5', xl: '10' }} onClick={navigateTo} cursor={'pointer'}>
-                        <Image src='/imagelogo/cryptico.png' w={'60px'} h={'50px'} mx={0}></Image>
+                        <Image src='/imagelogo/cryptico.png' w={'50px'} h={'40px'} mx={0}></Image>
                         <Text
-                            fontSize={'2xl'}
+                            fontSize={'xl'}
                             mb={1}
                             fontWeight={'600'}
                             sx={{
@@ -57,7 +93,7 @@ const Navbarnew = () => {
 
                     <Center>
 
-                        <Flex display={{ base: 'none', md: 'none', lg: 'none', xl: 'flex' }} >
+                        <Flex display={{ base: 'none', md: 'none', lg: 'flex', xl: 'flex' }} >
                             <DesktopNav />
 
                         </Flex>
@@ -69,23 +105,25 @@ const Navbarnew = () => {
                 </Flex>
 
                 {/*Login & Logout ButtonSection */}
-                <Stack justify={'flex-end'} direction={'row'} spacing={6} display={{ base: 'none', md: 'none', lg: 'none', xl: 'flex' }} gap={10}>
+                <Stack justify={'flex-end'} direction={'row'} spacing={6} gap={{ lg: 2, xl: 5 }}>
                     {
                         token ? <UserAvatar /> :
                             <>
+                                <Flex display={{ base: 'none', md: 'none', lg: 'flex', xl: 'flex' }} justifyContent={'center'} alignItems={'center'} gap={{ lg: 2, xl: 5 }}>
 
-                                <Button as={Link} to='/login' padding={'0px 32px'} borderColor={'#ffffff99'} variant={'ghost'} color={'white'} _hover={{ color: 'black', bgColor: '#ffb11a' }}>
-                                    Log In
-                                </Button>
+                                    <Button as={Link} size={'sm'} to='/login' padding={'0px 32px'} borderColor={'#ffffff99'} variant={'outline'} color={'white'} _hover={{ color: 'black', bgColor: '#ffb11a' }}>
+                                        Log In
+                                    </Button>
 
-                                <Button as={Link} to='/signup' padding={'0px 32px'} bgColor={'#ffb11a'} >
-                                    Sign Up
-                                </Button>
+                                    <Button as={Link} size={'sm'} to='/signup' padding={'0px 32px'} bgColor={'#ffb11a'} _hover={{ bg: 'orange' }} >
+                                        Sign Up
+                                    </Button>
+                                </Flex>
                             </>
 
                     }
                     {
-                        token ? '':<Button onClick={() => {
+                        token ? '' : <Button onClick={() => {
                             setDark(!isdark)
                             toggleColorMode();
                         }} boxSize={10}
@@ -106,23 +144,7 @@ const Navbarnew = () => {
                 {/*Login & Logout ButtonSection end */}
 
 
-                {/* ToggleIcon */}
-                <Flex justify={'flex-end'} flex={{ base: 1, md: 'auto' }} display={{ base: 'flex', md: 'flex', lg: 'flex', xl: 'none' }} pr={{ base: '20px', sm: '20px', md: '20px', lg: '0px' }}>
 
-                    <IconButton
-
-                        onClick={onToggle}
-                        color={'white'}
-                        fontFamily={'heading'}
-                        fontSize={'4xl'}
-                        icon={isOpen ? <IoCloseOutline /> : <IoMenuOutline />}
-                        variant={'ghost'}
-                        aria-label={'Toggle Navigation'}
-
-                    />
-
-                </Flex>
-                {/* ToggleIcon End */}
 
 
 
@@ -134,7 +156,7 @@ const Navbarnew = () => {
             <Collapse in={isOpen} animateOpacity>
                 <MobileNav />
             </Collapse>
-        </Box>
+        </Flex>
     )
 }
 
@@ -149,7 +171,7 @@ const DesktopNav = () => {
     return (
 
         <>
-            <Stack direction={'row'} spacing={{ lg: '2', xl: '10' }} >
+            <Stack direction={'row'} spacing={{ lg: '5', xl: '10' }} >
                 {
                     NAV_ITEMS.map((navitem) => (
                         <Box key={navitem.label} display={'flex'} justifyContent={'center'} >
@@ -301,25 +323,120 @@ const DesktopSubNav = ({ label, href, logo, subLabel, icon }) => {
 
 
 const MobileNav = () => {
+    const navigate = useNavigate();
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    const bgColor = useColorModeValue("gray.100", "gray.900");
+    const textColor = useColorModeValue("black", "white");
+    const navigateTo = () => { navigate("/") }
+
     return (
-        <Stack bg={useColorModeValue('white', 'gray.800')} p={4} display={{ base: 'flex', md: 'flex', lg: 'flex', xl: 'none' }}>
-            {NAV_ITEMS.map((navItem) => (
-                <MobileNavItem key={navItem.label} {...navItem} />
-            ))}
+        // <Stack bg={useColorModeValue('white', 'gray.800')} p={4} display={{ base: 'flex', md: 'flex', lg: 'flex', xl: 'none' }}>
+        //     {NAV_ITEMS.map((navItem) => (
+        //         <MobileNavItem key={navItem.label} {...navItem} />
+        //     ))}
 
 
-            <Stack justify={'flex-start'} direction={'row'} spacing={6} mt={5} >
-                <Button as={Link} to='/login' padding={'0px 32px'} bgColor={'#ffb11a'} >
-                    Log In
-                </Button>
+        //     <Stack justify={'flex-start'} direction={'row'} spacing={6} mt={5} >
+        //         <Button as={Link} to='/login' padding={'0px 32px'} bgColor={'#ffb11a'} >
+        //             Log In
+        //         </Button>
 
-                <Button as={Link} to='/signup' padding={'0px 32px'} bgColor={'#ffb11a'} >
-                    Sign Up
-                </Button>
+        //         <Button as={Link} to='/signup' padding={'0px 32px'} bgColor={'#ffb11a'} >
+        //             Sign Up
+        //         </Button>
 
 
-            </Stack>
-        </Stack>
+        //     </Stack>
+        // </Stack>
+        <>
+            <Button onClick={onOpen} bg={'transparent'} color={'white'} _hover={{ bg: 'transparent' }} px={0} display={'flex'} alignItems={'center'} justifyContent={'start'} >
+                <IoMenuOutline size={30} />
+            </Button>
+            {/* Drawer Component */}
+            <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
+                <DrawerOverlay />
+                <DrawerContent>
+                    <DrawerCloseButton />
+                    <DrawerHeader borderBottomWidth="1px">
+                        <Flex mr={{ lg: '5', xl: '10' }} onClick={navigateTo} cursor={'pointer'} alignItems={'center'} gap={1}>
+                            <Image src='/imagelogo/cryptico.png' w={'50px'} h={'40px'} mx={0}></Image>
+                            <Text
+                                fontSize={'xl'}
+                                mb={1}
+                                fontWeight={'600'}
+                                sx={{
+                                    "@media screen and (max-width: 254px)": {
+                                        display: 'none'
+
+                                    }
+                                }}
+                            >CRYPTICO</Text>
+                        </Flex>
+                    </DrawerHeader>
+
+                    <DrawerBody>
+                        <Stack spacing={4}>
+                            {/* Rendering Navigation Items */}
+                            {/* {NAV_ITEMS.map((navItem) => (
+                                <Box key={navItem.label}>
+                                    <Button as={Link} to={navItem.locate} variant="ghost" width="100%">
+                                        {navItem.label}
+                                    </Button>
+
+                                    {navItem.children && (
+                                        <Stack pl={4} mt={2}>
+                                            {navItem.children.map((child) => (
+                                                <Button
+                                                    key={child.label}
+                                                    as={Link}
+                                                    to={child.href}
+                                                    variant="ghost"
+                                                    width="100%"
+                                                    justifyContent="flex-start"
+                                                >
+                                                    {child.label}
+                                                </Button>
+                                            ))}
+                                        </Stack>
+                                    )}
+                                </Box>
+                            ))} */}
+                            {/* {NAV_ITEMS.map((navItem) => (
+                                <MobileNavItem key={navItem.label} {...navItem} />
+        
+                            ))} */}
+                            {
+                                offcanvaButton.map((item, index) => (
+                                    <>
+                                        <Flex key={index} direction={'column'}>
+                                            <Button rightIcon={<BiChevronRight />} display={'flex'} justifyContent={'space-between'} onClick={() => navigate(item.href)}>
+                                                {item.label}
+                                            </Button>
+                                        </Flex>
+                                    </>
+                                ))
+                            }
+
+                            {/* Login and Signup Buttons */}
+                            <Stack direction={"row"} spacing={4} mt={6} display={'flex'} justifyContent={'center'}>
+                                <Button as={Link} to="/login" padding="0px 32px" bgColor="#ffb11a">
+                                    Log In
+                                </Button>
+                                <Button as={Link} to="/signup" padding="0px 32px" bgColor="#ffb11a">
+                                    Sign Up
+                                </Button>
+                            </Stack>
+                        </Stack>
+                    </DrawerBody>
+
+                    <DrawerFooter borderTopWidth="1px">
+                        <Button variant="outline" mr={3} onClick={onClose}>
+                            Close
+                        </Button>
+                    </DrawerFooter>
+                </DrawerContent>
+            </Drawer>
+        </>
     )
 }
 
@@ -380,7 +497,7 @@ const MobileNavItem = ({ label, children, href }) => {
 
 const NAV_ITEMS = [
     {
-        label: <Button variant={'outline'} borderRadius={0} color={'white'} size={'sm'} px={4} _hover={{ bg: 'transparent' }}>Buy</Button>,
+        label: <Button variant={'outline'} borderRadius={5} color={'white'} size={'sm'} px={4} _hover={{ bg: 'transparent' }}>Buy</Button>,
         locate: '/buy',
         children: [
             {
@@ -410,7 +527,7 @@ const NAV_ITEMS = [
     },
 
     {
-        label: <Button variant={'outline'} borderRadius={0} color={'white'} size={'sm'} px={4} _hover={{ bg: 'transparent' }}>Sell</Button>,
+        label: <Button variant={'outline'} borderRadius={5} color={'white'} size={'sm'} px={4} _hover={{ bg: 'transparent' }}>Sell</Button>,
         locate: '/sell',
         children: [
             {
@@ -438,11 +555,6 @@ const NAV_ITEMS = [
             },
         ],
     },
-    // {
-    //     label: 'Create an Offer',
-    //     to: 'createOffers'
-
-    // },
 
     {
         label: 'Wallet',
@@ -529,4 +641,9 @@ const userOption = [
     },
 ]
 
+const offcanvaButton = [
+    { label: 'Wallet', href: '/wallet' },
+    { label: 'Dashboard', href: '/user-dashboard' },
+    { label: 'Create an Offer', href: '/createOffers' },
+]
 export default Navbarnew

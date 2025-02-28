@@ -13,6 +13,7 @@ import { PiChecks } from "react-icons/pi";
 import { IoMenuOutline, IoCloseOutline } from "react-icons/io5";
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useUser } from '../../../Context/userContext';
+import BuySellWithNotification from '../../Buy&Sell/BuySellWithNotification';
 
 
 
@@ -30,15 +31,20 @@ const UserDashboard = () => {
 
     }, []);
     return (
-        <Flex maxW={'container.xxl'} bg={''} justifyContent={'center'} alignItems={'center'} direction={'column'} gap={10} my={10} marginTop={'50px'}>
+        <Flex maxW={'container.xxl'} bg={''} justifyContent={'center'} alignItems={'center'} direction={'column'} gap={10} my={10} marginTop={'54px'}>
+            <BuySellWithNotification />
+
 
             <Flex
                 // minW={'80%'}
                 maxW={{ base: "90%", lg: '90%', xl: "90%" }}
                 minW={{ base: "90%", sm: '90%', lg: '90%', xl: "90%" }}
-                mt={10}
-
-                bg={''} direction={'column'} gap={5} mx={5}>
+                bg={''}
+                direction={'column'}
+                gap={5}
+                mx={5}
+                mt={{ base:20,lg:10}}
+            >
 
 
 
@@ -46,7 +52,7 @@ const UserDashboard = () => {
                 {/* First Grid Row---------------------------------------------------------------------- */}
                 <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)", lg: "repeat(3, 1fr)", xl: "repeat(4, 1fr)" }} gap={5} width={'full'} transition="all 0.5s ease-in-out" >
                     <GridItem bg={'wite'} colSpan={{ base: 3, md: 3, lg: 3, xl: 1 }} >
-                        <Card h={{ md: '50px', lg: '50px', xl: '120px' }} borderRadius={0} bg={'transparent'} boxShadow={'none'} border={'1px solid rgba(128, 128, 128, 0.05)'} direction={'row'} display={'flex'} justifyContent={'start'}>
+                        <Card h={{ md: '50px', lg: '50px', xl: '120px' }} borderRadius={5} bg={'transparent'} boxShadow={'none'} border={'1px solid rgba(128, 128, 128, 0.05)'} direction={'row'} display={'flex'} justifyContent={'start'}>
 
                             <Heading size={'lg'} display={'flex'} alignItems={'center'} > {tag}</Heading>
                             <Flex justify={'flex-end'} flex={{ base: 1, md: 'auto' }} display={{ base: 'flex', md: 'flex', lg: 'none', xl: 'none' }} pr={{ base: '20px', sm: '20px', md: '20px', lg: '0px' }} gap={5} >
@@ -83,7 +89,7 @@ const UserDashboard = () => {
 
 
                     <GridItem display={{ base: 'none', md: 'none', lg: 'block' }}>
-                        <Card h={'120px'} borderRadius={0} display={{ base: 'none', md: 'none', lg: 'flex' }} direction={'column'} justifyContent={'center'} alignItems={'center'} boxShadow={'lg'}>
+                        <Card h={'120px'} borderRadius={5} display={{ base: 'none', md: 'none', lg: 'flex' }} direction={'column'} justifyContent={'center'} alignItems={'center'} boxShadow={'lg'}>
 
                             <Box>
                                 Account Level : 1
@@ -94,7 +100,7 @@ const UserDashboard = () => {
                         </Card>
                     </GridItem>
                     <GridItem display={{ base: 'none', md: 'none', lg: 'block' }}>
-                        <Card h={'120px'} borderRadius={0} display={{ base: 'none', md: 'none', lg: 'flex' }} direction={'column'} justifyContent={'center'} alignItems={'center'} boxShadow={'lg'}>
+                        <Card h={'120px'} borderRadius={5} display={{ base: 'none', md: 'none', lg: 'flex' }} direction={'column'} justifyContent={'center'} alignItems={'center'} boxShadow={'lg'}>
 
                             <Flex gap={5} mx={1} >
                                 <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
@@ -114,7 +120,7 @@ const UserDashboard = () => {
                         </Card>
                     </GridItem>
                     <GridItem display={{ base: 'none', md: 'none', lg: 'block' }}>
-                        <Card h={'120px'} borderRadius={0} display={{ base: 'none', md: 'none', lg: 'flex' }} direction={'column'} justifyContent={'center'} alignItems={'center'} boxShadow={'lg'}>
+                        <Card h={'120px'} borderRadius={5} display={{ base: 'none', md: 'none', lg: 'flex' }} direction={'column'} justifyContent={'center'} alignItems={'center'} boxShadow={'lg'}>
 
                             <Flex gap={5} mx={1}>
                                 <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
@@ -152,7 +158,7 @@ const UserDashboard = () => {
 
                     {/* Left Side Nav ------------------------------------------------------------------------- */}
                     <GridItem >
-                        <Card borderRadius={0} display={{ base: 'none', sm: 'none', md: 'none', lg: 'flex' }} justifyContent={'center'} boxShadow={'lg'} >
+                        <Card borderRadius={5} display={{ base: 'none', sm: 'none', md: 'none', lg: 'flex' }} justifyContent={'center'} boxShadow={'lg'} >
 
                             <Flex justifyContent={'center'} alignItems={'center'} direction={'column'} my={5} >
                                 <Flex justifyContent={'center'} alignItems={'center'} direction={'column'} gap={5} width={'100%'} maxH={'80%'}  >
@@ -199,10 +205,10 @@ const UserDashboard = () => {
 
 
                                 </Flex>
-                                <Divider width={'80%'} />
+                                <Divider width={'90%'} my={3} />
 
 
-                                <Flex direction={'column'} gap={0} width={'100%'} justifyContent={'center'} alignItems={'center'} >
+                                <Flex direction={'column'} gap={5} width={'100%'} justifyContent={'center'} alignItems={'center'}   >
 
 
                                     {
@@ -213,7 +219,7 @@ const UserDashboard = () => {
                                             <Button
                                                 borderRadius={'none'}
                                                 width={'90%'}
-                                                border={'0px'} bg={'transparent'}
+                                                border={'1px solid #dcdcdc'} bg={'transparent'}
                                                 key={index} p={7}
                                                 px={20}
                                                 justifyContent="flex-start"
@@ -222,6 +228,7 @@ const UserDashboard = () => {
                                                     borderRight: '1px solid black'
                                                 }}
                                                 onClick={() => setTag(data.btn_name)}
+
 
                                             >
                                                 <Flex align="center" gap={2}>

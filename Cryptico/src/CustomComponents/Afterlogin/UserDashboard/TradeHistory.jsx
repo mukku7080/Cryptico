@@ -13,7 +13,7 @@ const TradeHistory = () => {
 
     return (
         <>
-            <Card borderRadius={0} p={10} gap={4} boxShadow={'lg'}>
+            <Card borderRadius={5} p={10} gap={4} boxShadow={'lg'}>
                 <Box>You are viewing all trades for the last 3 days</Box>
                 <Flex border={'1px solid rgba(128, 128, 128, 0.3)'} py={1} px={3} justifyContent={'space-between'} bgColor={bgcolor} boxShadow={'lg'} borderRadius={'5px'}>
                     <Box fontWeight={500} display={'flex'} alignItems={'center'} justifyContent={'center'}>

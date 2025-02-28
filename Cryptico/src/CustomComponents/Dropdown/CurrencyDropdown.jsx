@@ -10,18 +10,23 @@ import {
     InputLeftElement,
     InputRightElement,
     VStack,
+    Image,
+    Flex,
+    Box
 } from "@chakra-ui/react";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { IoMdSearch } from "react-icons/io";
+import { useOtherDetail } from "../../Context/otherContext";
 
 const CurrencyDropdown = () => {
 
+    const { handleOtherDetail, data } = useOtherDetail();
 
     const [searchTerm, setSearchTerm] = useState("");
-    const [option, setOption] = useState(items[0])
+    const [option, setOption] = useState(items[0]);
 
-    const filteredItems = items.filter((item) =>
-        item.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredItems = (data || []).filter((item) =>
+        item.currency_code.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
 
@@ -39,8 +44,12 @@ const CurrencyDropdown = () => {
                     alignItems="center"
                     justifyContent="space-between"
                     rightIcon={<MdKeyboardArrowDown />}
+                    _focus={{ boxShadow: "none" }}
+                    _active={{ bg: "transparent" }}
+                    onClick={handleOtherDetail}
 
                 >
+
                     {option}
                 </MenuButton>
 
@@ -70,8 +79,16 @@ const CurrencyDropdown = () => {
                     <VStack align="stretch" spacing={1}>
                         {filteredItems.length > 0 ? (
                             filteredItems.map((item, index) => (
-                                <MenuItem key={index} _hover={{ bg: "blue.100" }} onClick={() => setOption(item)}>
-                                    {item}
+                                <MenuItem key={index} _hover={{ bg: "blue.100" }} onClick={() => setOption(item.currency_code)}>
+                                    <Flex justifyContent={'space-between'} w={'full'}>
+
+                                        <Flex justifyContent={'start'} alignItems={'center'} w={'full'} gap={5} borderBottom={'1px solid #f5f7fa'}>
+                                            <Image boxSize={5} src={item.country_flag_url}></Image>
+
+                                            {item.currency_code}
+                                        </Flex>
+                                        <Box mr={3}>{item.currency_symbol}</Box>
+                                    </Flex>
                                 </MenuItem>
                             ))
                         ) : (

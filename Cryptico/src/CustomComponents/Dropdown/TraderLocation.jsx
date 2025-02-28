@@ -16,12 +16,14 @@ import {
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { IoMdSearch } from "react-icons/io";
 import { IoLocationOutline } from "react-icons/io5";
+import { useOtherDetail } from "../../Context/otherContext";
 
 const TraderLocation = ({ isDisabled }) => {
 
 
     const [searchTerm, setSearchTerm] = useState("");
     const [btnName, setBtnName] = useState(location[0]);
+    const { data } = useOtherDetail();
 
 
     const filteredItems = location.filter((location) =>

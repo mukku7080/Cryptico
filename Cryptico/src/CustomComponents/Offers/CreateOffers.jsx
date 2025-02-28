@@ -19,6 +19,7 @@ import {
     Input,
     InputGroup,
     InputRightElement,
+    useBreakpointValue,
     border, Grid, GridItem, Card
 } from '@chakra-ui/react'
 import React, { useState } from 'react'
@@ -32,6 +33,7 @@ import CryptoAccordion, { Mybadge } from '../Accordian/CryptoAccordion';
 import { IoEyeOutline } from "react-icons/io5";
 import { MdModeEdit } from "react-icons/md";
 import { FaTwitter, FaFacebook } from "react-icons/fa";
+import { MyPaymentModal } from '../Dropdown/PaymentModal/MyPaymentModal';
 
 
 
@@ -47,9 +49,9 @@ const CreateOffers = () => {
 
 
                 <Flex
-                    minW={{ base: '95%', md: '90%', lg: '80%', xl: '70%' }}
-                    maxW={{ base: '95%', md: '90%', lg: '80%', xl: '70%' }}
-                    mt ={10}
+                    maxW={{ base: "90%", lg: '90%', xl: "90%" }}
+                    minW={{ base: "90%", sm: '90%', lg: '90%', xl: "90%" }}
+                    mt={10}
                 >
                     <Flex w={'100%'} direction={{ base: 'column', md: 'row' }} >
                         <Flex width={{ base: '100%', md: '50%' }} direction={'column'} p={{ base: 2, sm: 4, md: 6, lg: 8, xl: 10 }} gap={10}>
@@ -97,8 +99,8 @@ const CreateOffers = () => {
                             <Flex direction={''} gap={5} flexWrap={{ base: 'wrap', lg: 'nowrap' }}  >
                                 <Flex w={'400px'} direction={'column'} gap={5}>
                                     <Heading size={'sm'}>PAYMENT METHOD</Heading>
+                                    <MyPaymentModal />
 
-                                    <PaymentDropdown />
                                 </Flex>
 
                                 {isShow &&
@@ -106,7 +108,7 @@ const CreateOffers = () => {
                                     <Flex w={'400px'} direction={'column'} gap={5}>
                                         <Heading size={'sm'}>Prefered Currency</Heading>
 
-                                        <Flex justifyContent={'space-between'} border={'1px solid #dcdcdc'} >
+                                        <Flex justifyContent={'space-between'} alignItems={'center'} border={'1px solid #dcdcdc'} >
                                             <InputGroup>
 
                                                 <Input placeholder='Enter Amount'
@@ -176,10 +178,12 @@ function Steper() {
         count: steps.length,
     })
 
-    return (
-        <Stepper index={activeStep}
+    const orientation = useBreakpointValue({ base: "vertical", xl: "horizontal" });
 
-            orientation='vertical'
+    return (
+        <Stepper size={'sm'} orientation={orientation} index={activeStep}
+
+
         >
             {steps.map((step, index) => (
                 <Step key={index}>
