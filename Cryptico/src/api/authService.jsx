@@ -83,3 +83,38 @@ export const logout = async () => {
         console.error("Logout failed:", error);
     }
 };
+export const forgetPassword = async (email) => {
+    try {
+        const response = await axiosInstance.post("/forgot-password", {
+            email
+
+
+        })
+        return response.data
+
+    }
+    catch (error) {
+        throw error.response ? error.response.data : error;
+
+    }
+}
+export const resetPassword = async ({ email, resetToken, newPassword }) => {
+    try {
+        console.log(email);
+        console.log(resetToken);
+        console.log(newPassword);
+        const response = await axiosInstance.post("/reset-password", {
+            email: email,
+            token: resetToken,
+            password: newPassword
+
+
+        })
+        return response.data
+
+    }
+    catch (error) {
+        throw error.response ? error.response.data : error;
+
+    }
+}

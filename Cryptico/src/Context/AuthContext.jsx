@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect } from 'react'
-import { login, signup, logout, emailOtp, verifyEmailOtp, loginWithGoogle, SignupWithGoogle } from '../api/authService';
+import { login, signup, logout, emailOtp, verifyEmailOtp, loginWithGoogle, SignupWithGoogle, forgetPassword, resetPassword } from '../api/authService';
 import { useNavigate } from 'react-router-dom';
 
 export const AuthContext = createContext();
@@ -111,8 +111,28 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const handleForgotPassword = async (email) => {
+        try {
+            const data = await forgetPassword(email);
+            return data;
+        }
+        catch (error) {
+            console.error("Forgot password error:", error);
+        }
+    }
+    const handleResetPassword = async ({ email, resetToken, newPassword }) => {
+        try {
+           
+            const data = await resetPassword({ email, resetToken, newPassword });
+            return data;
+        }
+        catch (error) {
+            console.error("Reset password error:", error);
+        }
+    }
+
     return (
-        <AuthContext.Provider value={{ user, handleLogin, handleSignup, handleLogout, handleEmailOtp, handleVerifyEmailOtp, handleLoginWithGoogle, handleSignupWithGoogle, error }}>
+        <AuthContext.Provider value={{ user, handleLogin, handleSignup, handleLogout, handleEmailOtp, handleVerifyEmailOtp, handleLoginWithGoogle, handleSignupWithGoogle, handleForgotPassword, handleResetPassword, error }}>
             {children}
         </AuthContext.Provider>
     );

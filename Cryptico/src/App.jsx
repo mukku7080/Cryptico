@@ -29,7 +29,8 @@ import Addresses from './CustomComponents/Wallet/Addresses'
 import Convert from './CustomComponents/Wallet/Convert'
 import TradeHistoryNew from './CustomComponents/Afterlogin/UserDashboard/TradeHistoryNew'
 import OtherDetailProvider from './Context/otherContext'
-// import ForgetPassword from './CustomComponents/LoginSignup/ForgetPassword'
+import PasswordReset from './CustomComponents/LoginSignup/PasswordReset'
+import ForgetPassword from './CustomComponents/LoginSignup/ForgetPassword'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -77,6 +78,8 @@ function App() {
                   <Route path='addresses' element={<Addresses />} />
                   <Route path='convert' element={<Convert />} />
                 </Route>
+                <Route path='password-reset/:token' element={<PasswordReset />} />
+                <Route path='forget' element={<ForgetPassword />}></Route>
 
               </Routes>
 

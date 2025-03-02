@@ -26,9 +26,10 @@ import { useAuth } from '../../Context/AuthContext';
 
 const Loginnew = () => {
 
-    const { handleLogin, handleLoginWithGoogle } = useAuth();
+    const { handleLogin, handleLoginWithGoogle, handleForgotPassword } = useAuth();
     const toast = useToast();
     const [showPassword, setShowPassword] = useState(false);
+    const [email,setEmail]=useState("");
     const [isLoading, setIsLoading] = useState(false);
     const txtcolor = useColorModeValue('black', 'white');
     const bgcolor = useColorModeValue('gray.100', 'gray.700');
@@ -39,7 +40,7 @@ const Loginnew = () => {
 
     const validationSchema = Yup.object({
         email: Yup.string().email("invalid email").required("*field is required"),
-        password: Yup.string().min(6, "Minimum 6 characters").required("*Password is required"),
+        password: Yup.string().min(6, "Minimum 8 characters").required("*Password is required"),
 
     });
 
@@ -50,6 +51,7 @@ const Loginnew = () => {
 
         },
         validationSchema,
+        
         onSubmit: async (values, action) => {
 
             try {
@@ -132,11 +134,14 @@ const Loginnew = () => {
                                             {/* user Field */}
 
                                             <FormControl isInvalid={errors.email && touched.email} mb={3}>
-                                                <FormLabel color={'gray'}  >Email/Number</FormLabel>
-                                                <Input name="email" placeholder="Email or Number" bg={bgcolor}  // Light gray background
+                                                <FormLabel color={'gray'}  >Email</FormLabel>
+                                                <Input name="email" placeholder="Email" bg={bgcolor}  // Light gray background
                                                     _focus={{ bgcolor }}
                                                     value={values.email}
-                                                    onChange={handleChange}
+                                                    onChange={(e)=>{
+                                                        setEmail(e.target.value);
+                                                        handleChange(e);
+                                                    }}
                                                     onBlur={handleBlur} />
                                                 <FormErrorMessage>{errors.email}</FormErrorMessage>
                                             </FormControl>
@@ -187,7 +192,7 @@ const Loginnew = () => {
                                                 </Box>
 
                                                 </Checkbox>
-                                                <Link mt={3} color={'orange'} display={'flex'} justifyContent={'flex-end'}> Forgot Password ?</Link>
+                                                <Link mt={3} color={'orange'} display={'flex'} justifyContent={'flex-end'} onClick={()=>handleForgotPassword(email)}> Forgot Password ?</Link>
                                             </Flex>
                                             {/* Submit Button */}
                                             <Button

@@ -25,9 +25,10 @@ import { PiChecks } from "react-icons/pi";
 
 import UserAvatar from '../Afterlogin/UserAvatar';
 import PaymentDropdown from '../Dropdown/PaymentDropdown';
+import { useUser } from '../../Context/userContext';
 
 const Navbarnew = () => {
-    // const { user } = useAuth();
+    //  const { user } = useUser();
     const navigate = useNavigate();
     const navigateTo = () => { navigate("/") }
     const { isOpen, onToggle } = useDisclosure();

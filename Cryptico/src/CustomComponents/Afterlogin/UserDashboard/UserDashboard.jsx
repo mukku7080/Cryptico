@@ -25,11 +25,7 @@ const UserDashboard = () => {
     const [istoogle, setToogle] = useState(false);
     const { isOpen, onToggle } = useDisclosure();
     const { isOpen: isOpen1, onToggle: onToggle1 } = useDisclosure();
-    const { user, error, handleUserDetail } = useUser();
-    useEffect(() => {
-        const res = handleUserDetail();
-
-    }, []);
+    const { user, error } = useUser();   
     return (
         <Flex maxW={'container.xxl'} bg={''} justifyContent={'center'} alignItems={'center'} direction={'column'} gap={10} my={10} marginTop={'54px'}>
             <BuySellWithNotification />
@@ -43,7 +39,7 @@ const UserDashboard = () => {
                 direction={'column'}
                 gap={5}
                 mx={5}
-                mt={{ base:20,lg:10}}
+                mt={{ base: 20, lg: 10 }}
             >
 
 
@@ -52,9 +48,9 @@ const UserDashboard = () => {
                 {/* First Grid Row---------------------------------------------------------------------- */}
                 <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)", lg: "repeat(3, 1fr)", xl: "repeat(4, 1fr)" }} gap={5} width={'full'} transition="all 0.5s ease-in-out" >
                     <GridItem bg={'wite'} colSpan={{ base: 3, md: 3, lg: 3, xl: 1 }} >
-                        <Card h={{ md: '50px', lg: '50px', xl: '120px' }} borderRadius={5} bg={'transparent'} boxShadow={'none'} border={'1px solid rgba(128, 128, 128, 0.05)'} direction={'row'} display={'flex'} justifyContent={'start'}>
+                        <Card h={{ md: '50px', lg: '50px', xl: '120px' }} borderRadius={5} bg={'transparent'} boxShadow={'none'} border={'1px solid rgba(128, 128, 128, 0.05)'} direction={'row'} display={'flex'} justifyContent={'start'} >
 
-                            <Heading size={'lg'} display={'flex'} alignItems={'center'} > {tag}</Heading>
+                            <Heading size={'lg'} display={'flex'} alignItems={'center'}> {tag}</Heading>
                             <Flex justify={'flex-end'} flex={{ base: 1, md: 'auto' }} display={{ base: 'flex', md: 'flex', lg: 'none', xl: 'none' }} pr={{ base: '20px', sm: '20px', md: '20px', lg: '0px' }} gap={5} >
 
                                 <Button
@@ -161,7 +157,7 @@ const UserDashboard = () => {
                         <Card borderRadius={5} display={{ base: 'none', sm: 'none', md: 'none', lg: 'flex' }} justifyContent={'center'} boxShadow={'lg'} >
 
                             <Flex justifyContent={'center'} alignItems={'center'} direction={'column'} my={5} >
-                                <Flex justifyContent={'center'} alignItems={'center'} direction={'column'} gap={5} width={'100%'} maxH={'80%'}  >
+                                <Flex justifyContent={'center'} alignItems={'center'} direction={'column'} gap={5} minW={'100%'} maxH={'80%'}  >
 
 
                                     {
@@ -176,7 +172,7 @@ const UserDashboard = () => {
                                                 borderRadius={'none'}
                                                 border={'1px solid #dcdcdc'} bg={'transparent'}
                                                 key={index} p={7}
-                                                px={20}
+
 
 
 

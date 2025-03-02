@@ -27,7 +27,6 @@ import CurrencyDropdown from '../Dropdown/CurrencyDropdown';
 import { MdDoubleArrow } from "react-icons/md";
 import OfferLocation from '../Dropdown/OfferLocation';
 import TraderLocation from '../Dropdown/TraderLocation';
-import { PaymentOptionsModal } from '../Dropdown/PaymentModal/PaymentOptionModal';
 import { MyPaymentModal } from '../Dropdown/PaymentModal/MyPaymentModal';
 import { Link } from 'react-router-dom';
 import TokenDropdown from '../Dropdown/TokenDropdown';
