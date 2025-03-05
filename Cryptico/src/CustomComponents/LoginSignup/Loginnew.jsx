@@ -1,5 +1,5 @@
 import { Card, CardBody, Divider, Flex, Heading, Icon, Image, InputGroup, IconButton, Link, useColorModeValue, useToast } from '@chakra-ui/react'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { CgArrowsExchange } from "react-icons/cg";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -29,21 +29,64 @@ const Loginnew = () => {
     const { handleLogin, handleLoginWithGoogle, handleForgotPassword } = useAuth();
     const toast = useToast();
     const [showPassword, setShowPassword] = useState(false);
-    const [email,setEmail]=useState("");
+    const [email, setEmail] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const txtcolor = useColorModeValue('black', 'white');
     const bgcolor = useColorModeValue('gray.100', 'gray.700');
+    const [isVisited, setIsVisited] = useState(false);
+
+
+
+
 
 
 
     const navigate = useNavigate();
+
+    const forget = async () => {
+        const res = await handleForgotPassword(email);
+        const { status, message } = res;
+
+
+        if (status === 'success') {
+            toast({
+                title: "Reset-password",
+                description: "password reset-link has been sent on your email..",
+                status: "info",
+                duration: 5000,
+                isClosable: true,
+                position: "top-right",
+            });
+
+        }
+        else {
+
+            toast({
+                title: "error",
+                description: message,
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+                position: "top-right",
+            });
+        }
+
+
+    }
+    useEffect(() => {
+        if (isVisited) {
+            const timer = setTimeout(() => {
+                setIsVisited(false);
+            }, 12000)
+            return () => clearTimeout(timer)
+        }
+    }, [isVisited])
 
     const validationSchema = Yup.object({
         email: Yup.string().email("invalid email").required("*field is required"),
         password: Yup.string().min(6, "Minimum 8 characters").required("*Password is required"),
 
     });
-
     const { values, handleBlur, handleSubmit, errors, touched, handleChange } = useFormik({
         initialValues: {
             email: "",
@@ -51,7 +94,7 @@ const Loginnew = () => {
 
         },
         validationSchema,
-        
+
         onSubmit: async (values, action) => {
 
             try {
@@ -138,7 +181,7 @@ const Loginnew = () => {
                                                 <Input name="email" placeholder="Email" bg={bgcolor}  // Light gray background
                                                     _focus={{ bgcolor }}
                                                     value={values.email}
-                                                    onChange={(e)=>{
+                                                    onChange={(e) => {
                                                         setEmail(e.target.value);
                                                         handleChange(e);
                                                     }}
@@ -184,15 +227,20 @@ const Loginnew = () => {
                                             {/* CheckBox */}
                                             <Flex justifyContent={'space-between'}>
 
-                                                <Checkbox mt={3}  ><Box color={'gray'} display={'flex'} justifyContent={'space-between'}  >
-                                                    <Box>
+                                                <Checkbox mt={3}>
+                                                    <Box color={'gray'} display={'flex'} justifyContent={'space-between'}  >
+                                                        <Box>
 
-                                                        Remember me
+                                                            Remember me
+                                                        </Box>
                                                     </Box>
-                                                </Box>
-
                                                 </Checkbox>
-                                                <Link mt={3} color={'orange'} display={'flex'} justifyContent={'flex-end'} onClick={()=>handleForgotPassword(email)}> Forgot Password ?</Link>
+                                                <Link mt={3} color={isVisited ? 'gray' : 'green'} display={'flex'} justifyContent={'flex-end'} onClick={() => {
+                                                    setIsVisited(true);
+                                                    forget();
+                                                }
+                                                }
+                                                > Forgot Password ?</Link>
                                             </Flex>
                                             {/* Submit Button */}
                                             <Button

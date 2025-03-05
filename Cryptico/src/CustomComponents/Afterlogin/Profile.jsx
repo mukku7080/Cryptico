@@ -29,7 +29,6 @@ const Profile = () => {
     return (
         <>
             <Flex w={'container.xxl'} justifyContent={'center'} alignItems={'center'} my={10} marginTop={'54px'} direction={'column'} >
-                <BuySellWithNotification />
                 <Flex
                     maxW={{ base: "95%", sm: '90%', lg: '95%', xl: "90%" }}
                     minW={{ base: "90%", sm: '90%', lg: '90%', xl: "90%" }}

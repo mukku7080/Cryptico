@@ -24,7 +24,7 @@ const Addresses = () => {
                 direction={'column'}
                 gap={8}
             >
-                <Flex ml={4}  >
+                <Flex ml={4} width={'300px'}  >
 
                     <TokenDropdown />
                 </Flex>

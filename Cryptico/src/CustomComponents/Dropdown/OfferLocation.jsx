@@ -19,12 +19,12 @@ import { IoLocationOutline } from "react-icons/io5";
 import { useOtherDetail } from "../../Context/otherContext";
 
 const OfferLocation = () => {
-      const {data} = useOtherDetail();
+    const { data } = useOtherDetail();
 
     const [searchTerm, setSearchTerm] = useState("");
     const [btnName, setBtnName] = useState(location[0]);
 
-    const filteredItems = (data||[]).filter((location) =>
+    const filteredItems = (data || []).filter((location) =>
         location.currency_name.toLowerCase().includes(searchTerm.toLowerCase())
     );
     return (
@@ -49,6 +49,8 @@ const OfferLocation = () => {
                 <MenuList p={2} borderRadius={0}
                     maxHeight="300px" // Limit height
                     overflowY="auto" // Enable scrolling
+
+                    maxW={{ base: '252px', sm: 'none' }}
 
                 >
                     {/* Search Box */}

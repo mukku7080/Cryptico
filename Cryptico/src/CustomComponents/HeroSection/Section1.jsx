@@ -14,6 +14,7 @@ const Section1 = () => {
                     gap={10}
                     direction={{ base: 'column', sm: 'column', md: 'column', lg: 'row', xl: 'row' }} minW={'80%'}
                     alignItems={'center'}
+                    mt={{ base: 20, lg: 0 }}
 
 
 

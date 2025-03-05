@@ -40,7 +40,7 @@ export const MyPaymentModal = () => {
 
             <Modal isOpen={isOpen} size={'2xl'} onClose={onClose} isCentered>
                 <ModalOverlay />
-                <ModalContent maxW={'70%'}>
+                <ModalContent maxW={{base:'90%',md:'70%'}}>
                     <ModalHeader>Available Payment Methods</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody >

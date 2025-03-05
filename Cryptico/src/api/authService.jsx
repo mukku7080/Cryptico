@@ -87,14 +87,14 @@ export const forgetPassword = async (email) => {
     try {
         const response = await axiosInstance.post("/forgot-password", {
             email
-
-
         })
         return response.data
 
     }
     catch (error) {
         throw error.response ? error.response.data : error;
+        
+
 
     }
 }

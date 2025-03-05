@@ -1,4 +1,4 @@
-import { Avatar, AvatarBadge, Badge, Menu, MenuButton, useColorModeValue, useColorMode, Icon, MenuList, MenuItem, Button, Flex, Box, IconButton, Spinner } from "@chakra-ui/react";
+import { Avatar, AvatarBadge, Badge, Menu, MenuButton, useColorModeValue, useColorMode, Icon, MenuList, MenuItem, Button, Flex, Box, IconButton, Spinner, Divider } from "@chakra-ui/react";
 import { MdKeyboardArrowDown, MdKeyboardArrowRight } from "react-icons/md";
 import { useState, useEffect } from "react";
 import { FaUser, FaCreditCard, FaCog, FaHistory, FaUsers, FaGift, FaExchangeAlt, FaComments, FaSignOutAlt } from "react-icons/fa";
@@ -59,7 +59,7 @@ const UserAvatar = () => {
                     </MenuButton>
                     <MenuList borderRadius={0}>
                         <MenuItem bg={'none'} display={'flex'} justifyContent={'end'}>
-                            <Flex justifyContent={'space-between'} alignItems={'center'} w={'100%'} p={1} >
+                            <Flex justifyContent={'space-between'} alignItems={'center'} w={'100%'} py={1} >
 
                                 <Button onClick={() => {
                                     setDark(!isdark)
@@ -67,7 +67,7 @@ const UserAvatar = () => {
                                 }} boxSize={6}
                                     bg={bgColor}
                                     borderRadius={'full'}
-                                > 
+                                >
 
                                     {
                                         isdark ? <Icon as={CiLight} boxSize={4} ></Icon> :
@@ -79,6 +79,7 @@ const UserAvatar = () => {
                             </Flex>
 
                         </MenuItem>
+                        <Divider />
                         {menuItems.map((item, index) => (
                             <MenuItem
                                 key={index}

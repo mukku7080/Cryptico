@@ -118,11 +118,12 @@ export const AuthProvider = ({ children }) => {
         }
         catch (error) {
             console.error("Forgot password error:", error);
+            return error;
         }
     }
     const handleResetPassword = async ({ email, resetToken, newPassword }) => {
         try {
-           
+
             const data = await resetPassword({ email, resetToken, newPassword });
             return data;
         }

@@ -28,7 +28,6 @@ const UserDashboard = () => {
     const { user, error } = useUser();   
     return (
         <Flex maxW={'container.xxl'} bg={''} justifyContent={'center'} alignItems={'center'} direction={'column'} gap={10} my={10} marginTop={'54px'}>
-            <BuySellWithNotification />
 
 
             <Flex

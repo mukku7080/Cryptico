@@ -20,7 +20,6 @@ const Wallet = () => {
 
     return (
         <Flex w={'container.xxl'} gap={10} direction={'column'} alignItems={'center'} justifyContent={'center'} my={20} marginTop={'50px'} minH={'86vh'}>
-        <BuySellWithNotification/>
             <Flex
                 maxW={{ base: "90%", lg: '90%', xl: "90%" }}
                 minW={{ base: "90%", sm: '90%', lg: '90%', xl: "90%" }}
