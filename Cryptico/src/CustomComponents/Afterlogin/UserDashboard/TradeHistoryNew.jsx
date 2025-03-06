@@ -13,7 +13,7 @@ const TradeHistoryNew = () => {
 
     return (
         <>
-            <Flex direction={'column'} borderRadius={5} gap={4} bg={'transparent'} >
+            <Flex direction={'column'} borderRadius={5} gap={4} bg={'transparent'} width={'100%'} >
                 <Grid templateColumns={{ base: 'repeat(1, 1fr)', lg: 'repeat(2, 1fr)', xl: 'repeat(3, 1fr)' }} gap={4}>
 
 
@@ -65,7 +65,7 @@ const TradeHistoryNew = () => {
                         </Card>
                     </GridItem>
                     {/* Third Card */}
-                    <GridItem>
+                    <GridItem colSpan={{base:1,lg:2,xl:'1'}}>
                         <Card border={'1px solid #dcdcdc'} p={4} h={'100%'}>
                             <Flex direction={'column'} alignItems={'start'} gap={4}>
                                 <Flex justifyContent={'space-between'} alignItems={'center'} w={'full'}>

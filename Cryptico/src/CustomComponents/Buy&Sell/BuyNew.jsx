@@ -37,9 +37,6 @@ import TraderLocation from '../Dropdown/TraderLocation';
 import { MyPaymentModal } from '../Dropdown/PaymentModal/MyPaymentModal';
 import { Link } from 'react-router-dom';
 import TokenDropdown from '../Dropdown/TokenDropdown';
-import BuySellWithNotification from './BuySellWithNotification';
-import { motion } from 'framer-motion';
-const MotionFlex = motion(Flex);
 
 const BuyNew = () => {
 

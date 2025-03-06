@@ -36,6 +36,7 @@ import { motion } from "framer-motion";
 
 import PageLoader from './CustomComponents/Animation/PageLoader'
 import BuySellWithNotification from './CustomComponents/Buy&Sell/BuySellWithNotification'
+import UserDashboardNew from './CustomComponents/Afterlogin/UserDashboard/UserDashboardNew'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -78,7 +79,7 @@ function App() {
                     <Route path='/login' element={<Loginnew />}></Route>
                     <Route path='/signup' element={<Signupnew />}></Route>
                     <Route path="/number-verification" element={<ProtectedRoute><Numberwithotp /></ProtectedRoute>} />
-                    <Route path="/user-dashboard" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} >
+                    <Route path="/user-dashboard" element={<ProtectedRoute><UserDashboardNew /></ProtectedRoute>} >
                       <Route index element={<TradeHistoryNew />} />
                       <Route path="tradehistory" element={<TradeHistoryNew />} />
                       <Route path="recentTradePartners" element={<RecentTradeHistory />} />

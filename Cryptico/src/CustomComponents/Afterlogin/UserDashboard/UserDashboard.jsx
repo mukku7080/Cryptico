@@ -25,7 +25,7 @@ const UserDashboard = () => {
     const [istoogle, setToogle] = useState(false);
     const { isOpen, onToggle } = useDisclosure();
     const { isOpen: isOpen1, onToggle: onToggle1 } = useDisclosure();
-    const { user, error } = useUser();   
+    const { user, error } = useUser();
     return (
         <Flex maxW={'container.xxl'} bg={''} justifyContent={'center'} alignItems={'center'} direction={'column'} gap={10} my={10} marginTop={'54px'}>
 
@@ -46,10 +46,10 @@ const UserDashboard = () => {
 
                 {/* First Grid Row---------------------------------------------------------------------- */}
                 <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)", lg: "repeat(3, 1fr)", xl: "repeat(4, 1fr)" }} gap={5} width={'full'} transition="all 0.5s ease-in-out" >
-                    <GridItem bg={'wite'} colSpan={{ base: 3, md: 3, lg: 3, xl: 1 }} >
-                        <Card h={{ md: '50px', lg: '50px', xl: '120px' }} borderRadius={5} bg={'transparent'} boxShadow={'none'} border={'1px solid rgba(128, 128, 128, 0.05)'} direction={'row'} display={'flex'} justifyContent={'start'} >
+                    <GridItem bg={'wite'} colSpan={{ base: 3, md: 3, lg: 3, xl: 1 }}  >
+                        <Card h={{ md: '50px', lg: '50px', xl: '120px' }} borderRadius={5} bg={'transparent'} boxShadow={'none'} border={'1px solid rgba(128, 128, 128)'} direction={'row'} display={'flex'} justifyContent={'start'} >
 
-                            <Heading size={'lg'} display={'flex'} alignItems={'center'}> {tag}</Heading>
+                            <Heading size={'lg'} display={'flex'} alignItems={'center'} > {tag}</Heading>
                             <Flex justify={'flex-end'} flex={{ base: 1, md: 'auto' }} display={{ base: 'flex', md: 'flex', lg: 'none', xl: 'none' }} pr={{ base: '20px', sm: '20px', md: '20px', lg: '0px' }} gap={5} >
 
                                 <Button
@@ -83,56 +83,69 @@ const UserDashboard = () => {
                     </GridItem>
 
 
-                    <GridItem display={{ base: 'none', md: 'none', lg: 'block' }}>
-                        <Card h={'120px'} borderRadius={5} display={{ base: 'none', md: 'none', lg: 'flex' }} direction={'column'} justifyContent={'center'} alignItems={'center'} boxShadow={'lg'}>
+                    <GridItem display={{ base: 'none', md: 'none', lg: 'block' }} colSpan={3}>
+                        <Flex w={'full'} gap={5}>
 
-                            <Box>
-                                Account Level : 1
-                            </Box>
-                            <Box>
-                                Account Limit: 87022.8
-                            </Box>
-                        </Card>
-                    </GridItem>
-                    <GridItem display={{ base: 'none', md: 'none', lg: 'block' }}>
-                        <Card h={'120px'} borderRadius={5} display={{ base: 'none', md: 'none', lg: 'flex' }} direction={'column'} justifyContent={'center'} alignItems={'center'} boxShadow={'lg'}>
+                            <Flex flex={1}>
 
-                            <Flex gap={5} mx={1} >
-                                <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
-                                    <Image src='/imagelogo/phoneverify.png' h={'50px'} w={'50px'} />
-                                </Box>
-                                <Flex direction={'column'}>
-                                    <Box color={'red'}>
+                                <Card h={'120px'} borderRadius={5} display={{ base: 'none', md: 'none', lg: 'flex' }} direction={'column'} justifyContent={'center'} alignItems={'center'} boxShadow={'lg'} w={'full'}>
 
-                                        Phone Number Not Verified
+                                    <Box>
+                                        Account Level : 1
                                     </Box>
-                                    <Box maxW={{ md: '300px', xl: '200px' }}>
-                                        Take a minute to verify your number
+                                    <Box>
+                                        Account Limit: 87022.8
                                     </Box>
-                                    <Link color={'orange'}>verify</Link>
-                                </Flex>
+                                </Card>
                             </Flex>
-                        </Card>
-                    </GridItem>
-                    <GridItem display={{ base: 'none', md: 'none', lg: 'block' }}>
-                        <Card h={'120px'} borderRadius={5} display={{ base: 'none', md: 'none', lg: 'flex' }} direction={'column'} justifyContent={'center'} alignItems={'center'} boxShadow={'lg'}>
+                            <Flex flex={1}>
 
-                            <Flex gap={5} mx={1}>
-                                <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
-                                    <Image src='/imagelogo/eaglesecure.png' h={'50px'} w={'50px'} />
-                                </Box>
-                                <Flex direction={'column'}>
-                                    <Box color={'red'}>
+                                <Card h={'120px'} borderRadius={5} display={{ base: 'none', md: 'none', lg: 'flex' }} direction={'column'} justifyContent={'center'} alignItems={'center'} boxShadow={'lg'} w={'full'}>
 
-                                        2FA Not Enabled
-                                    </Box>
-                                    <Box maxW={'200px'}>
-                                        Enabling 2FA  is great way to secure your account.
-                                    </Box>
-                                    <Link color={'orange'}>Setup 2FA Now</Link>
-                                </Flex>
+                                    <Flex gap={5} mx={1} >
+                                        <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
+                                            <Image src='/imagelogo/phoneverify.png' h={'50px'} w={'50px'} />
+                                        </Box>
+                                        <Flex direction={'column'}>
+                                            <Box color={'red'}>
+
+                                                Phone Number Not Verified
+                                            </Box>
+                                            <Box maxW={{ md: '300px', xl: '200px' }}>
+                                                Take a minute to verify your number
+                                            </Box>
+                                            <Link color={'orange'}>verify</Link>
+                                        </Flex>
+                                    </Flex>
+                                </Card>
                             </Flex>
-                        </Card>
+                            <Flex flex={1}>
+                                <Card h={'120px'} borderRadius={5} display={{ base: 'none', md: 'none', lg: 'flex' }} direction={'column'} justifyContent={'center'} alignItems={'center'} boxShadow={'lg'} w={'full'}>
+
+                                    <Flex gap={5} mx={1}>
+                                        <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
+                                            <Image src='/imagelogo/eaglesecure.png' h={'50px'} w={'50px'} />
+                                        </Box>
+                                        <Flex direction={'column'}>
+                                            <Box color={'red'}>
+
+                                                2FA Not Enabled
+                                            </Box>
+                                            <Box maxW={'200px'}>
+                                                Enabling 2FA  is great way to secure your account.
+                                            </Box>
+                                            <Link color={'orange'}>Setup 2FA Now</Link>
+                                        </Flex>
+                                    </Flex>
+                                </Card>
+
+                            </Flex>
+                        </Flex>
+                    </GridItem>
+                    {/* <GridItem display={{ base: 'none', md: 'none', lg: 'block' }}>
+                    </GridItem> */}
+                    <GridItem display={{ base: 'none', md: 'none', lg: 'block' }}>
+
                     </GridItem>
 
                 </Grid>
