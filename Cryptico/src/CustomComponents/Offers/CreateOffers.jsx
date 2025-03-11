@@ -57,7 +57,6 @@ const CreateOffers = () => {
 
 
 
-
     return (
         <>
             <Flex W={'container.xxl'} justifyContent={'center'} alignItems={'center'} marginTop={'54px'}>
@@ -70,7 +69,13 @@ const CreateOffers = () => {
 
                 >
                     <Flex w={'100%'} direction={{ base: 'column', lg: 'row' }} >
-                        <Flex borderRight={{ base: 0, lg: '1px solid #dcdcdc' }} flex={1.2} width={{ base: '100%', lg: '50%' }} direction={'column'} p={{ base: 2, sm: 4, md: 6, lg: 8, xl: 10 }} gap={10}  >
+                        <Flex
+                            borderRight={{ base: 0, lg: '1px solid #dcdcdc' }}
+                            flex={1.2} width={{ base: '100%', lg: '50%' }}
+                            direction={'column'}
+                            p={{ base: 2, sm: 4, md: 6, lg: 8, xl: 10 }}
+                            gap={10}
+                        >
 
                             <Heading size={'lg'}>Create an Offer to Sell Bitcoin</Heading>
                             <Steper step={page} />
@@ -83,7 +88,14 @@ const CreateOffers = () => {
 
 
                         {/* Right side Section start */}
-                        <Flex flex={.8} width={{ base: '100%', lg: '50%' }} my={{ base: 10, sm: 0 }}>
+                        <Flex flex={.8}
+                            width={{ base: '100%', lg: '50%' }}
+                            my={{ base: 10, sm: 0 }}
+                            position={'sticky'}
+                            top={{ base: '102px', lg: '58px' }}  // Adjust based on navbar height if any4
+                            // height={{ base: 'auto', lg: "calc(100vh - 60px)" }}
+                            zIndex={1}
+                        >
                             <Flex w={'full'} direction={'column'} gap={5}
                                 sx={
                                     {
@@ -98,7 +110,7 @@ const CreateOffers = () => {
                                     <Heading size={'md'}>About This Step</Heading>
                                     <Flex> Start creating your offer by selecting the cryptocurrency you want to trade, whether or not you want to buy or sell, and the payment method you want to use.</Flex>
                                     <Flex gap={5} >
-                                        <Button variant={'outline'} _hover={{bg:'orange.50'}} border={'1px solid #dcdcdc'} onClick={prevPage} disabled={page === 0}>Previous Step</Button>
+                                        <Button variant={'outline'} _hover={{ bg: 'orange.50' }} border={'1px solid #dcdcdc'} onClick={prevPage} disabled={page === 0}>Previous Step</Button>
                                         {
                                             (page === pages.length - 1) ?
 
@@ -123,7 +135,7 @@ const CreateOffers = () => {
 const steps = [
     { title: 'Payment Method', description: 'Contact Info' },
     { title: 'Pricing', description: 'Date & Time' },
-    { title: 'OterSetting', description: 'Select Rooms' },
+    { title: 'Other Settings', description: 'Select Rooms' },
 ]
 
 function Steper({ step }) {
@@ -167,7 +179,7 @@ const PaymentSection = () => {
     const [isShow, setShow] = useState(true);
     return (
 
-        <Flex direction={'column'} gap={10}>
+        <Flex direction={'column'} gap={10} >
             <Heading size={'md'}>Choose Your Crypto Currency</Heading>
             <Flex gap={5} flexWrap={{ base: 'wrap', lg: 'wrap' }}>
 
@@ -240,9 +252,11 @@ const PaymentSection = () => {
                 }
 
             </Flex>
-            <Flex >
-
+            <Flex w={'full'} direction={'column'} gap={5}>
                 <OfferLocation />
+
+
+
             </Flex>
 
         </Flex>
@@ -255,3 +269,4 @@ const cryptoOption = [
     { name: 'Tether', logo: 'https://cryptologos.cc/logos/thumbs/tether.png?v=040' },
 ];
 export default CreateOffers
+// width={{base:'100%',sm:'83.8%',md:'48.5%'}}

@@ -23,7 +23,7 @@ import { GoPlus } from "react-icons/go";
 
 
 
-const PaymentMethod = () => {
+const PaymentMethodOld = () => {
     return (
         <>
             <Flex w={'container.xxl'} justifyContent={'center'} alignItems={'center'} my={10} h={'90vh'} >
@@ -207,4 +207,4 @@ const navOption = [
 
 
 
-export default PaymentMethod
+export default PaymentMethodOld

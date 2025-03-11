@@ -1,13 +1,15 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { getOtherService } from '../api/otherService';
+import { getCountrycode, getOtherService } from '../api/otherService';
 
 export const OtherContext = createContext();
 
 const OtherDetailProvider = ({ children }) => {
     const [error, setError] = useState(null);
     const [data, setData] = useState(null);
+    const [countryCode, setCountryCode] = useState(null);
 
     useEffect(() => {
+        handleCountryCode();
         handleOtherDetail();
     }, [])
 
@@ -26,8 +28,23 @@ const OtherDetailProvider = ({ children }) => {
         }
     }
 
+    const handleCountryCode = async () => {
+        try {
+
+            const response = await getCountrycode();
+            setCountryCode(response.data);
+            return response;
+
+        }
+        catch (error) {
+
+            console.error("otp error:", error);
+            setError(error);
+        }
+    }
+
     return (
-        <OtherContext.Provider value={{ data, error }}>
+        <OtherContext.Provider value={{ data, error,countryCode }}>
             {children}
         </OtherContext.Provider>
     )

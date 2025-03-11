@@ -15,7 +15,7 @@ import { IoMenuOutline, IoCloseOutline, IoBagOutline } from "react-icons/io5";
 import { Link, useNavigate } from 'react-router-dom';
 import { HiMiniArrowPath } from "react-icons/hi2";
 import { LiaHandPointRightSolid } from "react-icons/lia";
-import { MdDarkMode, MdOutlineFileDownload } from "react-icons/md";
+import { MdDarkMode, MdKeyboardArrowDown, MdOutlineFileDownload } from "react-icons/md";
 import { BsLightningCharge, BsQrCode } from "react-icons/bs";
 import { CiLight, CiWallet } from "react-icons/ci";
 import { GrTransaction } from "react-icons/gr";
@@ -40,7 +40,7 @@ const Navbarnew = () => {
 
 
     return (
-        <Flex as='nav' bg={'#17181E'} maxW={'container.xxl'} justifyContent={'center'} alignItems={'center'} direction={'column'}  >
+        <Flex as='nav' bg={'#000000'} maxW={'container.xxl'} justifyContent={'center'} alignItems={'center'} direction={'column'}  >
             <Flex
                 maxW={{ base: "90%", lg: '90%', xl: "90%" }}
                 minW={{ base: "90%", sm: '90%', lg: '90%', xl: "90%" }}
@@ -172,7 +172,7 @@ const DesktopNav = () => {
     return (
 
         <>
-            <Stack direction={'row'} spacing={{ lg: '5', xl: '10' }} >
+            <Stack direction={'row'} spacing={{ lg: '3', xl: '10' }} >
                 {
                     NAV_ITEMS.map((navitem) => (
                         <Box key={navitem.label} display={'flex'} justifyContent={'center'} >
@@ -188,7 +188,7 @@ const DesktopNav = () => {
                                         display={'flex'}
                                         alignItems={'center'}
                                         justifyContent={'center'}
-                                        textDecoration={'underline'}
+                                    // textDecoration={'underline'}
 
 
                                     >
@@ -235,14 +235,14 @@ const DesktopNav = () => {
                         size={'sm'}
                         onMouseEnter={() => setMenuOpen(true)}
                         onMouseLeave={() => setMenuOpen(false)}
-                        textDecoration={'underline'}
+                        // textDecoration={'underline'}
 
 
                         onClick={() => navigate('/user-dashboard')}
                     >
                         Dashboard
                     </MenuButton>
-                    <MenuList borderRadius={0}
+                    <MenuList borderRadius={5}
                         onMouseEnter={() => setMenuOpen(true)}
                         onMouseLeave={() => setMenuOpen(false)}
 
@@ -354,7 +354,7 @@ const MobileNav = () => {
                 <IoMenuOutline size={30} />
             </Button>
             {/* Drawer Component */}
-            <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
+            <Drawer isOpen={isOpen} placement="left" onClose={onClose} transition={'0.5 ease'}>
                 <DrawerOverlay />
                 <DrawerContent>
                     <DrawerCloseButton />
@@ -377,40 +377,18 @@ const MobileNav = () => {
 
                     <DrawerBody>
                         <Stack spacing={4}>
-                            {/* Rendering Navigation Items */}
-                            {/* {NAV_ITEMS.map((navItem) => (
-                                <Box key={navItem.label}>
-                                    <Button as={Link} to={navItem.locate} variant="ghost" width="100%">
-                                        {navItem.label}
-                                    </Button>
 
-                                    {navItem.children && (
-                                        <Stack pl={4} mt={2}>
-                                            {navItem.children.map((child) => (
-                                                <Button
-                                                    key={child.label}
-                                                    as={Link}
-                                                    to={child.href}
-                                                    variant="ghost"
-                                                    width="100%"
-                                                    justifyContent="flex-start"
-                                                >
-                                                    {child.label}
-                                                </Button>
-                                            ))}
-                                        </Stack>
-                                    )}
-                                </Box>
-                            ))} */}
-                            {/* {NAV_ITEMS.map((navItem) => (
-                                <MobileNavItem key={navItem.label} {...navItem} />
-        
-                            ))} */}
                             {
                                 offcanvaButton.map((item, index) => (
                                     <>
                                         <Flex key={index} direction={'column'}>
-                                            <Button rightIcon={<BiChevronRight />} display={'flex'} justifyContent={'space-between'} onClick={() => navigate(item.href)}>
+                                            <Button rightIcon={<BiChevronRight />} display={'flex'} justifyContent={'space-between'} onClick={() => {
+
+                                                navigate(item.href);
+                                                onClose();
+                                            }
+                                            }
+                                            >
                                                 {item.label}
                                             </Button>
                                         </Flex>
@@ -420,10 +398,10 @@ const MobileNav = () => {
 
                             {/* Login and Signup Buttons */}
                             <Stack direction={"row"} spacing={4} mt={6} display={'flex'} justifyContent={'center'}>
-                                <Button as={Link} to="/login" padding="0px 32px" bgColor="#ffb11a">
+                                <Button as={Link} to="/login" padding="0px 32px" bgColor="#ffb11a" onClick={() => setTimeout(onClose, 300)}>
                                     Log In
                                 </Button>
-                                <Button as={Link} to="/signup" padding="0px 32px" bgColor="#ffb11a">
+                                <Button as={Link} to="/signup" padding="0px 32px" bgColor="#ffb11a" onClick={() => setTimeout(onClose, 300)}>
                                     Sign Up
                                 </Button>
                             </Stack>
@@ -498,7 +476,7 @@ const MobileNavItem = ({ label, children, href }) => {
 
 const NAV_ITEMS = [
     {
-        label: <Button variant={'outline'} borderRadius={5} color={'white'} size={'sm'} px={4} _hover={{ bg: 'transparent' }}>Buy</Button>,
+        label: <Button variant={'outline'} borderRadius={5} color={'white'} size={'sm'} px={4} _hover={{ bg: 'transparent' }} rightIcon={<MdKeyboardArrowDown />}>Buy</Button>,
         locate: '/buy',
         children: [
             {
@@ -528,7 +506,7 @@ const NAV_ITEMS = [
     },
 
     {
-        label: <Button variant={'outline'} borderRadius={5} color={'white'} size={'sm'} px={4} _hover={{ bg: 'transparent' }}>Sell</Button>,
+        label: <Button variant={'outline'} borderRadius={5} color={'white'} size={'sm'} px={4} _hover={{ bg: 'transparent' }} rightIcon={<MdKeyboardArrowDown />}>Sell</Button>,
         locate: '/sell',
         children: [
             {
@@ -558,7 +536,7 @@ const NAV_ITEMS = [
     },
 
     {
-        label: 'Wallet',
+        label: <Button bg={'transparent'} variant={'outline'} borderRadius={5} color={'white'} size={'sm'}  _hover={{ bg: 'transparent' }} rightIcon={<MdKeyboardArrowDown />}>Wallet</Button>,
         locate: '/wallet',
         children: [
             {

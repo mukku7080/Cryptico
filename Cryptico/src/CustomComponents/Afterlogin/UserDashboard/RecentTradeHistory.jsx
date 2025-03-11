@@ -12,7 +12,7 @@ const RecentTradeHistory = () => {
         <>
 
             {/* for large Screen */}
-            <Card borderRadius={5} p={10} gap={4} boxShadow={'lg'} display={{ base: 'none', md: 'flex' }}>
+            <Card borderRadius={5} p={10} gap={4} boxShadow={'lg'} display={{ base: 'none', md: 'flex' }} w={'100%'}>
 
                 <Grid templateColumns={'repeat(3,1fr)'} mb={3}>
                     <GridItem >
@@ -117,7 +117,7 @@ const RecentTradeHistory = () => {
 
 
             {/* for small screen */}
-            <Card borderRadius={5} p={{ base: 5, sm: 10 }} gap={4} boxShadow={'lg'} display={{ base: 'flex', md: 'none' }}>
+            <Card borderRadius={5} p={{ base: 5, sm: 10 }} gap={4} boxShadow={'lg'} display={{ base: 'flex', md: 'none' }} w={'100%'}>
                 {
                     user.map((data, index) => (
 

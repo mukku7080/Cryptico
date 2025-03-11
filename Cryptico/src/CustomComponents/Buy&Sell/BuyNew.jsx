@@ -246,7 +246,8 @@ const LeftSideContent = () => {
                                     </InputRightElement>
                                 }
                             </InputGroup>
-                            <CurrencyDropdown />
+
+                            <CurrencyDropdown width='20%' />
                         </Flex>
                     </Flex>
 
@@ -471,9 +472,9 @@ const MoreFilter = () => {
 
 const OfferList = () => {
     return (
-        <Flex w={'full'} p={4} borderBottom={'1px solid #dcdcdc'} borderBottomRadius={5} direction={'column'} gap={5} >
+        <Flex w={'full'}  borderBottom={'1px solid #dcdcdc'} borderBottomRadius={0} direction={'column'} gap={5} >
             {/* Row1 */}
-            <Flex w={'full'} gap={{ base: 2, sm: 10 }}>
+            <Flex w={'full'} gap={{ base: 2, sm: 10 }} p={4}>
 
                 {/* Buy from */}
                 <Flex direction={'column'} flex={1}  >
@@ -524,9 +525,9 @@ const OfferList = () => {
                     </Flex>
                     <Flex color={'gray'}> Only For Indian Traders</Flex>
                     <Flex gap={2} flexWrap={'wrap'} >
-                        <Box p={1} fontSize={'14px'} bg={'gray.200'}>receipt req. </Box>
-                        <Box p={1} fontSize={'14px'} bg={'gray.200'}>photo id req. </Box>
-                        <Box p={1} fontSize={'14px'} bg={'gray.200'}>no third parties </Box>
+                        <Box p={1} fontSize={'12px'} bg={'gray.200'}>receipt req. </Box>
+                        <Box p={1} fontSize={'12px'} bg={'gray.200'}>photo id req. </Box>
+                        <Box p={1} fontSize={'12px'} bg={'gray.200'}>no third parties </Box>
                     </Flex>
                 </Flex>
                 {/* Trade speed */}

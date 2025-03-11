@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { userDetails } from '../api/userService'
+import { changeProfilePic, userDetails } from '../api/userService'
 import { useLocation } from 'react-router-dom';
 
 export const UserContext = createContext();
@@ -7,12 +7,12 @@ export const UserContext = createContext();
 const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [error, setError] = useState(null);
-    const location=useLocation();
+    const location = useLocation();
 
 
-    useEffect(()=>{
+    useEffect(() => {
         handleUserDetail();
-    },[location.pathname])
+    }, [location.pathname])
 
 
 
@@ -32,8 +32,19 @@ const UserProvider = ({ children }) => {
         }
     }
 
+    const handleChangeProfilePic = async (file) => {
+        try {
+            const response = await changeProfilePic(file);
+            return response;
+        }
+        catch (error) {
+            console.error("Error uploading image:", error);
+
+        }
+    }
+
     return (
-        <UserContext.Provider value={{  user, error }}>
+        <UserContext.Provider value={{ user, error,setUser, handleChangeProfilePic }}>
             {children}
         </UserContext.Provider>
     )

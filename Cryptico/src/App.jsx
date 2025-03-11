@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import Navbarnew from './CustomComponents/Navbar/Navbarnew'
 import Footer from './CustomComponents/Footer/Footer'
@@ -12,7 +12,6 @@ import Numberwithotp from './CustomComponents/LoginSignup/Numberwithotp'
 import Profile from './CustomComponents/Afterlogin/Profile'
 import TradeHistory from './CustomComponents/Afterlogin/UserDashboard/TradeHistory'
 import RecentTradeHistory from './CustomComponents/Afterlogin/UserDashboard/RecentTradeHistory'
-import PaymentMethod from './CustomComponents/Afterlogin/UserDashboard/PaymentMethod'
 import ProtectedRoute from './CustomComponents/AuthContext/ProtectedRoute'
 import { AuthProvider } from './Context/AuthContext'
 import Buy from './CustomComponents/Buy&Sell/Buy'
@@ -37,12 +36,28 @@ import { motion } from "framer-motion";
 import PageLoader from './CustomComponents/Animation/PageLoader'
 import BuySellWithNotification from './CustomComponents/Buy&Sell/BuySellWithNotification'
 import UserDashboardNew from './CustomComponents/Afterlogin/UserDashboard/UserDashboardNew'
+import ProfileSetting from './CustomComponents/SettingsPage/Settings'
+import Settings from './CustomComponents/SettingsPage/Settings'
+import ProfilePage from './CustomComponents/SettingsPage/ProfilePage'
+import PaymentMethodOld from './CustomComponents/Afterlogin/UserDashboard/PaymentMethodOld'
+import PaymentMethod from './CustomComponents/SettingsPage/PaymentMethod'
+import RoutesConfig from './RoutesConfig'
+import AccountProvider from './Context/AccountContext'
 
 function App() {
   const [count, setCount] = useState(0)
   const bgColor = useColorModeValue("#f5f7fa", "gray.900");
   const location = useLocation();
   const isTopLevelRoute = location.pathname.split('/').length <= 2;
+
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    const timer = setTimeout(() => setLoading(false), 800); // Adjust duration as needed
+    return () => clearTimeout(timer);
+  }, [location.pathname]);
 
   return (
     <>
@@ -52,67 +67,42 @@ function App() {
       <AuthProvider>
         <UserProvider>
           <OtherDetailProvider>
+            <AccountProvider>
 
+              <Container maxW={'container.xxl'} margin={0} padding={0} bg={bgColor} display={'flex'} flexDirection={'column'}>
+                {/* <Box  zIndex={1}> */}
 
-            <Container maxW={'container.xxl'} margin={0} padding={0} bg={bgColor} display={'flex'} flexDirection={'column'}>
-              {/* <Box  zIndex={1}> */}
-
-              <motion.div
-                initial={{ opacity: 0, y: -20 }} // Start position
-                animate={{ opacity: 1, y: 0 }}    // End position
-                transition={{ duration: 0.5, ease: 'easeInOut' }} // Smooth transition
-                style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000 }}
-              >
-                <Navbarnew />
-                <BuySellWithNotification />
-              </motion.div>
-              {/* </Box> */}
-              <AnimatePresence mode='wait'>
-                <PageLoader key={location.pathname}>
-
+                <motion.div
+                  initial={{ opacity: 0, y: -20 }} // Start position
+                  animate={{ opacity: 1, y: 0 }}    // End position
+                  transition={{ duration: 0.5, ease: 'easeInOut' }} // Smooth transition
+                  style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000 }}
+                >
+                  <Navbarnew />
+                  <BuySellWithNotification />
+                </motion.div>
+                {/* </Box> */}
 
 
 
-
-                  <Routes location={location} key={location.pathname}>
-                    <Route path='/' element={<Hero />}></Route>
-                    <Route path='/login' element={<Loginnew />}></Route>
-                    <Route path='/signup' element={<Signupnew />}></Route>
-                    <Route path="/number-verification" element={<ProtectedRoute><Numberwithotp /></ProtectedRoute>} />
-                    <Route path="/user-dashboard" element={<ProtectedRoute><UserDashboardNew /></ProtectedRoute>} >
-                      <Route index element={<TradeHistoryNew />} />
-                      <Route path="tradehistory" element={<TradeHistoryNew />} />
-                      <Route path="recentTradePartners" element={<RecentTradeHistory />} />
-                    </Route>
-                    <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-                    <Route path="/paymentMethod" element={<ProtectedRoute><PaymentMethod /></ProtectedRoute>} />
-                    <Route path='/buy' element={<ProtectedRoute><BuyNew /></ProtectedRoute>} />
-                    <Route path='/sell' element={<ProtectedRoute><SellNew /></ProtectedRoute>} />
-                    <Route path='/createOffers' element={<ProtectedRoute><CreateOffers /></ProtectedRoute>} />
-                    <Route path='/redirect' element={<Redirect />}></Route>
-                    <Route path='/wallet' element={<ProtectedRoute><Wallet /></ProtectedRoute>} >
-                      <Route index element={<Balance />} />
-                      <Route path='balance' element={<Balance />} />
-                      <Route path='transactions' element={<Transaction />} />
-                      <Route path='addresses' element={<Addresses />} />
-                      <Route path='convert' element={<Convert />} />
-                    </Route>
-                    <Route path='password-reset/:token' element={<PasswordReset />} />
-                    <Route path='forget' element={<ForgetPassword />}></Route>
-
-                  </Routes>
-                </PageLoader>
-
-              </AnimatePresence>
-
-
-
-              <Footer />
+                {loading && isTopLevelRoute ? (
+                  <PageLoader />
+                ) : (
+                  <RoutesConfig /> // Render routes without reloading for nested pages
+                )}
 
 
 
 
-            </Container>
+                <Footer />
+
+
+
+
+              </Container>
+            </AccountProvider>
+
+
 
 
           </OtherDetailProvider>

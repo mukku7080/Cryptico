@@ -51,13 +51,13 @@ const UserAvatar = () => {
                         _active={{ bg: "transparent" }}
                     >
                         {user ? (
-                            <Avatar border={'1px solid white'} name={user.name ? user.name : user.email} size="sm" src={user.profile_image} />
+                            <Avatar border={'1px solid white'} name={user.name ? user.name : user.email} size="sm" src={user && user.profile_image_url} />
                         ) : (
                             <Spinner size="xs" color="white" />
                         )}
 
                     </MenuButton>
-                    <MenuList borderRadius={0}>
+                    <MenuList borderRadius={5}>
                         <MenuItem bg={'none'} display={'flex'} justifyContent={'end'}>
                             <Flex justifyContent={'space-between'} alignItems={'center'} w={'100%'} py={1} >
 
@@ -117,7 +117,7 @@ const UserAvatar = () => {
 const menuItems = [
     { name: "My Profile", icon: <FaUser />, to: 'profile' },
     { name: "Payment Methods", icon: <FaCreditCard />, to: 'paymentMethod' },
-    { name: "Settings", icon: <FaCog />, to: 'settings' },
+    { name: "Settings", icon: <FaCog />, to: 'Settings' },
     { name: "Trade History", icon: <FaHistory />, to: 'tradehistory' },
     { name: "Trade Partners", icon: <FaUsers />, to: 'tradeParters' },
     { name: "Invite a Friend", icon: <FaGift />, to: 'iFriend' },

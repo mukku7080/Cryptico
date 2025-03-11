@@ -39,9 +39,12 @@ const Pricing = () => {
 
                 </Flex>
             </Flex>
-            <TradeLimit />
-            <Offermargin />
-            <TimeLimit />
+            <Flex direction={'column'}>
+
+                <Offermargin />
+                <TradeLimit />
+                <TimeLimit />
+            </Flex>
 
 
 
@@ -109,7 +112,7 @@ const Offermargin = () => {
 
     return (
         <>
-            <Grid templateColumns={{ base: 'repeat(1,1fr)', lg: 'repeat(5,1fr)' }} border={'1px solid #dcdcdc'} borderLeft={{ base: '1px solid #dcdcdc', lg: 0 }} p={2}>
+            <Grid templateColumns={{ base: 'repeat(1,1fr)', lg: 'repeat(5,1fr)' }} border={'1px solid #dcdcdc'} borderBottom={0} borderLeft={{ base: '1px solid #dcdcdc', lg: 0 }} p={2}>
                 <GridItem colSpan={2} p={2}>
                     <Flex direction={'column'} gap={5} justify={'center'} alignItems={'center'} my={10}>
                         <Heading size={'md'}>Offer margin</Heading>
@@ -165,7 +168,7 @@ const TimeLimit = () => {
     const [isfixedprice, setFixedPrice] = useState(true);
 
     return (
-        <Grid templateColumns={{ base: 'repeat(1,1fr)', lg: 'repeat(5,1fr)' }} border={'1px solid #dcdcdc'} borderLeft={{ base: '1px solid #dcdcdc', lg: 0 }} p={2} >
+        <Grid templateColumns={{ base: 'repeat(1,1fr)', lg: 'repeat(5,1fr)' }} border={'1px solid #dcdcdc'} borderTop={0} borderLeft={{ base: '1px solid #dcdcdc', lg: 0 }} p={2} >
             <GridItem colSpan={2} p={2}>
                 <Flex direction={'column'} gap={5} justify={'center'} alignItems={'center'} my={10}>
                     <Heading size={'md'}>Offer Trades Limit</Heading>

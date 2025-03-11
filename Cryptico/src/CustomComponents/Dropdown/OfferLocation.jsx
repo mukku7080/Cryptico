@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Menu,
     MenuButton,
@@ -18,15 +18,38 @@ import { IoMdSearch } from "react-icons/io";
 import { IoLocationOutline } from "react-icons/io5";
 import { useOtherDetail } from "../../Context/otherContext";
 
-const OfferLocation = () => {
-    const { data } = useOtherDetail();
+const OfferLocation = ({ formikHelpers = {}, name }) => {
+    // const { values = {}, handleChange = {}, handleBlur = {}, errors = {}, touched = {} } = formikHelpers;
+    const {
+        values = {},
+        handleChange = () => { }, // Default to a no-op function
+        handleBlur = () => { },
+        errors = {},
+        touched = {},
+    } = formikHelpers || {}; // Ensure formikHelpers is not undefined
+
+    const { countryCode } = useOtherDetail();
+    const defaultOption = countryCode?.[0]?.name || "Loading.....";
+
 
     const [searchTerm, setSearchTerm] = useState("");
-    const [btnName, setBtnName] = useState(location[0]);
+    const [btnName, setBtnName] = useState(defaultOption);
 
-    const filteredItems = (data || []).filter((location) =>
-        location.currency_name.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredItems = (countryCode || []).filter((location) =>
+        location.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+
+    useEffect(() => {
+        // If no option is selected, set the default one
+        setBtnName(defaultOption);
+        handleChange({ target: { name, value: defaultOption } });
+
+        // deaultLocation();
+
+    }, [countryCode]);
+
+
     return (
         <>
             <Menu>
@@ -34,9 +57,10 @@ const OfferLocation = () => {
                     as={Button}
                     rightIcon={<MdKeyboardArrowDown />}
                     borderRadius={5}
+                    w={'100%'}
 
                 >
-                    <Flex>
+                    <Flex gap={2}>
                         <Box display={'flex'} alignItems={'center'} >
 
                             <IoLocationOutline />
@@ -70,8 +94,20 @@ const OfferLocation = () => {
                     <VStack align="stretch" spacing={1}>
                         {filteredItems.length > 0 ? (
                             filteredItems.map((location, index) => (
-                                <MenuItem key={index} _hover={{ bg: "blue.100" }} onClick={() => setBtnName(location.currency_name)}>
-                                    {location.currency_name}
+                                <MenuItem key={index}
+                                    _hover={{ bg: "blue.100" }}
+                                    onClick={() => {
+
+                                        setBtnName(location.name);
+                                        handleChange({ target: { name, value: location?.name || defaultOption } });
+                                    }
+
+                                    }
+                                    onChange={handleChange}
+
+
+                                >
+                                    {location.name}
                                 </MenuItem>
                             ))
                         ) : (

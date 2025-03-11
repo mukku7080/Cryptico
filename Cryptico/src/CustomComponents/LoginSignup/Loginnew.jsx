@@ -138,8 +138,14 @@ const Loginnew = () => {
     return (
         <Box minH={'100vh'} display={'flex'} justifyContent={'center'} alignItems={'center'}>
 
-            <Flex maxW={'container.xxl'} justifyContent={'center'}  >
-                <Card borderRadius={'none'}  >
+            <Flex
+
+                maxW={'container.xxl'}
+                justifyContent={'center'}  >
+                <Card borderRadius={'none'}
+
+
+                >
 
                     <Flex minW={{ base: 'container', sm: '500px', md: 'container.md', lg: 'container.lg' }} direction={{ base: 'column', sm: 'column', md: 'row' }}  >
 
@@ -280,11 +286,6 @@ const Loginnew = () => {
 
                             </Card>
                         </Box>
-
-
-
-
-
                     </Flex>
                 </Card>
             </Flex>

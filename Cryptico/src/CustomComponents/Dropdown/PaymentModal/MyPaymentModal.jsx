@@ -18,7 +18,9 @@ import {
     Box,
     Image,
     Icon,
-    useColorModeValue
+    useColorModeValue,
+    Grid,
+    GridItem
 } from '@chakra-ui/react'
 import { RiSearchLine } from "react-icons/ri";
 import { PiBankLight, PiCurrencyCircleDollarThin, PiMoneyThin, PiGameControllerLight, PiPaypalLogoThin } from "react-icons/pi";
@@ -27,8 +29,8 @@ import { FaGooglePay } from "react-icons/fa";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { useState } from 'react';
 export const MyPaymentModal = () => {
-        const bgColor = useColorModeValue("orange.50", "gray.900");
-    
+    const bgColor = useColorModeValue("orange.50", "gray.900");
+
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [searchTerm, setSearchTerm] = useState("");
     const filteredIndianOptions = IndianpaymentOptions.filter(option =>
@@ -40,7 +42,7 @@ export const MyPaymentModal = () => {
 
             <Modal isOpen={isOpen} size={'2xl'} onClose={onClose} isCentered>
                 <ModalOverlay />
-                <ModalContent maxW={{base:'90%',md:'70%'}}>
+                <ModalContent maxW={{ base: '90%', md: '70%' }}>
                     <ModalHeader>Available Payment Methods</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody >
@@ -55,20 +57,23 @@ export const MyPaymentModal = () => {
                                     </Input>
                                 </InputGroup>
                             </FormControl>
-                            <Flex flexWrap={'wrap'} gap={10} >
+                            <Grid templateColumns={{ base: 'repeat(2,1fr)',sm: 'repeat(3,1fr)',md: 'repeat(3,1fr)', lg: 'repeat(6,1fr)' }} flexWrap={'wrap'} gap={10} >
                                 {
                                     paymentOptions.map((data, index) => (
-                                        <Flex flex={1} key={index} direction={'column'} mt={4} justifyContent={'center'} alignItems={'center'}  h={'100px'}>
-                                            {data.icon}
-                                            <Box as='p' fontWeight={400} fontSize={'16px'} textAlign={'center'}>{data.name}</Box>
-                                            <Box as='p' fontWeight={400} color={'gray'} fontSize={'11px'}>CHOICE : 5</Box>
-                                        </Flex>
+                                        <GridItem key={index} >
+
+                                            <Flex flex={1} direction={'column'} mt={4} justifyContent={'center'} alignItems={'center'} h={'100px'}>
+                                                {data.icon}
+                                                <Box as='p' fontWeight={400} fontSize={'16px'} textAlign={'center'}>{data.name}</Box>
+                                                <Box as='p' fontWeight={400} color={'gray'} fontSize={'11px'}>CHOICE : 5</Box>
+                                            </Flex>
+                                        </GridItem>
 
                                     ))
                                 }
 
 
-                            </Flex>
+                            </Grid>
                         </Flex>
                         <Heading fontWeight={500} size={'md'} mb={8}>Popular In India</Heading>
                         <Flex w={'100%'} p={4} borderRadius={5} gap={{ base: 5, md: 5, lg: 10 }} wrap={'wrap'}  >

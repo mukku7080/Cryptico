@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
     Menu,
     MenuButton,
@@ -17,45 +17,17 @@ import {
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { IoMdSearch } from "react-icons/io";
 import { useOtherDetail } from "../../Context/otherContext";
-import { useFormik } from "formik";
 
-const CurrencyDropdown = ({ width, formikHelpers = {}, name, defaultName }) => {
+const NumberDropdownNew = () => {
 
-    const {
-        values = {},
-        handleChange = () => { }, // Default to a no-op function
-        handleBlur = () => { },
-        errors = {},
-        touched = {},
-    } = formikHelpers || {}; // Ensure formikHelpers is not undefined
-
-
-
-    // const { values = {}, handleChange = {}, handleBlur = {}, errors = {}, touched = {} } = formikHelpers;
-    // console.log(handleChange);
-
-    const { handleOtherDetail, data } = useOtherDetail();
-    const defaultOption = data?.[0]?.currency_code || "Loading...";
+    const { handleCountryCode, CountryCode } = useOtherDetail();
 
     const [searchTerm, setSearchTerm] = useState("");
-    const [option, setOption] = useState(defaultOption);
+    const [option, setOption] = useState("India");
 
-    const filteredItems = (data || []).filter((item) =>
-        item.currency_code.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredItems = (CountryCode || []).filter((item) =>
+        item.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-
-
-
-
-    useEffect(() => {
-        // If no option is selected, set the default one
-        setOption(defaultOption);
-        // defaultCurrency();
-        handleChange({ target: { name, value: defaultOption } });
-    }, [data]);
-
-
-
 
 
     return (
@@ -66,21 +38,19 @@ const CurrencyDropdown = ({ width, formikHelpers = {}, name, defaultName }) => {
                     bg={'transparent'}
                     borderRadius={5}
                     _hover={{ bg: "transparent" }}
-                    size={'md'}
+                    size={'sm'}
                     minW={{ base: "auto", md: "100px" }} // Ensures it doesn't shrink too much
                     display="flex"
-                    // variant={'outline'}
-                    // rightIcon={}
+                    alignItems="center"
+                    justifyContent="space-between"
+                    rightIcon={<MdKeyboardArrowDown />}
                     _focus={{ boxShadow: "none" }}
                     _active={{ bg: "transparent" }}
-                    w={width}
+                    onClick={handleCountryCode}
 
                 >
-                    <Flex justifyContent={'space-between'}>
 
-                        {option}
-                        <MdKeyboardArrowDown />
-                    </Flex>
+                    {option}
                 </MenuButton>
 
                 <MenuList p={2} borderRadius={0}
@@ -109,21 +79,16 @@ const CurrencyDropdown = ({ width, formikHelpers = {}, name, defaultName }) => {
                     <VStack align="stretch" spacing={1}>
                         {filteredItems.length > 0 ? (
                             filteredItems.map((item, index) => (
-                                <MenuItem key={index} _hover={{ bg: "blue.100" }} onClick={() => {
-                                    setOption(item.currency_code);
-                                    handleChange({ target: { name, value: item.currency_code } });
-
-
-                                }}
-                                // onChange={handleChange}
-
-                                >
+                                <MenuItem key={index} _hover={{ bg: "blue.100" }}
+                                    onClick={() => {
+                                        setOption(item.code);
+                                    }}>
                                     <Flex justifyContent={'space-between'} w={'full'}>
 
-                                        <Flex justifyContent={'start'} alignItems={'center'} w={'full'} gap={5} borderBottom={'1px solid #f5f7fa'}>
-                                            <Image boxSize={5} src={item.country_flag_url}></Image>
+                                        <Flex justifyContent={'space-between'} alignItems={'center'} w={'full'} gap={5} borderBottom={'1px solid #f5f7fa'}>
+                                            <Image boxSize={5} src={item.flag_url}></Image>
 
-                                            {item.currency_code}
+                                            {item.dialing_code}
                                         </Flex>
                                         <Box mr={3}>{item.currency_symbol}</Box>
                                     </Flex>
@@ -139,8 +104,8 @@ const CurrencyDropdown = ({ width, formikHelpers = {}, name, defaultName }) => {
         </>
     );
 };
-const items = ["USD", "INR", "Rial", "Phonepay", "Dirham", "Taka", "Dollar", "yuro", "pisa", "Grain", "CD"];
+// const items = ["USD", "INR", "Rial", "Phonepay", "Dirham", "Taka", "Dollar", "yuro", "pisa", "Grain", "CD"];
 
 
 
-export default CurrencyDropdown;
+export default NumberDropdownNew;

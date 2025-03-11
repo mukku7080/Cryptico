@@ -17,10 +17,7 @@ const OtherSettings = () => {
                             <Heading size={'sm'}>Offer Tags</Heading>
                         </FormLabel>
                         <SearchableMultiSelect />
-                        {/* <Select placeholder='Select country' mb={3}>
-                            <option>United Arab Emirates</option>
-                            <option>Nigeria</option>
-                        </Select> */}
+                       
                         <Box fontSize={'14px'}>Select up to 3 tags that best describe your offer terms.</Box>
                     </FormControl>
 
