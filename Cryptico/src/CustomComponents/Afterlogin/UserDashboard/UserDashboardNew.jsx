@@ -95,7 +95,7 @@ const UserDashboardNew = () => {
                         </Collapse>
 
                         <Collapse in={isOpen1} animateOpacity transition={{ exit: { delay: 0 }, enter: { duration: 0.5 } }}>
-                            <Mobilecollapse2 onClose={onToggle1} />
+                            <Mobilecollapse2 onClose={onToggle1} tag={tag} setTag={setTag} />
                         </Collapse>
                     </Flex>
                     {/* content Heading and toggle layer */}
@@ -409,8 +409,7 @@ const Mobilecollapse1 = () => {
 
 
 }
-const Mobilecollapse2 = ({ onClose }) => {
-    const [tag, setTag] = useState("TradeHistory");
+const Mobilecollapse2 = ({ onClose, tag, setTag }) => {
     const navigate = useNavigate();
 
     return (

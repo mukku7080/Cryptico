@@ -13,13 +13,13 @@ const Convert = () => {
         <>
             <Flex w={'container.xxl'} gap={10} direction={'column'} alignItems={'center'} justifyContent={'start'} my={20} marginTop={'50px'} minH={'70vh'}>
                 <Flex
-                    maxW={{ base: "90%", lg: '90%', xl: "90%" }}
-                    minW={{ base: "90%", sm: '90%', lg: '90%', xl: "90%" }}
+                    maxW={{ base: "100%", lg: '90%', xl: "90%" }}
+                    minW={{ base: "100%", sm: '90%', lg: '90%', xl: "90%" }}
                     direction={'column'}
                     gap={8}
                 >
 
-                    <Flex gap={2} bg={'red.100'} p={2} color={'black'}>
+                    {/* <Flex gap={2} bg={'red.100'} p={2} color={'black'}>
                         <Box mt={1} color={'red'}>
 
                             <AiOutlineExclamationCircle />
@@ -31,7 +31,7 @@ const Convert = () => {
 
                             </Box>
                         </Flex>
-                    </Flex>
+                    </Flex> */}
                     <Card w={'full'} p={4}  >
                         <Flex w={'full'} direction={{ base: 'column', lg: 'row' }} my={5} >
 

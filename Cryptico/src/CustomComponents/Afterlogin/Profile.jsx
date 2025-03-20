@@ -47,13 +47,13 @@ const Profile = () => {
                                     <Box boxSize={3} bg={'green.400'} borderRadius={'50%'}></Box> Active Now
                                 </Flex>
                                 <Flex alignItems={'center'} justifyContent={'center'} direction={'column'} gap={2}>
-                                    {user ? (<Avatar name={user.name ? user.name : user.email} src={user.Profile} size={'xl'} />) : (<Spinner size={'xl'} />)
+                                    {user ? (<Avatar name={user.name ? user.name : user.email} src={user.profile_image_url} size={'xl'} />) : (<Spinner size={'xl'} />)
 
                                     }
-                                    <Heading size={'lg'}> User_Name</Heading>
+                                    <Heading size={'lg'}> {user.username}</Heading>
                                     <Flex gap={3} alignItems={'center'}>
-                                        India
-                                        <Image boxSize={8} src='https://www.svgrepo.com/show/401651/flag-for-india.svg'></Image>
+                                        {user.country}
+                                        <Image boxSize={8} src={user.country_flag_url}></Image>
                                     </Flex>
 
 

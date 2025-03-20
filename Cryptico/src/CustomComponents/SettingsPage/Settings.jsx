@@ -167,7 +167,7 @@ const Settings = () => {
                             </Card>
                         </Flex>
 
-                        <Flex flex={1.6} gap={5} direction={'column'}  >
+                        <Flex flex={1.6} gap={5} direction={'column'} w={'100%'} >
 
                             <Card h={'auto'} borderRadius={5} direction={'column'} boxShadow={'lg'} w={{ base: '100%', md: '100%' }} p={4}>
 
@@ -392,7 +392,7 @@ const userOption = [
     },
     {
         icon: <CiCircleQuestion />,
-        btn_name: "Connected Apps & Websites",
+        btn_name: "Security Questions",
         to: 'securityQuestions'
 
     },

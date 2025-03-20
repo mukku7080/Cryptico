@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { changeProfilePic, userDetails } from '../api/userService'
+import { changePassword, changeProfilePic, userDetails } from '../api/userService'
 import { useLocation } from 'react-router-dom';
 
 export const UserContext = createContext();
@@ -43,8 +43,18 @@ const UserProvider = ({ children }) => {
         }
     }
 
+    const handleChangePassword = async (values) => {
+        try {
+            const res = changePassword(values);
+            return res;
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+
     return (
-        <UserContext.Provider value={{ user, error,setUser, handleChangeProfilePic }}>
+        <UserContext.Provider value={{ user, error, setUser, handleChangeProfilePic, handleChangePassword }}>
             {children}
         </UserContext.Provider>
     )

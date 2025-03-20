@@ -28,7 +28,7 @@ const UserAvatar = () => {
         try {
 
             const res = await handleLogout();
-            if (res.status === 'success') {
+            if (res.status === true) {
                 navigate('/');
                 window.location.reload();
             }
@@ -116,7 +116,7 @@ const UserAvatar = () => {
 
 const menuItems = [
     { name: "My Profile", icon: <FaUser />, to: 'profile' },
-    { name: "Payment Methods", icon: <FaCreditCard />, to: 'paymentMethod' },
+    { name: "Payment Methods", icon: <FaCreditCard />, to: 'Settings/paymentMethod' },
     { name: "Settings", icon: <FaCog />, to: 'Settings' },
     { name: "Trade History", icon: <FaHistory />, to: 'tradehistory' },
     { name: "Trade Partners", icon: <FaUsers />, to: 'tradeParters' },

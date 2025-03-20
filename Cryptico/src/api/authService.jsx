@@ -2,7 +2,7 @@ import { axiosInstance } from "./axiosInstance";
 
 export const login = async ({ email, password }) => {
     try {
-        const response = await axiosInstance.post("/login", {
+        const response = await axiosInstance.post("/auth/login", {
             username: email,
             password: password
         });
@@ -38,7 +38,7 @@ export const SignupWithGoogle = async () => {
 export const signup = async ({ email, password }) => {
 
     try {
-        const response = await axiosInstance.post("/register", {
+        const response = await axiosInstance.post("/auth/register", {
             email: email,
             password: password
         });
@@ -76,7 +76,7 @@ export const verifyEmailOtp = async ({ otp }) => {
 
 export const logout = async () => {
     try {
-        const response = await axiosInstance.delete("/logout");
+        const response = await axiosInstance.delete("/auth/logout");
         localStorage.removeItem("authToken");
         return response.data
     } catch (error) {
@@ -85,7 +85,7 @@ export const logout = async () => {
 };
 export const forgetPassword = async (email) => {
     try {
-        const response = await axiosInstance.post("/forgot-password", {
+        const response = await axiosInstance.post("/auth/forgot-password", {
             email
         })
         return response.data
@@ -103,7 +103,7 @@ export const resetPassword = async ({ email, resetToken, newPassword }) => {
         console.log(email);
         console.log(resetToken);
         console.log(newPassword);
-        const response = await axiosInstance.post("/reset-password", {
+        const response = await axiosInstance.post("auth/reset-password", {
             email: email,
             token: resetToken,
             password: newPassword

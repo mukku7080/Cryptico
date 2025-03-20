@@ -23,6 +23,12 @@ import PasswordReset from './CustomComponents/LoginSignup/PasswordReset';
 import ForgetPassword from './CustomComponents/LoginSignup/ForgetPassword';
 import Redirect from './CustomComponents/LoginSignup/Redirect';
 import MyOffers from './CustomComponents/Afterlogin/UserDashboard/MyOffers';
+import Verification from './CustomComponents/SettingsPage/Verification';
+import SecurityQuestionForm from './CustomComponents/SettingsPage/SecurityQuestionForm';
+import SecurityQuestion from './CustomComponents/SettingsPage/SecurityQuestion';
+import Security from './CustomComponents/SettingsPage/Security';
+import BuyOffer from './CustomComponents/Buy&Sell/BuyOffer';
+import SellOffer from './CustomComponents/Buy&Sell/SellOffer';
 
 const RoutesConfig = () => {
     return (
@@ -39,6 +45,8 @@ const RoutesConfig = () => {
             </Route>
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path='/buy' element={<ProtectedRoute><BuyNew /></ProtectedRoute>} />
+            <Route path='/buyOffer' element={<ProtectedRoute><BuyOffer /></ProtectedRoute>} />
+            <Route path='/sellOffer' element={<ProtectedRoute><SellOffer /></ProtectedRoute>} />
             <Route path='/sell' element={<ProtectedRoute><SellNew /></ProtectedRoute>} />
             <Route path='/createOffers' element={<ProtectedRoute><CreateOffers /></ProtectedRoute>} />
             <Route path='/redirect' element={<Redirect />} />
@@ -53,6 +61,9 @@ const RoutesConfig = () => {
                 <Route index element={<ProfilePage />} />
                 <Route path='profileSetting' element={<ProfilePage />} />
                 <Route path='paymentMethod' element={<PaymentMethod />} />
+                <Route path='verification' element={<Verification />} />
+                <Route path='securityQuestions' element={<SecurityQuestion />} />
+                <Route path='security' element={<Security />} />
             </Route>
             <Route path='password-reset/:token' element={<PasswordReset />} />
             <Route path='forget' element={<ForgetPassword />} />

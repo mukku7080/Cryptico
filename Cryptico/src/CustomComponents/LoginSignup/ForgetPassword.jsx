@@ -140,15 +140,6 @@ const ForgetPassowrd = () => {
                                                 <FormErrorMessage>{errors.email}</FormErrorMessage>
                                             </FormControl>
 
-
-
-
-
-
-
-
-
-
                                             {/* Submit Button */}
                                             <Button
                                                 isLoading={isLoading}

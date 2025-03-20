@@ -171,7 +171,7 @@ const TimeLimit = () => {
         <Grid templateColumns={{ base: 'repeat(1,1fr)', lg: 'repeat(5,1fr)' }} border={'1px solid #dcdcdc'} borderTop={0} borderLeft={{ base: '1px solid #dcdcdc', lg: 0 }} p={2} >
             <GridItem colSpan={2} p={2}>
                 <Flex direction={'column'} gap={5} justify={'center'} alignItems={'center'} my={10}>
-                    <Heading size={'md'}>Offer Trades Limit</Heading>
+                    <Heading size={'md'}>Offer Time Limit</Heading>
                     <Button size={'sm'} variant={'outline'} px={8} onClick={() => setFixedPrice((prev) => !prev)}>{isfixedprice ? "use range" : "use fixed amount"}</Button>
                 </Flex>
             </GridItem>

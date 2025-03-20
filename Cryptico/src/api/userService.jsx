@@ -1,3 +1,4 @@
+import axios from "axios";
 import { axiosInstance } from "./axiosInstance"
 
 export const userDetails = async () => {
@@ -24,6 +25,21 @@ export const changeProfilePic = async (file) => {
         throw error.response ? error.response.data : error;
 
 
+    }
+}
+export const changePassword = async (values) => {
+    try {
+        const response = await axiosInstance.post("/change-password", {
+            current_password: values.currentPassword,
+            new_password: values.password,
+
+        })
+        return response.data;
+
+    }
+    catch (error) {
+        throw error.response ? error.response.data : error.message;
+        
     }
 }
 

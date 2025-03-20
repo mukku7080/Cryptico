@@ -89,7 +89,7 @@ const PaymentMethod = () => {
 
                                 console.log(res);
                                 const { status, message } = res;
-                                if (status === 'success') {
+                                if (status === true) {
                                     toast({
                                         title: "Account",
                                         description: message,

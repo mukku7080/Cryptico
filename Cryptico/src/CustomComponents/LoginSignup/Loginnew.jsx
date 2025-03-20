@@ -48,7 +48,7 @@ const Loginnew = () => {
         const { status, message } = res;
 
 
-        if (status === 'success') {
+        if (status === true) {
             toast({
                 title: "Reset-password",
                 description: "password reset-link has been sent on your email..",
@@ -100,16 +100,19 @@ const Loginnew = () => {
             try {
                 setIsLoading(true);
                 const res = await handleLogin(values);
-                toast({
-                    title: "Login Successfuly",
-                    description: "Enjoy our Service",
-                    status: "success",
-                    duration: 1000,
-                    isClosable: true,
-                    position: "top-right",
-                });
+                if (res.status === true) {
 
-                navigate("/user-dashboard");
+                    toast({
+                        title: "Login Successfuly",
+                        description: "Enjoy our Service",
+                        status: "success",
+                        duration: 1000,
+                        isClosable: true,
+                        position: "top-right",
+                    });
+
+                    navigate("/user-dashboard");
+                }
             }
             catch (err) {
                 toast({
@@ -246,6 +249,8 @@ const Loginnew = () => {
                                                     forget();
                                                 }
                                                 }
+                                                    isLoading
+                                                    colorScheme='blue'
                                                 > Forgot Password ?</Link>
                                             </Flex>
                                             {/* Submit Button */}

@@ -70,7 +70,7 @@ const Signupnew = () => {
             try {
                 setIsLoading(true);
                 const res = await handleSignup(values);
-                if (res.status === "success") {
+                if (res.status === true) {
                     try {
 
                         setToken(res.token);

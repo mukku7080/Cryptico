@@ -40,8 +40,10 @@ import OtherSettings from './OtherSettings';
 
 
 const CreateOffers = () => {
+    const [currency, setCurrency] = useState("USDT");
+    const [action, setAction] = useState("Sell");
     const [page, setPage] = useState(0);
-    const pages = [<PaymentSection />, <Pricing />, <OtherSettings />];
+    const pages = [<PaymentSection action={action} setAction={setAction} setCurrency={setCurrency} />, <Pricing />, <OtherSettings />];
 
     const nextPage = () => {
         if (page < pages.length - 1) {
@@ -77,7 +79,7 @@ const CreateOffers = () => {
                             gap={10}
                         >
 
-                            <Heading size={'lg'}>Create an Offer to Sell Bitcoin</Heading>
+                            <Heading size={'lg'}>{`Create an Offer to ${action} ${currency}`}</Heading>
                             <Steper step={page} />
 
 
@@ -174,8 +176,8 @@ function Steper({ step }) {
 
 
 
-const PaymentSection = () => {
-    const [value, setValue] = React.useState('1')//Radio button
+const PaymentSection = ({ action, setAction, setCurrency }) => {
+    const [value, setValue] = React.useState('Buy')//Radio button
     const [isShow, setShow] = useState(true);
     return (
 
@@ -185,25 +187,25 @@ const PaymentSection = () => {
 
                 {cryptoOption.map((data, index) => (
 
-                    <Flex key={index} border={'1px solid #dcdcdc'}>
+                    <Flex key={index} border={'1px solid #dcdcdc'} borderRadius={5}>
 
-                        <Button leftIcon={<Image boxSize={5} src={data.logo}></Image>} >{data.name}</Button>
+                        <Button onClick={() => setCurrency(data.name)} leftIcon={<Image boxSize={5} src={data.logo} ></Image>} >{data.name}</Button>
                     </Flex>
                 ))}
             </Flex>
             <Heading size={'md'}>What Would You Like to Do ?</Heading>
-            <RadioGroup onChange={setValue} value={value}>
+            <RadioGroup onChange={setAction} value={action}>
                 <Flex gap={5} direction={'column'}>
 
                     <Flex gap={2} >
-                        <Radio size='md' name='1' colorScheme='orange' value='1' >
+                        <Radio size='md' name='1' colorScheme='orange' value='Sell' >
                         </Radio>
                         <Box>Sell BitCoin </Box>
                         <Box display={'flex'} alignItems={'center'} color={'gray'} fontSize={'12px'}> * Your offer will be listed on the Buy Bitcoin page</Box>
 
                     </Flex>
                     <Flex gap={2} >
-                        <Radio size='md' name='1' colorScheme='orange' value='2' >
+                        <Radio size='md' name='1' colorScheme='orange' value='Buy' >
                         </Radio>
                         <Box>Buy BitCoin </Box>
                         <Box display={'flex'} alignItems={'center'} color={'gray'} fontSize={'12px'}> * Your offer will be listed on the Sell Bitcoin page</Box>
@@ -228,9 +230,9 @@ const PaymentSection = () => {
                 {isShow &&
 
                     <Flex w={'400px'} direction={'column'} gap={5}>
-                        <Heading size={'sm'}>Prefered Currency</Heading>
+                        <Heading size={'sm'}>Prefer Currency</Heading>
 
-                        <Flex justifyContent={'space-between'} alignItems={'center'} border={'1px solid #dcdcdc'} >
+                        <Flex justifyContent={'space-between'} alignItems={'center'} border={'1px solid #dcdcdc'} borderRadius={5} >
                             <InputGroup>
 
                                 <Input placeholder='Enter Amount'

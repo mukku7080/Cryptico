@@ -11,7 +11,7 @@ const Footer = () => {
   const textColor = useColorModeValue("gray.600", "gray.200");
 
   return (
-    <Container maxW={'container.xxl'} bg={bgColor} height={'auto'} display={'flex'} justifyContent={'center'} borderTop={'1px solid #ccc'}>
+    <Container maxW={'container.xxl'} bg={bgColor} height={'auto'} display={'flex'} justifyContent={'center'} borderTop={'1px solid #ccc'} mt={10} >
       {/* mainFlex */}
 
 

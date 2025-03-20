@@ -35,7 +35,7 @@ import { MdDoubleArrow } from "react-icons/md";
 import OfferLocation from '../Dropdown/OfferLocation';
 import TraderLocation from '../Dropdown/TraderLocation';
 import { MyPaymentModal } from '../Dropdown/PaymentModal/MyPaymentModal';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import TokenDropdown from '../Dropdown/TokenDropdown';
 import BuySellWithNotification from './BuySellWithNotification';
 import { motion } from 'framer-motion';
@@ -208,6 +208,8 @@ const LeftSideContent = () => {
             top={{ base: '102px', lg: '58px' }}  // Adjust based on navbar height if any
             height={{ base: 'auto', lg: "calc(100vh - 60px)" }}
             zIndex={1}
+            overflowY={'auto'}
+            overflowX={'hidden'}
 
         >
             <Flex w={'full'} direction={'column'} >
@@ -473,6 +475,8 @@ const MoreFilter = () => {
 
 
 const OfferList = () => {
+    const navigate = useNavigate();
+
     return (
         <Flex w={'full'} p={4} borderBottom={'1px solid #dcdcdc'} borderBottomRadius={5} direction={'column'} gap={5} >
             {/* Row1 */}
@@ -517,7 +521,7 @@ const OfferList = () => {
                         <Box>
                             Bhim
                         </Box>
-                        <Flex border={'1px solid green'} color={'green'} px={2} fontSize={'10px'} fontWeight={'bold'} gap={2} justifyContent={'center'} alignItems={'center'}>
+                        <Flex border={'1px solid green'} color={'green'} px={2} fontSize={'10px'} fontWeight={'bold'} gap={2} justifyContent={'center'} alignItems={'center'} borderRadius={5}>
                             <FaCheck />
                             <Box as='span'>
 
@@ -527,9 +531,9 @@ const OfferList = () => {
                     </Flex>
                     <Flex color={'gray'}> Only For Indian Traders</Flex>
                     <Flex gap={2} flexWrap={'wrap'} >
-                        <Box p={1} fontSize={'14px'} bg={'gray.200'}>receipt req. </Box>
-                        <Box p={1} fontSize={'14px'} bg={'gray.200'}>photo id req. </Box>
-                        <Box p={1} fontSize={'14px'} bg={'gray.200'}>no third parties </Box>
+                        <Box p={1} fontSize={'14px'} bg={'gray.200'} borderRadius={5}>receipt req. </Box>
+                        <Box p={1} fontSize={'14px'} bg={'gray.200'} borderRadius={5}>photo id req. </Box>
+                        <Box p={1} fontSize={'14px'} bg={'gray.200'} borderRadius={5}>no third parties </Box>
                     </Flex>
                 </Flex>
                 {/* Trade speed */}
@@ -608,7 +612,7 @@ const OfferList = () => {
                 {/* Pay With */}
 
 
-                <Flex direction={'row'} flex={2} display={{ base: 'none', md: 'flex' }} gap={3} fontSize={'14px'} color={'gray'} bg={'red.100'} p={1}>
+                <Flex direction={'row'} flex={2} display={{ base: 'none', md: 'flex' }} gap={3} fontSize={'14px'} color={'gray'} bg={'red.100'} p={1} borderRadius={5}>
 
                     <Box as='span'  >
                         <Flex gap={2} justifyContent={'start'} alignItems={'start'} >
@@ -620,7 +624,6 @@ const OfferList = () => {
                             <Box as='span' >
                                 <Link >
                                     <Box as='span' textDecoration={'underline'} color={'black'}>
-
                                         Show your full name
                                     </Box>
                                 </Link>
@@ -659,7 +662,7 @@ const OfferList = () => {
                             </Flex>
                             <Flex alignItems={'center'} gap={2} >
                                 <Button size={'sm'} variant='outline' bg={'transparent'}><CiStar /></Button>
-                                <Button size={'sm'} bg={'orange'}>Buy</Button>
+                                <Button size={'sm'} bg={'orange'} onClick={() => navigate('/sellOffer')}>Sell</Button>
                             </Flex>
 
                         </Flex>

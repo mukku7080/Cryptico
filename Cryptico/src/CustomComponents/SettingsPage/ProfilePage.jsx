@@ -83,9 +83,9 @@ const ProfilePage = () => {
     // },[image])
     return (
         <Flex gap={5} direction={'column'} my={5}>
-            <Flex gap={10} direction={{ base: 'column-reverse', lg: 'row' }} >
+            <Flex gap={10} direction={{ base: 'column-reverse', md: 'row', lg: 'row' }} >
                 <Flex flex={1} >
-                    <Flex direction={'column'} gap={5} w={{ base: '80%', lg: '100%' }}>
+                    <Flex direction={'column'} gap={5} w={{ base: '100%', md: '100%', lg: '100%' }}>
 
                         <Flex alignItems={'center'} gap={2}>
 
@@ -95,9 +95,9 @@ const ProfilePage = () => {
                                 <Box color={'green.400'} fontSize={'16px'} > &nbsp;ID verified</Box>
                             </Heading>
                         </Flex>
-                        <Flex gap={{ base: 5, sm: 2 }} alignItems={'center'}>
+                        <Flex gap={{ base: 0, sm: 2 }} alignItems={'center'} flexWrap={'wrap'}>
                             <Box>{user && user.email}</Box>
-                            <Button size={'sm'} bg={'transparent'} textDecoration={'underline'}>change email</Button>
+                            <Button size={'sm'} px={0} bg={'transparent'} textDecoration={'underline'}>change email</Button>
                         </Flex>
                         <Flex>
                             <Box p={4} borderWidth={1} borderRadius="lg" w={'full'}>
@@ -130,58 +130,59 @@ const ProfilePage = () => {
                 <Flex flex={1}>
 
                     <Flex alignItems={'start'} justifyContent={'start'} gap={5} w={'full'} direction={{ base: 'column', xl: 'column' }} >
-                        <Flex gap={5} alignItems={'center'}>
+                        <Flex gap={3} flex={.5} alignItems={'start'} direction={{ base: 'column', sm: 'column', md: 'column', xl: 'row' }} w={{ base: '100%', md: '100%', lg: '100%' }}>
 
                             {user ? (
-                                <Avatar key={user.profile_image_url} border={'1px solid white'} size="xl" src={user && user.profile_image_url} />
+                                <Avatar key={user.profile_image_url} border={'1px solid white'} boxSize={'150px'} src={user && user.profile_image_url} />
                             ) : (
                                 <Spinner size="xl" color="black" />
                             )}
 
                             {/* <Avatar size={{ base: 'lg', sm: 'xl' }} alignSelf={'start'} src={user && user.profile_image_url} /> */}
-                            <Heading size={'xl'} color={'orange'}>{user && user.username}</Heading>
-                        </Flex>
+                            <Flex direction={'column'} gap={3} alignItems={'start'} justifyContent={'start'} w={'100%'} mt={5}>
+                               
+                                <Button isLoading={isLoading} w={'200px'} loadingText='uploading..' onClick={handleClick} variant={'outline'} rightIcon={<MdUpload />}>
+                                    Upload Image
+                                </Button>
+                                <Box fontSize={'14px'} >
+                                    Upload a nice picture, preferably of yourself. If you upload any explicit or otherwise inappropriate image, we’ll remove it immediately.
+                                </Box>
+                                 <Flex direction={'column'} gap={2} w={'full'}>
 
-                        <Flex direction={'column'} gap={3} w={{ base: '80%', lg: '100%' }} >
+                                    {/* <Heading size={'sm'}>username</Heading> */}
 
-                            <Flex direction={'column'} gap={2} >
-                                <Heading size={'sm'}>username</Heading>
+                                    <Heading size={'md'} color={'orange'}>{user && user.username}</Heading>
+                                    <Flex justifyContent={'space-between'} alignItems={'center'} border={'1px solid #dcdcdc'} borderRadius={5} >
+                                        <InputGroup   >
 
-                                <Flex justifyContent={'space-between'} alignItems={'center'} border={'1px solid #dcdcdc'} borderRadius={5} >
-                                    <InputGroup >
+                                            <Input placeholder='Change username'
+                                                border={'none'}
+                                                _hover={{ border: "none" }}
+                                                _focus={{ boxShadow: "none", border: "none" }}
+                                                w={'full'}
 
-                                        <Input placeholder='Enter username'
-                                            border={'none'}
-                                            _hover={{ border: "none" }}
-                                            _focus={{ boxShadow: "none", border: "none" }}
+                                            ></Input>
 
-                                        ></Input>
+                                            <InputRightAddon bg='orange' px={0} borderRightRadius={4}>
+                                                <Button bg={'transparent'} >save</Button>
+                                            </InputRightAddon>
 
-                                        <InputRightAddon bg='orange' px={0} borderRightRadius={4}>
-                                            <Button bg={'transparent'} >save</Button>
-                                        </InputRightAddon>
-
-                                    </InputGroup>
+                                        </InputGroup>
+                                    </Flex>
+                                    <Box fontSize={'14px'}> you can change your username only once</Box>
                                 </Flex>
-                                <Box> you can change your username only once</Box>
+                                <Input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    style={{ display: "none" }}
+                                    accept="image/*"
+                                    onChange={handleFileChange}
+                                />
                             </Flex>
-
-                            <Input
-                                type="file"
-                                ref={fileInputRef}
-                                style={{ display: "none" }}
-                                accept="image/*"
-                                onChange={handleFileChange}
-                            />
-                            <Button isLoading={isLoading} loadingText='uploading..' onClick={handleClick} variant={'outline'} rightIcon={<MdUpload />}>
-                                Upload Image
-                            </Button>
-                            {image && <Image src={image} alt="Preview" mt={4} boxSize="100px" />}
-                            {/* <Button variant={'outline'} rightIcon={<MdUpload />}>Upload Image </Button> */}
-                            <Box fontSize={'14px'}>
-                                Upload a nice picture, preferably of yourself. If you upload any explicit or otherwise inappropriate image, we’ll remove it immediately.
-                            </Box>
                         </Flex>
+
+
+
                     </Flex>
                 </Flex>
                 {/* User_Image & name Section end--------------------------------------------------------------------------------- */}
@@ -193,7 +194,7 @@ const ProfilePage = () => {
             <Divider />
 
 
-            <Flex w={{ base: '80%', lg: '100%' }} gap={{ base: 5, md: 10 }} direction={{ base: 'column', md: 'row' }} >
+            <Flex w={{ base: '100%', md: '100%', lg: '100%' }} gap={{ base: 5, md: 10 }} direction={{ base: 'column', md: 'row' }} >
                 <Flex direction={'column'} gap={5} flex={1}>
                     <Heading size={'sm'}>Prefered Currency</Heading>
 
@@ -220,7 +221,7 @@ const ProfilePage = () => {
                     <LanguageSelectorDropdown />
                 </Flex>
             </Flex>
-            <Flex w={{ base: '80%', lg: '100%' }}>
+            <Flex w={{ base: '100%', md: '100%', lg: '100%' }}>
                 <FormControl gap={4}>
                     <FormLabel mb={3}>
                         <Heading size={'sm'}>Bio</Heading>

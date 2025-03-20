@@ -26,10 +26,11 @@ export const AuthProvider = ({ children }) => {
             const data = await login({ email, password });
             localStorage.setItem("authToken", data.token);
             setUser(data.user);
+            return data;
         }
         catch (error) {
             console.error("Login error:", error);
-            alert(error.message || "Login failed");
+            // alert(error.message || "Login failed");
 
         }
 

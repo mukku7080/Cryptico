@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { getCountrycode, getOtherService } from '../api/otherService';
+import { AddSecurityQuestions, getCountrycode, getLoginHistory, getOtherService } from '../api/otherService';
 
 export const OtherContext = createContext();
 
@@ -7,10 +7,12 @@ const OtherDetailProvider = ({ children }) => {
     const [error, setError] = useState(null);
     const [data, setData] = useState(null);
     const [countryCode, setCountryCode] = useState(null);
+    const [loginhistory, setLoginHistory] = useState(null);
 
     useEffect(() => {
         handleCountryCode();
         handleOtherDetail();
+        handleLoginHistory();
     }, [])
 
     const handleOtherDetail = async () => {
@@ -42,9 +44,27 @@ const OtherDetailProvider = ({ children }) => {
             setError(error);
         }
     }
+    const handleSecurityQuestions = async (values) => {
+        try {
+            const response = await AddSecurityQuestions(values);
+            return response;
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    const handleLoginHistory = async () => {
+        try {
+            const response = await getLoginHistory();
+            setLoginHistory(response.data);
+        }
+        catch (error) {
+            throw error.response ? error.response.data : error.message;
+        }
+    }
 
     return (
-        <OtherContext.Provider value={{ data, error,countryCode }}>
+        <OtherContext.Provider value={{ data, error, countryCode, handleSecurityQuestions, loginhistory }}>
             {children}
         </OtherContext.Provider>
     )
