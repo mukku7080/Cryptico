@@ -73,7 +73,15 @@ const Loginnew = () => {
 
 
     }
+
     useEffect(() => {
+        if (localStorage.getItem("authToken")) {
+            navigate("/user-dashboard"); // Redirect logged-in users
+        }
+    }, []);
+
+    useEffect(() => {
+
         if (isVisited) {
             const timer = setTimeout(() => {
                 setIsVisited(false);
@@ -246,7 +254,7 @@ const Loginnew = () => {
                                                 </Checkbox>
                                                 <Link mt={3} color={isVisited ? 'gray' : 'green'} display={'flex'} justifyContent={'flex-end'} onClick={() => {
                                                     setIsVisited(true);
-                                                    forget();
+                                                    navigate('/forgetPassword')
                                                 }
                                                 }
                                                     isLoading

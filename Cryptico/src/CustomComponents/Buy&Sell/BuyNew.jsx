@@ -35,10 +35,17 @@ import { MdDoubleArrow } from "react-icons/md";
 import OfferLocation from '../Dropdown/OfferLocation';
 import TraderLocation from '../Dropdown/TraderLocation';
 import { MyPaymentModal } from '../Dropdown/PaymentModal/MyPaymentModal';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import TokenDropdown from '../Dropdown/TokenDropdown';
+import { useOffer } from '../../Context/OfferContext';
 
 const BuyNew = () => {
+    const { handleGetOffer } = useOffer();
+
+    useEffect(() => {
+        const res = handleGetOffer();
+        console.log(res)
+    }, [])
 
 
     return (
@@ -74,14 +81,10 @@ const BuyNew = () => {
                                     <Box bg={'orange.500'} fontWeight={500} borderTopRadius={'4px'} p={2}>Promoted Offers</Box>
                                     <Button display={'flex'} width={'120px'} variant={'outline'} alignSelf={'end'} colorScheme='orange' size={'sm'} borderRadius={'none'} leftIcon={<AiOutlineExclamationCircle />}>Take Tour</Button>
                                 </Flex>
-
                                 <Flex>
                                     <Flex direction={'column'} w={'full'} borderLeft={'1px solid #dcdcdc'} borderRight={'1px solid #dcdcdc'} borderTop={'none'} borderBottomRadius={5} >
-
                                         {/* Table Heading */}
-
                                         <Flex w={'full'} bg={'gray.200'} p={4} fontWeight={500} gap={10}>
-
                                             <Flex flex={1} >
                                                 <Box>Buy From</Box>
                                             </Flex>
@@ -92,11 +95,8 @@ const BuyNew = () => {
                                                 <Box display={{ base: 'none', md: 'flex' }} textAlign={'end'}>Avg. trade speed</Box>
                                             </Flex>
                                             <Flex flex={2} gap={4}>
-
                                                 <Flex flex={1} justifyContent={'end'} gap={3} wrap={{ base: 'wrap', xl: 'nowrap' }}>
                                                     <Box textAlign={'end'}>Price per Bitcoin</Box>
-
-
                                                     <Menu >
                                                         <MenuButton
                                                             as={Button}
@@ -116,20 +116,11 @@ const BuyNew = () => {
                                                             }
                                                         </MenuList>
                                                     </Menu>
-
-
                                                 </Flex>
                                             </Flex>
                                         </Flex>
                                         {/* Table Heading End */}
-
-
-
                                         {/* Offer Details */}
-
-
-
-
                                         <OfferList />
                                         <OfferList />
                                         <OfferList />
@@ -167,12 +158,9 @@ const BuyNew = () => {
                                         <OfferList />
                                         <OfferList />
                                         <OfferList />
-
-
                                     </Flex>
                                 </Flex>
                             </Flex>
-
                         </Card>
                         <Card borderRadius={0}>
 
@@ -195,6 +183,17 @@ const BuyNew = () => {
 
 
 const LeftSideContent = () => {
+    const [searchParams] = useSearchParams();
+    const [index, setIndex] = useState(0);   
+    useEffect(() => {
+        const queryValue = searchParams.get('index');
+        // Check if the value is not null and is a valid number
+        if (queryValue !== null) {
+            setIndex(queryValue);
+        } else {
+            setIndex(0);
+        }
+    }, [searchParams]);
 
     return (
         <Flex flex={{ lg: .6, xl: .4 }}
@@ -218,8 +217,7 @@ const LeftSideContent = () => {
                     gap={5}>
 
                     <Flex display={{ base: 'none', lg: 'flex' }} direction={'column'} gap={5}>
-
-                        <TokenDropdown />
+                        <TokenDropdown index={index} />
                         <Flex gap={4} color={'gray'}>
                             <Box>1 BTC = 458254.23 INR</Box>
                             <Box display={'flex'} alignItems={'center'}>

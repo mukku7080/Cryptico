@@ -52,7 +52,7 @@ const OfferLocation = ({ formikHelpers = {}, name }) => {
 
     return (
         <>
-            <Menu>
+            <Menu matchWidth>
                 <MenuButton
                     as={Button}
                     rightIcon={<MdKeyboardArrowDown />}

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { AddSecurityQuestions, getCountrycode, getLoginHistory, getOtherService } from '../api/otherService';
+import { AddSecurityQuestions, getAllNotification, getCountrycode, getLoginHistory, getOtherService, getReferalLink } from '../api/otherService';
 
 export const OtherContext = createContext();
 
@@ -8,11 +8,15 @@ const OtherDetailProvider = ({ children }) => {
     const [data, setData] = useState(null);
     const [countryCode, setCountryCode] = useState(null);
     const [loginhistory, setLoginHistory] = useState(null);
+    const [referalLink, setReferalLink] = useState(null);
+    const [notifications, setNotification] = useState(null);
 
     useEffect(() => {
         handleCountryCode();
         handleOtherDetail();
         handleLoginHistory();
+        handleReferralLink();
+        handleGetAllNotification();
     }, [])
 
     const handleOtherDetail = async () => {
@@ -62,9 +66,30 @@ const OtherDetailProvider = ({ children }) => {
             throw error.response ? error.response.data : error.message;
         }
     }
+    const handleReferralLink = async () => {
+        try {
+
+            const res = await getReferalLink();
+
+            setReferalLink(res.referralLink);
+            return res;
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    const handleGetAllNotification = async () => {
+        try {
+            const response = await getAllNotification();
+            setNotification(response);
+        }
+        catch (error) {
+            throw error;
+        }
+    }
 
     return (
-        <OtherContext.Provider value={{ data, error, countryCode, handleSecurityQuestions, loginhistory }}>
+        <OtherContext.Provider value={{ data, error, countryCode, handleSecurityQuestions, loginhistory, handleReferralLink, referalLink, notifications }}>
             {children}
         </OtherContext.Provider>
     )
@@ -72,6 +97,7 @@ const OtherDetailProvider = ({ children }) => {
 export const useOtherDetail = () => {
     return useContext(OtherContext)
 }
+
 
 
 export default OtherDetailProvider

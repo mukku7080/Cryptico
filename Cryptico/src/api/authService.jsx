@@ -40,7 +40,8 @@ export const signup = async ({ email, password }) => {
     try {
         const response = await axiosInstance.post("/auth/register", {
             email: email,
-            password: password
+            password: password,
+            referralCode: localStorage.getItem("referralCode") || ""
         });
         return response.data;
     }
@@ -93,7 +94,7 @@ export const forgetPassword = async (email) => {
     }
     catch (error) {
         throw error.response ? error.response.data : error;
-        
+
 
 
     }
@@ -117,4 +118,16 @@ export const resetPassword = async ({ email, resetToken, newPassword }) => {
         throw error.response ? error.response.data : error;
 
     }
+}
+export const passwordMatch = async (password) => {
+    try {
+        const response = await axiosInstance.post("/auth/password-verification", {
+            password: password
+        })
+        return response.data
+    }
+    catch (error) {
+        throw error.response ? error.response.data : error.message;
+    }
+
 }

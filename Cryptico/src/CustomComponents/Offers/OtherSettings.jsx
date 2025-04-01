@@ -1,10 +1,16 @@
-import { Heading, Flex, FormControl, FormLabel, Select, Box, Input, Textarea, Checkbox, InputGroup, InputRightAddon, Tooltip } from '@chakra-ui/react'
+import { Heading, Flex, FormControl, FormLabel, Select, Box, Input, Textarea, Checkbox, InputGroup, InputRightAddon, Tooltip, FormErrorMessage } from '@chakra-ui/react'
 import React from 'react'
 import SearchableMultiSelect from '../Dropdown/SearchableMultiSelect'
 import { PiQuestionLight } from "react-icons/pi";
 import { MdKeyboardArrowDown } from 'react-icons/md';
 
-const OtherSettings = () => {
+const OtherSettings = ({ values, handleChange, handleBlur, setFieldValue, touched, errors }) => {
+    const [option, setOption] = React.useState('Select offers');
+    values.offerTag = option;
+    console.log(values);
+
+
+
     return (
         <Flex direction={'column'} gap={10}>
             <Heading size={'md'} fontWeight={700}>Trade Instruction</Heading>
@@ -16,8 +22,8 @@ const OtherSettings = () => {
                         <FormLabel mb={3}>
                             <Heading size={'sm'}>Offer Tags</Heading>
                         </FormLabel>
-                        <SearchableMultiSelect />
-                       
+                        <SearchableMultiSelect setOption={setOption} />
+
                         <Box fontSize={'14px'}>Select up to 3 tags that best describe your offer terms.</Box>
                     </FormControl>
 
@@ -25,7 +31,7 @@ const OtherSettings = () => {
                         <FormLabel mb={3}>
                             <Heading size={'sm'}>Your Offer Label</Heading>
                         </FormLabel>
-                        <Input placeholder='maximum 25 character, only letters,number and dashes.' mb={3}>
+                        <Input placeholder='maximum 25 character, only letters,number and dashes.' name={values.lable} onChange={handleChange} mb={3}>
 
                         </Input>
                         <Box fontSize={'14px'}>Make your offer stand out to other users with a catchy label. Your offer label can be up to 25 characters long and can contain letters, numbers, the apostrophe and the hyphen.</Box>
@@ -34,11 +40,11 @@ const OtherSettings = () => {
 
 
 
-                    <FormControl>
-                        <FormLabel mb={3}>
-                            <Heading size={'sm'}>Offer Term</Heading>
+                    <FormControl isRequired >
+                        <FormLabel mb={3} fontWeight={700}>Offer Term
+                            {/* <Heading size={'sm'}>Offer Term</Heading> */}
                         </FormLabel>
-                        <Textarea h={'150px'} placeholder='write your term here' />
+                        <Textarea h={'150px'} placeholder='write your term here' name={'term'} onChange={handleChange} />
 
                         <Box fontSize={'14px'}>Anybody who views your offer will see these terms. Keep them simple and clear to make your offer sound attractive.</Box>
                     </FormControl>
@@ -60,7 +66,7 @@ const OtherSettings = () => {
                         <FormLabel mb={3}>
                             <Heading size={'md'} mb={3}> Verification</Heading>
                             <Flex>
-                                <Checkbox>Require your trade partner to have verified their ID</Checkbox>
+                                <Checkbox name='isVerified' onChange={handleChange}>Require your trade partner to have verified their ID</Checkbox>
                             </Flex>
                         </FormLabel>
                     </FormControl>
@@ -69,14 +75,14 @@ const OtherSettings = () => {
                         <FormLabel mb={3}>
                             <Heading size={'md'} mb={3}> Visibility</Heading>
                             <Flex>
-                                <Checkbox>Show this offer only to my list of trusted users</Checkbox>
+                                <Checkbox name='visibility' onChange={(e) => setFieldValue('trusted_users')}>Show this offer only to my list of trusted users</Checkbox>
                             </Flex>
                         </FormLabel>
                     </FormControl>
 
 
                     <Flex justifyContent={'center'} alignItems={'start'} gap={5} direction={'column'} my={10}  >
-                        <Flex gap={10} w={{sm:'80%',md:'50%'}} direction={'column'}>
+                        <Flex gap={10} w={{ sm: '80%', md: '50%' }} direction={'column'}>
                             <Flex direction={'column'} flex={1} borderRadius={5} gap={5}>
                                 <Flex gap={2}>
 

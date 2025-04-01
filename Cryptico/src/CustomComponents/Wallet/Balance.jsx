@@ -1,5 +1,5 @@
-import { Box, Button, Card, Divider, Flex, Heading, Icon, Image, Menu, MenuButton, MenuList, MenuItem, Circle } from '@chakra-ui/react'
-import React from 'react'
+import { Box, Button, Card, Divider, Flex, Heading, Icon, Image, Menu, MenuButton, MenuList, MenuItem, Circle, Modal, ModalOverlay, ModalContent, ModalFooter, useDisclosure, ModalHeader, ModalCloseButton, ModalBody, ButtonGroup, Tag, ScaleFade, Fade, Tooltip, FormControl, Input } from '@chakra-ui/react'
+import React, { useState } from 'react'
 import { LuEqualApproximately } from "react-icons/lu";
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 import { TbSend } from "react-icons/tb";
@@ -10,8 +10,14 @@ import { GoArrowDownLeft, GoArrowUpRight } from "react-icons/go";
 import { PiDotsThreeCircleVerticalThin } from "react-icons/pi";
 import { RiArrowRightDownLine } from "react-icons/ri";
 import { BsBoxArrowInUpRight, BsBoxArrowInDownRight } from "react-icons/bs";
+import { IoWarningOutline } from 'react-icons/io5';
+import { MdArrowRightAlt, MdKeyboardArrowDown, MdKeyboardArrowRight } from 'react-icons/md';
+import { FaArrowRightFromBracket, FaArrowRightLong } from 'react-icons/fa6';
+import { useNavigate } from 'react-router-dom';
+import CreateWallet from './CreateWallet';
 
 const Balance = () => {
+    const navigate = useNavigate()
 
 
     return (
@@ -64,6 +70,7 @@ const Balance = () => {
                 <Flex>
                     <Card w={'100%'} p={4}>
                         <Heading size={'md'}>Assets</Heading>
+                        <CreateWallet />
 
                         {/* Bellow Assets */}
 
@@ -89,9 +96,9 @@ const Balance = () => {
                             {/* TableHeading End -------------------------------------------------------------------------------------------------------*/}
 
                             {
-                                cryptoOption.map((item, index) => (
+                                cryptoOption.map((item, optionIndex) => (
 
-                                    <Flex key={index} w={'full'} p={2} gap={10}>
+                                    <Flex key={optionIndex} w={'full'} p={2} gap={10}>
                                         <Flex flex={1.2} color={'gray'} direction={'column'} >
 
                                             {/* Left Side Table Data */}
@@ -138,7 +145,7 @@ const Balance = () => {
                                                         </Flex>
                                                         <Flex display={{ base: 'flex', md: 'none' }}>
 
-                                                            <ThreeDotMenu2 />
+                                                            <ThreeDotMenu2 option={item.actions} />
                                                         </Flex>
 
                                                     </Flex>
@@ -163,20 +170,26 @@ const Balance = () => {
 
                                         {/* Right side Table Data Start */}
                                         <Flex flex={.8} justifyContent={{ md: 'space-between', lg: 'space-around' }} display={{ base: 'none', md: 'flex' }}  >
+                                            {item.send}
+
+                                            {item.receive}
 
                                             {
                                                 cryptoStatus.map((item, index) => (
-                                                    <>
+                                                    <React.Fragment key={index}>
 
-                                                        <Flex key={index} cursor={'pointer'} direction={'column'} >
+                                                        <Flex key={index} cursor={'pointer'} direction={'column'} onClick={() => navigate(item.to)} >
                                                             <Flex display={'flex'} alignItems={'center'} justifyContent={'center'}>{item.icon}</Flex>
                                                             <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>{item.name}</Flex>
+                                                            <Flex>
+
+                                                            </Flex>
 
                                                         </Flex>
-                                                    </>
+                                                    </React.Fragment>
                                                 ))
                                             }
-
+                                            {item.threedots}
 
                                         </Flex>
                                         {/* Right side Table Data End */}
@@ -204,22 +217,28 @@ const Balance = () => {
 }
 
 
-const ThreeDotMenu1 = () => {
+const ThreeDotMenu1 = ({ btnName }) => {
+    const navigateTo = useNavigate()
     return (
 
         <Menu>
-            <MenuButton>
+            <MenuButton alignSelf={'start'}>
                 <BsThreeDots />
             </MenuButton>
             <MenuList borderRadius={0} >
-                <MenuItem>Buy BTC</MenuItem>
-                <MenuItem>Sell BTC</MenuItem>
+                <MenuItem onClick={() => {
+                    navigateTo('/buy');
+
+                }}>Buy {btnName}</MenuItem>
+                <MenuItem onClick={() => { navigateTo('/sell') }}>Sell {btnName}</MenuItem>
             </MenuList>
         </Menu>
 
     )
 }
-const ThreeDotMenu2 = () => {
+const ThreeDotMenu2 = ({ option }) => {
+    const { onClose, onOpen } = useDisclosure
+    const navigate = useNavigate();
     return (
 
         <Menu>
@@ -228,16 +247,24 @@ const ThreeDotMenu2 = () => {
             </MenuButton>
             <MenuList borderRadius={0} >
                 {
-                    cryptoStatus1.map((item, index) => (
-                        <>
-                            <MenuItem key={index}>
-                                <Flex cursor={'pointer'} gap={5}  >
+                    option.map((item, index) => (
+                        <React.Fragment key={index}>
+                            <MenuItem key={index}
+                                onClick={() => {
+                                    navigate(item.to)
+                                }} >
+                                <Flex cursor={'pointer'} gap={5} >
+
+                                    {item.action}
+
+
+
                                     <Flex display={'flex'} alignItems={'center'} justifyContent={'center'}>{item.icon}</Flex>
                                     <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>{item.name}</Flex>
 
                                 </Flex>
                             </MenuItem>
-                        </>
+                        </React.Fragment>
                     ))
                 }
 
@@ -275,45 +302,43 @@ const LatestTransactions = () => {
 
                     {/* Data Part start */}
                     {
-                        arr.map(() => (
-                            <>
+                        arr.map((item, index) => (
 
-                                <Flex w={'full'}>
-                                    <Flex flex={1.4} gap={10}>
-                                        <Flex flex={.8}>
-                                            <Flex gap={5}>
-                                                <Box pt={1}> <Circle bg={'orange'} p={2}><BsBoxArrowInDownRight /></Circle></Box>
-                                                <Flex direction={'column'}>
-                                                    <Box>Recived</Box>
-                                                    <Box fontSize={'12px'}>{new Date().toLocaleString()}</Box>
-                                                </Flex>
+                            <Flex w={'full'} key={index}>
+                                <Flex flex={1.4} gap={10}>
+                                    <Flex flex={.8}>
+                                        <Flex gap={5}>
+                                            <Box pt={1}> <Circle bg={'orange'} p={2}><BsBoxArrowInDownRight /></Circle></Box>
+                                            <Flex direction={'column'}>
+                                                <Box>Recived</Box>
+                                                <Box fontSize={'12px'}>{new Date().toLocaleString()}</Box>
                                             </Flex>
-                                        </Flex>
-                                        <Flex display={{ base: 'none', md: 'Flex' }} direction={'column'} flex={1.2} gap={2}>
-                                            Sent To : 0x1234567890
-                                            <Flex display={{ base: 'flex', lg: 'none' }}>
-
-                                                <Button variant={'outline'} size={'sm'} colorScheme='green'>Completed</Button>
-                                            </Flex>
-
                                         </Flex>
                                     </Flex>
-                                    <Flex flex={.6} >
-                                        <Flex justifyContent={{ base: 'end', lg: 'space-between' }} w={'full'} gap={10}>
+                                    <Flex display={{ base: 'none', md: 'Flex' }} direction={'column'} flex={1.2} gap={2}>
+                                        Sent To : 0x1234567890
+                                        <Flex display={{ base: 'flex', lg: 'none' }}>
 
-                                            <Flex display={{ base: 'none', lg: 'Flex' }}>
-                                                <Button variant={'outline'} size={'sm'} colorScheme='green'>Completed</Button>
-                                            </Flex>
-                                            <Flex>
-                                                <Flex direction={'column'} textAlign={'end'}  >
-                                                    <Box alignItems={'end'}  >-0.000000254 BTC</Box>
-                                                    <Box alignItems={'end'} fontSize={'12px'} >-0.73 BTC</Box>
-                                                </Flex>
+                                            <Button variant={'outline'} size={'sm'} colorScheme='green'>Completed</Button>
+                                        </Flex>
+
+                                    </Flex>
+                                </Flex>
+                                <Flex flex={.6} >
+                                    <Flex justifyContent={{ base: 'end', lg: 'space-between' }} w={'full'} gap={10}>
+
+                                        <Flex display={{ base: 'none', lg: 'Flex' }}>
+                                            <Button variant={'outline'} size={'sm'} colorScheme='green'>Completed</Button>
+                                        </Flex>
+                                        <Flex>
+                                            <Flex direction={'column'} textAlign={'end'}  >
+                                                <Box alignItems={'end'}  >-0.000000254 BTC</Box>
+                                                <Box alignItems={'end'} fontSize={'12px'} >-0.73 BTC</Box>
                                             </Flex>
                                         </Flex>
                                     </Flex>
                                 </Flex>
-                            </>
+                            </Flex>
                         ))
                     }
                     {/* Data Part End */}
@@ -325,17 +350,730 @@ const LatestTransactions = () => {
 }
 
 
-const cryptoOption = [
-    { shrotName: 'BTC', name: 'Bitcoin', logo: 'https://cryptologos.cc/logos/thumbs/bitcoin.png?v=040', pricePerCoin: '1 BTC = 8,448,496.2999 INR', blc: 0, INR: '0.00', table: 'true' },
-    { shrotName: 'ETH', name: 'Ethereum', logo: 'https://cryptologos.cc/logos/thumbs/ethereum.png?v=040', pricePerCoin: '1 ETH = 8,448,496.2999 INR', blc: 0, INR: '0.00' },
-    { shrotName: 'USDC', name: 'USDC', logo: 'https://cryptologos.cc/logos/thumbs/usd-coin.png?v=040', pricePerCoin: '1 USDC = 8,448,496.2999 INR', blc: 0, INR: '0.00' },
-    { shrotName: 'USDT', name: 'Tether', logo: 'https://cryptologos.cc/logos/thumbs/tether.png?v=040', pricePerCoin: '1 USDT = 8,448,496.2999 INR', blc: 0, INR: '0.00' },
+
+
+
+const Receive1 = () => {
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    const address = '33m5SWh6zg9mmSukJ2K9oobLPXx6psfBwE'
+    const [copied, setCopied] = useState(false);
+    const handleCopy = () => {
+        navigator.clipboard.writeText(address).then(() => {
+            setCopied(true);
+            setTimeout(() => {
+                setCopied(false);
+            }, 2000);
+        }).catch((err) => {
+            console.log(err)
+        })
+    }
+    return (
+        <>
+
+            <Flex cursor={'pointer'} direction={{ base: 'row', md: 'column' }} gap={{ base: 5, md: 0 }} onClick={onOpen} >
+                <Flex display={'flex'} alignItems={'center'} justifyContent={'center'}><RiArrowRightDownLine /></Flex>
+                <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>Receive</Flex>
+
+            </Flex>
+            <Modal isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader bg={'orange.50'} borderTopRadius={5}>
+                        <Flex alignItems={'center'} gap={5} p={1}>
+
+                            <Image src='https://cryptologos.cc/logos/thumbs/bitcoin.png?v=040' boxSize={5}></Image>
+                            Receive Bitcoin
+
+                            <ModalCloseButton mt={2} />
+                        </Flex>
+                    </ModalHeader>
+                    <ModalBody>
+                        <Flex direction={'column'} gap={5}>
+                            {/* <Flex direction={'column'}>
+                                <ButtonGroup>
+                                    <Button borderRadius={0} bg={'transparent'} _hover={{ bg: 'transparent', borderBottom: '1px solid black' }}>Bitcoin network</Button>
+                                    <Button borderRadius={0} bg={'transparent'} _hover={{ bg: 'transparent', borderBottom: '1px solid black' }}>Lightning</Button>
+                                </ButtonGroup>
+                                <Divider />
+                            </Flex> */}
+                            <Flex my={7}>
+                                <Image src='/imagelogo/Qr.png' boxSize={150}></Image>
+
+                            </Flex>
+                            <Heading size={'lg'}>Your Bitcoin address</Heading>
+                            <Flex direction={'column'}>
+
+                                <Box color={'gray'}>Use this address to deposit Bitcoin (BTC):</Box>
+                                <Box fontWeight={500}>{address}</Box>
+                            </Flex>
+                            <Tooltip label={copied ? "Copied!" : "Copy to clipboard"} bg={'gray.100'} color={'black'} closeDelay={500} hasArrow>
+                                <Button mb={5} colorScheme='orange' w={'150px'} onClick={handleCopy}>Copy address</Button>
+                            </Tooltip>
+
+                        </Flex>
+                    </ModalBody>
+
+                    <ModalFooter bg={'red.100'} borderBottomRadius={5}>
+                        <Flex direction={'column'} justifyContent={'center'} alignItems={'start'}>
+                            {/* <Box ml={3} >
+
+                                <IoWarningOutline size={30} color={'red.500'} />
+                            </Box> */}
+                            <Box p={4}>
+
+                                <Box as='span' fontWeight={500}> Make sure to only send BTC through the selected network: Bitcoin.&nbsp;</Box>
+                                Sending incompatible cryptocurrencies or sending through a different network may result in irreversible loss.
+                            </Box>
+                        </Flex>
+
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+        </>
+    )
+}
+const Receive2 = () => {
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    const address = '0xae2244e9bD6fC01b52d8E1b634eE5Db94eA6Ca48'
+    const [copied, setCopied] = useState(false);
+    const handleCopy = () => {
+        navigator.clipboard.writeText(address).then(() => {
+            setCopied(true);
+            setTimeout(() => {
+                setCopied(false);
+            }, 2000);
+        }).catch((err) => {
+            console.log(err)
+        })
+    }
+    return (
+        <>
+            <Flex cursor={'pointer'} direction={{ base: 'row', md: 'column' }} gap={{ base: 5, md: 0 }} onClick={onOpen} >
+                <Flex display={'flex'} alignItems={'center'} justifyContent={'center'}><RiArrowRightDownLine /></Flex>
+                <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>Receive</Flex>
+
+            </Flex>
+            <Modal isOpen={isOpen} onClose={onClose} >
+                <ModalOverlay />
+                <ModalContent >
+                    <ModalHeader bg={'orange.50'} borderTopRadius={5}>
+                        <Flex alignItems={'center'} gap={5} p={1}>
+
+                            <Image src='https://cryptologos.cc/logos/thumbs/ethereum.png?v=040' boxSize={5}></Image>
+                            Receive Etherum
+
+                            <ModalCloseButton mt={2} />
+                        </Flex>
+                    </ModalHeader>
+                    <ModalBody>
+                        <Flex my={7} direction={'column'} gap={8}>
+
+                            <Flex >
+                                <Image src='/imagelogo/Qr.png' boxSize={150}></Image>
+
+                            </Flex>
+                            <Heading size={'lg'}>Your ERC-20 address</Heading>
+                            <Flex direction={'column'}>
+
+                                <Box color={'gray'}>Use this address to deposit Ethereum (ETH):</Box>
+                                <Box fontWeight={500}>{address}</Box>
+                            </Flex>
+                            <Tooltip label={copied ? "Copied!" : "Copy to clipboard"} bg={'gray.100'} color={'black'} closeDelay={500} hasArrow>
+                                <Button mb={2} colorScheme='orange' w={'150px'} onClick={handleCopy}>Copy address</Button>
+                            </Tooltip>
+
+                        </Flex>
+                    </ModalBody>
+
+                    <ModalFooter bg={'red.100'} borderBottomRadius={5}>
+                        <Flex direction={'column'} justifyContent={'center'} alignItems={'start'}>
+                            <Box ml={3} >
+
+                                <IoWarningOutline size={30} color={'red.500'} />
+                            </Box>
+                            <Box p={4}>
+
+                                <Box as='span' fontWeight={500}>Make sure to only send ETH through the selected network: ERC-20.&nbsp; </Box>
+                                Sending incompatible cryptocurrencies or sending through a different network may result in irreversible loss.
+                            </Box>
+                        </Flex>
+
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+        </>
+    )
+}
+const Receive3 = () => {
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    const address = '0xae2244e9bD6fC01b52d8E1b634eE5Db94eA6Ca48'
+    const [copied, setCopied] = useState(false);
+    const handleCopy = () => {
+        navigator.clipboard.writeText(address)
+            .then(() => {
+                setCopied(true);
+                setTimeout(() => {
+                    setCopied(false);
+                }, 2000);
+            })
+            .catch((err) => {
+                console.error('Could not copy text: ', err);
+            });
+    }
+    return (
+        <>
+            <Flex cursor={'pointer'} direction={{ base: 'row', md: 'column' }} gap={{ base: 5, md: 0 }} onClick={onOpen} >
+                <Flex display={'flex'} alignItems={'center'} justifyContent={'center'}><RiArrowRightDownLine /></Flex>
+                <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>Receive</Flex>
+
+            </Flex>
+            <Modal isOpen={isOpen} onClose={onClose} >
+                <ModalOverlay />
+                <ModalContent >
+                    {/* <Flex bg={'gray.100'} p={2} alignItems={'center'} justifyContent={'space-between'}> */}
+                    <ModalHeader bg={'orange.50'} borderTopRadius={5}>
+                        <Flex alignItems={'center'} gap={5} p={1}>
+
+                            <Image src='https://cryptologos.cc/logos/thumbs/usd-coin.png?v=040' boxSize={5}></Image>
+                            Receive USDC
+
+                            <ModalCloseButton mt={2} />
+                        </Flex>
+                    </ModalHeader>
+                    {/* </Flex> */}
+                    <ModalBody>
+                        <Flex my={7} direction={'column'} gap={8}>
+
+                            <Flex >
+                                <Image src='/imagelogo/Qr.png' boxSize={150}></Image>
+
+                            </Flex>
+                            <Heading size={'lg'}>Your ERC-20 address</Heading>
+                            <Flex direction={'column'}>
+
+                                <Box color={'gray'}>Use this address to deposit USDC (USDC):</Box>
+                                <Box fontWeight={500}>{address}</Box>
+                            </Flex>
+                            <Tooltip label={copied ? "Copied!" : "Copy to clipboard"} bg={'gray.100'} color={'black'} closeDelay={500} hasArrow>
+                                <Button mb={2} colorScheme='orange' w={'150px'} onClick={handleCopy}>Copy address</Button>
+                            </Tooltip>
+
+
+                        </Flex>
+                    </ModalBody>
+
+                    <ModalFooter bg={'red.100'} borderBottomRadius={5}>
+                        <Flex direction={'column'} justifyContent={'center'} alignItems={'start'}>
+                            <Box ml={3} >
+
+                                <IoWarningOutline size={30} color={'red.500'} />
+                            </Box>
+                            <Box p={4}>
+
+                                <Box as='span' fontWeight={500}>Make sure to only send USDC through the selected network: ERC-20. &nbsp; </Box>
+                                Sending incompatible cryptocurrencies or sending through a different network may result in irreversible loss.
+                            </Box>
+                        </Flex>
+
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+        </>
+    )
+}
+
+const Receive4 = () => {
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    const [istron, setTron] = React.useState(true)
+    const [active, setActive] = React.useState('tron')
+    const addressTron = 'TFk4Ee97s4cPqebEeUY5kbDfPgqiRfR6X9'
+    const addressEth = '0xae2244e9bD6fC01b52d8E1b634eE5Db94eA6Ca48'
+    const [copied, setCopied] = useState(false);
+
+    const handleCopyTron = () => {
+        navigator.clipboard.writeText(addressTron).then(() => {
+            setCopied(true);
+            setTimeout(() => {
+                setCopied(false);
+            }, 2000);
+        }).catch((err) => {
+            console.log(err)
+        })
+    }
+    const handleCopyEth = () => {
+        navigator.clipboard.writeText(addressEth).then(() => {
+            setCopied(true);
+            setTimeout(() => {
+                setCopied(false);
+            }, 2000);
+        }).catch((err) => {
+            console.log(err)
+        })
+    }
+    return (
+        <>
+
+            <Flex cursor={'pointer'} direction={{ base: 'row', md: 'column' }} gap={{ base: 5, md: 0 }} onClick={onOpen} >
+                <Flex display={'flex'} alignItems={'center'} justifyContent={'center'}><RiArrowRightDownLine /></Flex>
+                <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>Receive</Flex>
+
+            </Flex>
+            <Modal isOpen={isOpen} onClose={onClose} >
+                <ModalOverlay />
+                <ModalContent >
+                    <ModalHeader bg={'orange.50'} borderTopRadius={5}>
+                        <Flex alignItems={'center'} gap={5} p={1}>
+
+                            <Image src='https://cryptologos.cc/logos/thumbs/tether.png?v=040' boxSize={5}></Image>
+                            Receive USDT
+
+                            <ModalCloseButton mt={2} />
+                        </Flex>
+                    </ModalHeader>
+                    <ModalBody>
+                        <Flex direction={'column'} gap={5}>
+                            <Flex direction={'column'}>
+                                <ButtonGroup gap={2}>
+                                    <Button
+                                        gap={2}
+                                        p={0}
+                                        borderBottom={active === 'tron' ? '1px solid black' : '0px'}
+                                        borderRadius={0} bg={'transparent'}
+                                        _hover={{ bg: 'transparent' }}
+                                        onClick={() => {
+                                            setTron(true)
+                                            setActive('tron');
+                                        }
+                                        }>TRON network <Tag bg={'orange.100'} >cheaper</Tag></Button>
+                                    <Button
+                                        p={0}
+                                        borderBottom={active === 'eth' ? '1px solid black' : '0px'}
+                                        borderRadius={0}
+                                        bg={'transparent'}
+                                        _hover={{ bg: 'transparent' }}
+                                        onClick={() => {
+                                            setTron(false);
+                                            setActive('eth');
+                                        }
+                                        }
+                                    >
+                                        Ethereum network
+                                    </Button>
+                                </ButtonGroup>
+                                <Divider />
+                            </Flex>
+                            {
+                                istron ?
+
+                                    <Flex my={5} direction={'column'} gap={7}>
+
+                                        <Flex>
+                                            <Image src='/imagelogo/Qr.png' boxSize={150}></Image>
+
+                                        </Flex>
+                                        <Heading size={'lg'}>Your TRC-20 address</Heading>
+                                        <Flex direction={'column'}>
+
+                                            <Box color={'gray'}>Use this address to deposit Tether (USDT):</Box>
+                                            <Box fontWeight={500}>{addressTron}</Box>
+                                        </Flex>
+                                        <Tooltip label={copied ? "Copied!" : "Copy to clipboard"} bg={'gray.100'} color={'black'} closeDelay={500} hasArrow>
+                                            <Button mb={5} colorScheme='orange' w={'150px'} onClick={handleCopyTron}>Copy address</Button>
+                                        </Tooltip>
+                                    </Flex>
+                                    :
+                                    <ScaleFade initialScale={0.1} in={isOpen}>
+
+                                        <Flex my={5} direction={'column'} gap={7}>
+
+                                            <Flex >
+                                                <Image src='/imagelogo/Qr.png' boxSize={150}></Image>
+
+                                            </Flex>
+                                            <Heading size={'lg'}>Your ERC-20 address</Heading>
+                                            <Flex direction={'column'}>
+
+                                                <Box color={'gray'}>Use this address to deposit Ethereum (ETH):</Box>
+                                                <Box fontWeight={500}>{addressEth}</Box>
+                                            </Flex>
+                                            <Tooltip label={copied ? "Copied!" : "Copy to clipboard"} bg={'gray.100'} color={'black'} closeDelay={200} hasArrow>
+
+                                                <Button mb={2} colorScheme='orange' w={'150px'} onClick={handleCopyEth}>Copy Address</Button>
+                                            </Tooltip>
+
+
+                                        </Flex>
+                                    </ScaleFade>
+
+                            }
+
+                        </Flex>
+                    </ModalBody>
+
+                    <ModalFooter bg={'red.100'} borderBottomRadius={5}>
+                        <Flex direction={'column'} justifyContent={'center'} alignItems={'start'}>
+                            {
+                                istron ?
+
+                                    <Box p={4}>
+
+                                        <Box as='span' fontWeight={500}> Make sure to only send USDT through the selected network: TRC-20.&nbsp;</Box>
+                                        Sending incompatible cryptocurrencies or sending through a different network may result in irreversible loss.
+                                    </Box>
+                                    :
+                                    <Box p={4}>
+
+                                        <Box as='span' fontWeight={500}> Make sure to only send USDT through the selected network: ERC-20.&nbsp;</Box>
+                                        Sending incompatible cryptocurrencies or sending through a different network may result in irreversible loss.
+                                    </Box>
+
+                            }
+
+                        </Flex>
+
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+
+        </>
+    )
+}
+
+const Send1 = () => {
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    const [headername, setHeaderName] = useState(cryptoOption[0].name);
+    const [headerlogo, setHeaderLogo] = useState(cryptoOption[0].logo);
+    const resetState = () => {
+        setHeaderName(cryptoOption[0].name);
+        setHeaderLogo(cryptoOption[0].logo);
+    }
+    return (
+        <>
+
+            <Flex cursor={'pointer'} direction={{ base: 'row', md: 'column' }} gap={{ base: 5, md: 0 }} onClick={onOpen}  >
+                <Flex display={'flex'} alignItems={'center'} justifyContent={'center'}><TbSend /></Flex>
+                <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>Send</Flex>
+
+            </Flex>
+            <Modal isOpen={isOpen} onClose={onClose} onCloseComplete={resetState}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader bg={'orange.50'} borderTopRadius={5}>
+                        <Flex alignItems={'center'} gap={5} p={1}>
+
+                            <Image src={headerlogo} boxSize={5}></Image>
+                            Send {headername}
+
+                            <ModalCloseButton mt={2} />
+                        </Flex>
+                    </ModalHeader>
+                    <ModalBody>
+                        <Flex direction={'column'} gap={10} my={10}>
+
+                            <SelectToken index={0} setHeaderName={setHeaderName} setHeaderLogo={setHeaderLogo} />
+                            <Flex direction={'column'} bg={'gray.100'} borderRadius={5} py={4}>
+
+                                <Flex justifyContent={'space-between'} p={4} >
+                                    <Heading size={'md'}>Send to </Heading>
+                                    <ButtonGroup size={'sm'} >
+                                        <Button colorScheme='orange' fontSize={'12px'}>Address</Button>
+                                        <Button fontSize={'12px'}>Cryptico Address</Button>
+                                    </ButtonGroup>
+
+                                </Flex>
+                                <FormControl p={4} borderRadius={5}>
+                                    <Input fontWeight={'700'} px={0} py={5} border={'none'} _hover={{ border: 'none' }} _focus={{ boxShadow: 'none' }} placeholder='Paste or Enter wallet address here '></Input>
+                                </FormControl>
+                            </Flex>
+
+
+                            <FormControl isDisabled bg={'gray.100'}>
+                                <Input fontSize={'22px'} fontWeight={700} py={10} placeholder='Amount to send'></Input>
+                            </FormControl>
+                            <Button fontWeight={600} fontSize={'18px'} _hover={{ bg: 'gray.100' }} bg={'gray.100'} p={10} isDisabled >
+                                <Flex gap={2} alignItems={'center'} justifyContent={'center'}>
+                                    Continue
+                                    <FaArrowRightLong />
+                                </Flex>
+                            </Button>
+                        </Flex>
+                    </ModalBody>
+
+                </ModalContent>
+                <ModalFooter>
+                    <Button onClick={onClose}>Close</Button>
+                    <Button>Save</Button>
+                </ModalFooter>
+            </Modal>
+        </>
+    )
+}
+
+
+
+const Send2 = () => {
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    const [headername, setHeaderName] = useState(cryptoOption[1].name);
+    const [headerlogo, setHeaderLogo] = useState(cryptoOption[1].logo);
+    const resetState = () => {
+        setHeaderName(cryptoOption[1].name);
+        setHeaderLogo(cryptoOption[1].logo);
+    }
+    return (
+        <>
+
+            <Flex cursor={'pointer'} direction={{ base: 'row', md: 'column' }} gap={{ base: 5, md: 0 }} onClick={onOpen} >
+                <Flex display={'flex'} alignItems={'center'} justifyContent={'center'}><TbSend /></Flex>
+                <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>Send</Flex>
+
+            </Flex>
+            <Modal isOpen={isOpen} onClose={onClose} onCloseComplete={resetState}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader bg={'orange.50'} borderTopRadius={5}>
+                        <Flex alignItems={'center'} gap={5} p={1}>
+
+
+                            <Image src={headerlogo} boxSize={5}></Image>
+                            Send {headername}
+
+                            <ModalCloseButton mt={2} />
+                        </Flex>
+                    </ModalHeader>
+                    <ModalBody>
+                        <Flex direction={'column'} gap={10} my={10}>
+
+                            <SelectToken index={1} setHeaderName={setHeaderName} setHeaderLogo={setHeaderLogo} />
+                            <Flex direction={'column'} bg={'gray.100'} borderRadius={5} py={4}>
+
+                                <Flex justifyContent={'space-between'} p={4} >
+                                    <Heading size={'md'}>Send to </Heading>
+                                    <ButtonGroup size={'sm'} >
+                                        <Button colorScheme='orange' fontSize={'12px'}>Address</Button>
+                                        <Button fontSize={'12px'}>Cryptico Address</Button>
+                                    </ButtonGroup>
+
+                                </Flex>
+                                <FormControl p={4} borderRadius={5}>
+                                    <Input fontWeight={'700'} px={0} py={5} border={'none'} _hover={{ border: 'none' }} _focus={{ boxShadow: 'none' }} placeholder='Paste or Enter wallet address here '></Input>
+                                </FormControl>
+                            </Flex>
+
+
+                            <FormControl isDisabled bg={'gray.100'}>
+                                <Input fontSize={'22px'} fontWeight={700} py={10} placeholder='Amount to send'></Input>
+                            </FormControl>
+                            <Button fontWeight={600} fontSize={'18px'} _hover={{ bg: 'gray.100' }} bg={'gray.100'} p={10} isDisabled >
+                                <Flex gap={2} alignItems={'center'} justifyContent={'center'}>
+                                    Continue
+                                    <FaArrowRightLong />
+                                </Flex>
+                            </Button>
+                        </Flex>
+                    </ModalBody>
+
+                </ModalContent>
+                <ModalFooter>
+                    <Button onClick={onClose}>Close</Button>
+                    <Button>Save</Button>
+                </ModalFooter>
+            </Modal>
+        </>
+    )
+}
+const Send3 = () => {
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    const [headername, setHeaderName] = useState(cryptoOption[2].name);
+    const [headerlogo, setHeaderLogo] = useState(cryptoOption[2].logo);
+    const resetState = () => {
+        setHeaderName(cryptoOption[2].name);
+        setHeaderLogo(cryptoOption[2].logo);
+    }
+    return (
+        <>
+
+            <Flex cursor={'pointer'} direction={{ base: 'row', md: 'column' }} gap={{ base: 5, md: 0 }} onClick={onOpen} >
+                <Flex display={'flex'} alignItems={'center'} justifyContent={'center'}><TbSend /></Flex>
+                <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>Send</Flex>
+
+            </Flex>
+            <Modal isOpen={isOpen} onClose={onClose} onCloseComplete={resetState}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader bg={'orange.50'} borderTopRadius={5}>
+                        <Flex alignItems={'center'} gap={5} p={1}>
+
+
+                            <Image src={headerlogo} boxSize={5}></Image>
+                            Send {headername}
+
+                            <ModalCloseButton mt={2} />
+                        </Flex>
+                    </ModalHeader>
+                    <ModalBody>
+                        <Flex direction={'column'} gap={10} my={10}>
+
+                            <SelectToken index={2} setHeaderName={setHeaderName} setHeaderLogo={setHeaderLogo} />
+                            <Flex direction={'column'} bg={'gray.100'} borderRadius={5} py={4}>
+
+                                <Flex justifyContent={'space-between'} p={4} >
+                                    <Heading size={'md'}>Send to </Heading>
+                                    <ButtonGroup size={'sm'} >
+                                        <Button colorScheme='orange' fontSize={'12px'}>Address</Button>
+                                        <Button fontSize={'12px'}>Cryptico Address</Button>
+                                    </ButtonGroup>
+
+                                </Flex>
+                                <FormControl p={4} borderRadius={5}>
+                                    <Input fontWeight={'700'} px={0} py={5} border={'none'} _hover={{ border: 'none' }} _focus={{ boxShadow: 'none' }} placeholder='Paste or Enter wallet address here '></Input>
+                                </FormControl>
+                            </Flex>
+
+
+                            <FormControl isDisabled bg={'gray.100'}>
+                                <Input fontSize={'22px'} fontWeight={700} py={10} placeholder='Amount to send'></Input>
+                            </FormControl>
+                            <Button fontWeight={600} fontSize={'18px'} _hover={{ bg: 'gray.100' }} bg={'gray.100'} p={10} isDisabled >
+                                <Flex gap={2} alignItems={'center'} justifyContent={'center'}>
+                                    Continue
+                                    <FaArrowRightLong />
+                                </Flex>
+                            </Button>
+                        </Flex>
+                    </ModalBody>
+
+                </ModalContent>
+                <ModalFooter>
+                    <Button onClick={onClose}>Close</Button>
+                    <Button>Save</Button>
+                </ModalFooter>
+            </Modal>
+        </>
+    )
+}
+
+const Send4 = () => {
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [headername, setHeaderName] = useState(cryptoOption[3].name);
+    const [headerlogo, setHeaderLogo] = useState(cryptoOption[3].logo);
+    const resetState = () => {
+        setHeaderName(cryptoOption[3].name);
+        setHeaderLogo(cryptoOption[3].logo);
+    }
+    return (
+        <>
+
+            <Flex cursor={'pointer'} direction={{ base: 'row', md: 'column' }} gap={{ base: 5, md: 0 }} onClick={onOpen} >
+                <Flex display={'flex'} alignItems={'center'} justifyContent={'center'}><TbSend /></Flex>
+                <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>Send</Flex>
+
+            </Flex>
+            <Modal isOpen={isOpen} onClose={onClose} onCloseComplete={resetState}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader bg={'orange.50'} borderTopRadius={5}>
+                        <Flex alignItems={'center'} gap={5} p={1}>
+
+
+                            <Image src={headerlogo} boxSize={5}></Image>
+                            Send {headername}
+
+                            <ModalCloseButton mt={2} />
+                        </Flex>
+                    </ModalHeader>
+                    <ModalBody>
+                        <Flex direction={'column'} gap={10} my={10}>
+
+                            <SelectToken index={3} setHeaderName={setHeaderName} setHeaderLogo={setHeaderLogo} />
+                            <Flex direction={'column'} bg={'gray.100'} borderRadius={5} py={4}>
+
+                                <Flex justifyContent={'space-between'} p={4} >
+                                    <Heading size={'md'}>Send to </Heading>
+                                    <ButtonGroup size={'sm'} >
+                                        <Button colorScheme='orange' fontSize={'12px'}>Address</Button>
+                                        <Button fontSize={'12px'}>Cryptico Address</Button>
+                                    </ButtonGroup>
+
+                                </Flex>
+                                <FormControl p={4} borderRadius={5}>
+                                    <Input fontWeight={'700'} px={0} py={5} border={'none'} _hover={{ border: 'none' }} _focus={{ boxShadow: 'none' }} placeholder='Paste or Enter wallet address here '></Input>
+                                </FormControl>
+                            </Flex>
+
+
+                            <FormControl isDisabled bg={'gray.100'}>
+                                <Input fontSize={'22px'} fontWeight={700} py={10} placeholder='Amount to send'></Input>
+                            </FormControl>
+                            <Button fontWeight={600} fontSize={'18px'} _hover={{ bg: 'gray.100' }} bg={'gray.100'} p={10} isDisabled >
+                                <Flex gap={2} alignItems={'center'} justifyContent={'center'}>
+                                    Continue
+                                    <FaArrowRightLong />
+                                </Flex>
+                            </Button>
+                        </Flex>
+                    </ModalBody>
+
+                </ModalContent>
+                <ModalFooter>
+                    <Button onClick={onClose}>Close</Button>
+                    <Button>Save</Button>
+                </ModalFooter>
+            </Modal>
+        </>
+    )
+}
+
+
+
+export const SelectToken = ({ index, setHeaderName, setHeaderLogo }) => {
+    const [option, setOption] = useState(cryptoOption[index].name);
+    const [logo, setlogo] = useState(cryptoOption[index].logo);
+    return (
+        <>
+            <Menu matchWidth >
+
+                <MenuButton as={Button} py={8} w={'full'} borderRadius={5} bg={'gray.100'} rightIcon={<MdKeyboardArrowDown />} _hover={{ bg: 'gray.100' }}  >
+                    <Flex gap={2}>
+                        <Image boxSize={5} src={logo}></Image>
+                        {option}
+                    </Flex>
+
+                </MenuButton>
+                <MenuList borderRadius={0} p={2}  >
+                    {cryptoOption.map((data, index) => (
+                        <>
+                            <MenuItem key={data.name} onClick={() => {
+                                setOption(data.name);
+                                setHeaderName(data.name);
+                                setHeaderLogo(data.logo);
+                                setlogo(data.logo);
+                            }} gap={3} _hover={{ bg: "blue.100" }}><Image boxSize={5} src={data.logo}></Image>{data.name}</MenuItem>
+                        </>
+                    ))}
+
+                </MenuList>
+            </Menu>
+        </>
+    )
+}
+
+
+
+
+// const cryptoOption = [
+//     { shrotName: 'BTC', name: 'Bitcoin', logo: 'https://cryptologos.cc/logos/thumbs/bitcoin.png?v=040', pricePerCoin: '1 BTC = 8,448,496.2999 INR', blc: 0, INR: '0.00', table: 'true', receive: <Receive1 />, send: <Send1 /> },
+//     { shrotName: 'ETH', name: 'Ethereum', logo: 'https://cryptologos.cc/logos/thumbs/ethereum.png?v=040', pricePerCoin: '1 ETH = 8,448,496.2999 INR', blc: 0, INR: '0.00', table: 'true', receive: <Receive2 />, send: <Send2 /> },
+//     { shrotName: 'USDC', name: 'USDC', logo: 'https://cryptologos.cc/logos/thumbs/usd-coin.png?v=040', pricePerCoin: '1 USDC = 8,448,496.2999 INR', blc: 0, INR: '0.00', receive: <Receive3 />, send: <Send3 /> },
+//     { shrotName: 'USDT', name: 'Tether', logo: 'https://cryptologos.cc/logos/thumbs/tether.png?v=040', pricePerCoin: '1 USDT = 8,448,496.2999 INR', blc: 0, INR: '0.00', receive: <Receive4 />, send: <Send4 /> },
+// ]
+const cryptoOption1 = [
+    { name: 'Bitcoin', logo: 'https://cryptologos.cc/logos/thumbs/bitcoin.png?v=040' },
+    { name: 'Ethereum', logo: 'https://cryptologos.cc/logos/thumbs/ethereum.png?v=040' },
+    { name: 'USDC', logo: 'https://cryptologos.cc/logos/thumbs/usd-coin.png?v=040' },
+    { name: 'Tether', logo: 'https://cryptologos.cc/logos/thumbs/tether.png?v=040' },
 ]
 const cryptoStatus = [
-    { name: 'Send', icon: <TbSend /> },
-    { name: 'Receive', icon: <RiArrowRightDownLine /> },
-    { name: 'Convert', icon: <SiConvertio /> },
-    { name: '', icon: <ThreeDotMenu1 /> }
+    { name: 'Convert', icon: <SiConvertio />, to: 'convert' },
 ]
 
 const cryptoStatus1 = [
@@ -346,6 +1084,77 @@ const cryptoStatus1 = [
     { name: 'Sell BTC', icon: <GoArrowUpRight /> }
 ]
 
+const cryptoOption = [
+    {
+        shrotName: 'BTC',
+        name: 'Bitcoin',
+        logo: 'https://cryptologos.cc/logos/thumbs/bitcoin.png?v=040',
+        pricePerCoin: '1 BTC = 8,448,496.2999 INR',
+        blc: 0, INR: '0.00',
+        table: 'true',
+        receive: <Receive1 />,
+        send: <Send1 />,
+        threedots: <ThreeDotMenu1 btnName={'BTC'} />,
+
+        actions: [
+            { action: <Send1 /> },
+            { action: <Receive1 /> },
+            { name: 'Convert', icon: <SiConvertio />, to: 'convert' },
+            { name: 'Buy BTC', icon: <GoArrowDownLeft />, to: '/buy' },
+            { name: 'Sell BTC', icon: <GoArrowUpRight />, to: '/sell' }
+        ]
+    },
+    {
+        shrotName: 'ETH',
+        name: 'Ethereum',
+        logo: 'https://cryptologos.cc/logos/thumbs/ethereum.png?v=040',
+        pricePerCoin: '1 ETH = 8,448,496.2999 INR',
+        blc: 0, INR: '0.00',
+        table: 'true',
+        receive: <Receive2 />,
+        send: <Send2 />,
+        threedots: <ThreeDotMenu1 btnName={'ETH'} />,
+
+        actions: [
+            { action: <Send2 /> },
+            { action: <Receive2 /> },
+            { name: 'Convert', icon: <SiConvertio />, to: 'convert' },
+            { name: 'Buy ETH', icon: <GoArrowDownLeft />, to: '/buy' },
+            { name: 'Sell ETH', icon: <GoArrowUpRight />, to: '/sell' }
+        ]
+    },
+    {
+        shrotName: 'USDC', name: 'USDC',
+        logo: 'https://cryptologos.cc/logos/thumbs/usd-coin.png?v=040',
+        pricePerCoin: '1 USDC = 8,448,496.2999 INR',
+        blc: 0, INR: '0.00',
+        receive: <Receive3 />, send: <Send3 />,
+        threedots: <ThreeDotMenu1 btnName={'USDC'} />,
+
+        actions: [
+            { action: <Send3 /> },
+            { action: <Receive3 /> },
+            { name: 'Convert', icon: <SiConvertio />, to: 'convert' },
+            { name: 'Buy USDC', icon: <GoArrowDownLeft />, to: '/buy' },
+            { name: 'Sell USDC', icon: <GoArrowUpRight />, to: '/sell' }
+        ]
+    },
+    {
+        shrotName: 'USDT', name: 'Tether',
+        logo: 'https://cryptologos.cc/logos/thumbs/tether.png?v=040',
+        pricePerCoin: '1 USDT = 8,448,496.2999 INR',
+        blc: 0, INR: '0.00',
+        receive: <Receive4 />, send: <Send4 />,
+        threedots: <ThreeDotMenu1 btnName={'USDT'} />,
+        actions: [
+            { action: <Send4 /> },
+            { action: <Receive4 /> },
+            { name: 'Convert', icon: <SiConvertio />, to: 'convert' },
+            { name: 'Buy USDT', icon: <GoArrowDownLeft />, to: '/buy' },
+            { name: 'Sell USDT', icon: <GoArrowUpRight />, to: '/sell' }
+        ]
+    }
+];
 
 
 export default Balance

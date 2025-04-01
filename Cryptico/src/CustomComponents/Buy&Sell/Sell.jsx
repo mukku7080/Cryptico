@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 
 import {
     Box, Button, Card, Flex, Grid, GridItem, Heading,
@@ -11,7 +11,13 @@ import {
     Switch,
     flexbox,
     Avatar,
-    calc
+    calc,
+    Accordion,
+    AccordionItem,
+    AccordionButton,
+    AccordionPanel,
+    AccordionIcon,
+    useDisclosure,
 
 } from '@chakra-ui/react';
 import { FaArrowTrendUp, FaRegThumbsDown } from "react-icons/fa6";
@@ -29,145 +35,40 @@ import { MdDoubleArrow } from "react-icons/md";
 import OfferLocation from '../Dropdown/OfferLocation';
 import TraderLocation from '../Dropdown/TraderLocation';
 import { MyPaymentModal } from '../Dropdown/PaymentModal/MyPaymentModal';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import TokenDropdown from '../Dropdown/TokenDropdown';
 import BuySellWithNotification from './BuySellWithNotification';
+import { motion } from 'framer-motion';
+const MotionFlex = motion(Flex);
 
 const Sell = () => {
-    // const [isDisabled, setIsDisabled] = useState(true); // Switch state
-    const array = [1, 2, 3, 4, 5, 6];
 
 
     return (
         <>
             <Flex maxW={'container.xxl'} justifyContent={'center'} alignItems={'center'} paddingTop={20} minH={'90vh'} direction={'column'} >
                 <Flex
-                    maxW={{ base: "90%", lg: '98%', xl: "90%" }}
-                    minW={{ base: "90%", sm: '90%', lg: '90%', xl: "none" }}
+                    maxW={{ base: "100%", lg: '90%', xl: "90%" }}
+                    minW={{ base: "100%", sm: '90%', lg: '90%', xl: "none" }}
                     w={'100%'}
                     gap={5}
-                    // mt={{ base: 20, lg: 10 }}
+                    mt={{ base: 5, lg: 0 }}
                     direction={{ base: 'column', lg: 'row' }}
 
                 >
                     {/* Left Side nav column */}
 
-                    <Flex flex={{ lg: .6, xl: .4 }}
-                        width={'full'}
-                        gap={{ base: 5, xl: 5 }}
-                        direction={{ base: 'column', md: 'row', lg: 'row', xl: 'column' }}
-                        position={'sticky'}
-                        top={'80px'}  // Adjust based on navbar height if any
-                        height="calc(100vh - 60px)"
-
-                    >
-                        <Flex w={'full'} direction={'column'}>
-                            <Card boxShadow={'lg'}
-                                borderRadius={5}
-                                border={'1px solid #dcdcdc'}
-                                h={{ md: 'full', xl: 'auto' }}
-                                p={{ base: 4, sm: 4, md: 6, xl: 4 }}
-                                gap={5}>
-
-
-                                <TokenDropdown />
-                                <Flex gap={4} color={'gray'}>
-                                    <Box>1 BTC = 458254.23 INR</Box>
-                                    <Box display={'flex'} alignItems={'center'}>
-
-                                        <FaArrowTrendUp />
-                                    </Box>
-                                </Flex>
-                                {/* <PaymentDropdown /> */}
-                                <MyPaymentModal />
-
-                                {/* currency type input */}
-                                {/* <CurrencyDropdown /> */}
-                                <Flex justifyContent={'space-between'} border={'1px solid #dcdcdc'} borderRadius={5} display={'flex'} alignItems={'center'} >
-                                    <InputGroup>
-
-                                        <Input placeholder='Enter Amount'
-                                            border={'none'}
-                                            _hover={{ border: "none" }}
-                                            _focus={{ boxShadow: "none", border: "none" }}
-
-                                        ></Input>
-                                        {
-                                            false &&
-                                            <InputRightElement>
-                                                <Button><MdKeyboardArrowDown /></Button>
-                                            </InputRightElement>
-                                        }
-                                    </InputGroup>
-                                    <CurrencyDropdown />
-                                </Flex>
-
-
-                                <Divider />
-
-                                {/* LocationFilter */}
-
-                                <Flex direction={'column'} gap={5}>
-                                    <Flex gap={2}>
-                                        <Box>Offer Location</Box>
-                                        <Box display={'flex'} alignItems={'center'}><AiOutlineExclamationCircle /></Box>
-                                    </Flex>
-                                    <OfferLocation />
-
-
-                                    <Flex gap={2} justifyContent={'space-between'}>
-                                        <Flex gap={2}>
-                                            <Box>Trader Location</Box>
-                                            <Box display={'flex'} alignItems={'center'}><AiOutlineExclamationCircle /></Box>
-                                        </Flex>
-                                        {/* <Flex alignItems={'center'}>
-                                                    <Switch colorScheme='orange' onChange={() => setIsDisabled((prev) => !prev)} />
-
-                                                </Flex> */}
-                                    </Flex>
-                                    <TraderLocation />
-
-                                    <Flex gap={2} justifyContent={'space-between'}>
-                                        <Flex gap={2}>
-                                            <Box>Recently active traders</Box>
-                                            <Box display={'flex'} alignItems={'center'}><AiOutlineExclamationCircle /></Box>
-                                        </Flex>
-                                        <Flex alignItems={'center'}>
-                                            <Switch colorScheme='orange' />
-
-                                        </Flex>
-                                    </Flex>
-                                    <Flex gap={2} justifyContent={'space-between'}>
-                                        <Flex gap={2}>
-                                            <Box>Verified offers</Box>
-                                            <Box display={'flex'} alignItems={'center'}><AiOutlineExclamationCircle /></Box>
-                                        </Flex>
-                                        <Flex alignItems={'center'}>
-                                            <Switch colorScheme='orange' />
-
-                                        </Flex>
-                                    </Flex>
-
-                                    <Button borderRadius={5} variant={'solid'} justifyContent={'space-between'} colorScheme={'orange'} rightIcon={<MdDoubleArrow />}>Find Offers</Button>
-
-
-                                </Flex>
-                            </Card>
-
-
-                        </Flex>
-
-
-                    </Flex>
+                    <LeftSideContent />
 
                     {/* Left Side nav column end */}
 
 
                     {/* RightSide start */}
+                    {/* <Flex w={'full'} justifyContent={'center'} alignItems={'center'} direction={'column'} > */}
 
-                    <Flex flex={{ lg: 1.4, xl: 1.6 }} direction={'column'} gap={5} overflowY={'auto'} >
+                    <Flex alignSelf={'center'} flex={{ lg: 1.4, xl: 1.6 }} direction={'column'} gap={5} overflowY={'auto'} w={{ base: '95%', lg: 'full' }} >
                         <Card borderRadius={5} gap={5} p={2} >
-                            <Flex direction={'column'} py={5} px={2} gap={5}>
+                            <Flex direction={'column'} py={5} px={2} gap={5} >
 
                                 <Heading size={'lg'}>Sell Bitcoin (BTC).</Heading>
                                 <Box as='p' fontWeight={500} color={'gray'} fontSize={'18px'}>Sell your Bitcoin and get paid via over 500 payment methods, including bank transfers, online wallets, and gift cards.</Box>
@@ -281,7 +182,9 @@ const Sell = () => {
                         </Card>
 
 
+                        {/* </Flex> */}
                     </Flex>
+
 
                     {/* RightSide end */}
 
@@ -294,11 +197,286 @@ const Sell = () => {
 }
 
 
+const LeftSideContent = () => {
+
+    return (
+        <Flex flex={{ lg: .6, xl: .4 }}
+            width={'full'}
+            gap={{ base: 5, xl: 5 }}
+            direction={{ base: 'column', md: 'row', lg: 'row', xl: 'column' }}
+            position={'sticky'}
+            top={{ base: '102px', lg: '58px' }}  // Adjust based on navbar height if any
+            height={{ base: 'auto', lg: "calc(100vh - 60px)" }}
+            zIndex={1}
+            overflowY={'auto'}
+            overflowX={'hidden'}
+
+        >
+            <Flex w={'full'} direction={'column'} >
+                <Card boxShadow={'lg'}
+                    borderRadius={{ md: 0, lg: 5 }}
+                    border={'1px solid #dcdcdc'}
+                    h={{ md: 'full', xl: 'auto' }}
+                    p={{ base: 4, sm: 4, md: 6, xl: 4 }}
+                    gap={5}>
+
+                    <Flex display={{ base: 'none', lg: 'flex' }} direction={'column'} gap={5}>
+
+                        <TokenDropdown />
+                        <Flex gap={4} color={'gray'}>
+                            <Box>1 BTC = 458254.23 INR</Box>
+                            <Box display={'flex'} alignItems={'center'}>
+
+                                <FaArrowTrendUp />
+                            </Box>
+                        </Flex>
+                        {/* <PaymentDropdown /> */}
+                        <MyPaymentModal />
+
+                        {/* currency type input */}
+                        {/* <CurrencyDropdown /> */}
+                        <Flex justifyContent={'space-between'} border={'1px solid #dcdcdc'} borderRadius={5} display={'flex'} alignItems={'center'} >
+                            <InputGroup>
+
+                                <Input placeholder='Enter Amount'
+                                    border={'none'}
+                                    _hover={{ border: "none" }}
+                                    _focus={{ boxShadow: "none", border: "none" }}
+
+                                ></Input>
+                                {
+                                    false &&
+                                    <InputRightElement>
+                                        <Button><MdKeyboardArrowDown /></Button>
+                                    </InputRightElement>
+                                }
+                            </InputGroup>
+                            <CurrencyDropdown />
+                        </Flex>
+                    </Flex>
+
+                    <Box display={{ base: 'block', lg: 'none' }}>
+
+                        <LeftContentmobileView />
+                    </Box>
 
 
+
+
+
+
+                    {/* </MotionFlex> */}
+                    <Flex direction={'column'} gap={5} w={'full'} display={{ base: 'none', lg: 'flex' }}>
+                        <Flex gap={2}>
+                            <Box>Offer Location</Box>
+                            <Box display={'flex'} alignItems={'center'}><AiOutlineExclamationCircle /></Box>
+                        </Flex>
+                        <OfferLocation />
+
+
+                        <Flex gap={2} justifyContent={'space-between'}>
+                            <Flex gap={2}>
+                                <Box>Trader Location</Box>
+                                <Box display={'flex'} alignItems={'center'}><AiOutlineExclamationCircle /></Box>
+                            </Flex>
+                            {/* <Flex alignItems={'center'}>
+                                    <Switch colorScheme='orange' onChange={() => setIsDisabled((prev) => !prev)} />
+
+                                </Flex> */}
+                        </Flex>
+                        <TraderLocation />
+
+                        <Flex gap={2} justifyContent={'space-between'}>
+                            <Flex gap={2}>
+                                <Box>Recently active traders</Box>
+                                <Box display={'flex'} alignItems={'center'}><AiOutlineExclamationCircle /></Box>
+                            </Flex>
+                            <Flex alignItems={'center'}>
+                                <Switch colorScheme='orange' />
+
+                            </Flex>
+                        </Flex>
+                        <Flex gap={2} justifyContent={'space-between'}>
+                            <Flex gap={2}>
+                                <Box>Verified offers</Box>
+                                <Box display={'flex'} alignItems={'center'}><AiOutlineExclamationCircle /></Box>
+                            </Flex>
+                            <Flex alignItems={'center'}>
+                                <Switch colorScheme='orange' />
+
+                            </Flex>
+                        </Flex>
+
+                        <Button borderRadius={5} variant={'solid'} justifyContent={'space-between'} colorScheme={'orange'} rightIcon={<MdDoubleArrow />}>Find Offers</Button>
+
+
+                    </Flex>
+
+
+
+                </Card>
+            </Flex>
+
+
+        </Flex>
+    )
+}
+
+const LeftContentmobileView = () => {
+    const { isOpen, onToggle, onClose } = useDisclosure();
+    const accordionRef = useRef(null);
+
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (accordionRef.current && !accordionRef.current.contains(event.target)) {
+                onClose();
+            }
+        }
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+    return (
+        <Box ref={accordionRef}>
+            <Accordion allowToggle index={isOpen ? [0] : []} >
+                <AccordionItem border={'none'} >
+                    <h2>
+                        <AccordionButton border={'1px solid #dcdcdc'} p={4} onClick={onToggle}>
+                            <Box as='span' flex='1' textAlign='left'>
+                                Filters
+                            </Box>
+                            <AccordionIcon />
+                        </AccordionButton>
+                    </h2>
+                    <AccordionPanel p={0} maxH="500px"  // Set max height for scrolling
+                        overflowY="auto" >
+                        <Flex direction={'column'} py={{ base: 4, sm: 4, md: 6, xl: 4 }}
+                            m={0}
+                            gap={5}>
+
+                            <TokenDropdown />
+                            <Flex gap={4} color={'gray'}>
+                                <Box>1 BTC = 458254.23 INR</Box>
+                                <Box display={'flex'} alignItems={'center'}>
+
+                                    <FaArrowTrendUp />
+                                </Box>
+                            </Flex>
+                            {/* <PaymentDropdown /> */}
+                            <MyPaymentModal />
+
+                            {/* currency type input */}
+                            {/* <CurrencyDropdown /> */}
+                            <Flex justifyContent={'space-between'} border={'1px solid #dcdcdc'} borderRadius={5} display={'flex'} alignItems={'center'} >
+                                <InputGroup>
+
+                                    <Input placeholder='Enter Amount'
+                                        border={'none'}
+                                        _hover={{ border: "none" }}
+                                        _focus={{ boxShadow: "none", border: "none" }}
+
+                                    ></Input>
+                                    {
+                                        false &&
+                                        <InputRightElement>
+                                            <Button><MdKeyboardArrowDown /></Button>
+                                        </InputRightElement>
+                                    }
+                                </InputGroup>
+                                <CurrencyDropdown />
+                            </Flex>
+                            <MoreFilter />
+                        </Flex>
+                    </AccordionPanel>
+                </AccordionItem>
+            </Accordion>
+        </Box>
+    )
+
+}
+
+const MoreFilter = () => {
+    const [show, setShow] = useState(false);
+
+    return (
+        <>
+            <Flex direction={'column'} gap={5}>
+                <Divider />
+
+
+                <Flex alignItems={'center'} gap={5} display={{ base: 'flex', lg: 'none' }}>
+                    <Switch colorScheme='orange' onChange={() => setShow((prev) => !prev)} />
+                    <Heading size={'sm'} color={'gray'}>{show ? "Hide filters" : 'Show more filters'}</Heading>
+
+                </Flex>
+                {/* <MotionFlex
+        initial={{ opacity: 0, maxHeight: 0, overflow: "hidden" }}
+        animate={{ opacity: show ? 1 : 0, maxHeight: show ? "600px" : "0px" }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        direction={'column'}
+        display={{ base: 'flex', lg: 'none' }}
+
+    > */}
+                {/* LocationFilter */}
+                {show &&
+
+                    <Flex direction={'column'} gap={5} w={'full'} transition={{ duration: 0.4, ease: 'ease' }}>
+                        <Flex gap={2}>
+                            <Box>Offer Location</Box>
+                            <Box display={'flex'} alignItems={'center'}><AiOutlineExclamationCircle /></Box>
+                        </Flex>
+                        <OfferLocation />
+
+
+                        <Flex gap={2} justifyContent={'space-between'}>
+                            <Flex gap={2}>
+                                <Box>Trader Location</Box>
+                                <Box display={'flex'} alignItems={'center'}><AiOutlineExclamationCircle /></Box>
+                            </Flex>
+                            {/* <Flex alignItems={'center'}>
+                <Switch colorScheme='orange' onChange={() => setIsDisabled((prev) => !prev)} />
+
+            </Flex> */}
+                        </Flex>
+                        <TraderLocation />
+
+                        <Flex gap={2} justifyContent={'space-between'}>
+                            <Flex gap={2}>
+                                <Box>Recently active traders</Box>
+                                <Box display={'flex'} alignItems={'center'}><AiOutlineExclamationCircle /></Box>
+                            </Flex>
+                            <Flex alignItems={'center'}>
+                                <Switch colorScheme='orange' />
+
+                            </Flex>
+                        </Flex>
+                        <Flex gap={2} justifyContent={'space-between'}>
+                            <Flex gap={2}>
+                                <Box>Verified offers</Box>
+                                <Box display={'flex'} alignItems={'center'}><AiOutlineExclamationCircle /></Box>
+                            </Flex>
+                            <Flex alignItems={'center'}>
+                                <Switch colorScheme='orange' />
+
+                            </Flex>
+                        </Flex>
+
+                        <Button borderRadius={5} variant={'solid'} justifyContent={'space-between'} colorScheme={'orange'} rightIcon={<MdDoubleArrow />}>Find Offers</Button>
+
+
+                    </Flex>
+                }
+            </Flex>
+        </>
+    )
+}
 
 
 const OfferList = () => {
+    const navigate = useNavigate();
+
     return (
         <Flex w={'full'} p={4} borderBottom={'1px solid #dcdcdc'} borderBottomRadius={5} direction={'column'} gap={5} >
             {/* Row1 */}
@@ -343,7 +521,7 @@ const OfferList = () => {
                         <Box>
                             Bhim
                         </Box>
-                        <Flex border={'1px solid green'} color={'green'} px={2} fontSize={'10px'} fontWeight={'bold'} gap={2} justifyContent={'center'} alignItems={'center'}>
+                        <Flex border={'1px solid green'} color={'green'} px={2} fontSize={'10px'} fontWeight={'bold'} gap={2} justifyContent={'center'} alignItems={'center'} borderRadius={5}>
                             <FaCheck />
                             <Box as='span'>
 
@@ -353,9 +531,9 @@ const OfferList = () => {
                     </Flex>
                     <Flex color={'gray'}> Only For Indian Traders</Flex>
                     <Flex gap={2} flexWrap={'wrap'} >
-                        <Box p={1} fontSize={'14px'} bg={'gray.200'}>receipt req. </Box>
-                        <Box p={1} fontSize={'14px'} bg={'gray.200'}>photo id req. </Box>
-                        <Box p={1} fontSize={'14px'} bg={'gray.200'}>no third parties </Box>
+                        <Box p={1} fontSize={'14px'} bg={'gray.200'} borderRadius={5}>receipt req. </Box>
+                        <Box p={1} fontSize={'14px'} bg={'gray.200'} borderRadius={5}>photo id req. </Box>
+                        <Box p={1} fontSize={'14px'} bg={'gray.200'} borderRadius={5}>no third parties </Box>
                     </Flex>
                 </Flex>
                 {/* Trade speed */}
@@ -434,7 +612,7 @@ const OfferList = () => {
                 {/* Pay With */}
 
 
-                <Flex direction={'row'} flex={2} display={{ base: 'none', md: 'flex' }} gap={3} fontSize={'14px'} color={'gray'} bg={'red.100'} p={1}>
+                <Flex direction={'row'} flex={2} display={{ base: 'none', md: 'flex' }} gap={3} fontSize={'14px'} color={'gray'} bg={'red.100'} p={1} borderRadius={5}>
 
                     <Box as='span'  >
                         <Flex gap={2} justifyContent={'start'} alignItems={'start'} >
@@ -446,7 +624,6 @@ const OfferList = () => {
                             <Box as='span' >
                                 <Link >
                                     <Box as='span' textDecoration={'underline'} color={'black'}>
-
                                         Show your full name
                                     </Box>
                                 </Link>
@@ -485,7 +662,7 @@ const OfferList = () => {
                             </Flex>
                             <Flex alignItems={'center'} gap={2} >
                                 <Button size={'sm'} variant='outline' bg={'transparent'}><CiStar /></Button>
-                                <Button size={'sm'} bg={'orange'}>Buy</Button>
+                                <Button size={'sm'} bg={'orange'} onClick={() => navigate('/sellOffer')}>Sell</Button>
                             </Flex>
 
                         </Flex>

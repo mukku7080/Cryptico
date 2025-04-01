@@ -113,7 +113,7 @@ const Settings = () => {
                                             userOption.map((data, index) => (
 
 
-                                                <>
+                                                <React.Fragment key={index}>
 
                                                     <Button as={Button}
                                                         isLoading={isLoading}
@@ -149,7 +149,7 @@ const Settings = () => {
                                                         </Flex>
                                                     </Button>
                                                     <Divider></Divider>
-                                                </>
+                                                </React.Fragment>
 
 
 
@@ -312,7 +312,7 @@ const Mobilecollapse2 = ({ onClose }) => {
 
 
 
-                                <>
+                                <React.Fragment key={index}>
 
                                     <Button
                                         width={'100%'}
@@ -339,7 +339,7 @@ const Mobilecollapse2 = ({ onClose }) => {
                                         </Flex>
                                     </Button>
                                     <Divider />
-                                </>
+                                </React.Fragment>
 
 
 

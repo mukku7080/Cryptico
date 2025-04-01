@@ -1,5 +1,5 @@
-import { Card, CardBody, Divider, Flex, Heading, Icon, Image, InputGroup, IconButton, Link, useColorModeValue, useToast } from '@chakra-ui/react'
-import React, { useState } from 'react'
+import { Card, CardBody, Divider, Flex, Heading, Icon, Image, InputGroup, InputRightElement, IconButton, useColorModeValue } from '@chakra-ui/react'
+import React, { useEffect, useState } from 'react'
 import { CgArrowsExchange } from "react-icons/cg";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -10,149 +10,215 @@ import {
     FormLabel,
     FormErrorMessage,
     Input,
-    Checkbox, Toast,
-    InputRightElement
-
+    Checkbox, useToast
 } from "@chakra-ui/react";
-import { useNavigate } from 'react-router-dom';
-import { IoMdEyeOff, IoMdEye } from "react-icons/io";
-
 import { FcGoogle } from "react-icons/fc";
 import { FaApple, FaTelegramPlane } from "react-icons/fa";
-// import { useAuth } from '../AuthContext/AuthProvider';
-import axios from 'axios';
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../Context/AuthContext';
 
 
-const ForgetPassowrd = () => {
 
-    const { handleLogin, handleLoginWithGoogle, handleForgotPassword } = useAuth();
+const ForgetPasswrod = () => {
+
+    const { handleSignupWithGoogle, error, handleForgotPassword } = useAuth();
     const toast = useToast();
-    const [showPassword, setShowPassword] = useState(false);
+
+    const { token } = useParams();
+    const [searchParams] = useSearchParams();
+
+
     const [email, setEmail] = useState("");
+    const [resetToken, setResetToken] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+
+
+    useEffect(() => {
+        setResetToken(token);
+        setEmail(searchParams.get("email"));
+
+
+    }, [token, searchParams])
+
+
+
+
+
     const [isLoading, setIsLoading] = useState(false);
-    const txtcolor = useColorModeValue('black', 'white');
+    const navigate = useNavigate();
+
+
+
     const bgcolor = useColorModeValue('gray.100', 'gray.700');
 
 
 
-    const navigate = useNavigate();
-
     const validationSchema = Yup.object({
         email: Yup.string().email("invalid email").required("*field is required"),
-        password: Yup.string().min(6, "Minimum 8 characters").required("*Password is required"),
 
     });
+
 
     const { values, handleBlur, handleSubmit, errors, touched, handleChange } = useFormik({
         initialValues: {
             email: "",
-            password: "",
-
         },
         validationSchema,
-
         onSubmit: async (values, action) => {
-
             try {
                 setIsLoading(true);
-                const res = await handleLogin(values);
-                toast({
-                    title: "Login Successfuly",
-                    description: "Enjoy our Service",
-                    status: "success",
-                    duration: 1000,
-                    isClosable: true,
-                    position: "top-right",
-                });
+                const res = await handleForgotPassword(values.email);
+                const { status, message } = res;
 
-                navigate("/user-dashboard");
+
+                if (status === true) {
+                    toast({
+                        title: "Reset-password",
+                        description: "password reset-link has been sent on your email..",
+                        status: "info",
+                        duration: 5000,
+                        isClosable: true,
+                        position: "top-right",
+                    });
+                    navigate("/login");
+
+                }
+                else {
+
+                    toast({
+                        title: "error",
+                        description: message,
+                        status: "error",
+                        duration: 5000,
+                        isClosable: true,
+                        position: "top-right",
+                    });
+                }
             }
-            catch (err) {
-                toast({
-                    title: "Something Went Wrong",
-                    description: "plz check you credential",
-                    status: "error",
-                    duration: 5000,
-                    isClosable: true,
-                    position: "top-right",
-                });
-                console.log("Login Failded:", err);
+            catch (error) {
+                throw error;
+
             }
             finally {
+                action.resetForm();
                 setIsLoading(false);
             }
-            action.resetForm();
+
+
+
 
 
         }
 
     });
 
-
-
-
+    const [isshow, setShow] = useState(false);
     return (
-        <Box minH={'100vh'} display={'flex'} justifyContent={'center'} alignItems={'center'}>
+        <Flex minH={'100vh'} maxW={'container.xxl'} justifyContent={'center'} alignItems={'center'}>
 
-            <Flex maxW={'container.xxl'} justifyContent={'center'}  >
-                <Card borderRadius={'none'} bg={'transparent'}  >
+            <Flex
+                maxW={{ base: "95%", lg: '90%', xl: "70%" }}
+                minW={{ base: "95%", sm: '90%', lg: '90%', xl: "70%" }}
+                justifyContent={'center'} my={10} >
+                <Card
+                    w={'full'}
+                    borderRadius={'none'} bg={'transparent'} >
 
-                    <Flex minW={{ base: 'container', sm: '500px', md: 'container.md', lg: 'container.lg' }} direction={{ base: 'column', sm: 'column', md: 'row' }}  >
 
+                    <Flex
+                        w={'full'}
 
-                      
+                        direction={{ base: 'column', sm: 'column', md: 'row' }} >
 
-
-                        <Box flex={1}
+                        <Flex w={'full'}
+                            bgImage={'/imagelogo/security_new1.png'}
+                            bgPosition={{ base: 'center', md: 'center', lg: 'center' }}
+                            bgRepeat={'no-repeat'}
+                            bgSize={'cover'}
+                            position="relative"
+                            _before={{
+                                content: '""',
+                                position: "absolute",
+                                inset: 0,
+                                backdropFilter: "blur(10px)", // Adjust blur strength
+                                zIndex: -1,
+                            }}
                         >
 
-                            <Card borderRadius={'none'} bg={'transparent'} border={'none'} boxShadow={'none'} >
+                            <Flex direction={'column'} borderRadius={'none'} w={'full'} bg="rgba(255, 255, 255, 0.2)" backdropFilter={{ base: "blur(10px)", md: 'none' }}>
                                 <Flex justifyContent={'space-between'} px={3} alignItems={'center'} mt={5}>
-                                    <Button leftIcon={<CgArrowsExchange />} bg={'transparent'} color={'orange'} onClick={() => navigate('/login')}>Login</Button>
+                                    <Button leftIcon={<CgArrowsExchange />} bg={'transparent'} color={'orange'} onClick={() => navigate('/login')}>Log in</Button>
                                 </Flex>
 
-                                <Divider color={'#dcdcdc'} opacity={0.5} />
+                                <Divider color={'gray'} opacity={0.5} />
 
-                                <Flex display={'flex'} justifyContent={'center'} alignItems={'start'} direction={'column'} w={'full'} my={10} px={4} gap={5}>
-                                    <Heading size={'lg'} fontWeight={'500'} textAlign={'start'}>Forget password</Heading>
-                                    <Box as='p' color={'gray'} minW={'400px'} my={3}  >password reset link will be sent to your email address</Box>
+                                <Flex display={'flex'}
+                                    justifyContent={'space-between'}
+                                    w={'full'}
+                                    my={10}
+                                    p={4}
+
+                                >
+
+                                    <Box borderRadius="md" w={{ base: '80%', md: '50%' }} ml={4}  >
+                                        <Heading size={'lg'} fontWeight={'500'} textAlign={'start'}>Forget password</Heading>
+                                        <Box as='p' color={'gray'} maxW={'400px'} my={3}  >password reset link will be sent to your email address</Box>
 
 
-                                    <Box borderRadius="md" w={'36%'} >
 
                                         <form onSubmit={(e) => {
                                             e.preventDefault();
                                             handleSubmit();
                                         }} >
-                                            {/* user Field */}
 
+
+
+                                            {/* Email Field */}
                                             <FormControl isInvalid={errors.email && touched.email} mb={3}>
-                                                <FormLabel color={'gray'}  >Email</FormLabel>
-                                                <Input name="email" placeholder="Email" bg={bgcolor}  // Light gray background
+                                                <FormLabel color={'gray'}>Email</FormLabel>
+
+                                                <Input
+
+                                                    name="email"
+                                                    type='text'
+                                                    placeholder="Enter Email"
+                                                    bg={bgcolor}
                                                     _focus={{ bgcolor }}
                                                     value={values.email}
                                                     onChange={(e) => {
-                                                        setEmail(e.target.value);
                                                         handleChange(e);
+
                                                     }}
-                                                    onBlur={handleBlur} />
+                                                    onFocus={() => setShow(true)}
+                                                    onBlur={(e) => {
+
+                                                        handleBlur(e);
+                                                        setShow(false);
+                                                    }}
+                                                    borderRadius={5}
+
+                                                />
+
                                                 <FormErrorMessage>{errors.email}</FormErrorMessage>
                                             </FormControl>
+                                            <Flex justifyContent={'center'} w={'full'} textAlign={'center'}>
 
-                                            {/* Submit Button */}
-                                            <Button
-                                                isLoading={isLoading}
-                                                loadingText='Loading'
-                                                type="submit" bg={'orange'}
-                                                width="full"
-                                                mt={5}
-                                                _hover={{ bg: 'orange.500' }}>
+                                                <Button isLoading={isLoading}
+                                                    loadingText='Loading'
+                                                    type="Submit"
+                                                    bg={'orange'}
+                                                    width="full"
+                                                    mt={5}
+                                                    _hover={{ bg: 'orange.500' }}
+                                                    borderRadius={5}
+                                                    w={{ base: '100%', sm: '100%', md: '100%', lg: '100%' }}
+                                                >
+                                                    Send Password Reset Link
+                                                </Button>
+                                            </Flex>
 
-                                                Send Reset Link
-
-                                            </Button>
                                         </form>
+
 
                                     </Box>
 
@@ -160,13 +226,13 @@ const ForgetPassowrd = () => {
 
                                 <Flex>
                                     <Divider color={'orange'} ml={3} flex={1} opacity={0.9} />
-                                    <Box fontSize={'14px'} textAlign={'center'} flex={1}>Or login with</Box>
+                                    <Box fontSize={'14px'} textAlign={'center'} flex={1}>Or sign up with</Box>
                                     <Divider mr={3} flex={1} opacity={0.9} color={'orange'} />
                                 </Flex>
 
                                 <Flex my={5} justifyContent={'center'} gap={10}>
-                                    <Button variant={'outline'} boxSize={10} onClick={async () => await handleLoginWithGoogle()}>
-                                        <Icon as={FcGoogle} boxSize={6}></Icon>
+                                    <Button variant={'outline'} boxSize={10}>
+                                        <Icon as={FcGoogle} onClick={async () => await handleSignupWithGoogle()} boxSize={6}></Icon>
                                     </Button>
                                     <Button variant={'outline'} boxSize={10}>
                                         <Icon as={FaApple} boxSize={6}></Icon>
@@ -176,23 +242,22 @@ const ForgetPassowrd = () => {
                                     </Button>
                                 </Flex>
 
-                            </Card>
-                        </Box>
-
-
-
-
-
+                            </Flex>
+                        </Flex>
                     </Flex>
+
                 </Card>
             </Flex>
-        </Box>
+        </Flex>
 
 
     )
 }
 
-export default ForgetPassowrd
+
+
+
+export default ForgetPasswrod
 
 
 

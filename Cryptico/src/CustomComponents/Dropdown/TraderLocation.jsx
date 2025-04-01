@@ -31,7 +31,7 @@ const TraderLocation = ({ isDisabled }) => {
     );
     return (
         <>
-            <Menu>
+            <Menu matchWidth>
                 <MenuButton
                     as={Button}
                     rightIcon={<MdKeyboardArrowDown />}

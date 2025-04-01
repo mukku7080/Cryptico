@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useEffect } from 'react'
-import { login, signup, logout, emailOtp, verifyEmailOtp, loginWithGoogle, SignupWithGoogle, forgetPassword, resetPassword } from '../api/authService';
+import React, { createContext, useContext, useEffect, useState } from 'react'
+import { login, signup, logout, emailOtp, verifyEmailOtp, loginWithGoogle, SignupWithGoogle, forgetPassword, resetPassword, passwordMatch } from '../api/authService';
 import { useNavigate } from 'react-router-dom';
 
 export const AuthContext = createContext();
@@ -8,6 +8,7 @@ export const AuthProvider = ({ children }) => {
 
     const [user, setUser] = React.useState(null);
     const [error, setError] = React.useState(null);
+    const [passwordmatch, setPasswordMatch] = useState(null);
     const navigate = useNavigate('');
 
     useEffect(() => {
@@ -132,9 +133,20 @@ export const AuthProvider = ({ children }) => {
             console.error("Reset password error:", error);
         }
     }
+    const handlePasswordMatch = async (password) => {
+        try {
+            const data = await passwordMatch(password);
+            setPasswordMatch(data);
+            return data;
+        }
+        catch (error) {
+            throw error;
+        }
+
+    }
 
     return (
-        <AuthContext.Provider value={{ user, handleLogin, handleSignup, handleLogout, handleEmailOtp, handleVerifyEmailOtp, handleLoginWithGoogle, handleSignupWithGoogle, handleForgotPassword, handleResetPassword, error }}>
+        <AuthContext.Provider value={{ user, handleLogin, handleSignup, handleLogout, handleEmailOtp, handleVerifyEmailOtp, handleLoginWithGoogle, handleSignupWithGoogle, handleForgotPassword, handleResetPassword, error, handlePasswordMatch, passwordmatch }}>
             {children}
         </AuthContext.Provider>
     );

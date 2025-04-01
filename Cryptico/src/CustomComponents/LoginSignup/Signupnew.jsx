@@ -1,5 +1,5 @@
 import { Card, CardBody, Divider, Flex, Heading, Icon, Image, InputGroup, InputRightElement, IconButton, useColorModeValue } from '@chakra-ui/react'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { CgArrowsExchange } from "react-icons/cg";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -18,7 +18,7 @@ import { IoMdEyeOff, IoMdEye } from "react-icons/io";
 import { FaApple, FaTelegramPlane } from "react-icons/fa";
 import OTPInput from './OtpInput';
 // import { useAuth } from '../AuthContext/AuthProvider';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../Context/AuthContext';
 
 
@@ -27,20 +27,35 @@ const Signupnew = () => {
 
     const { handleSignup, handleEmailOtp, handleSignupWithGoogle, error } = useAuth();
     const toast = useToast();
-
-
+    const bgcolor = useColorModeValue('gray.100', 'gray.700');
     const [email, setEmail] = useState("");
     const [pass, setPass] = useState("");
     const [token, setToken] = useState("");
     const [showPassword, setShowPassword] = useState(false);
-
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
-
-
-
     const [issignup, setSignup] = useState(false);
-    const bgcolor = useColorModeValue('gray.100', 'gray.700');
+    const location = useLocation();
+
+
+    useEffect(() => {
+        const searchParams = new URLSearchParams(location.search);
+        const referralCode = searchParams.get("refer");
+        if (referralCode) {
+            localStorage.setItem("referralCode", referralCode);
+            searchParams.delete("refer");
+            navigate({ pathname: location.pathname, search: searchParams.toString() }, { replace: true });
+
+        }
+
+    }, [location.search, navigate]);
+    useEffect(() => {
+        if (localStorage.getItem("authToken")) {
+            navigate("/user-dashboard"); // Redirect logged-in users
+        }
+    }, []);
+
+
 
 
 
@@ -62,7 +77,7 @@ const Signupnew = () => {
             password: "",
             mobile: "",
             cpass: "",
-            referal: "",
+            referralCode: localStorage.getItem("referralCode") || "",
             ts: false
         },
         validationSchema,
@@ -322,6 +337,8 @@ const Signupnew = () => {
                                                     <FormErrorMessage>{errors.cpass}</FormErrorMessage>
 
                                                 </FormControl>
+
+
 
 
                                                 <FormControl isInvalid={errors.ts && touched.ts}>

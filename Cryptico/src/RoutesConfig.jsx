@@ -29,6 +29,11 @@ import SecurityQuestion from './CustomComponents/SettingsPage/SecurityQuestion';
 import Security from './CustomComponents/SettingsPage/Security';
 import BuyOffer from './CustomComponents/Buy&Sell/BuyOffer';
 import SellOffer from './CustomComponents/Buy&Sell/SellOffer';
+import InviteFriend from './CustomComponents/Afterlogin/UserDashboard/InviteFriend';
+import ForgetPassowrd from './CustomComponents/LoginSignup/ForgetPassword';
+import ForgetPasswrod from './CustomComponents/LoginSignup/ForgetPassword';
+import Testing from './CustomComponents/Wallet/Testing';
+
 
 const RoutesConfig = () => {
     return (
@@ -36,12 +41,17 @@ const RoutesConfig = () => {
             <Route path='/' element={<Hero />} />
             <Route path='/login' element={<Loginnew />} />
             <Route path='/signup' element={<Signupnew />} />
+            <Route path='/testing' element={<Testing />} />
+
+            <Route path='/forgetPassword' element={<ForgetPasswrod />} />
+
             <Route path="/number-verification" element={<ProtectedRoute><Numberwithotp /></ProtectedRoute>} />
             <Route path="/user-dashboard" element={<ProtectedRoute><UserDashboardNew /></ProtectedRoute>} >
                 <Route index element={<TradeHistoryNew />} />
                 <Route path="tradehistory" element={<TradeHistoryNew />} />
                 <Route path="recentTradePartners" element={<RecentTradeHistory />} />
                 <Route path="myOffers" element={<MyOffers />} />
+                <Route path="inviteFriends" element={<InviteFriend />} />
             </Route>
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path='/buy' element={<ProtectedRoute><BuyNew /></ProtectedRoute>} />

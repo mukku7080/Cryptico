@@ -9,41 +9,49 @@ import {
     NumberIncrementStepper,
     NumberDecrementStepper,
     InputRightAddon,
-    InputLeftAddon
+    InputLeftAddon,
+    RadioGroup
 } from '@chakra-ui/react'
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 
 import React, { useState } from 'react'
 
-const Pricing = () => {
+const Pricing = ({ values, handleChange, handleBlur, setFieldValue }) => {
+
+    const formikHelpers = { values, handleChange, handleBlur, setFieldValue };
+    console.log(values);
+
+
+
     return (
         <Flex direction={'column'} gap={10}>
             <Heading size={'md'}>Trade Pricing</Heading>
             <Heading size={'sm'}>Choose Bitcoin rate you want to use</Heading>
-            <Flex gap={5} direction={{ base: 'column', xl: 'row' }} >
+            <RadioGroup name='priceType' defaultValue={values.priceType} onChange={handleChange} value={values.priceType}>
+                <Flex gap={5} direction={{ base: 'column', xl: 'row' }} >
 
-                <Flex gap={1} border={'1px solid #dcdcdc'} direction={'column'} p={2} minW={{ base: 'auto', sm: '300px' }} borderRadius={5} >
-                    <Radio size='md' name='1' colorScheme='orange' value='2' >
-                        Market Price
 
-                    </Radio>
-                    <Box display={'flex'} alignItems={'center'} color={'gray'} fontSize={'14px'} pl={6}>Your offer’s selling price will change according to the market price of Bitcoin.</Box>
+                    <Flex gap={1} border={'1px solid #dcdcdc'} direction={'column'} p={2} minW={{ base: 'auto', sm: '300px' }} borderRadius={5} >
+                        <Radio size='md' colorScheme='orange' onChange={handleChange} value='market_price' >
+                            Market Price
+                        </Radio>
+                        <Box display={'flex'} alignItems={'center'} color={'gray'} fontSize={'14px'} pl={6}>Your offer’s selling price will change according to the market price of Bitcoin.</Box>
 
+                    </Flex>
+                    <Flex gap={1} border={'1px solid #dcdcdc'} direction={'column'} p={2} minW={{ base: 'auto', sm: '300px' }} borderRadius={5} >
+                        <Radio size='md' colorScheme='orange' value='fixed_price' onChange={handleChange} >
+                            Fixed Price
+                        </Radio>
+                        <Box display={'flex'} alignItems={'center'} color={'gray'} fontSize={'14px'} pl={6}>Your offer’s selling price is locked when you create it, and won’t change with the market price.</Box>
+
+                    </Flex>
                 </Flex>
-                <Flex gap={1} border={'1px solid #dcdcdc'} direction={'column'} p={2} minW={{ base: 'auto', sm: '300px' }} borderRadius={5} >
-                    <Radio size='md' name='1' colorScheme='orange' value='2' >
-                        Fixed Price
-
-                    </Radio>
-                    <Box display={'flex'} alignItems={'center'} color={'gray'} fontSize={'14px'} pl={6}>Your offer’s selling price is locked when you create it, and won’t change with the market price.</Box>
-
-                </Flex>
-            </Flex>
+            </RadioGroup>
             <Flex direction={'column'}>
 
-                <Offermargin />
-                <TradeLimit />
-                <TimeLimit />
+                <Offermargin formikHelpers={formikHelpers} />
+                <TradeLimit formikHelpers={formikHelpers} />
+                <TimeLimit formikHelpers={formikHelpers} />
             </Flex>
 
 
@@ -53,41 +61,55 @@ const Pricing = () => {
 }
 
 
-const TradeLimit = () => {
-    const [isfixedprice, setFixedPrice] = useState(true);
+const TradeLimit = ({ formikHelpers = {} }) => {
+    const {
+        values = {},
+        handleChange = () => { }, // Default to a no-op function
+        handleBlur = () => { },
+        errors = {},
+        touched = {},
+        setFieldValue = () => { }
+    } = formikHelpers || {}; // Ensure formikHelpers is not undefined
+    // const [isfixedprice, setFixedPrice] = useState(true);
+    // const minimum = 258;
+    // const maximum = minimum + 100;
 
     return (
         <Grid templateColumns={{ base: 'repeat(1,1fr)', lg: 'repeat(5,1fr)' }} border={'1px solid #dcdcdc'} borderLeft={{ base: '1px solid #dcdcdc', lg: 0 }} p={2}>
             <GridItem colSpan={2} p={2}  >
                 <Flex direction={'column'} gap={5} justify={'center'} alignItems={'center'} my={{ md: 10 }}>
                     <Heading size={'md'}>Offer Trades Limit</Heading>
-                    <Button size={'sm'} variant={'outline'} px={8} onClick={() => setFixedPrice((prev) => !prev)}>{isfixedprice ? "use range" : "use fixed amount"}</Button>
+                    {/* <Button size={'sm'} variant={'outline'} px={8} onClick={() => setFixedPrice((prev) => !prev)}>{isfixedprice ? "use range" : "use fixed amount"}</Button> */}
                 </Flex>
             </GridItem>
             <GridItem colSpan={3} borderLeft={{ base: 0, lg: '1px solid #dcdcdc' }} borderTop={{ base: '1px solid #dcdcdc', lg: 0 }} p={2}>
                 <Flex justifyContent={'center'} alignItems={'center'} gap={5} direction={'column'} px={4} my={10}  >
                     <Flex gap={10} w={'full'} direction={{ base: 'column', xl: 'row' }}>
                         <Flex direction={'column'} flex={1} borderRadius={5}>
-                            <Box>
-                                minimum
-                            </Box>
-                            <InputGroup >
-                                <Input borderRadius={5} placeholder='type...' ></Input>
-                                <InputRightAddon bg={'transparent'} borderRadius={5} >
-                                    <Box>INR</Box>
-                                </InputRightAddon>
-                            </InputGroup>
+
+                            <FormControl isRequired>
+                                <FormLabel>Minimum Trades</FormLabel>
+
+                                <InputGroup >
+                                    <Input borderRadius={5} placeholder='type...' name='minimum' onChange={handleChange} defaultValue={values.minimum}  ></Input>
+                                    <InputRightAddon bg={'transparent'} borderRadius={5} >
+                                        <Box>INR</Box>
+                                    </InputRightAddon>
+                                </InputGroup>
+                            </FormControl>
                         </Flex>
                         <Flex direction={'column'} flex={1} borderRadius={5}>
-                            <Box>
-                                maximum
-                            </Box>
-                            <InputGroup >
-                                <Input borderRadius={5} placeholder='type...'  ></Input>
-                                <InputRightAddon bg={'transparent'} borderRadius={5}>
-                                    <Box>INR</Box>
-                                </InputRightAddon>
-                            </InputGroup>
+
+                            <FormControl isRequired>
+                                <FormLabel>Maximum Trades</FormLabel>
+
+                                <InputGroup >
+                                    <Input borderRadius={5} placeholder='type...' name='maximum' onChange={handleChange} defaultValue={values.maximum} ></Input>
+                                    <InputRightAddon bg={'transparent'} borderRadius={5}>
+                                        <Box>INR</Box>
+                                    </InputRightAddon>
+                                </InputGroup>
+                            </FormControl>
                         </Flex>
                     </Flex>
 
@@ -107,7 +129,15 @@ const TradeLimit = () => {
 
 
 
-const Offermargin = () => {
+const Offermargin = ({ formikHelpers = {} }) => {
+    const {
+        values = {},
+        handleChange = () => { }, // Default to a no-op function
+        handleBlur = () => { },
+        errors = {},
+        touched = {},
+        setFieldValue = () => { }
+    } = formikHelpers || {}; // Ensure formikHelpers is not undefined
     const [show, setShow] = useState(false);
 
     return (
@@ -127,8 +157,14 @@ const Offermargin = () => {
                             <InputGroup >
                                 <InputLeftAddon bg={'transparent'} >%</InputLeftAddon>
 
-                                <NumberInput borderRadius={0} >
-                                    <NumberInputField borderLeftRadius={0} />
+                                <NumberInput borderRadius={0}
+                                    value={values.offerMargin}
+                                    onChange={(value) =>
+                                        setFieldValue('offerMargin', value)
+                                    }
+
+                                >
+                                    <NumberInputField borderLeftRadius={0} name='offerMargin' />
                                     <NumberInputStepper>
                                         <NumberIncrementStepper />
                                         <NumberDecrementStepper />
@@ -164,15 +200,23 @@ const Offermargin = () => {
 
 
 
-const TimeLimit = () => {
-    const [isfixedprice, setFixedPrice] = useState(true);
+const TimeLimit = ({ formikHelpers = {} }) => {
+    const {
+        values = {},
+        handleChange = () => { }, // Default to a no-op function
+        handleBlur = () => { },
+        errors = {},
+        touched = {},
+        setFieldValue = () => { }
+    } = formikHelpers || {}; // Ensure formikHelpers is not undefined
+    // const [isfixedprice, setFixedPrice] = useState(true);
+    console.log(values);
 
     return (
         <Grid templateColumns={{ base: 'repeat(1,1fr)', lg: 'repeat(5,1fr)' }} border={'1px solid #dcdcdc'} borderTop={0} borderLeft={{ base: '1px solid #dcdcdc', lg: 0 }} p={2} >
             <GridItem colSpan={2} p={2}>
                 <Flex direction={'column'} gap={5} justify={'center'} alignItems={'center'} my={10}>
                     <Heading size={'md'}>Offer Time Limit</Heading>
-                    <Button size={'sm'} variant={'outline'} px={8} onClick={() => setFixedPrice((prev) => !prev)}>{isfixedprice ? "use range" : "use fixed amount"}</Button>
                 </Flex>
             </GridItem>
             <GridItem colSpan={3} borderLeft={{ base: 0, lg: '1px solid #dcdcdc' }} borderTop={{ base: '1px solid #dcdcdc', lg: 0 }}>
@@ -181,8 +225,11 @@ const TimeLimit = () => {
                         <InputGroup >
                             <InputLeftAddon bg={'transparent'} borderRightRadius={0}>minutes</InputLeftAddon>
 
-                            <NumberInput borderRadius={0} min={30} max={90} >
-                                <NumberInputField borderLeftRadius={0} />
+                            <NumberInput borderRadius={0} min={30} max={90}
+                                value={values.timeLimit} // Bind value to Formik's state
+                                onChange={(value) => setFieldValue('timeLimit', value)}
+                            >
+                                <NumberInputField borderLeftRadius={0} name='timeLimit' />
                                 <NumberInputStepper>
                                     <NumberIncrementStepper />
                                     <NumberDecrementStepper />

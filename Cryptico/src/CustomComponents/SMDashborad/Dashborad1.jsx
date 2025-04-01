@@ -48,7 +48,7 @@ const Dashborad1 = () => {
                                     {cryptoData.map((cdata, index) => (
 
 
-                                        < >
+                                        <React.Fragment key={index}>
                                             <GridItem colSpan={2} key={index} mb={5}>
                                                 <Flex>
 
@@ -65,7 +65,7 @@ const Dashborad1 = () => {
                                             <GridItem key={index} mb={5}> <Image src={cdata.chart} maxW={'80px'} maxH={'40px'}></Image></GridItem>
                                             <GridItem key={index} mb={5}><Button variant='outline' color={'orange'}>Trade</Button></GridItem>
 
-                                        </>
+                                        </React.Fragment>
 
 
                                     ))}
@@ -93,7 +93,7 @@ const Dashborad1 = () => {
                                     {gainers.map((cdata, index) => (
 
 
-                                        <>
+                                        <React.Fragment key={index}>
                                             <GridItem colSpan={2} key={index}>
                                                 <Flex>
 
@@ -108,7 +108,7 @@ const Dashborad1 = () => {
                                             <GridItem key={index}>{cdata.change}</GridItem>
 
 
-                                        </>
+                                        </React.Fragment>
 
 
                                     ))}
@@ -124,7 +124,7 @@ const Dashborad1 = () => {
                                     {losers.map((cdata, index) => (
 
 
-                                        <>
+                                        <React.Fragment key={index}>
                                             <GridItem colSpan={2} key={index}>
                                                 <Flex>
 
@@ -139,7 +139,7 @@ const Dashborad1 = () => {
                                             <GridItem key={index}>{cdata.change}</GridItem>
 
 
-                                        </>
+                                        </React.Fragment>
 
 
                                     ))}

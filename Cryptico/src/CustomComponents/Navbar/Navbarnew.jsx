@@ -59,18 +59,6 @@ const Navbarnew = () => {
                     {/* ToggleIcon */}
                     <Flex flex={{ base: 1, md: 'auto' }} alignItems={'center'} display={{ base: 'flex', md: 'flex', lg: 'none', xl: 'none' }} >
 
-                        {/* <IconButton
-
-                            onClick={onToggle}
-                            color={'white'}
-                            size={'sm'}
-                            fontFamily={'heading'}
-                            fontSize={'4xl'}
-                            icon={isOpen ? <IoCloseOutline /> : <IoMenuOutline />}
-                            variant={'outline'}
-                            aria-label={'Toggle Navigation'}
-
-                        /> */}
                         <MobileNav />
 
                     </Flex>
@@ -89,22 +77,12 @@ const Navbarnew = () => {
                             }}
                         >CRYPTICO</Text>
                     </Center>
-
-
-
                     <Center>
-
                         <Flex display={{ base: 'none', md: 'none', lg: 'flex', xl: 'flex' }} >
                             <DesktopNav />
-
                         </Flex>
                     </Center>
-
-
-
-
                 </Flex>
-
                 {/*Login & Logout ButtonSection */}
                 <Stack justify={'flex-end'} direction={'row'} spacing={6} gap={{ lg: 2, xl: 5 }}>
                     {
@@ -121,7 +99,6 @@ const Navbarnew = () => {
                                     </Button>
                                 </Flex>
                             </>
-
                     }
                     {
                         token ? '' : <Button onClick={() => {
@@ -136,24 +113,9 @@ const Navbarnew = () => {
                             }
                         </Button>
                     }
-
-                    {/* <Button onClick={toggleColorMode}>toogle</Button> */}
-
-
-
                 </Stack>
                 {/*Login & Logout ButtonSection end */}
-
-
-
-
-
-
-
-
             </Flex>
-
-
             <Collapse in={isOpen} animateOpacity>
                 <MobileNav />
             </Collapse>
@@ -174,8 +136,8 @@ const DesktopNav = () => {
         <>
             <Stack direction={'row'} spacing={{ lg: '3', xl: '10' }} >
                 {
-                    NAV_ITEMS.map((navitem) => (
-                        <Box key={navitem.label} display={'flex'} justifyContent={'center'} >
+                    NAV_ITEMS.map((navitem, index) => (
+                        <Box key={index} display={'flex'} justifyContent={'center'} >
                             <Popover trigger='hover' placement='bottom-start'>
                                 <PopoverTrigger>
                                     <Box
@@ -288,7 +250,7 @@ const DesktopSubNav = ({ label, href, logo, subLabel, icon }) => {
             p={2}
             rounded={'md'}
             _hover={{ bg: 'gray.200' }}>
-            <Flex direction={'row'} align={'center'} gap={4}>
+            <Flex direction={'row'} align={'center'} gap={4} onClick={() => navigateTo(`${href}`)}>
                 {logo &&
 
                     <Image boxSize={10} src={logo}></Image>
@@ -331,24 +293,6 @@ const MobileNav = () => {
     const navigateTo = () => { navigate("/") }
 
     return (
-        // <Stack bg={useColorModeValue('white', 'gray.800')} p={4} display={{ base: 'flex', md: 'flex', lg: 'flex', xl: 'none' }}>
-        //     {NAV_ITEMS.map((navItem) => (
-        //         <MobileNavItem key={navItem.label} {...navItem} />
-        //     ))}
-
-
-        //     <Stack justify={'flex-start'} direction={'row'} spacing={6} mt={5} >
-        //         <Button as={Link} to='/login' padding={'0px 32px'} bgColor={'#ffb11a'} >
-        //             Log In
-        //         </Button>
-
-        //         <Button as={Link} to='/signup' padding={'0px 32px'} bgColor={'#ffb11a'} >
-        //             Sign Up
-        //         </Button>
-
-
-        //     </Stack>
-        // </Stack>
         <>
             <Button onClick={onOpen} bg={'transparent'} color={'white'} _hover={{ bg: 'transparent' }} px={0} display={'flex'} alignItems={'center'} justifyContent={'start'} >
                 <IoMenuOutline size={30} />
@@ -380,7 +324,7 @@ const MobileNav = () => {
 
                             {
                                 offcanvaButton.map((item, index) => (
-                                    <>
+                                    <React.Fragment key={index}>
                                         <Flex key={index} direction={'column'}>
                                             <Button rightIcon={<BiChevronRight />} display={'flex'} justifyContent={'space-between'} onClick={() => {
 
@@ -392,7 +336,7 @@ const MobileNav = () => {
                                                 {item.label}
                                             </Button>
                                         </Flex>
-                                    </>
+                                    </React.Fragment>
                                 ))
                             }
 
@@ -483,24 +427,25 @@ const NAV_ITEMS = [
                 label: 'Buy Bitcoin',
                 logo: 'https://cryptologos.cc/logos/thumbs/bitcoin.png?v=040',
                 subLabel: 'Search for offer to buy Bitcoin',
-                href: '#',
-            },
-            {
-                label: 'Buy Tether',
-                logo: 'https://cryptologos.cc/logos/thumbs/ethereum.png?v=040',
-                subLabel: 'Search for offer to buy Tether',
-                href: '#',
+                href: '/buy?index=0'
             },
             {
                 label: 'Buy Ethereum',
-                logo: 'https://cryptologos.cc/logos/thumbs/usd-coin.png?v=040',
+                logo: 'https://cryptologos.cc/logos/thumbs/ethereum.png?v=040',
                 subLabel: 'Search for offer to buy Ethereum',
-                href: '#',
-            }, {
+                href: '/buy?index=1'
+
+            },
+            {
                 label: 'Buy USDC',
-                logo: 'https://cryptologos.cc/logos/thumbs/tether.png?v=040',
+                logo: 'https://cryptologos.cc/logos/thumbs/usd-coin.png?v=040',
                 subLabel: 'Search for offer to buy USDC',
-                href: '#',
+                href: '/buy?index=2',
+            }, {
+                label: 'Buy Tether',
+                logo: 'https://cryptologos.cc/logos/thumbs/tether.png?v=040',
+                subLabel: 'Search for offer to buy Tether',
+                href: '/buy?index=3',
             },
         ],
     },
@@ -512,61 +457,61 @@ const NAV_ITEMS = [
             {
                 label: 'Sell Bitcoin',
                 logo: 'https://cryptologos.cc/logos/thumbs/bitcoin.png?v=040',
-                subLabel: 'Search for offer to buy Bitcoin',
-                href: '#',
-            },
-            {
-                label: 'Sell Tether',
-                logo: 'https://cryptologos.cc/logos/thumbs/ethereum.png?v=040',
-                subLabel: 'Search for offer to buy Tether',
-                href: '#',
+                subLabel: 'Search for offer to sell Bitcoin',
+                href: '/sell?index=0',
             },
             {
                 label: 'Sell Ethereum',
-                logo: 'https://cryptologos.cc/logos/thumbs/usd-coin.png?v=040',
-                subLabel: 'Search for offer to buy Ethereum',
-                href: '#',
-            }, {
+                logo: 'https://cryptologos.cc/logos/thumbs/ethereum.png?v=040',
+                subLabel: 'Search for offer to sell Ethereum',
+                href: '/sell?index=1',
+            },
+            {
                 label: 'Sell USDC',
+                logo: 'https://cryptologos.cc/logos/thumbs/usd-coin.png?v=040',
+                subLabel: 'Search for offer to sell USDC',
+                href: '/sell?index=2',
+            }, {
+                label: 'Sell Tether',
                 logo: 'https://cryptologos.cc/logos/thumbs/tether.png?v=040',
-                subLabel: 'Search for offer to buy USDC',
-                href: '#',
+                subLabel: 'Search for offer to sell Tether',
+                href: '/sell?index=3',
             },
         ],
     },
 
     {
-        label: <Button bg={'transparent'} variant={'outline'} borderRadius={5} color={'white'} size={'sm'}  _hover={{ bg: 'transparent' }} rightIcon={<MdKeyboardArrowDown />}>Wallet</Button>,
+        label: <Button bg={'transparent'} variant={'outline'} borderRadius={5} color={'white'} size={'sm'} _hover={{ bg: 'transparent' }} rightIcon={<MdKeyboardArrowDown />}>Wallet</Button>,
         locate: '/wallet',
         children: [
             {
                 label: 'Balance',
                 icon: <CiWallet size={20} />,
                 subLabel: 'Check you Crypto balacnce in Cryptico',
-                href: '#',
+                href: '/wallet/balance',
             },
             {
                 label: 'Lightining',
                 icon: <BsLightningCharge size={20} />,
                 subLabel: 'send and revice BTC with lightining speed and low fee',
-                href: '#',
+                href: '/wallet/lightining',
             },
             {
                 label: 'Transaction',
                 icon: <GrTransaction size={20} />,
                 subLabel: 'check your account transaction history',
-                href: '#',
+                href: '/wallet/transactions',
             }, {
                 label: 'Address',
                 icon: <BsQrCode size={20} />,
                 subLabel: 'use you wallet address to recieve crypto',
-                href: '#',
+                href: '/wallet/addresses',
             },
             {
                 label: 'Convert',
                 icon: <SiConvertio size={20} />,
                 subLabel: 'convert fund from one to another cypto',
-                href: '#',
+                href: '/wallet/convert',
             },
         ],
     },

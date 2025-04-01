@@ -61,7 +61,7 @@ const UserAvatar = () => {
                         <MenuItem bg={'none'} display={'flex'} justifyContent={'end'}>
                             <Flex justifyContent={'space-between'} alignItems={'center'} w={'100%'} py={1} >
 
-                                <Button onClick={() => {
+                                <Box display={'flex'} justifyContent={'center'} alignItems={'center'} textAlign={'center'} onClick={() => {
                                     setDark(!isdark)
                                     toggleColorMode();
                                 }} boxSize={6}
@@ -73,7 +73,7 @@ const UserAvatar = () => {
                                         isdark ? <Icon as={CiLight} boxSize={4} ></Icon> :
                                             <Icon as={MdDarkMode} boxSize={4} ></Icon>
                                     }
-                                </Button>
+                                </Box>
                                 <Box as="p" color={'gray'}>Switch Mode</Box>
 
                             </Flex>
@@ -116,8 +116,8 @@ const UserAvatar = () => {
 
 const menuItems = [
     { name: "My Profile", icon: <FaUser />, to: 'profile' },
-    { name: "Payment Methods", icon: <FaCreditCard />, to: 'Settings/paymentMethod' },
-    { name: "Settings", icon: <FaCog />, to: 'Settings' },
+    { name: "Payment Methods", icon: <FaCreditCard />, to: 'settings/paymentMethod' },
+    { name: "Settings", icon: <FaCog />, to: 'settings' },
     { name: "Trade History", icon: <FaHistory />, to: 'tradehistory' },
     { name: "Trade Partners", icon: <FaUsers />, to: 'tradeParters' },
     { name: "Invite a Friend", icon: <FaGift />, to: 'iFriend' },

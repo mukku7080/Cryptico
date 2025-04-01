@@ -41,8 +41,9 @@ const ProfilePage = () => {
     const { isOpen: isOpen1, onToggle: onToggle1 } = useDisclosure();
     const [visibility, setVisibility] = useState("firstName");
     const [isLoading, setIsLoading] = useState(false);
-    const { user, setUser, handleChangeProfilePic } = useUser()
+    const { user, setUser, handleChangeProfilePic, handleUserNameChange } = useUser()
     const [image, setImage] = useState(null);
+    const [username, setUserName] = useState('');
     const fileInputRef = useRef(null);
 
 
@@ -140,14 +141,14 @@ const ProfilePage = () => {
 
                             {/* <Avatar size={{ base: 'lg', sm: 'xl' }} alignSelf={'start'} src={user && user.profile_image_url} /> */}
                             <Flex direction={'column'} gap={3} alignItems={'start'} justifyContent={'start'} w={'100%'} mt={5}>
-                               
+
                                 <Button isLoading={isLoading} w={'200px'} loadingText='uploading..' onClick={handleClick} variant={'outline'} rightIcon={<MdUpload />}>
                                     Upload Image
                                 </Button>
                                 <Box fontSize={'14px'} >
                                     Upload a nice picture, preferably of yourself. If you upload any explicit or otherwise inappropriate image, we’ll remove it immediately.
                                 </Box>
-                                 <Flex direction={'column'} gap={2} w={'full'}>
+                                <Flex direction={'column'} gap={2} w={'full'}>
 
                                     {/* <Heading size={'sm'}>username</Heading> */}
 
@@ -156,15 +157,19 @@ const ProfilePage = () => {
                                         <InputGroup   >
 
                                             <Input placeholder='Change username'
+                                                isDisabled={user?.username_changed}
                                                 border={'none'}
                                                 _hover={{ border: "none" }}
                                                 _focus={{ boxShadow: "none", border: "none" }}
                                                 w={'full'}
+                                                onChange={(e) => {
+                                                    setUserName(e.target.value)
+                                                }}
 
                                             ></Input>
 
                                             <InputRightAddon bg='orange' px={0} borderRightRadius={4}>
-                                                <Button bg={'transparent'} >save</Button>
+                                                <Button isDisabled={user?.username_changed} bg={'transparent'} w={'full'} _hover={{ bg: 'transparent' }} onClick={() => handleUserNameChange(username)}>save</Button>
                                             </InputRightAddon>
 
                                         </InputGroup>

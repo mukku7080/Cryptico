@@ -33,7 +33,7 @@ const Hero = () => {
                         {cardData.map((cdata, index) => (
 
                             <CardComponent
-                                key={index}
+                                key={cdata.title}
                                 img={cdata.img}
                                 title={cdata.title}
                                 txt={cdata.txt}

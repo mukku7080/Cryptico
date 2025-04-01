@@ -39,7 +39,18 @@ export const changePassword = async (values) => {
     }
     catch (error) {
         throw error.response ? error.response.data : error.message;
-        
+
+    }
+}
+export const changeUserName = async (username) => {
+    try {
+        const response = await axiosInstance.post("/update-username", {
+            username: username
+        })
+        return response.data;
+    }
+    catch (error) {
+        throw error.response ? error.response.data : error.message;
     }
 }
 

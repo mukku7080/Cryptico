@@ -21,13 +21,17 @@ import { MdKeyboardArrowDown } from "react-icons/md";
 
 const options = ["pan verified", "address verified", "same bank only", "no third parties", "no verification nedded",'photo id required'];
 
-const SearchableMultiSelect = () => {
+const SearchableMultiSelect = ({setOption}) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedItems, setSelectedItems] = useState([]);
-
+ 
   // Add or remove item from selectedItems
-  const toggleSelection = (item) => {
+  const toggleSelection = (item) => {  
+   
     setSelectedItems([...selectedItems, item]);
+    setOption([...selectedItems, item]);
+    
+    
   };
 
   // Remove selected item
@@ -48,7 +52,7 @@ const SearchableMultiSelect = () => {
       </Flex>
 
       {/* Dropdown Menu */}
-      <Menu>
+      <Menu matchWidth>
         <MenuButton justifyContent={'space-between'} as={Button} variant={'outline'} _hover={{ bg: 'none' }} w="full">
           <Flex justifyContent={'space-between'}>
 

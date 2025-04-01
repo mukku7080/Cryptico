@@ -163,31 +163,33 @@ const PaymentMethod = () => {
 
 
             </Card>
-            <Card borderRadius={0} p={4} gap={5} border={'1px solid rgba(128, 128, 128, 0.3)'}>
-                <Flex border={'1px solid orange'}>
-                    <Flex direction={'column'} gap={3} p={4} w={'full'}>
-                        <Box as='p' fontWeight={600} fontSize={'12px'} color={'gray'}>{(accountDetails?.account_type)}</Box>
-                        <Flex justifyContent={'space-between'} w={'full'} direction={{ base: 'column', sm: 'row' }} gap={5} >
-                            <Flex gap={2} wrap={'wrap'} >
+            {
+                accountDetails &&
+                <Card borderRadius={0} p={4} gap={5} border={'1px solid rgba(128, 128, 128, 0.3)'}>
+                    <Flex border={'1px solid orange'}>
+                        <Flex direction={'column'} gap={3} p={4} w={'full'}>
+                            <Box as='p' fontWeight={600} fontSize={'12px'} color={'gray'}>{(accountDetails?.account_type)}</Box>
+                            <Flex justifyContent={'space-between'} w={'full'} direction={{ base: 'column', sm: 'row' }} gap={5} >
+                                <Flex gap={2} wrap={'wrap'} >
 
-                                <Button as={Box} size={'sm'} colorScheme='orange'>{accountDetails?.bank_name}</Button>
-                                <Flex gap={2} >
+                                    <Button as={Box} size={'sm'} colorScheme='orange'>{accountDetails?.bank_name}</Button>
+                                    <Flex gap={2} >
 
-                                    <Button as={Box} size={'sm'} colorScheme='teal'>INR</Button>
-                                    <Box justifyContent={'center'} alignItems={'center'} display={'flex'} color={'gray'} fontSize={'14px'}>{accountDetails?.account_number}</Box>
+                                        <Button as={Box} size={'sm'} colorScheme='teal'>{accountDetails?.currency}</Button>
+                                        <Box justifyContent={'center'} alignItems={'center'} display={'flex'} color={'gray'} fontSize={'14px'}>{accountDetails?.account_number}</Box>
+                                    </Flex>
                                 </Flex>
-                            </Flex>
-                            <Flex>
-                                <Button size={'sm'} bgColor={'transparent'} borderRadius={0} color={'red'} display={{ base: 'flex', sm: 'none' }}><RiDeleteBin6Line /></Button>
-                                <Button size={'sm'} bgColor={'transparent'} borderRadius={0} color={'green.300'} display={{ base: 'flex', sm: 'none' }}><MdModeEdit /></Button>
-                                <Button size={'sm'} bgColor={'transparent'} borderRadius={0} color={'red'} leftIcon={<RiDeleteBin6Line />} display={{ base: 'none', sm: 'flex' }}>Delete</Button>
-                                <Button size={'sm'} bgColor={'transparent'} borderRadius={0} color={'green.300'} leftIcon={<MdModeEdit />} display={{ base: 'none', sm: 'flex' }}>Edit</Button>
+                                <Flex>
+                                    <Button size={'sm'} bgColor={'transparent'} borderRadius={0} color={'red'} display={{ base: 'flex', sm: 'none' }}><RiDeleteBin6Line /></Button>
+                                    <Button size={'sm'} bgColor={'transparent'} borderRadius={0} color={'green.300'} display={{ base: 'flex', sm: 'none' }}><MdModeEdit /></Button>
+                                    <Button size={'sm'} bgColor={'transparent'} borderRadius={0} color={'red'} leftIcon={<RiDeleteBin6Line />} display={{ base: 'none', sm: 'flex' }}>Delete</Button>
+                                    <Button size={'sm'} bgColor={'transparent'} borderRadius={0} color={'green.300'} leftIcon={<MdModeEdit />} display={{ base: 'none', sm: 'flex' }}>Edit</Button>
+                                </Flex>
                             </Flex>
                         </Flex>
                     </Flex>
-                </Flex>
 
-                {/* <Heading size={'md'} fontWeight={500}>Online Wallets</Heading>
+                    {/* <Heading size={'md'} fontWeight={500}>Online Wallets</Heading>
                 <Box as='p' fontSize={'14px'} color={'gray'}>Add your online wallets below.
                 </Box>
                 <ButtonGroup isAttached variant='ghost' colorScheme='orange'>
@@ -204,7 +206,8 @@ const PaymentMethod = () => {
                     </Box>
 
                 </Flex> */}
-            </Card>
+                </Card>
+            }
 
 
         </Flex>
@@ -213,6 +216,7 @@ const PaymentMethod = () => {
 
 
 const BankDetail1 = ({ setIsNext, formikHelpers }) => {
+    console.log(formikHelpers);
     const { values, handleChange, handleBlur, errors, touched } = formikHelpers;
 
     return (

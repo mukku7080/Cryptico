@@ -3,7 +3,7 @@ import { axiosInstance } from "./axiosInstance"
 export const addAccount = async (values) => {
     try {
 
-        const response = await axiosInstance.post('/payment-details',
+        const response = await axiosInstance.post('/add-payment-details',
             {
                 account_type: values.accountType,
                 bank_account_country: values.bankCountry,
@@ -35,7 +35,6 @@ export const addAccount = async (values) => {
 export const getPaymentDetails = async () => {
     try {
         const response = await axiosInstance.get('/payment-details');
-        console.log(response.data);
         return response.data;
 
     }

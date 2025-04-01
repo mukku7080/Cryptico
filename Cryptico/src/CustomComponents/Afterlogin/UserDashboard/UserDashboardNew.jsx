@@ -141,6 +141,8 @@ const UserDashboardNew = () => {
                                                         // borderBottom={'1px solid #dcdcdc'}
                                                         borderRadius={'none'}
                                                         key={index} py={8}
+                                                        isDisabled={data.to ? false : true}
+
 
 
 
@@ -188,12 +190,20 @@ const UserDashboardNew = () => {
                                                         width={'100%'}
                                                         bg={'transparent'}
                                                         key={index} py={8}
+                                                        isDisabled={data.to ? false : true}
 
                                                         justifyContent="flex-start"
                                                         _hover={{
                                                             bg: 'linear-gradient(90deg, rgba(236,240,155,0.7875525210084033) 24%, rgba(247,241,175,0.9864320728291317) 78%)',
                                                         }}
-                                                        onClick={() => setTag(data.btn_name)}
+                                                        onClick={() => {
+
+                                                            setTag(data.btn_name)
+                                                            navigate(`${data.to}`);
+
+                                                        }
+
+                                                        }
 
 
                                                     >
@@ -504,24 +514,21 @@ const userOption = [
     {
         icon: <LiaHandPointRightSolid />,
         btn_name: "Favorite Offers",
-        to: 'favoriteOffers'
 
     },
     {
         icon: <MdOutlineFileDownload />,
         btn_name: "Trade Statistics",
-        to: 'tradeStatistics'
 
     },
     {
         icon: <BsLightningCharge />,
         btn_name: "Trader Program Badges",
-        to: 'tpBadges'
     },
     {
         icon: <PiChecks />,
         btn_name: "Invite a Friend",
-        to: 'iFriend'
+        to: 'inviteFriends'
 
     },
 ]
@@ -529,7 +536,9 @@ const userOption = [
 const userOption1 = [
     {
         icon: <FaArrowTrendUp />,
-        btn_name: "Account Setting"
+        btn_name: "Account Setting",
+        to: '/settings'
+
     },
     {
         icon: <HiMiniArrowPath />,

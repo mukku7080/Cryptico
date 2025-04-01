@@ -64,3 +64,23 @@ export const getLoginHistory = async () => {
         throw error.response ? error.response.data : error.message;
     }
 }
+export const getReferalLink = async () => {
+    try {
+        const response = await axiosInstance.get("/get-referral-link");
+        return response.data;
+
+
+    }
+    catch (error) {
+        throw error.response ? error.response.data : error.message;
+    }
+}
+export const getAllNotification = async () => {
+    try {
+        const response = await axiosInstance.get("/notifications");
+        return response.data;
+    }
+    catch (error) {
+        throw error.response ? error.response.data : error.message;
+    }
+}
