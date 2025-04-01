@@ -1,10 +1,11 @@
-import React, { createContext, useEffect } from 'react'
-import { addAccount, getPaymentDetails } from '../api/accountService';
+import React, { createContext, useEffect, useState } from 'react'
+import { addAccount, createWebWallet, getPaymentDetails, getWalletKeyPhrase, updateWeb3WalletAddress } from '../api/accountService';
 
 const AccountContext = createContext();
 
 const AccountProvider = ({ children }) => {
     const [accountDetails, setAccountDetails] = React.useState(null);
+    const [walletkeyphrase, setWalletKeyPhrase] = useState(null);
 
     useEffect(() => {
         getAccountDetail();
@@ -36,9 +37,42 @@ const AccountProvider = ({ children }) => {
     }
 
 
+    const getKeyPhrase = async () => {
+        try {
+            const res = await getWalletKeyPhrase();
+            setWalletKeyPhrase(res.data);
+            return res;
+
+
+
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    const handleCreateWallet = async (blockChainType) => {
+        try {
+            const res = await createWebWallet(blockChainType);
+            return res;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+    const handleUpdateweb3WalletAddress = async (values) => {
+        try {
+            const res = await updateWeb3WalletAddress(values);
+            return res;
+        }
+        catch (error) {
+            console.log(error);
+
+        }
+    }
+
 
     return (
-        <AccountContext.Provider value={{ handleAddAccount, accountDetails }}>
+        <AccountContext.Provider value={{ handleAddAccount, accountDetails, getKeyPhrase, walletkeyphrase, setWalletKeyPhrase, handleCreateWallet, handleUpdateweb3WalletAddress }}>
             {children}
         </AccountContext.Provider>
     )

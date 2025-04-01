@@ -43,7 +43,43 @@ export const getPaymentDetails = async () => {
 
     }
 }
+export const getWalletKeyPhrase = async () => {
+    try {
+        const response = await axiosInstance.get("/web3-wallet/get-walletKeyPhrase")
+        return response.data;
+    }
+    catch (error) {
+        throw error.response ? error.response.data : error.message;
+    }
+}
+export const createWebWallet = async (blockChainType) => {
+    try {
+        const response = await axiosInstance.post('/web3-wallet/create-web3-wallet', {
+            blockchain: blockChainType.blockchain,
+            network: blockChainType.network,
+            asset: blockChainType.asset
+        })
+        return response.data;
 
+    }
+    catch (error) {
+        throw error.response ? error.response.data : error.message;
+    }
+}
+
+export const updateWeb3WalletAddress = async (values) => {
+    try {
+        const response = await axiosInstance.post('/web3-wallet/update-web3-wallet',
+
+            values
+        )
+        return response.data;
+
+    }
+    catch (error) {
+        throw error.response ? error.response.data : error.message;
+    }
+}
 
 
 
