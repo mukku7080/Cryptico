@@ -1,12 +1,7 @@
 import { Box, Button, Flex, Heading, Icon, Image, Menu, MenuButton, MenuList, MenuItem, Modal, ModalOverlay, ModalContent, ModalFooter, useDisclosure, ModalHeader, ModalCloseButton, ModalBody, ButtonGroup, FormControl, Input, FormLabel, IconButton, InputRightElement, InputGroup, InputRightAddon } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { ethers } from 'ethers';
-
-
-import { TbSend } from "react-icons/tb";
-
-import { FaArrowRightFromBracket, FaArrowRightLong } from 'react-icons/fa6';
-import { SelectToken } from './Balance';
+import CryptoJS from 'crypto-js';
 import { IoMdEye, IoMdEyeOff } from 'react-icons/io';
 import { useAuth } from '../../Context/AuthContext';
 import { useAccount } from '../../Context/AccountContext';
@@ -88,7 +83,7 @@ const PasswordVerification = ({ blockChainType = {} }) => {
             if (res.passwordVerified) {
 
                 const response = await handleCreateWallet(blockChainType);
-               
+
                 console.log(response.data);
                 setKeyPhrase(response.data.phrase)
                 setWalletId(response.data.wallet_id);
@@ -106,9 +101,19 @@ const PasswordVerification = ({ blockChainType = {} }) => {
     }
     const generateWalletAddress = async () => {
         console.log('hello');
+        console.log(keyphrase);
+
+        const decrypted = await decryptWithKey(keyphrase, 99);
+        // console.log("Decrypted Data:", decrypted);
+        const finalDecryption = await decryptWithKey(decrypted.phrase, decrypted.key);
+        // console.log(finalDecryption);
+
+        // const decy = await decryptData(keyphrase);
+
+
 
         // Create an HD Wallet from the mnemonic
-        const mnemonic = keyphrase;
+        const mnemonic = finalDecryption;
         const hdNode = ethers.utils.HDNode.fromMnemonic(mnemonic);
 
         console.log("Master Wallet Address:", hdNode.address); // First address
@@ -129,6 +134,93 @@ const PasswordVerification = ({ blockChainType = {} }) => {
 
 
     };
+
+
+
+
+    async function decryptWithKey(encryptedData, customKey) {
+        try {
+            // Step 1: Base64 decode the encrypted data
+            const decodedData = atob(encryptedData);
+            const iv = new Uint8Array(decodedData.slice(0, 16).split('').map(c => c.charCodeAt(0)));
+            const ciphertext = new Uint8Array(decodedData.slice(16).split('').map(c => c.charCodeAt(0)));
+
+            // Step 2: Derive the key (SHA-256 hash of customKey)
+            const encoder = new TextEncoder();
+            const keyMaterial = encoder.encode(customKey);
+            const keyHash = await crypto.subtle.digest('SHA-256', keyMaterial);
+
+            // Step 3: Import the key
+            const cryptoKey = await crypto.subtle.importKey(
+                'raw',
+                keyHash,
+                { name: 'AES-CBC' },
+                false,
+                ['decrypt']
+            );
+
+            // Step 4: Decrypt the data
+            const decryptedBuffer = await crypto.subtle.decrypt(
+                { name: 'AES-CBC', iv: iv },
+                cryptoKey,
+                ciphertext
+            );
+
+            // Step 5: Convert decrypted data to string
+            const decoder = new TextDecoder();
+            const decryptedData = decoder.decode(decryptedBuffer);
+
+            // Step 6: Parse JSON if possible
+            try {
+                return JSON.parse(decryptedData);
+            } catch (e) {
+                return decryptedData;  // Return as plain text if not JSON
+            }
+        } catch (error) {
+            console.error('Decryption failed:', error);
+            throw new Error('Decryption failed.');
+        }
+    }
+
+
+    // Example usage
+
+
+    // function decryptWithKey(encryptedData, customKey) {
+    //     try {
+    //         // Step 1: Decode the Base64 data
+    //         const encryptedBase64 = CryptoJS.enc.Base64.parse(encryptedData);
+
+    //         // Step 2: Extract IV (first 16 bytes)
+    //         const iv = CryptoJS.lib.WordArray.create(encryptedBase64.words.slice(0, 4)); // 16 bytes = 4 words
+    //         const encryptedText = CryptoJS.lib.WordArray.create(encryptedBase64.words.slice(4));
+
+    //         // Step 3: Derive the key using SHA-256
+    //         const key = CryptoJS.SHA256(customKey);
+
+    //         // Step 4: Decrypt the data
+    //         const decrypted = CryptoJS.AES.decrypt(
+    //             { ciphertext: encryptedText, iv: iv },
+    //             key,
+    //             { iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
+    //         );
+
+    //         // Step 5: Convert to string
+    //         const decryptedData = decrypted.toString(CryptoJS.enc.Utf8);
+
+    //         // Step 6: Parse JSON if possible
+    //         try {
+    //             return JSON.parse(decryptedData);
+    //         } catch (error) {
+    //             return decryptedData; // Return as plain text if not JSON
+    //         }
+    //     } catch (error) {
+    //         console.error('Decryption failed:', error);
+    //         throw new Error('Decryption failed.');
+    //     }
+    // }
+
+
 
     return (
         <>
@@ -202,7 +294,7 @@ const SelectBlockChain = ({ index, setHeaderName, setHeaderLogo, setblockChainTy
                 </MenuButton>
                 <MenuList borderRadius={0} p={2}  >
                     {cryptoOption.map((data, index) => (
-                        <>
+                        <React.Fragment key={index}>
                             <MenuItem key={data.name} onClick={() => {
                                 setOption(data.name);
                                 setHeaderName(data.name);
@@ -210,7 +302,7 @@ const SelectBlockChain = ({ index, setHeaderName, setHeaderLogo, setblockChainTy
                                 setlogo(data.logo);
                                 setblockChainType(data.blockchainDetail)
                             }} gap={3} _hover={{ bg: "blue.100" }}><Image boxSize={5} src={data.logo}></Image>{data.name}</MenuItem>
-                        </>
+                        </React.Fragment>
                     ))}
 
                 </MenuList>
