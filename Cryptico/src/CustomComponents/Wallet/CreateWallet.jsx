@@ -10,7 +10,7 @@ import { MdKeyboardArrowDown } from 'react-icons/md';
 
 const CreateWallet = () => {
     const { isOpen, onOpen, onClose } = useDisclosure()
-    const [blockChainType, setblockChainType] = useState();
+    const [blockChainType, setblockChainType] = useState(cryptoOption[0].blockchainDetail);
 
     const [headername, setHeaderName] = useState(cryptoOption[0].name);
     const [headerlogo, setHeaderLogo] = useState(cryptoOption[0].logo);
@@ -22,7 +22,10 @@ const CreateWallet = () => {
         <>
 
 
-            <Button onClick={onOpen}>
+            <Button onClick={onOpen}
+                sx={gradientButtonStyle}
+
+            >
                 Create Wallet
             </Button>
             <Modal isOpen={isOpen} onClose={onClose} onCloseComplete={resetState}>
@@ -47,7 +50,7 @@ const CreateWallet = () => {
                                 Verify your password to procced with wallet creation.
 
                             </Flex>
-                            <PasswordVerification blockChainType={blockChainType} />
+                            <PasswordVerification blockChainType={blockChainType} onClose={onClose} />
 
                         </Flex>
                     </ModalBody>
@@ -62,16 +65,19 @@ const CreateWallet = () => {
     )
 }
 
-const PasswordVerification = ({ blockChainType = {} }) => {
+const PasswordVerification = ({ blockChainType = {}, onClose }) => {
     // const { blockchain, network, asset } = blockChainType;
     const [password, setPassword] = useState('');
     const { handlePasswordMatch, passwordmatch } = useAuth();
     const [showpassword, setShowPassword] = useState(false);
     const [isLoading, setLoading] = useState(false);
-    const { handleCreateWallet, handleUpdateweb3WalletAddress } = useAccount();
+    const { handleCreateWallet, handleUpdateweb3WalletAddress, handleGetWeb3Wallet } = useAccount();
     const [keyphrase, setKeyPhrase] = useState();
     const [walletid, setWalletId] = useState();
     const [iscelebrate, setCelebrate] = useState(false);
+    const [walleterror, setWalletError] = useState(null);
+    const [isInputDisabled, setIsInputDisabled] = useState(false);
+    const [walletAddressUpdate, setWalletAddressUpdate] = useState(false);
     const [createWalletErrorMessage, setCreateWalletErrorMessage] = useState(false);
 
 
@@ -81,12 +87,34 @@ const PasswordVerification = ({ blockChainType = {} }) => {
 
             const res = await handlePasswordMatch(password);
             if (res.passwordVerified) {
+                setIsInputDisabled(true);
 
                 const response = await handleCreateWallet(blockChainType);
+                // console.log(response)
+                if (response?.status) {
+                    if (!response.walletAddressUpdate) {
 
-                console.log(response.data);
-                setKeyPhrase(response.data.phrase)
-                setWalletId(response.data.wallet_id);
+                        // console.log(response.data);
+                        setKeyPhrase(response?.data.phrase)
+                        setWalletId(response?.data.wallet_id);
+                    }
+                    else {
+                        await handleGetWeb3Wallet();
+                        setWalletAddressUpdate(response?.walletAddressUpdate);
+
+                        setCelebrate(true);
+                        setTimeout(() => {
+                            setIsInputDisabled(false);
+                            onClose();
+                        }, 3000);
+                    }
+
+                }
+                else {
+                    setWalletError(response?.message);
+                    console.log(response?.message);
+                }
+
 
             }
         }
@@ -99,9 +127,10 @@ const PasswordVerification = ({ blockChainType = {} }) => {
         }
 
     }
+
     const generateWalletAddress = async () => {
-        console.log('hello');
-        console.log(keyphrase);
+        // console.log('hello');
+        // console.log(keyphrase);
 
         const decrypted = await decryptWithKey(keyphrase, 99);
         // console.log("Decrypted Data:", decrypted);
@@ -116,7 +145,7 @@ const PasswordVerification = ({ blockChainType = {} }) => {
         const mnemonic = finalDecryption;
         const hdNode = ethers.utils.HDNode.fromMnemonic(mnemonic);
 
-        console.log("Master Wallet Address:", hdNode.address); // First address
+        // console.log("Master Wallet Address:", hdNode.address); // First address
 
         // Generate multiple wallet addresses
         const wallet = new ethers.Wallet(hdNode.derivePath(`m/44'/60'/0'/0/${walletid}`).privateKey);
@@ -128,16 +157,18 @@ const PasswordVerification = ({ blockChainType = {} }) => {
         }
         const response = await handleUpdateweb3WalletAddress(values);
         if (response.data.status) {
+
+            await handleGetWeb3Wallet();
             setCelebrate(true);
+            setTimeout(() => {
+                setIsInputDisabled(false);
+                onClose();
+            }, 3000);
         }
 
 
 
     };
-
-
-
-
     async function decryptWithKey(encryptedData, customKey) {
         try {
             // Step 1: Base64 decode the encrypted data
@@ -181,47 +212,6 @@ const PasswordVerification = ({ blockChainType = {} }) => {
             throw new Error('Decryption failed.');
         }
     }
-
-
-    // Example usage
-
-
-    // function decryptWithKey(encryptedData, customKey) {
-    //     try {
-    //         // Step 1: Decode the Base64 data
-    //         const encryptedBase64 = CryptoJS.enc.Base64.parse(encryptedData);
-
-    //         // Step 2: Extract IV (first 16 bytes)
-    //         const iv = CryptoJS.lib.WordArray.create(encryptedBase64.words.slice(0, 4)); // 16 bytes = 4 words
-    //         const encryptedText = CryptoJS.lib.WordArray.create(encryptedBase64.words.slice(4));
-
-    //         // Step 3: Derive the key using SHA-256
-    //         const key = CryptoJS.SHA256(customKey);
-
-    //         // Step 4: Decrypt the data
-    //         const decrypted = CryptoJS.AES.decrypt(
-    //             { ciphertext: encryptedText, iv: iv },
-    //             key,
-    //             { iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
-    //         );
-
-    //         // Step 5: Convert to string
-    //         const decryptedData = decrypted.toString(CryptoJS.enc.Utf8);
-
-    //         // Step 6: Parse JSON if possible
-    //         try {
-    //             return JSON.parse(decryptedData);
-    //         } catch (error) {
-    //             return decryptedData; // Return as plain text if not JSON
-    //         }
-    //     } catch (error) {
-    //         console.error('Decryption failed:', error);
-    //         throw new Error('Decryption failed.');
-    //     }
-    // }
-
-
-
     return (
         <>
 
@@ -232,7 +222,7 @@ const PasswordVerification = ({ blockChainType = {} }) => {
                         <FormLabel>password</FormLabel>
                         <InputGroup>
 
-                            <Input name="password" isDisabled={passwordmatch?.passwordVerified} placeholder='Enter Password' value={password} type={showpassword ? "text" : "password"} _focus={{ boxShadow: '0px', border: '0px' }} onChange={(e) => setPassword(e.target.value)} />
+                            <Input name="password" isDisabled={isInputDisabled} placeholder='Enter Password' value={password} type={showpassword ? "text" : "password"} _focus={{ boxShadow: '0px', border: '0px' }} onChange={(e) => setPassword(e.target.value)} />
 
                             <InputRightElement >
                                 <IconButton
@@ -257,16 +247,33 @@ const PasswordVerification = ({ blockChainType = {} }) => {
                                 :
                                 <Box color={'red'} fontWeight={700}>{passwordmatch?.message}</Box>
                         }
-                        <Button isLoading={isLoading} isDisabled={passwordmatch?.passwordVerified} loadingText='wait' onClick={handleClick} alignSelf={'end'} size={'sm'} variant={'outline'} w={'80px'}>Verify</Button>
+                        <Button
+                            isLoading={isLoading}
+                            isDisabled={isInputDisabled}
+                            loadingText='wait' onClick={handleClick}
+                            alignSelf={'end'}
+                            textAlign={'center'}
+                            sx={gradientButtonStyle}
+                            size={'md'}
+                            // variant={'outline'}
+                            w={'80px'}
+                        >
+                            Verify
+                        </Button>
                     </Flex>
                     {
-                        passwordmatch?.passwordVerified &&
+                        isInputDisabled && !walletAddressUpdate &&
 
-                        <Button onClick={generateWalletAddress}>Procced to wallet creation</Button>
+                        <Button sx={gradientButtonStyle} onClick={generateWalletAddress}>Procced to wallet creation</Button>
+                    }
+                    {
+                        walleterror &&
+                        <Flex color={'red'} fontSize={'14px'} fontWeight={600} px={4}>{walleterror}</Flex>
                     }
                     {
                         iscelebrate &&
                         <Flex justifyContent={'center'} alignItems={'center'} direction={'column'}>
+                            <></>
                             <Box color={'green'}>Woohoo! Your Wallet is Created 🎉</Box>
                             <Image src='/imagelogo/wallet.gif'></Image>
                         </Flex>
@@ -353,4 +360,23 @@ const cryptoOption = [
         },
     },
 ]
+
+
+export const gradientButtonStyle = {
+    backgroundImage: 'linear-gradient(to right, #FF512F 0%, #F09819 51%, #FF512F 100%)',
+    // margin: '10px',
+    textAlign: 'center',
+    // textTransform: 'uppercase',
+    transition: '0.5s',
+    backgroundSize: '200% auto',
+    color: 'white',
+    // boxShadow: '0 0 20px #eee',
+    borderRadius: '5px',
+    // display: 'block',
+    _hover: {
+        backgroundPosition: 'right center',
+        color: 'white',
+        textDecoration: 'none',
+    },
+};
 export default CreateWallet;

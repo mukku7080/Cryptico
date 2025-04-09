@@ -20,6 +20,7 @@ import OTPInput from './OtpInput';
 // import { useAuth } from '../AuthContext/AuthProvider';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../Context/AuthContext';
+import { gradientButtonStyle } from '../Wallet/CreateWallet';
 
 
 
@@ -98,7 +99,8 @@ const Signupnew = () => {
                             isClosable: true,
                             position: "top-right",
                         });
-                        const otpResposne = await handleEmailOtp();
+                        const operation = 'email_verification'
+                        const otpResposne = await handleEmailOtp(operation);
                     }
                     catch (err) {
                         console.log("error:", err.otpResposne ? err.otpResposne.data : err.message);
@@ -190,7 +192,14 @@ const Signupnew = () => {
                                 <CardBody display={'flex'} justifyContent={'center'}>
                                     <Box maxW="md" borderRadius="md"  >
                                         {issignup ?
-                                            <OTPInput verification={"Email"} email={values.email} />
+                                            <OTPInput
+                                                verification={"Email"}
+                                                email={values.email}
+                                                onEvent={'register'}
+                                                onSuccess={() => {
+                                                    navigate('/user-dashboard');
+                                                }}
+                                            />
                                             :
 
                                             <form onSubmit={(e) => {
@@ -352,6 +361,7 @@ const Signupnew = () => {
                                                 </FormControl>
                                                 {/* Submit Button */}
                                                 <Button isLoading={isLoading}
+                                                    sx={gradientButtonStyle}
                                                     loadingText='Loading'
                                                     type="submit" bg={'orange'}
                                                     width="full"

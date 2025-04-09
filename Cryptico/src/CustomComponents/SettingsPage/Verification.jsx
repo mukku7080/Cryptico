@@ -3,10 +3,13 @@ import {
     Button,
     VStack,
     Select,
-    Tag
+    Tag,
+    InputGroup,
+    InputRightAddon,
+    HStack, PinInput, PinInputField
 } from '@chakra-ui/react'
-import React, { useState } from 'react'
-import { MdMarkEmailRead, MdMobileFriendly, MdOutlineLocationOff } from 'react-icons/md'
+import React, { useEffect, useState } from 'react'
+import { MdArrowRightAlt, MdMarkEmailRead, MdMobileFriendly, MdOutlineLocationOff } from 'react-icons/md'
 import CurrencyDropdown from '../Dropdown/CurrencyDropdown'
 import NumberDropdownNew from '../Dropdown/NumberDropdownNew'
 import { FaIdCard } from 'react-icons/fa'
@@ -14,6 +17,11 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import OfferLocation from '../Dropdown/OfferLocation'
 import CountryCodeDropdown from '../Dropdown/CountryCodeDropdown'
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
+import { RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
+import { auth } from '../../firebase.config';
+// import { gradientButtonStyle } from '../Wallet/CreateWallet';
 
 const validationSchema = Yup.object({
     region: Yup.string().required("Region/State is required"),
@@ -43,7 +51,55 @@ const Verification = () => {
 
 const PhoneVerification = () => {
     const [isShow, setShow] = useState(false);
+    const [phone, setPhone] = useState();
+    const [user, setUser] = useState(null);
+    const [otp, setOtp] = useState(null);
+    const [countryCode, setCountryCode] = useState(null);
+    const [fullPhone, setFullPhone] = useState(null);
+    const [isotpsend, setIsOtpSend] = useState(false);
 
+
+    const sendOtp = async () => {
+        console.log('Sending OTP to:', fullPhone);
+        try {
+
+            const recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha", {
+                size: 'invisible',
+                callback: (response) => {
+                    console.log('reCAPTCHA verified!');
+                },
+                'expired-callback': () => {
+                    console.log('reCAPTCHA expired. Please solve again.');
+                }
+            })
+
+            const confirmation = await signInWithPhoneNumber(auth, fullPhone, recaptchaVerifier);
+            console.log(confirmation);
+            setUser(confirmation);
+        } catch (error) {
+            console.log('Error sending OTP:', error);
+        }
+    };
+
+    const verifyOtp = async () => {
+        console.log('Verifying OTP:', otp);
+        try {
+            const confirmationResult = user;
+            const data = await confirmationResult.confirm(otp);
+            console.log('OTP verified:', data);
+        } catch (error) {
+            console.log('OTP verification failed:', error);
+        }
+    };
+    useEffect(() => {
+        setFullPhone(`${countryCode?.trim()}${phone?.trim()}`);
+
+    }, [countryCode, phone])
+    useEffect(() => {
+        if (otp?.length === 6) {
+            verifyOtp();
+        }
+    }, [otp]);
     return (
         <>
             <Flex direction={'column'} border={'1px solid #dcdcdc'}>
@@ -61,26 +117,70 @@ const PhoneVerification = () => {
                 {
                     isShow &&
                     <Flex p={4} direction={'column'} gap={5} borderTop={'1px solid #dcdcdc'}>
-                        <Flex direction={'column'} gap={5} w={{ base: '100%', md: '50%' }}>
-
-                            <FormControl>
-                                <FormLabel>Phone</FormLabel>
-                                <Flex border={'1px solid #dcdcdc'} p={2} gap={2} borderRadius={5} flexWrap={'nowrap'}>
-                                    <Box>
-
-                                        <CountryCodeDropdown />
-                                    </Box>
+                        <Flex direction={'column'} gap={2} w={{ base: '100%', md: '50%' }}>
+                            {
+                                isotpsend ?
 
 
+                                    <FormControl isRequired >
+                                        <FormLabel>OTP</FormLabel>
 
-                                    <Input size={'sm'} borderLeftRadius={0} placeholder='Enter your Number'></Input>
+                                        {/* <Flex direction={'column'} gap={2}> */}
 
-                                </Flex>
-                            </FormControl>
-                            <FormControl>
-                                <Checkbox type='checkbox' placeholder='Enter OTP'>isVerified</Checkbox>
-                            </FormControl>
+                                        <HStack>
+                                            <PinInput
+
+                                                value={otp}
+                                                onChange={setOtp} // Update state when user types
+                                            // onComplete={verifyOtp}
+                                            >
+                                                <PinInputField />
+                                                <PinInputField />
+                                                <PinInputField />
+                                                <PinInputField />
+                                                <PinInputField />
+                                                <PinInputField />
+                                            </PinInput>
+                                        </HStack>
+                                        {/* </Flex> */}
+                                    </FormControl>
+                                    :
+                                    <FormControl>
+                                        <FormLabel>Phone</FormLabel>
+                                        <Flex border={'1px solid #dcdcdc'} p={2} gap={2} borderRadius={5} flexWrap={'nowrap'}>
+                                            <Box>
+                                                <CountryCodeDropdown setCountryCode={setCountryCode} />
+                                            </Box>
+
+                                            <Input size={'sm'} borderLeftRadius={0} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder='Enter your Number'></Input>
+
+                                        </Flex>
+                                    </FormControl>
+                            }
+
+
+                            {
+                                isotpsend ? ""
+                                    :
+                                    <FormControl>
+                                        <Flex>
+                                            <Button colorScheme='gray' onClick={() => {
+                                                sendOtp();
+                                                setIsOtpSend(true);
+                                            }}
+                                                variant={'outline'}
+                                                size={'sm'}
+                                                alignSelf={'end'}
+                                            >
+                                                Send OTP
+                                            </Button>
+                                        </Flex>
+
+                                    </FormControl>
+                            }
                         </Flex>
+                        <Box alignSelf={'center'} id="recaptcha" style={{ display: 'block' }}></Box>
+
                     </Flex>
 
                 }

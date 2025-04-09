@@ -9,6 +9,7 @@ import { useAccount } from '../../Context/AccountContext';
 import { MdKeyboardArrowDown, MdKeyboardArrowUp, MdModeEdit } from 'react-icons/md';
 import { GoPlus } from "react-icons/go"
 import { RiDeleteBin6Line } from 'react-icons/ri';
+import { gradientButtonStyle } from '../Wallet/CreateWallet';
 
 
 
@@ -266,7 +267,7 @@ const BankDetail1 = ({ setIsNext, formikHelpers }) => {
 
                 </FormControl>
             </Flex>
-            <Button mt={5} size={'md'} colorScheme='orange' width={'60px'} onClick={() => { setIsNext((prev) => !prev) }}>Next</Button>
+            <Button mt={5} size={'md'} sx={gradientButtonStyle} width={'60px'} onClick={() => { setIsNext((prev) => !prev) }}>Next</Button>
 
         </>
     )
@@ -381,8 +382,8 @@ const BankDetail2 = ({ setIsNext, formikHelpers, isLoading, reload }) => {
 
                 <Flex gap={5} >
 
-                    <Button mt={5} size={'md'} colorScheme='orange' width={'60px'} onClick={() => { setIsNext((prev) => !prev) }}>Back</Button>
-                    <Button type='Submit' mt={5} size={'md'} colorScheme='orange' width={'120px'} loadingText='Loading' isLoading={isLoading}  >Add account</Button>
+                    <Button mt={5} size={'md'} sx={gradientButtonStyle} width={'60px'} onClick={() => { setIsNext((prev) => !prev) }}>Back</Button>
+                    <Button type='Submit' mt={5} size={'md'} sx={gradientButtonStyle} width={'120px'} loadingText='Loading' isLoading={isLoading}  >Add account</Button>
                 </Flex>
 
             </Flex>

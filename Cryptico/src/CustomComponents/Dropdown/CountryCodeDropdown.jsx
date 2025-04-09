@@ -19,7 +19,7 @@ import { IoMdSearch } from "react-icons/io";
 import { IoLocationOutline } from "react-icons/io5";
 import { useOtherDetail } from "../../Context/otherContext";
 
-const CountryCodeDropdown = ({ formikHelpers = {}, name }) => {
+const CountryCodeDropdown = ({ formikHelpers = {}, name, setCountryCode }) => {
     // const { values = {}, handleChange = {}, handleBlur = {}, errors = {}, touched = {} } = formikHelpers;
     const {
         values = {},
@@ -45,6 +45,7 @@ const CountryCodeDropdown = ({ formikHelpers = {}, name }) => {
         // If no option is selected, set the default one
         setBtnName(defaultOption);
         handleChange({ target: { name, value: defaultOption } });
+        setCountryCode(defaultOption);
 
         // deaultLocation();
 
@@ -99,7 +100,7 @@ const CountryCodeDropdown = ({ formikHelpers = {}, name }) => {
                                 <MenuItem key={index}
                                     _hover={{ bg: "blue.100" }}
                                     onClick={() => {
-
+                                        setCountryCode(location.dialing_code);
                                         setBtnName(location.dialing_code);
                                         handleChange({ target: { name, value: location?.name || defaultOption } });
                                     }

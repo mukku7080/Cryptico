@@ -32,6 +32,7 @@ import CurrencyDropdown from '../Dropdown/CurrencyDropdown';
 import SearchableMultiSelect from '../Dropdown/SearchableMultiSelect';
 import LanguageSelectorDropdown from '../Dropdown/LanguageSelectorDropdown';
 import { useUser } from '../../Context/userContext';
+import { gradientButtonStyle } from '../Wallet/CreateWallet';
 
 const ProfilePage = () => {
     const navigate = useNavigate();
@@ -142,7 +143,7 @@ const ProfilePage = () => {
                             {/* <Avatar size={{ base: 'lg', sm: 'xl' }} alignSelf={'start'} src={user && user.profile_image_url} /> */}
                             <Flex direction={'column'} gap={3} alignItems={'start'} justifyContent={'start'} w={'100%'} mt={5}>
 
-                                <Button isLoading={isLoading} w={'200px'} loadingText='uploading..' onClick={handleClick} variant={'outline'} rightIcon={<MdUpload />}>
+                                <Button isLoading={isLoading} w={'200px'} sx={gradientButtonStyle} loadingText='uploading..' onClick={handleClick} variant={'outline'} rightIcon={<MdUpload />}>
                                     Upload Image
                                 </Button>
                                 <Box fontSize={'14px'} >
@@ -168,8 +169,8 @@ const ProfilePage = () => {
 
                                             ></Input>
 
-                                            <InputRightAddon bg='orange' px={0} borderRightRadius={4}>
-                                                <Button isDisabled={user?.username_changed} bg={'transparent'} w={'full'} _hover={{ bg: 'transparent' }} onClick={() => handleUserNameChange(username)}>save</Button>
+                                            <InputRightAddon border={'none'} px={0} borderRightRadius={4} bg={'transparent'}>
+                                                <Button mr={1} size={'sm'} isDisabled={user?.username_changed} sx={gradientButtonStyle} bg={'transparent'} w={'full'} _hover={{ bg: 'transparent' }} onClick={() => handleUserNameChange(username)}>save</Button>
                                             </InputRightAddon>
 
                                         </InputGroup>

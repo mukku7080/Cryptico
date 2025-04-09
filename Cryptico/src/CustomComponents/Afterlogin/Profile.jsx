@@ -50,10 +50,10 @@ const Profile = () => {
                                     {user ? (<Avatar name={user.name ? user.name : user.email} src={user.profile_image_url} size={'xl'} />) : (<Spinner size={'xl'} />)
 
                                     }
-                                    <Heading size={'lg'}> {user.username}</Heading>
+                                    <Heading size={'lg'}> {user?.username}</Heading>
                                     <Flex gap={3} alignItems={'center'}>
-                                        {user.country}
-                                        <Image boxSize={8} src={user.country_flag_url}></Image>
+                                        {user?.country}
+                                        <Image boxSize={8} src={user?.country_flag_url}></Image>
                                     </Flex>
 
 

@@ -84,3 +84,22 @@ export const getAllNotification = async () => {
         throw error.response ? error.response.data : error.message;
     }
 }
+export const markAsRead = async () => {
+    try {
+        const response = await axiosInstance.patch("/mark-as-read");
+        return response.data;
+    }
+    catch (error) {
+        throw error.response ? error.response.data : error.message;
+    }
+
+}
+export const markAsReadById = async (id) => {
+    try {
+        const response = await axiosInstance.get(`/notification/${id}`);
+        return response.data;
+    }
+    catch (error) {
+        throw error.response ? error.response.data : error.message;
+    }
+}

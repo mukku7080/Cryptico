@@ -26,6 +26,7 @@ const OfferProvider = ({ children }) => {
             console.log(error);
         }
     }
+    
     return (
         <OfferContext.Provider value={{ handleAddOffer, handleGetOffer }}>
             {children}

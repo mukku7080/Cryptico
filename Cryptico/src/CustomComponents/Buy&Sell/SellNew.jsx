@@ -39,6 +39,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import TokenDropdown from '../Dropdown/TokenDropdown';
 import BuySellWithNotification from './BuySellWithNotification';
 import { motion } from 'framer-motion';
+import { gradientButtonStyle } from '../Wallet/CreateWallet';
 const MotionFlex = motion(Flex);
 
 const SellNew = () => {
@@ -74,8 +75,19 @@ const SellNew = () => {
                                 <Box as='p' fontWeight={500} color={'gray'} fontSize={'18px'}>Sell your Bitcoin and get paid via over 500 payment methods, including bank transfers, online wallets, and gift cards.</Box>
                                 <Flex direction={'column'}>
 
-                                    <Box bg={'orange.500'} fontWeight={500} borderTopRadius={'4px'} p={2}>Promoted Offers</Box>
-                                    <Button display={'flex'} width={'120px'} variant={'outline'} alignSelf={'end'} colorScheme='orange' size={'sm'} borderRadius={'none'} leftIcon={<AiOutlineExclamationCircle />}>Take Tour</Button>
+                                    <Box bg={'orange.500'} sx={{
+                                        backgroundImage: 'linear-gradient(to right, #FF512F 0%, #F09819 51%, #FF512F 100%)',
+                                        transition: '0.5s',
+                                        backgroundSize: '200% auto',
+                                        color: 'white',
+                                        _hover: {
+                                            backgroundPosition: 'right center',
+                                            color: 'white',
+                                            textDecoration: 'none',
+                                        }
+                                    }} fontWeight={500} borderTopRadius={'4px'} p={2}>Promoted Offers</Box>
+                                    <Button display={'flex'} width={'120px'} variant={'outline'} alignSelf={'end'} border={'1px solid #f18f1b'} _hover={{ bg: 'transparent' }} size={'sm'} borderRadius={'none'} leftIcon={<AiOutlineExclamationCircle />}>Take Tour</Button>
+
                                 </Flex>
 
                                 <Flex>
@@ -307,7 +319,7 @@ const LeftSideContent = () => {
                             </Flex>
                         </Flex>
 
-                        <Button borderRadius={5} variant={'solid'} justifyContent={'space-between'} colorScheme={'orange'} rightIcon={<MdDoubleArrow />}>Find Offers</Button>
+                        <Button borderRadius={5} variant={'solid'} justifyContent={'space-between'} sx={gradientButtonStyle} rightIcon={<MdDoubleArrow />}>Find Offers</Button>
 
 
                     </Flex>
@@ -662,7 +674,7 @@ const OfferList = () => {
                             </Flex>
                             <Flex alignItems={'center'} gap={2} >
                                 <Button size={'sm'} variant='outline' bg={'transparent'}><CiStar /></Button>
-                                <Button size={'sm'} bg={'orange'} onClick={() => navigate('/sellOffer')}>Sell</Button>
+                                <Button sx={gradientButtonStyle} size={'sm'} bg={'orange'} onClick={() => navigate('/sellOffer')}>Sell</Button>
                             </Flex>
 
                         </Flex>

@@ -51,9 +51,9 @@ export const signup = async ({ email, password }) => {
     }
 };
 
-export const emailOtp = async () => {
+export const emailOtp = async (operation) => {
     try {
-        const response = await axiosInstance.post('/send-email-otp');
+        const response = await axiosInstance.post('/send-email-otp', { operation });
 
         return response.data;
     }
@@ -62,10 +62,9 @@ export const emailOtp = async () => {
 
     }
 };
-export const verifyEmailOtp = async ({ otp }) => {
+export const verifyEmailOtp = async (verifyOtp) => {
     try {
-        const response = await axiosInstance.post('/verify-email-otp', { otp });
-        console.log(response);
+        const response = await axiosInstance.post('/verify-email-otp', verifyOtp);
         return response;
     }
     catch (error) {
@@ -130,4 +129,13 @@ export const passwordMatch = async (password) => {
         throw error.response ? error.response.data : error.message;
     }
 
+}
+export const enable2FA = async (checked) => {
+    try {
+        const response = await axiosInstance.post("/auth/update-2fa", { two_fa: checked });
+        return response.data;
+    }
+    catch (error) {
+        throw error.response ? error.response.data : error.message;
+    }
 }

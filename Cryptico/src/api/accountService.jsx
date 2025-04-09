@@ -63,7 +63,9 @@ export const createWebWallet = async (blockChainType) => {
 
     }
     catch (error) {
-        throw error.response ? error.response.data : error.message;
+        // throw error.response ? error.response.data : error.message;
+        return error.response?.data;
+
     }
 }
 
@@ -78,6 +80,17 @@ export const updateWeb3WalletAddress = async (values) => {
     }
     catch (error) {
         throw error.response ? error.response.data : error.message;
+    }
+}
+export const getWeb3Wallet = async () => {
+    try {
+        const response = await axiosInstance.get('/web3-wallet/get-web3-wallet')
+        return response.data
+    }
+    catch (error) {
+        throw error.response ? error.response.data : error.message;
+
+
     }
 }
 

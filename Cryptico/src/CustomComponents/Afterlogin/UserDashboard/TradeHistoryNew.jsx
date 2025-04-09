@@ -3,9 +3,12 @@ import { Box, Button, Card, Flex, Grid, GridItem, Heading, Image, Link, useColor
 import { MdOutlineContentCopy } from "react-icons/md";
 import { LuUpload } from "react-icons/lu";
 import UserDrware from '../../Drwares/UserDrware';
+import { gradientButtonStyle } from '../../Wallet/CreateWallet';
+import { useNavigate } from 'react-router-dom';
 
 const TradeHistoryNew = () => {
     const bgcolor = useColorModeValue('gray.100', 'gray.700');
+    const navigate = useNavigate();
 
 
 
@@ -36,7 +39,7 @@ const TradeHistoryNew = () => {
                                 </Flex>
                                 <Flex w={'full'} justifyContent={'center'} alignItems={'center'} mt={5}>
 
-                                    <Button w={'full'} colorScheme='orange' size={'sm'}> Go to Wallet</Button>
+                                    <Button w={'full'} sx={gradientButtonStyle} size={'sm'} onClick={() => navigate('/wallet')}> Go to Wallet</Button>
                                 </Flex>
                             </Flex>
 
@@ -57,15 +60,15 @@ const TradeHistoryNew = () => {
 
                                 <Flex w={'full'} justifyContent={'space-between'} alignItems={'center'} mt={5}>
 
-                                    <Button colorScheme='orange' size={'sm'}> Buy Crypto</Button>
-                                    <Button colorScheme='orange' size={'sm'}> Sell Crypto</Button>
+                                    <Button sx={gradientButtonStyle} colorScheme='orange' size={'sm'} onClick={() => navigate('/buy')}> Buy Crypto</Button>
+                                    <Button sx={gradientButtonStyle} colorScheme='orange' size={'sm'} onClick={() => navigate('/sell')}> Sell Crypto</Button>
                                 </Flex>
                             </Flex>
 
                         </Card>
                     </GridItem>
                     {/* Third Card */}
-                    <GridItem colSpan={{base:1,lg:2,xl:'1'}}>
+                    <GridItem colSpan={{ base: 1, lg: 2, xl: '1' }}>
                         <Card border={'1px solid #dcdcdc'} p={4} h={'100%'}>
                             <Flex direction={'column'} alignItems={'start'} gap={4}>
                                 <Flex justifyContent={'space-between'} alignItems={'center'} w={'full'}>
@@ -91,14 +94,14 @@ const TradeHistoryNew = () => {
 
                                 <Flex w={'full'} justifyContent={'end'} alignItems={'end'} mt={5}>
 
-                                    <Button w={'full'} colorScheme='orange' size={'sm'}> View your badges</Button>
+                                    <Button w={'full'} sx={gradientButtonStyle} size={'sm'}> View your badges</Button>
                                 </Flex>
                             </Flex>
 
                         </Card>
                     </GridItem>
                 </Grid>
-                <Flex gap={5} direction={{base:'column',md:'row'}}>
+                <Flex gap={5} direction={{ base: 'column', md: 'row' }}>
                     <Flex flex={1}>
                         <Card w={'full'}>
                             <Flex direction={'column'} justifyContent={'space-between'} h={'100%'}>
@@ -113,7 +116,7 @@ const TradeHistoryNew = () => {
                                     <Image width={20} height={16} src='/imagelogo/cryptico.png'></Image>
                                     <Flex alignItems={'end'}>
 
-                                        <Button colorScheme='orange' size={'sm'}> View all offers</Button>
+                                        <Button sx={gradientButtonStyle} size={'sm'}> View all offers</Button>
                                     </Flex>
                                 </Flex>
                             </Flex>
@@ -137,7 +140,7 @@ const TradeHistoryNew = () => {
                                     </Flex>
                                 </Flex>
                                 <Flex alignItems={'end'}>
-                                    <Button colorScheme='orange' size={'sm'}> View all Rewards</Button>
+                                    <Button sx={gradientButtonStyle} size={'sm'}> View all Rewards</Button>
                                 </Flex>
                             </Flex>
 

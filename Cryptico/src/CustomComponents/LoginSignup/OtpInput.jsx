@@ -6,10 +6,10 @@ import { useAuth } from "../../Context/AuthContext";
 
 
 
-function OTPInput({ verification, email }) {
+function OTPInput({ verification, email, onSuccess, onEvent }) {
     const [otp, setOtp] = useState("");
     const { handleVerifyEmailOtp, handleEmailOtp } = useAuth();
-    const [timeLeft, setTimeLeft] = useState(120); // 2 minutes (120 seconds)
+    const [timeLeft, setTimeLeft] = useState(300); // 2 minutes (120 seconds)
     const [isResendDisabled, setIsResendDisabled] = useState(true);
     const toast = useToast()
 
@@ -30,17 +30,28 @@ function OTPInput({ verification, email }) {
             try {
 
                 const res = await handleVerifyEmailOtp({ otp });
-                console.log(res.status);
-                toast({
-                    title: "Email Verified",
-                    description: "Successfully Registered",
-                    status: "success",
-                    duration: 2000,
-                    isClosable: true,
-                    position: "top-right",
-                });
+                if (onEvent === 'register') {
 
-                navigate('/user-dashboard');
+                    toast({
+                        title: "Email Verified",
+                        description: "Successfully Registered",
+                        status: "success",
+                        duration: 2000,
+                        isClosable: true,
+                        position: "top-right",
+                    });
+                }
+                else {
+                    toast({
+                        title: "Login Successfully",
+                        status: "success",
+                        duration: 3000,
+                        isClosable: true,
+                        position: "top-right",
+                    });
+                }
+
+                onSuccess();
 
             }
             catch (error) {
@@ -71,8 +82,8 @@ function OTPInput({ verification, email }) {
         setIsResendDisabled(true);
         setOtp(""); // Clear OTP input
         try {
-
-            const res = handleEmailOtp();
+            const operation = 'login'
+            const res = handleEmailOtp(operation);
             if (res.status === 'success') {
                 toast({
                     title: "Otp Resent Successfully",

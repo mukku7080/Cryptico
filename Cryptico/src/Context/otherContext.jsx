@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { AddSecurityQuestions, getAllNotification, getCountrycode, getLoginHistory, getOtherService, getReferalLink } from '../api/otherService';
+import { AddSecurityQuestions, getAllNotification, getCountrycode, getLoginHistory, getOtherService, getReferalLink, markAsRead, markAsReadById } from '../api/otherService';
 
 export const OtherContext = createContext();
 
@@ -10,14 +10,20 @@ const OtherDetailProvider = ({ children }) => {
     const [loginhistory, setLoginHistory] = useState(null);
     const [referalLink, setReferalLink] = useState(null);
     const [notifications, setNotification] = useState(null);
+    const [notificationCount, setNotificationCount] = useState(0);
+    const [readNotification, setReadNotification] = useState(null);
+    const [unreadNotification, setUnreadNotification] = useState([]);
 
     useEffect(() => {
         handleCountryCode();
         handleOtherDetail();
         handleLoginHistory();
         handleReferralLink();
-        handleGetAllNotification();
+        // handleGetAllNotification();
     }, [])
+    useEffect(() => {
+        handleGetAllNotification();
+    }, [notificationCount])
 
     const handleOtherDetail = async () => {
         try {
@@ -81,7 +87,30 @@ const OtherDetailProvider = ({ children }) => {
     const handleGetAllNotification = async () => {
         try {
             const response = await getAllNotification();
+            setUnreadNotification(response?.data?.filter(data => data.is_read === false) || []);
+            setReadNotification(response?.data?.filter(data => data.is_read === true) || []);
+            setNotificationCount(response?.analytics?.totalUnreadNotification);
             setNotification(response);
+
+
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    const handleMarkAsRead = async () => {
+        try {
+            const response = await markAsRead();
+            return response;
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    const handleMarkAsReadById = async (id) => {
+        try {
+            const response = await markAsReadById(id);
+            return response;
         }
         catch (error) {
             throw error;
@@ -89,7 +118,23 @@ const OtherDetailProvider = ({ children }) => {
     }
 
     return (
-        <OtherContext.Provider value={{ data, error, countryCode, handleSecurityQuestions, loginhistory, handleReferralLink, referalLink, notifications }}>
+        <OtherContext.Provider value={{
+            data,
+            error,
+            countryCode,
+            handleSecurityQuestions,
+            loginhistory,
+            handleReferralLink,
+            handleGetAllNotification,
+            referalLink,
+            notifications,
+            handleMarkAsRead,
+            unreadNotification,
+            handleMarkAsReadById,
+            notificationCount,
+            readNotification,
+            setNotificationCount
+        }}>
             {children}
         </OtherContext.Provider>
     )

@@ -14,6 +14,8 @@ import { IoMenuOutline, IoCloseOutline } from "react-icons/io5";
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useUser } from '../../../Context/userContext';
 import BuySellWithNotification from '../../Buy&Sell/BuySellWithNotification';
+import { gradientButtonStyle } from '../../Wallet/CreateWallet';
+import { useOtherDetail } from '../../../Context/otherContext';
 
 
 
@@ -26,12 +28,16 @@ const UserDashboardNew = () => {
     const { isOpen, onToggle } = useDisclosure();
     const { isOpen: isOpen1, onToggle: onToggle1 } = useDisclosure();
     const { user, error } = useUser();
+    const { handleGetAllNotification } = useOtherDetail();
     const location = useLocation();
 
     // useEffect(() => {
     //     const lastSegment = location.pathname.split("/").filter(Boolean).pop();
     //     setTag(lastSegment);
     // }, [location])
+    useEffect(() => {
+        handleGetAllNotification();
+    }, [])
 
     return (
         <Flex maxW={'container.xxl'} bg={''} justifyContent={'center'} alignItems={'center'} direction={'column'} gap={10} my={10} marginTop={'54px'}>
@@ -220,7 +226,7 @@ const UserDashboardNew = () => {
 
                                             ))
                                         }
-                                        <Button mt={5} w={'80%'} colorScheme='orange'>
+                                        <Button sx={gradientButtonStyle} mt={5} w={'80%'} >
                                             <Flex maxW={'80%'} justifyContent={'center'}>
                                                 any suggestion for us?
                                             </Flex>
@@ -289,7 +295,7 @@ const UserDashboardNew = () => {
                                                 <Box maxW={'200px'}>
                                                     Enabling 2FA  is to enhance security.
                                                 </Box>
-                                                <Link color={'orange'}>Setup 2FA Now</Link>
+                                                <Link color={'orange'} onClick={() => navigate('/settings/security')} >Setup 2FA Now</Link>
                                             </Flex>
                                         </Flex>
                                     </Card>
@@ -428,7 +434,7 @@ const Mobilecollapse2 = ({ onClose, tag, setTag }) => {
 
             <Card borderRadius={0} display={{ base: 'flex', sm: 'flex', md: 'flex', lg: 'none' }} justifyContent={'center'} width={'full'} >
 
-                <Flex justifyContent={'start'} alignItems={'center'} >
+                <Flex justifyContent={'start'} alignItems={'center'}  >
                     <Flex direction={'column'} width={'100%'} >
 
 
@@ -440,15 +446,16 @@ const Mobilecollapse2 = ({ onClose, tag, setTag }) => {
                                 <>
 
                                     <Button
+                                        sx={gradientButtonStyle}
                                         width={'100%'}
-                                        borderRadius={'none'}
+                                        borderRadius={5}
                                         border={'0px'} bg={'transparent'}
                                         py={8}
                                         key={index}
                                         justifyContent="flex-start"
-                                        _hover={{
-                                            bg: 'linear-gradient(90deg, rgba(236,240,155,0.7875525210084033) 24%, rgba(247,241,175,0.9864320728291317) 78%)',
-                                        }}
+                                        // _hover={{
+                                        //     bg: 'linear-gradient(90deg, rgba(236,240,155,0.7875525210084033) 24%, rgba(247,241,175,0.9864320728291317) 78%)',
+                                        // }}
                                         onClick={() => {
 
                                             setTag(data.btn_name);

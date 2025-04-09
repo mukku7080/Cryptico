@@ -57,7 +57,7 @@ const UserAvatar = () => {
                         )}
 
                     </MenuButton>
-                    <MenuList borderRadius={5}>
+                    <MenuList borderRadius={5} w={'300px'}>
                         <MenuItem bg={'none'} display={'flex'} justifyContent={'end'}>
                             <Flex justifyContent={'space-between'} alignItems={'center'} w={'100%'} py={1} >
 
@@ -118,9 +118,9 @@ const menuItems = [
     { name: "My Profile", icon: <FaUser />, to: 'profile' },
     { name: "Payment Methods", icon: <FaCreditCard />, to: 'settings/paymentMethod' },
     { name: "Settings", icon: <FaCog />, to: 'settings' },
-    { name: "Trade History", icon: <FaHistory />, to: 'tradehistory' },
+    { name: "Trade History", icon: <FaHistory />, to: '/user-dashboard/tradehistory' },
     { name: "Trade Partners", icon: <FaUsers />, to: 'tradeParters' },
-    { name: "Invite a Friend", icon: <FaGift />, to: 'iFriend' },
+    { name: "Invite a Friend", icon: <FaGift />, to: '/user-dashboard/inviteFriends' },
     { name: "My Transactions", icon: <FaExchangeAlt />, to: 'myTransactions' },
     { name: "Join Cryptico Community", icon: <FaComments />, to: 'cryptoComunity' },
     { name: "Log Out", icon: <FaSignOutAlt />, to: '/' },

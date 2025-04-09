@@ -38,6 +38,7 @@ import { MyPaymentModal } from '../Dropdown/PaymentModal/MyPaymentModal';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import TokenDropdown from '../Dropdown/TokenDropdown';
 import { useOffer } from '../../Context/OfferContext';
+import { gradientButtonStyle } from '../Wallet/CreateWallet';
 
 const BuyNew = () => {
     const { handleGetOffer } = useOffer();
@@ -78,8 +79,26 @@ const BuyNew = () => {
                                 <Box as='p' fontWeight={500} color={'gray'} fontSize={'18px'}>Buy Bitcoin with over 500 payment methods to choose from, including bank transfers, online wallets, and gift cards.</Box>
                                 <Flex direction={'column'}>
 
-                                    <Box bg={'orange.500'} fontWeight={500} borderTopRadius={'4px'} p={2}>Promoted Offers</Box>
-                                    <Button display={'flex'} width={'120px'} variant={'outline'} alignSelf={'end'} colorScheme='orange' size={'sm'} borderRadius={'none'} leftIcon={<AiOutlineExclamationCircle />}>Take Tour</Button>
+                                    <Box
+                                        bg={'orange.500'}
+                                        sx={{
+                                            backgroundImage: 'linear-gradient(to right, #FF512F 0%, #F09819 51%, #FF512F 100%)',
+                                            transition: '0.5s',
+                                            backgroundSize: '200% auto',
+                                            color: 'white',
+                                            _hover: {
+                                                backgroundPosition: 'right center',
+                                                color: 'white',
+                                                textDecoration: 'none',
+                                            },
+                                        }}
+                                        fontWeight={500}
+                                        borderTopRadius={'4px'}
+                                        p={2}
+                                    >
+                                        Promoted Offers
+                                    </Box>
+                                    <Button display={'flex'} width={'120px'} variant={'outline'} alignSelf={'end'} border={'1px solid #f18f1b'} _hover={{ bg: 'transparent' }} size={'sm'} borderRadius={'none'} leftIcon={<AiOutlineExclamationCircle />}>Take Tour</Button>
                                 </Flex>
                                 <Flex>
                                     <Flex direction={'column'} w={'full'} borderLeft={'1px solid #dcdcdc'} borderRight={'1px solid #dcdcdc'} borderTop={'none'} borderBottomRadius={5} >
@@ -184,7 +203,7 @@ const BuyNew = () => {
 
 const LeftSideContent = () => {
     const [searchParams] = useSearchParams();
-    const [index, setIndex] = useState(0);   
+    const [index, setIndex] = useState(0);
     useEffect(() => {
         const queryValue = searchParams.get('index');
         // Check if the value is not null and is a valid number
@@ -303,7 +322,7 @@ const LeftSideContent = () => {
                             </Flex>
                         </Flex>
 
-                        <Button borderRadius={5} variant={'solid'} justifyContent={'space-between'} colorScheme={'orange'} rightIcon={<MdDoubleArrow />}>Find Offers</Button>
+                        <Button borderRadius={5} sx={gradientButtonStyle} justifyContent={'space-between'} colorScheme={'orange'} rightIcon={<MdDoubleArrow />}>Find Offers</Button>
 
 
                     </Flex>
@@ -658,7 +677,7 @@ const OfferList = () => {
                             </Flex>
                             <Flex alignItems={'center'} gap={2} >
                                 <Button size={'sm'} variant='outline' bg={'transparent'}><CiStar /></Button>
-                                <Button size={'sm'} bg={'orange'} onClick={() => navigate('/buyOffer')}>Buy</Button>
+                                <Button sx={gradientButtonStyle} size={'sm'} onClick={() => navigate('/buyOffer')}>Buy</Button>
                             </Flex>
 
                         </Flex>

@@ -33,6 +33,10 @@ import InviteFriend from './CustomComponents/Afterlogin/UserDashboard/InviteFrie
 import ForgetPassowrd from './CustomComponents/LoginSignup/ForgetPassword';
 import ForgetPasswrod from './CustomComponents/LoginSignup/ForgetPassword';
 import Testing from './CustomComponents/Wallet/Testing';
+import OtpVerification from './CustomComponents/LoginSignup/OtpVerification';
+import AllNotification from './CustomComponents/NotificationFile/AllNotification';
+import NotFound from './CustomComponents/NotFound/NotFound';
+// import BitcoinWallet1 from './CustomComponents/Testwallet/BitCoinWallet1';
 
 
 const RoutesConfig = () => {
@@ -42,6 +46,10 @@ const RoutesConfig = () => {
             <Route path='/login' element={<Loginnew />} />
             <Route path='/signup' element={<Signupnew />} />
             <Route path='/testing' element={<Testing />} />
+            <Route path='*' element={<NotFound/>} />
+            {/* <Route path='/bitcoinTesting' element={<BitcoinWallet1 />} /> */}
+            {/* <Route path='/phoneVerification' element={<OtpVerification />} /> */}
+            <Route path='/allNotification' element={<AllNotification />} />
 
             <Route path='/forgetPassword' element={<ForgetPasswrod />} />
 

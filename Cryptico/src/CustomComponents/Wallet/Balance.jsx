@@ -14,10 +14,14 @@ import { IoWarningOutline } from 'react-icons/io5';
 import { MdArrowRightAlt, MdKeyboardArrowDown, MdKeyboardArrowRight } from 'react-icons/md';
 import { FaArrowRightFromBracket, FaArrowRightLong } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
-import CreateWallet from './CreateWallet';
+import CreateWallet, { gradientButtonStyle } from './CreateWallet';
+import { useAccount } from '../../Context/AccountContext';
+import WalletQR from './WalletQR';
 
 const Balance = () => {
     const navigate = useNavigate()
+    const { web3wallet } = useAccount();
+
 
 
     return (
@@ -59,7 +63,7 @@ const Balance = () => {
                     {/* RightSideButton */}
 
                     <Flex alignItems={'end'}   >
-                        <Button w={'full'} colorScheme='orange' px={20}> Buy Crypto Directly</Button>
+                        <Button sx={gradientButtonStyle} w={'full'} colorScheme='orange' px={20}> Buy Crypto Directly</Button>
                     </Flex>
                 </Flex>
 
@@ -69,8 +73,11 @@ const Balance = () => {
 
                 <Flex>
                     <Card w={'100%'} p={4}>
-                        <Heading size={'md'}>Assets</Heading>
-                        <CreateWallet />
+                        <Flex justifyContent={'space-between'}>
+
+                            <Heading size={'md'}>Assets</Heading>
+                            <CreateWallet />
+                        </Flex>
 
                         {/* Bellow Assets */}
 
@@ -237,7 +244,7 @@ const ThreeDotMenu1 = ({ btnName }) => {
     )
 }
 const ThreeDotMenu2 = ({ option }) => {
-    const { onClose, onOpen } = useDisclosure
+    const { isOpen, onClose, onOpen } = useDisclosure();
     const navigate = useNavigate();
     return (
 
@@ -251,7 +258,7 @@ const ThreeDotMenu2 = ({ option }) => {
                         <React.Fragment key={index}>
                             <MenuItem key={index}
                                 onClick={() => {
-                                    navigate(item.to)
+                                    navigate(item.to);
                                 }} >
                                 <Flex cursor={'pointer'} gap={5} >
 
@@ -355,10 +362,10 @@ const LatestTransactions = () => {
 
 const Receive1 = () => {
     const { isOpen, onOpen, onClose } = useDisclosure()
-    const address = '33m5SWh6zg9mmSukJ2K9oobLPXx6psfBwE'
     const [copied, setCopied] = useState(false);
+    const { web3wallet } = useAccount();
     const handleCopy = () => {
-        navigator.clipboard.writeText(address).then(() => {
+        navigator.clipboard.writeText(web3wallet?.data?.bitcoin[0]?.wallet_address).then(() => {
             setCopied(true);
             setTimeout(() => {
                 setCopied(false);
@@ -397,14 +404,15 @@ const Receive1 = () => {
                                 <Divider />
                             </Flex> */}
                             <Flex my={7}>
-                                <Image src='/imagelogo/Qr.png' boxSize={150}></Image>
+                                <WalletQR walletAddress={web3wallet?.data?.bitcoin?.length > 0 ? web3wallet?.data?.bitcoin[0]?.wallet_address : 'No Bitcoin wallet address available'} />
+                                {/* <Image src='/imagelogo/Qr.png' boxSize={150}></Image> */}
 
                             </Flex>
                             <Heading size={'lg'}>Your Bitcoin address</Heading>
                             <Flex direction={'column'}>
 
                                 <Box color={'gray'}>Use this address to deposit Bitcoin (BTC):</Box>
-                                <Box fontWeight={500}>{address}</Box>
+                                <Box fontWeight={500}>{web3wallet?.data?.bitcoin?.length > 0 ? web3wallet?.data?.bitcoin[0]?.wallet_address : 'No Bitcoin wallet address available'}</Box>
                             </Flex>
                             <Tooltip label={copied ? "Copied!" : "Copy to clipboard"} bg={'gray.100'} color={'black'} closeDelay={500} hasArrow>
                                 <Button mb={5} colorScheme='orange' w={'150px'} onClick={handleCopy}>Copy address</Button>
@@ -436,8 +444,9 @@ const Receive2 = () => {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const address = '0xae2244e9bD6fC01b52d8E1b634eE5Db94eA6Ca48'
     const [copied, setCopied] = useState(false);
+    const { web3wallet } = useAccount();
     const handleCopy = () => {
-        navigator.clipboard.writeText(address).then(() => {
+        navigator.clipboard.writeText(web3wallet?.data?.ethereum[0]?.wallet_address).then(() => {
             setCopied(true);
             setTimeout(() => {
                 setCopied(false);
@@ -469,14 +478,16 @@ const Receive2 = () => {
                         <Flex my={7} direction={'column'} gap={8}>
 
                             <Flex >
-                                <Image src='/imagelogo/Qr.png' boxSize={150}></Image>
+                                <WalletQR walletAddress={web3wallet?.data?.ethereum?.length > 0 ? web3wallet?.data?.ethereum[0]?.wallet_address : 'No Bitcoin wallet address available'} />
+
+                                {/* <Image src='/imagelogo/Qr.png' boxSize={150}></Image> */}
 
                             </Flex>
                             <Heading size={'lg'}>Your ERC-20 address</Heading>
                             <Flex direction={'column'}>
 
                                 <Box color={'gray'}>Use this address to deposit Ethereum (ETH):</Box>
-                                <Box fontWeight={500}>{address}</Box>
+                                <Box fontWeight={500}>{web3wallet?.data?.ethereum?.length > 0 ? web3wallet?.data?.ethereum[0]?.wallet_address : 'No Bitcoin wallet address available'}</Box>
                             </Flex>
                             <Tooltip label={copied ? "Copied!" : "Copy to clipboard"} bg={'gray.100'} color={'black'} closeDelay={500} hasArrow>
                                 <Button mb={2} colorScheme='orange' w={'150px'} onClick={handleCopy}>Copy address</Button>
@@ -508,8 +519,9 @@ const Receive3 = () => {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const address = '0xae2244e9bD6fC01b52d8E1b634eE5Db94eA6Ca48'
     const [copied, setCopied] = useState(false);
+    const { web3wallet } = useAccount();
     const handleCopy = () => {
-        navigator.clipboard.writeText(address)
+        navigator.clipboard.writeText(web3wallet?.data?.binance?.length > 0 ? web3wallet?.data?.binance[0]?.wallet_address : 'No Bitcoin wallet address available')
             .then(() => {
                 setCopied(true);
                 setTimeout(() => {
@@ -545,14 +557,16 @@ const Receive3 = () => {
                         <Flex my={7} direction={'column'} gap={8}>
 
                             <Flex >
-                                <Image src='/imagelogo/Qr.png' boxSize={150}></Image>
+                                <WalletQR walletAddress={web3wallet?.data?.binance?.length > 0 ? web3wallet?.data?.binance[0]?.wallet_address : 'No Bitcoin wallet address available'} />
+
+                                {/* <Image src='/imagelogo/Qr.png' boxSize={150}></Image> */}
 
                             </Flex>
                             <Heading size={'lg'}>Your ERC-20 address</Heading>
                             <Flex direction={'column'}>
 
                                 <Box color={'gray'}>Use this address to deposit USDC (USDC):</Box>
-                                <Box fontWeight={500}>{address}</Box>
+                                <Box fontWeight={500}>{web3wallet?.data?.binance?.length > 0 ? web3wallet?.data?.binance[0]?.wallet_address : 'No Bitcoin wallet address available'}</Box>
                             </Flex>
                             <Tooltip label={copied ? "Copied!" : "Copy to clipboard"} bg={'gray.100'} color={'black'} closeDelay={500} hasArrow>
                                 <Button mb={2} colorScheme='orange' w={'150px'} onClick={handleCopy}>Copy address</Button>
@@ -584,14 +598,15 @@ const Receive3 = () => {
 
 const Receive4 = () => {
     const { isOpen, onOpen, onClose } = useDisclosure()
-    const [istron, setTron] = React.useState(true)
-    const [active, setActive] = React.useState('tron')
+    const [istron, setTron] = React.useState(false)
+    const [active, setActive] = React.useState('eth')
     const addressTron = 'TFk4Ee97s4cPqebEeUY5kbDfPgqiRfR6X9'
     const addressEth = '0xae2244e9bD6fC01b52d8E1b634eE5Db94eA6Ca48'
     const [copied, setCopied] = useState(false);
+    const { web3wallet } = useAccount();
 
     const handleCopyTron = () => {
-        navigator.clipboard.writeText(addressTron).then(() => {
+        navigator.clipboard.writeText().then(() => {
             setCopied(true);
             setTimeout(() => {
                 setCopied(false);
@@ -601,7 +616,7 @@ const Receive4 = () => {
         })
     }
     const handleCopyEth = () => {
-        navigator.clipboard.writeText(addressEth).then(() => {
+        navigator.clipboard.writeText(web3wallet?.data?.ethereum?.length > 0 ? web3wallet?.data?.ethereum[1]?.wallet_address : 'No Bitcoin wallet address available').then(() => {
             setCopied(true);
             setTimeout(() => {
                 setCopied(false);
@@ -634,17 +649,7 @@ const Receive4 = () => {
                         <Flex direction={'column'} gap={5}>
                             <Flex direction={'column'}>
                                 <ButtonGroup gap={2}>
-                                    <Button
-                                        gap={2}
-                                        p={0}
-                                        borderBottom={active === 'tron' ? '1px solid black' : '0px'}
-                                        borderRadius={0} bg={'transparent'}
-                                        _hover={{ bg: 'transparent' }}
-                                        onClick={() => {
-                                            setTron(true)
-                                            setActive('tron');
-                                        }
-                                        }>TRON network <Tag bg={'orange.100'} >cheaper</Tag></Button>
+
                                     <Button
                                         p={0}
                                         borderBottom={active === 'eth' ? '1px solid black' : '0px'}
@@ -659,6 +664,19 @@ const Receive4 = () => {
                                     >
                                         Ethereum network
                                     </Button>
+                                    <Button
+                                        gap={2}
+                                        p={0}
+                                        borderBottom={active === 'tron' ? '1px solid black' : '0px'}
+                                        borderRadius={0} bg={'transparent'}
+                                        _hover={{ bg: 'transparent' }}
+                                        onClick={() => {
+                                            setTron(true)
+                                            setActive('tron');
+                                        }
+                                        }>TRON network <Tag bg={'orange.100'} >cheaper</Tag>
+
+                                    </Button>
                                 </ButtonGroup>
                                 <Divider />
                             </Flex>
@@ -668,7 +686,9 @@ const Receive4 = () => {
                                     <Flex my={5} direction={'column'} gap={7}>
 
                                         <Flex>
-                                            <Image src='/imagelogo/Qr.png' boxSize={150}></Image>
+                                            <WalletQR walletAddress={web3wallet?.data?.ethereum?.length > 0 ? web3wallet?.data?.ethereum[1]?.wallet_address : 'No Bitcoin wallet address available'} />
+
+                                            {/* <Image src='/imagelogo/Qr.png' boxSize={150}></Image> */}
 
                                         </Flex>
                                         <Heading size={'lg'}>Your TRC-20 address</Heading>
@@ -682,28 +702,27 @@ const Receive4 = () => {
                                         </Tooltip>
                                     </Flex>
                                     :
-                                    <ScaleFade initialScale={0.1} in={isOpen}>
 
-                                        <Flex my={5} direction={'column'} gap={7}>
+                                    <Flex my={5} direction={'column'} gap={7}>
 
-                                            <Flex >
-                                                <Image src='/imagelogo/Qr.png' boxSize={150}></Image>
-
-                                            </Flex>
-                                            <Heading size={'lg'}>Your ERC-20 address</Heading>
-                                            <Flex direction={'column'}>
-
-                                                <Box color={'gray'}>Use this address to deposit Ethereum (ETH):</Box>
-                                                <Box fontWeight={500}>{addressEth}</Box>
-                                            </Flex>
-                                            <Tooltip label={copied ? "Copied!" : "Copy to clipboard"} bg={'gray.100'} color={'black'} closeDelay={200} hasArrow>
-
-                                                <Button mb={2} colorScheme='orange' w={'150px'} onClick={handleCopyEth}>Copy Address</Button>
-                                            </Tooltip>
-
+                                        <Flex >
+                                            {/* <Image src='/imagelogo/Qr.png' boxSize={150}></Image> */}
+                                            <WalletQR walletAddress={web3wallet?.data?.ethereum?.length > 0 ? web3wallet?.data?.ethereum[1]?.wallet_address : 'No Bitcoin wallet address available'} />
 
                                         </Flex>
-                                    </ScaleFade>
+                                        <Heading size={'lg'}>Your ERC-20 address</Heading>
+                                        <Flex direction={'column'}>
+
+                                            <Box color={'gray'}>Use this address to deposit Ethereum (ETH):</Box>
+                                            <Box fontWeight={500}>{web3wallet?.data?.ethereum?.length > 0 ? web3wallet?.data?.ethereum[1]?.wallet_address : 'No Bitcoin wallet address available'}</Box>
+                                        </Flex>
+                                        <Tooltip label={copied ? "Copied!" : "Copy to clipboard"} bg={'gray.100'} color={'black'} closeDelay={200} hasArrow>
+
+                                            <Button mb={2} colorScheme='orange' w={'150px'} onClick={handleCopyEth}>Copy Address</Button>
+                                        </Tooltip>
+
+
+                                    </Flex>
 
                             }
 

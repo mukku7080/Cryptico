@@ -22,11 +22,14 @@ import { FaApple, FaTelegramPlane } from "react-icons/fa";
 // import { useAuth } from '../AuthContext/AuthProvider';
 import axios from 'axios';
 import { useAuth } from '../../Context/AuthContext';
+import { gradientButtonStyle } from '../Wallet/CreateWallet';
+import { useUser } from '../../Context/userContext';
+import OTPInput from './OtpInput';
 
 
 const Loginnew = () => {
 
-    const { handleLogin, handleLoginWithGoogle, handleForgotPassword } = useAuth();
+    const { handleLogin, handleLoginWithGoogle, handleForgotPassword, handleEmailOtp } = useAuth();
     const toast = useToast();
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState("");
@@ -34,12 +37,9 @@ const Loginnew = () => {
     const txtcolor = useColorModeValue('black', 'white');
     const bgcolor = useColorModeValue('gray.100', 'gray.700');
     const [isVisited, setIsVisited] = useState(false);
-
-
-
-
-
-
+    const [is2FA_Enable, set2FA_Enable] = useState(false);
+    const [is2FAshow, set2FAshow] = useState(false);
+    const [otpVerificationStatus, setOtpVerificationStauts] = useState(false);
 
     const navigate = useNavigate();
 
@@ -107,8 +107,16 @@ const Loginnew = () => {
 
             try {
                 setIsLoading(true);
+
+
                 const res = await handleLogin(values);
                 if (res.status === true) {
+                    if (res.twoFactorAuth) {
+                        set2FAshow(true);
+                        // const operation = 'two_fa'
+                        // const response = await handleEmailOtp(operation);
+                        return;
+                    }
 
                     toast({
                         title: "Login Successfuly",
@@ -186,94 +194,108 @@ const Loginnew = () => {
 
                                 <CardBody display={'flex'} justifyContent={'center'}>
                                     <Box maxW="md" borderRadius="md" w={'90%'}  >
-
-                                        <form onSubmit={(e) => {
-                                            e.preventDefault();
-                                            handleSubmit();
-                                        }} >
-                                            {/* user Field */}
-
-                                            <FormControl isInvalid={errors.email && touched.email} mb={3}>
-                                                <FormLabel color={'gray'}  >Email</FormLabel>
-                                                <Input name="email" placeholder="Email" bg={bgcolor}  // Light gray background
-                                                    _focus={{ bgcolor }}
-                                                    value={values.email}
-                                                    onChange={(e) => {
-                                                        setEmail(e.target.value);
-                                                        handleChange(e);
+                                        {
+                                            is2FAshow ?
+                                                <OTPInput
+                                                    verification={"Email"}
+                                                    email={values.email}
+                                                    onEvent={'login'}
+                                                    onSuccess={() => {
+                                                        navigate('/user-dashboard');
                                                     }}
-                                                    onBlur={handleBlur} />
-                                                <FormErrorMessage>{errors.email}</FormErrorMessage>
-                                            </FormControl>
+
+                                                />
+                                                :
+                                                <form onSubmit={(e) => {
+                                                    e.preventDefault();
+                                                    handleSubmit();
+                                                }} >
+                                                    {/* user Field */}
+
+                                                    <FormControl isInvalid={errors.email && touched.email} mb={3}>
+                                                        <FormLabel color={'gray'}  >Email</FormLabel>
+                                                        <Input name="email" placeholder="Email" bg={bgcolor}  // Light gray background
+                                                            _focus={{ bgcolor }}
+                                                            value={values.email}
+                                                            onChange={(e) => {
+                                                                setEmail(e.target.value);
+                                                                handleChange(e);
+                                                            }}
+                                                            onBlur={handleBlur} />
+                                                        <FormErrorMessage>{errors.email}</FormErrorMessage>
+                                                    </FormControl>
 
 
 
-                                            {/* password Field */}
-                                            <FormControl isInvalid={errors.password && touched.password} mb={3}>
-                                                <FormLabel color={'gray'}>Password</FormLabel>
-                                                <InputGroup>
+                                                    {/* password Field */}
+                                                    <FormControl isInvalid={errors.password && touched.password} mb={3}>
+                                                        <FormLabel color={'gray'}>Password</FormLabel>
+                                                        <InputGroup>
 
-                                                    <Input name="password" type={showPassword ? "text" : "password"}
-                                                        placeholder="Passwrod" bg={bgcolor}  // Light gray background
-                                                        _focus={{ bgcolor }}
-                                                        value={values.password}
-                                                        onChange={handleChange}
-                                                        onBlur={handleBlur} />
+                                                            <Input name="password" type={showPassword ? "text" : "password"}
+                                                                placeholder="Passwrod" bg={bgcolor}  // Light gray background
+                                                                _focus={{ bgcolor }}
+                                                                value={values.password}
+                                                                onChange={handleChange}
+                                                                onBlur={handleBlur} />
 
-                                                    <InputRightElement>
-                                                        <IconButton
-                                                            bg={'transparent'}
-                                                            h="1.75rem"
-                                                            size=""
-                                                            onClick={() => setShowPassword((prev) => !prev)}
-                                                            icon={showPassword ? <IoMdEye /> : <IoMdEyeOff />}
-                                                            aria-label="Toggle Password Visibility"
-                                                            _hover={{ bg: 'transparent' }}
-                                                        />
-                                                    </InputRightElement>
-                                                </InputGroup>
-                                                <FormErrorMessage>{errors.password}</FormErrorMessage>
-                                            </FormControl>
-
-
+                                                            <InputRightElement>
+                                                                <IconButton
+                                                                    bg={'transparent'}
+                                                                    h="1.75rem"
+                                                                    size=""
+                                                                    onClick={() => setShowPassword((prev) => !prev)}
+                                                                    icon={showPassword ? <IoMdEye /> : <IoMdEyeOff />}
+                                                                    aria-label="Toggle Password Visibility"
+                                                                    _hover={{ bg: 'transparent' }}
+                                                                />
+                                                            </InputRightElement>
+                                                        </InputGroup>
+                                                        <FormErrorMessage>{errors.password}</FormErrorMessage>
+                                                    </FormControl>
 
 
 
 
 
-                                            {/* CheckBox */}
-                                            <Flex justifyContent={'space-between'}>
 
-                                                <Checkbox mt={3}>
-                                                    <Box color={'gray'} display={'flex'} justifyContent={'space-between'}  >
-                                                        <Box>
 
-                                                            Remember me
-                                                        </Box>
-                                                    </Box>
-                                                </Checkbox>
-                                                <Link mt={3} color={isVisited ? 'gray' : 'green'} display={'flex'} justifyContent={'flex-end'} onClick={() => {
-                                                    setIsVisited(true);
-                                                    navigate('/forgetPassword')
-                                                }
-                                                }
-                                                    isLoading
-                                                    colorScheme='blue'
-                                                > Forgot Password ?</Link>
-                                            </Flex>
-                                            {/* Submit Button */}
-                                            <Button
-                                                isLoading={isLoading}
-                                                loadingText='Loading'
-                                                type="submit" bg={'orange'}
-                                                width="full"
-                                                mt={5}
-                                                _hover={{ bg: 'orange.500' }}>
+                                                    {/* CheckBox */}
+                                                    <Flex justifyContent={'space-between'}>
 
-                                                Login
+                                                        <Checkbox mt={3}>
+                                                            <Box color={'gray'} display={'flex'} justifyContent={'space-between'}  >
+                                                                <Box>
 
-                                            </Button>
-                                        </form>
+                                                                    Remember me
+                                                                </Box>
+                                                            </Box>
+                                                        </Checkbox>
+                                                        <Link mt={3} color={isVisited ? 'gray' : 'green'} display={'flex'} justifyContent={'flex-end'} onClick={() => {
+                                                            setIsVisited(true);
+                                                            navigate('/forgetPassword')
+                                                        }
+                                                        }
+                                                            isLoading
+                                                            colorScheme='blue'
+                                                        > Forgot Password ?</Link>
+                                                    </Flex>
+                                                    {/* Submit Button */}
+                                                    <Button
+                                                        sx={gradientButtonStyle}
+                                                        isLoading={isLoading}
+                                                        loadingText='Loading'
+                                                        type="submit" bg={'orange'}
+                                                        width="full"
+                                                        mt={5}
+                                                        _hover={{ bg: 'orange.500' }}>
+
+                                                        Login
+
+                                                    </Button>
+                                                </form>
+                                        }
+
 
                                     </Box>
 

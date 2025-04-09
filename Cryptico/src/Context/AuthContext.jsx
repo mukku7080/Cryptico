@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { login, signup, logout, emailOtp, verifyEmailOtp, loginWithGoogle, SignupWithGoogle, forgetPassword, resetPassword, passwordMatch } from '../api/authService';
+import { login, signup, logout, emailOtp, verifyEmailOtp, loginWithGoogle, SignupWithGoogle, forgetPassword, resetPassword, passwordMatch, enable2FA } from '../api/authService';
 import { useNavigate } from 'react-router-dom';
 
 export const AuthContext = createContext();
@@ -10,6 +10,8 @@ export const AuthProvider = ({ children }) => {
     const [error, setError] = React.useState(null);
     const [passwordmatch, setPasswordMatch] = useState(null);
     const navigate = useNavigate('');
+
+
 
     useEffect(() => {
         const token = localStorage.getItem("authToken");
@@ -25,6 +27,7 @@ export const AuthProvider = ({ children }) => {
         try {
 
             const data = await login({ email, password });
+            // sessionStorage.setItem("authToken", data.token);
             localStorage.setItem("authToken", data.token);
             setUser(data.user);
             return data;
@@ -77,9 +80,9 @@ export const AuthProvider = ({ children }) => {
             return error;
         }
     };
-    const handleEmailOtp = async () => {
+    const handleEmailOtp = async (operation) => {
         try {
-            const response = await emailOtp();
+            const response = await emailOtp(operation);
             return response;
         }
         catch (error) {
@@ -87,14 +90,13 @@ export const AuthProvider = ({ children }) => {
         }
 
     }
-    const handleVerifyEmailOtp = async ({ otp }) => {
+    const handleVerifyEmailOtp = async (verifyOtp) => {
         try {
-            const response = await verifyEmailOtp({ otp });
-            console.log(response);
+            const response = await verifyEmailOtp(verifyOtp);
             return response;
         }
         catch (error) {
-            console.error("otp error:", error);
+            throw error.response ? error.response.data : error;
 
         }
 
@@ -144,9 +146,18 @@ export const AuthProvider = ({ children }) => {
         }
 
     }
+    const handleEnable2FA = async (checked) => {
+        try {
+            const data = await enable2FA(checked);
+            return data;
+        }
+        catch (error) {
+            console.error("Enable 2FA error:", error);
+        }
+    }
 
     return (
-        <AuthContext.Provider value={{ user, handleLogin, handleSignup, handleLogout, handleEmailOtp, handleVerifyEmailOtp, handleLoginWithGoogle, handleSignupWithGoogle, handleForgotPassword, handleResetPassword, error, handlePasswordMatch, passwordmatch }}>
+        <AuthContext.Provider value={{ user, handleLogin, handleSignup, handleLogout, handleEmailOtp, handleVerifyEmailOtp, handleLoginWithGoogle, handleSignupWithGoogle, handleForgotPassword, handleResetPassword, error, handlePasswordMatch, passwordmatch, handleEnable2FA }}>
             {children}
         </AuthContext.Provider>
     );

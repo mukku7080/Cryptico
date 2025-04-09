@@ -26,6 +26,7 @@ import { PiChecks } from "react-icons/pi";
 import UserAvatar from '../Afterlogin/UserAvatar';
 import PaymentDropdown from '../Dropdown/PaymentDropdown';
 import { useUser } from '../../Context/userContext';
+import { gradientButtonStyle } from '../Wallet/CreateWallet';
 
 const Navbarnew = () => {
     //  const { user } = useUser();
@@ -90,21 +91,36 @@ const Navbarnew = () => {
                             <>
                                 <Flex display={{ base: 'none', md: 'none', lg: 'flex', xl: 'flex' }} justifyContent={'center'} alignItems={'center'} gap={{ lg: 2, xl: 5 }}>
 
-                                    <Button as={Link} size={'sm'} to='/login' padding={'0px 32px'} borderColor={'#ffffff99'} variant={'outline'} color={'white'} _hover={{ color: 'black', bgColor: '#ffb11a' }}>
+                                    <Button as={Link} size={'sm'} to='/login' padding={'0px 32px'} borderColor={'#ffffff99'} variant={'outline'} color={'white'} _hover={{ border: 'none', transition:'0.5s', backgroundImage: 'linear-gradient(to right, #FF512F 0%, #F09819 51%, #FF512F 600%)' }}>
                                         Log In
                                     </Button>
 
-                                    <Button as={Link} size={'sm'} to='/signup' padding={'0px 32px'} bgColor={'#ffb11a'} _hover={{ bg: 'orange' }} >
+                                    <Button as={Link} sx={gradientButtonStyle} size={'sm'} to='/signup' padding={'0px 32px'} bgColor={'#ffb11a'} _hover={{ bg: 'orange' }} >
                                         Sign Up
                                     </Button>
                                 </Flex>
                             </>
                     }
                     {
-                        token ? '' : <Button onClick={() => {
-                            setDark(!isdark)
-                            toggleColorMode();
-                        }} boxSize={10}
+                        token ? '' : <Button
+                            sx={{
+                                backgroundImage: 'linear-gradient(to right, #FF512F 0%, #F09819 51%, #FF512F 100%)',
+                                textAlign: 'center',
+                                transition: '0.5s',
+                                backgroundSize: '200% auto',
+                                color: 'white',
+
+                                _hover: {
+                                    backgroundPosition: 'right center',
+                                    color: 'white',
+                                    textDecoration: 'none',
+                                }
+                            }
+                            }
+                            onClick={() => {
+                                setDark(!isdark)
+                                toggleColorMode();
+                            }} boxSize={10}
                             bg={'orange'}
                             borderRadius={'full'}>
                             {
