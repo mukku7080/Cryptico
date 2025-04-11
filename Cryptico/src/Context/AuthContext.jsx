@@ -9,6 +9,7 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = React.useState(null);
     const [error, setError] = React.useState(null);
     const [passwordmatch, setPasswordMatch] = useState(null);
+    const [verifyOtpResponse, setVerifyOtpResponse] = useState(null);
     const navigate = useNavigate('');
 
 
@@ -88,26 +89,25 @@ export const AuthProvider = ({ children }) => {
 
     }
     const handleVerifyEmailOtp = async (verifyOtp) => {
-        try {
-            const response = await verifyEmailOtp(verifyOtp);
-            console.log(response);
-            console.log(verifyOtp);
-            if (response.status === true && verifyOtp?.operation === 'login') {
-                localStorage.setItem("authToken", sessionStorage.getItem('authToken'));
+
+        const response = await verifyEmailOtp(verifyOtp);
+        setVerifyOtpResponse(response);
+        if (response.status === true) {
+            const token = sessionStorage.getItem('authToken');
+
+            if (verifyOtp?.operation === 'login' || verifyOtp?.operation === 'email_verification') {
+                localStorage.setItem("authToken", token);
                 sessionStorage.removeItem('authToken');
             }
-            if (response.status === true && verifyOtp?.operation === 'email_verification') {
+
+            if (verifyOtp?.operation === 'email_verification') {
                 sessionStorage.removeItem('emailVerified');
-                localStorage.setItem("authToken", sessionStorage.getItem('authToken'));
-                sessionStorage.removeItem('authToken');
             }
-
-            return response;
         }
-        catch (error) {
-            throw error.response ? error.response.data : error;
 
-        }
+        return response;
+
+
 
     }
 
@@ -166,7 +166,25 @@ export const AuthProvider = ({ children }) => {
     }
 
     return (
-        <AuthContext.Provider value={{ user, handleLogin, handleSignup, handleLogout, handleEmailOtp, handleVerifyEmailOtp, handleLoginWithGoogle, handleSignupWithGoogle, handleForgotPassword, handleResetPassword, error, handlePasswordMatch, passwordmatch, handleEnable2FA }}>
+        <AuthContext.Provider value={
+            {
+                user,
+                handleLogin,
+                handleSignup,
+                handleLogout,
+                handleEmailOtp,
+                handleVerifyEmailOtp,
+                handleLoginWithGoogle,
+                handleSignupWithGoogle,
+                handleForgotPassword,
+                handleResetPassword,
+                error,
+                handlePasswordMatch,
+                passwordmatch,
+                handleEnable2FA,
+                verifyOtpResponse
+            }
+        }>
             {children}
         </AuthContext.Provider>
     );

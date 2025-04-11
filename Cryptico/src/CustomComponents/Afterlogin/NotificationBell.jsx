@@ -147,7 +147,7 @@ const NotificationBell = () => {
                                                                 >
                                                                     <Box fontWeight={700} fontSize="14px">{data.title}</Box>
                                                                     <Box>{data.message}</Box>
-                                                                    <Box  fontSize="14px" opacity={0.8}>{data.time_duration}</Box>
+                                                                    <Box fontSize="14px" opacity={0.8}>{data.time_duration}</Box>
                                                                 </Flex>
                                                             </motion.div>
 
@@ -171,7 +171,7 @@ const NotificationBell = () => {
                                                             >
                                                                 <Box fontWeight={700} fontSize="14px">{data.title}</Box>
                                                                 <Box>{data.message}</Box>
-                                                                <Box fontSize="12px" opacity={0.8}>{data.timestamp}</Box>
+                                                                <Box fontSize="12px" opacity={0.8}>{data.time_duration}</Box>
                                                             </Flex>
                                                     ))
                                                     :

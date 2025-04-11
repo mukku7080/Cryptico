@@ -266,16 +266,16 @@ const Enable2FA = () => {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const { isOpen: isOpen2, onOpen: onOpen2, onClose: onClose2 } = useDisclosure()
     const [isshow, setShow] = useState(false);
-    const { handleEmailOtp, handleEnable2FA, handleVerifyEmailOtp } = useAuth();
+    const { handleEmailOtp, handleEnable2FA, handleVerifyEmailOtp, verifyOtpResponse } = useAuth();
     const [otp, setOtp] = useState(null);
     const [isShow2FA, setIShow2FA] = useState(false);
+    const [isOtpvalid, setOtpvalid] = useState(false);
     const [otpVerificationMessage, setOtpVerificationMessage] = useState("");
 
     useEffect(() => {
         setIsCheckedA(user?.twoFactorAuth);
 
     }, [user])
-
 
     const handleSwitchChangeA = async (e) => {
         const checked = e.target.checked;
@@ -306,52 +306,27 @@ const Enable2FA = () => {
             otp: value,
             operation: 'two_fa'
         }
-        const response = await handleVerifyEmailOtp(verifyOtp);
-        console.log(response);
-        setOtpVerificationMessage(response?.message);
-        console.log(otpVerificationMessage);
+        try {
 
-        if (response.status) {
-            const checked = false
-            const res = await handleEnable2FA(checked);
-            if (res.status) {
-                setIsCheckedA(checked);
+            const response = await handleVerifyEmailOtp(verifyOtp);
+            if (response.status) {
+                const checked = false
+                setOtpvalid(true);
+                setOtpVerificationMessage(response?.message);
+                const res = await handleEnable2FA(checked);
+                if (res.status) {
+                    setIsCheckedA(checked);
+                }
+                onClose2();
+                setOtp(null);
             }
-            onClose2();
-            setOtp(null);
         }
-        setOtpVerificationMessage("Invalid OTP");
+        catch (error) {
+            console.log(error);
+            setOtpVerificationMessage(error?.message);
+        }
+
     }
-
-    // const handleSwitchChangeB = async (e) => {
-    //     const checked = e.target.checked;
-    //     setIsCheckedB(checked);
-    //     if (!checked) {
-    //         try {
-    //             const response = await handleEmailOtp();
-    //             console.log(response);
-    //         }
-    //         catch (error) {
-    //             console.log(error);
-    //         }
-
-    //     }
-    // }
-
-    // const handleSwitchChangeC = async (e) => {
-    //     const checked = e.target.checked;
-    //     setIsCheckedC(checked);
-    //     if (!checked) {
-    //         try {
-    //             const response = await handleEmailOtp();
-    //             console.log(response);
-    //         }
-    //         catch (error) {
-    //             console.log(error);
-    //         }
-
-    //     }
-    // }
     return (
         <Flex direction={'column'} gap={5} p={4} border={'1px solid #dcdcdc'} borderRadius={5}>
             <Heading size={'lg'} px={4}>Two-factor authentication (2FA) settings</Heading>
@@ -463,7 +438,7 @@ const Enable2FA = () => {
                             </HStack>
 
                         </Flex>
-                        {/* <Box>{otpVerificationMessage}</Box> */}
+                        <Box color={isOtpvalid ? 'green' : 'red'}>{otpVerificationMessage}</Box>
 
 
                     </ModalBody>
@@ -532,7 +507,7 @@ const Enable2FA = () => {
 
 
                                             }}
-                                        >Enable 2FA via Email</Button>
+                                        >{ischeckedA ? 'Disable 2FA via Email' : 'Enable 2FA via Email'}</Button>
                                     </Flex>
                                 }
                                 {
@@ -545,23 +520,21 @@ const Enable2FA = () => {
                                         </Flex>
                                         <Flex justifyContent={'space-between'} >
                                             <Flex gap={5} alignItems={'center'}>
-
                                                 <Box fontWeight={500} >Login</Box>
-                                                {/* <Box fontSize={'14px'}>you receive an otp on your email during every login</Box> */}
                                             </Flex>
                                             <Switch isChecked={ischeckedA} colorScheme='orange' onChange={handleSwitchChangeA} />
 
                                         </Flex>
-                                        {/* <Flex justifyContent={'space-between'} w={'full'}>
-                                            <Box fontWeight={500} >During BuyCrypto</Box>
-                                            <Switch isChecked={ischeckedB} colorScheme='orange' onChange={handleSwitchChangeB} />
+                                        <Flex justifyContent={'space-between'} w={'full'} >
+                                            <Box fontWeight={500} color={'gray.200'} >During BuyCrypto</Box>
+                                            <Switch isDisabled isChecked={ischeckedB} colorScheme='orange' />
 
                                         </Flex>
                                         <Flex justifyContent={'space-between'} w={'full'}>
-                                            <Box fontWeight={500} >During SellCrypto</Box>
-                                            <Switch isChecked={ischeckedC} colorScheme='orange' onChange={handleSwitchChangeC} />
+                                            <Box fontWeight={500} color={'gray.200'} >During SellCrypto</Box>
+                                            <Switch isDisabled isChecked={ischeckedC} colorScheme='orange' />
 
-                                        </Flex> */}
+                                        </Flex>
                                     </Flex>
                                 }
                             </Flex>

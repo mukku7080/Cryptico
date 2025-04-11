@@ -125,15 +125,17 @@ const Loginnew = () => {
                     else {
                         localStorage.setItem("authToken", res.token);
                     }
+                    setTimeout(() => {
+                        toast({
+                            title: "Login Successfuly",
+                            description: "Enjoy our Service",
+                            status: "success",
+                            duration: 1000,
+                            isClosable: true,
+                            position: "top-right",
+                        });
+                    }, 1000);
 
-                    toast({
-                        title: "Login Successfuly",
-                        description: "Enjoy our Service",
-                        status: "success",
-                        duration: 1000,
-                        isClosable: true,
-                        position: "top-right",
-                    });
 
                     navigate("/user-dashboard");
                 }

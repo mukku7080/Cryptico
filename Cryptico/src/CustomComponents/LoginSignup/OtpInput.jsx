@@ -38,22 +38,29 @@ function OTPInput({ verification, email, onSuccess, onEvent }) {
 
                     if (onEvent === 'email_verification') {
 
-                        toast({
-                            title: "Email Verified",
-                            status: "success",
-                            duration: 2000,
-                            isClosable: true,
-                            position: "top-right",
-                        });
+                        setTimeout(() => {
+                            toast({
+                                title: "Email Verified",
+                                status: "success",
+                                duration: 2000,
+                                isClosable: true,
+                                position: "top-right",
+                            });
+
+                        }, 1000);
                     }
                     else {
-                        toast({
-                            title: "Login Successfully",
-                            status: "success",
-                            duration: 3000,
-                            isClosable: true,
-                            position: "top-right",
-                        });
+                        setTimeout(() => {
+                            toast({
+                                title: "Login Successfully",
+                                status: "success",
+                                duration: 3000,
+                                isClosable: true,
+                                position: "top-right",
+                            });
+
+                        }, 3000);
+
                     }
                 }
 

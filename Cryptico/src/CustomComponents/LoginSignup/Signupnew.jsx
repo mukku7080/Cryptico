@@ -91,14 +91,28 @@ const Signupnew = () => {
                         sessionStorage.setItem('authToken', res.token);
                         setToken(res.token);
                         setSignup(true);
-                        toast({
-                            title: "Email OTP Sent",
-                            description: "OTP has been sent on your email..",
-                            status: "warning",
-                            duration: 5000,
-                            isClosable: true,
-                            position: "top-right",
-                        });
+                        setTimeout(() => {
+                            toast({
+                                title: "Registered Successfully",
+                                status: "success",
+                                duration: 3000,
+                                isClosable: true,
+                                position: "top-right",
+                            });
+
+                        }, 1000)
+                        setTimeout(() => {
+                            toast({
+                                title: "Email OTP Sent",
+                                description: "OTP has been sent on your email..",
+                                status: "info",
+                                duration: 5000,
+                                isClosable: true,
+                                position: "top-right",
+                            });
+                        }, 3000);
+
+
                         const operation = 'email_verification'
                         const otpResposne = await handleEmailOtp(operation);
                     }
