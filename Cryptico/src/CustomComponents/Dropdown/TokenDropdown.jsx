@@ -54,9 +54,9 @@ const TokenDropdown = ({ index }) => {
     )
 }
 const cryptoOption = [
-    { name: 'Bitcoin', logo: 'https://cryptologos.cc/logos/thumbs/bitcoin.png?v=040' },
-    { name: 'Ethereum', logo: 'https://cryptologos.cc/logos/thumbs/ethereum.png?v=040' },
-    { name: 'USDC', logo: 'https://cryptologos.cc/logos/thumbs/usd-coin.png?v=040' },
-    { name: 'Tether', logo: 'https://cryptologos.cc/logos/thumbs/tether.png?v=040' },
+    { name: 'Bitcoin', logo: '/imagelogo/bitcoin-btc-logo.png' },
+    { name: 'Ethereum', logo: '/imagelogo/ethereum-eth-logo.png' },
+    { name: 'BNB', logo: '/imagelogo/bnb-bnb-logo.png' },
+    { name: 'Tether', logo: '/imagelogo/tether-usdt-logo.png' },
 ]
 export default TokenDropdown

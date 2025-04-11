@@ -91,7 +91,7 @@ const Navbarnew = () => {
                             <>
                                 <Flex display={{ base: 'none', md: 'none', lg: 'flex', xl: 'flex' }} justifyContent={'center'} alignItems={'center'} gap={{ lg: 2, xl: 5 }}>
 
-                                    <Button as={Link} size={'sm'} to='/login' padding={'0px 32px'} borderColor={'#ffffff99'} variant={'outline'} color={'white'} _hover={{ border: 'none', transition:'0.5s', backgroundImage: 'linear-gradient(to right, #FF512F 0%, #F09819 51%, #FF512F 600%)' }}>
+                                    <Button as={Link} size={'sm'} to='/login' padding={'0px 32px'} borderColor={'#ffffff99'} variant={'outline'} color={'white'} _hover={{ border: 'none', transition: '0.5s', backgroundImage: 'linear-gradient(to right, #FF512F 0%, #F09819 51%, #FF512F 600%)' }}>
                                         Log In
                                     </Button>
 
@@ -441,25 +441,25 @@ const NAV_ITEMS = [
         children: [
             {
                 label: 'Buy Bitcoin',
-                logo: 'https://cryptologos.cc/logos/thumbs/bitcoin.png?v=040',
+                logo: '/imagelogo/bitcoin-btc-logo.png',
                 subLabel: 'Search for offer to buy Bitcoin',
                 href: '/buy?index=0'
             },
             {
                 label: 'Buy Ethereum',
-                logo: 'https://cryptologos.cc/logos/thumbs/ethereum.png?v=040',
+                logo: '/imagelogo/ethereum-eth-logo.png',
                 subLabel: 'Search for offer to buy Ethereum',
                 href: '/buy?index=1'
 
             },
             {
-                label: 'Buy USDC',
-                logo: 'https://cryptologos.cc/logos/thumbs/usd-coin.png?v=040',
+                label: 'Buy BNB',
+                logo: '/imagelogo/bnb-bnb-logo.png',
                 subLabel: 'Search for offer to buy USDC',
                 href: '/buy?index=2',
             }, {
                 label: 'Buy Tether',
-                logo: 'https://cryptologos.cc/logos/thumbs/tether.png?v=040',
+                logo: '/imagelogo/tether-usdt-logo.png',
                 subLabel: 'Search for offer to buy Tether',
                 href: '/buy?index=3',
             },
@@ -472,19 +472,19 @@ const NAV_ITEMS = [
         children: [
             {
                 label: 'Sell Bitcoin',
-                logo: 'https://cryptologos.cc/logos/thumbs/bitcoin.png?v=040',
+                logo: '/imagelogo/bitcoin-btc-logo.png',
                 subLabel: 'Search for offer to sell Bitcoin',
                 href: '/sell?index=0',
             },
             {
                 label: 'Sell Ethereum',
-                logo: 'https://cryptologos.cc/logos/thumbs/ethereum.png?v=040',
+                logo: '/imagelogo/ethereum-eth-logo.png',
                 subLabel: 'Search for offer to sell Ethereum',
                 href: '/sell?index=1',
             },
             {
                 label: 'Sell USDC',
-                logo: 'https://cryptologos.cc/logos/thumbs/usd-coin.png?v=040',
+                logo: '/imagelogo/bnb-bnb-logo.png',
                 subLabel: 'Search for offer to sell USDC',
                 href: '/sell?index=2',
             }, {

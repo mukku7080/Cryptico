@@ -1,5 +1,5 @@
 import { Box, Button, Card, Divider, Flex, Heading, Icon, Image, Menu, MenuButton, MenuList, MenuItem, Circle, Modal, ModalOverlay, ModalContent, ModalFooter, useDisclosure, ModalHeader, ModalCloseButton, ModalBody, ButtonGroup, Tag, ScaleFade, Fade, Tooltip, FormControl, Input } from '@chakra-ui/react'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { LuEqualApproximately } from "react-icons/lu";
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 import { TbSend } from "react-icons/tb";
@@ -17,11 +17,32 @@ import { useNavigate } from 'react-router-dom';
 import CreateWallet, { gradientButtonStyle } from './CreateWallet';
 import { useAccount } from '../../Context/AccountContext';
 import WalletQR from './WalletQR';
+import { useWalletStore } from '../Store/useWalletStore';
+import { useCryptoOption } from '../Store/CryptoOption';
 
 const Balance = () => {
     const navigate = useNavigate()
-    const { web3wallet } = useAccount();
+    const { web3wallet, handleGetWeb3Wallet } = useAccount();
+    const [isloading, setLoading] = useState(true);
+    const setWeb3wallet = useWalletStore((state) => state.setWeb3wallet);
+    useEffect(() => {
+        if (web3wallet) {
+            setWeb3wallet(web3wallet);
+        }
+    }, [web3wallet])
+    useEffect(() => {
+        setTimeout(() => {
+            setLoading(false);
 
+        }, 2000);
+    })
+    useEffect(() => {
+        handleGetWeb3Wallet();
+    }, [])
+    const cryptoOption = useCryptoOption();
+    const data = web3wallet?.data || {}
+
+    const count = Object.keys(data).length;
 
 
     return (
@@ -80,134 +101,153 @@ const Balance = () => {
                         </Flex>
 
                         {/* Bellow Assets */}
-
-                        <Flex p={4} gap={2} direction={'column'} >
-                            {/* TableHeading start -------------------------------------------------------------------------------------------------------------- */}
-
-                            <Flex w={'full'} p={2} gap={10} >
-                                <Flex flex={1.2} color={'gray'} direction={'column'} gap={10}>
-                                    <Flex fontSize={'12px'}>
-                                        <Flex flex={1}  >
-                                            <Box ml={10}>
-                                                Currency
-                                            </Box>
-                                        </Flex>
-                                        <Flex flex={.5} justifyContent={{ base: 'end', xl: 'center' }} mr={{ base: 10, xl: 0 }} >Balance</Flex>
-                                        <Flex flex={.5} justifyContent={'center'} w={'full'} display={{ base: 'none', xl: 'flex' }} > In INR</Flex>
-                                    </Flex>
-                                </Flex>
-                                <Flex flex={.8} color={'green'} gap={20} justifyContent={'space-between'} direction={'column'} display={{ base: 'none', md: 'flex' }} >
-
-                                </Flex>
-                            </Flex>
-                            {/* TableHeading End -------------------------------------------------------------------------------------------------------*/}
-
-                            {
-                                cryptoOption.map((item, optionIndex) => (
-
-                                    <Flex key={optionIndex} w={'full'} p={2} gap={10}>
-                                        <Flex flex={1.2} color={'gray'} direction={'column'} >
-
-                                            {/* Left Side Table Data */}
-                                            <Flex borderRight={{ base: '0', md: '1px solid #dcdcdc' }}  >
+                        {
+                            isloading ?
+                                <Heading size={'lg'} alignSelf={'center'} fontSize={'14px'} mt={10} color={'gray.500'}>Loading...</Heading>
+                                :
+                                count > 0 &&
 
 
-                                                <Flex flex={1} gap={2} direction={'column'} justifyContent={'space-between'}  >
-
-                                                    <Flex gap={0}>
-
-                                                        <Box display={'flex'} pt={1} width={'40px'} height={'40px'}>
-                                                            <Image boxSize={5} src={item.logo} alt={item.name} />
-
+                                <Flex p={4} gap={2} direction={'column'} >
+                                    {/* TableHeading start -------------------------------------------------------------------------------------------------------------- */}
+                                    {
+                                        count > 0 &&
+                                        <Flex w={'full'} p={2} gap={10} >
+                                            <Flex flex={1.2} color={'gray'} direction={'column'} gap={10}>
+                                                <Flex fontSize={'12px'}>
+                                                    <Flex flex={1}  >
+                                                        <Box ml={10}>
+                                                            Currency
                                                         </Box>
-                                                        <Flex direction={'column'}>
+                                                    </Flex>
+                                                    <Flex flex={.5} justifyContent={{ base: 'end', xl: 'center' }} mr={{ base: 10, xl: 0 }} >Balance</Flex>
+                                                    <Flex flex={.5} justifyContent={'center'} w={'full'} display={{ base: 'none', xl: 'flex' }} > In INR</Flex>
+                                                </Flex>
+                                            </Flex>
+                                            <Flex flex={.8} color={'green'} gap={20} justifyContent={'space-between'} direction={'column'} display={{ base: 'none', md: 'flex' }} >
+
+                                            </Flex>
+                                        </Flex>
+                                    }
+
+                                    {/* TableHeading End -------------------------------------------------------------------------------------------------------*/}
+
+                                    {
+                                        cryptoOption.map((item, optionIndex) => (
+                                            item.status &&
+
+
+                                            <Flex key={optionIndex} w={'full'} p={2} gap={10}>
+                                                <Flex flex={1.2} color={'gray'} direction={'column'} >
+
+                                                    {/* Left Side Table Data */}
+                                                    <Flex borderRight={{ base: '0', md: '1px solid #dcdcdc' }}  >
+
+
+                                                        <Flex flex={1} gap={2} direction={'column'} justifyContent={'space-between'}  >
+
+                                                            <Flex gap={0}>
+
+                                                                <Box display={'flex'} pt={1} width={'40px'} height={'40px'}>
+                                                                    <Image boxSize={5} src={item.logo} alt={item.name} />
+
+                                                                </Box>
+                                                                <Flex direction={'column'}>
+
+                                                                    <Flex gap={2}>
+                                                                        <Heading size={'md'}>
+                                                                            {item.shrotName}
+                                                                        </Heading>
+                                                                        <Box display={'flex'} alignItems={'center'} as='span' color={'gray.300'} fontWeight={500}>
+                                                                            {item.name}
+                                                                        </Box>
+                                                                    </Flex>
+                                                                    <Box>{item.pricePerCoin}</Box>
+                                                                </Flex>
+                                                            </Flex>
+
+                                                        </Flex>
+                                                        <Flex flex={.5} justifyContent={'center'} alignItems={{ base: 'end', xl: 'center' }} direction={'column'} mr={{ base: 0, md: 10, xl: 0 }}>
 
                                                             <Flex gap={2}>
-                                                                <Heading size={'md'}>
-                                                                    {item.shrotName}
-                                                                </Heading>
-                                                                <Box display={'flex'} alignItems={'center'} as='span' color={'gray.300'} fontWeight={500}>
-                                                                    {item.name}
-                                                                </Box>
+                                                                <Flex direction={'column'} textAlign={'end'}>
+
+                                                                    <Box fontWeight={600} color={'black'}>
+                                                                        {item.blc}
+                                                                    </Box>
+                                                                    <Flex gap={1} display={{ base: 'flex', xl: 'none' }} >
+                                                                        <Box pt={1}>
+                                                                            <LuEqualApproximately />
+                                                                        </Box>
+                                                                        {`  ${item.INR} INR`}
+                                                                    </Flex>
+                                                                </Flex>
+                                                                <Flex display={{ base: 'flex', md: 'none' }}>
+
+                                                                    <ThreeDotMenu2 option={item.actions} />
+                                                                </Flex>
+
                                                             </Flex>
-                                                            <Box>{item.pricePerCoin}</Box>
+
+
                                                         </Flex>
-                                                    </Flex>
+                                                        <Flex flex={.5} justifyContent={'center'} alignItems={'center'} direction={'column'} gap={1} fontSize={'12px'} display={{ base: 'none', xl: 'flex' }}>
 
-                                                </Flex>
-                                                <Flex flex={.5} justifyContent={'center'} alignItems={{ base: 'end', xl: 'center' }} direction={'column'} mr={{ base: 0, md: 10, xl: 0 }}>
+                                                            <Flex>
 
-                                                    <Flex gap={2}>
-                                                        <Flex direction={'column'} textAlign={'end'}>
-
-                                                            <Box fontWeight={600} color={'black'}>
-                                                                {item.blc}
-                                                            </Box>
-                                                            <Flex gap={1} display={{ base: 'flex', xl: 'none' }} >
                                                                 <Box pt={1}>
                                                                     <LuEqualApproximately />
                                                                 </Box>
-                                                                {`  ${item.INR} INR`}
+                                                                {item.INR}
                                                             </Flex>
-                                                        </Flex>
-                                                        <Flex display={{ base: 'flex', md: 'none' }}>
 
-                                                            <ThreeDotMenu2 option={item.actions} />
                                                         </Flex>
-
                                                     </Flex>
+                                                    {/* Left Side Table Data End */}
+                                                </Flex>
 
+
+                                                {/* Right side Table Data Start */}
+                                                <Flex flex={.8} justifyContent={{ md: 'space-between', lg: 'space-around' }} display={{ base: 'none', md: 'flex' }}  >
+                                                    {item.send}
+
+                                                    {item.receive}
+
+                                                    {
+                                                        cryptoStatus.map((item, index) => (
+                                                            <React.Fragment key={index}>
+
+                                                                <Flex key={index} cursor={'pointer'} direction={'column'} onClick={() => navigate(item.to)} >
+                                                                    <Flex display={'flex'} alignItems={'center'} justifyContent={'center'}>{item.icon}</Flex>
+                                                                    <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>{item.name}</Flex>
+                                                                    <Flex>
+
+                                                                    </Flex>
+
+                                                                </Flex>
+                                                            </React.Fragment>
+                                                        ))
+                                                    }
+                                                    {item.threedots}
 
                                                 </Flex>
-                                                <Flex flex={.5} justifyContent={'center'} alignItems={'center'} direction={'column'} gap={1} fontSize={'12px'} display={{ base: 'none', xl: 'flex' }}>
+                                                {/* Right side Table Data End */}
 
-                                                    <Flex>
-
-                                                        <Box pt={1}>
-                                                            <LuEqualApproximately />
-                                                        </Box>
-                                                        {item.INR}
-                                                    </Flex>
-
-                                                </Flex>
                                             </Flex>
-                                            {/* Left Side Table Data End */}
-                                        </Flex>
 
 
-                                        {/* Right side Table Data Start */}
-                                        <Flex flex={.8} justifyContent={{ md: 'space-between', lg: 'space-around' }} display={{ base: 'none', md: 'flex' }}  >
-                                            {item.send}
-
-                                            {item.receive}
-
-                                            {
-                                                cryptoStatus.map((item, index) => (
-                                                    <React.Fragment key={index}>
-
-                                                        <Flex key={index} cursor={'pointer'} direction={'column'} onClick={() => navigate(item.to)} >
-                                                            <Flex display={'flex'} alignItems={'center'} justifyContent={'center'}>{item.icon}</Flex>
-                                                            <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>{item.name}</Flex>
-                                                            <Flex>
-
-                                                            </Flex>
-
-                                                        </Flex>
-                                                    </React.Fragment>
-                                                ))
-                                            }
-                                            {item.threedots}
-
-                                        </Flex>
-                                        {/* Right side Table Data End */}
-
-                                    </Flex>
 
 
-                                ))
-                            }
 
-                        </Flex>
+
+
+                                        ))
+                                    }
+
+                                </Flex>
+
+                        }
+
                     </Card>
 
                 </Flex>
@@ -224,7 +264,7 @@ const Balance = () => {
 }
 
 
-const ThreeDotMenu1 = ({ btnName }) => {
+export const ThreeDotMenu1 = ({ btnName }) => {
     const navigateTo = useNavigate()
     return (
 
@@ -243,7 +283,7 @@ const ThreeDotMenu1 = ({ btnName }) => {
 
     )
 }
-const ThreeDotMenu2 = ({ option }) => {
+export const ThreeDotMenu2 = ({ option }) => {
     const { isOpen, onClose, onOpen } = useDisclosure();
     const navigate = useNavigate();
     return (
@@ -283,7 +323,12 @@ const ThreeDotMenu2 = ({ option }) => {
 
 
 
-const LatestTransactions = () => {
+export const LatestTransactions = () => {
+    const { transaction } = useAccount();
+    console.log(transaction);
+
+
+
     const arr = [1, 2]
 
     return (
@@ -309,7 +354,7 @@ const LatestTransactions = () => {
 
                     {/* Data Part start */}
                     {
-                        arr.map((item, index) => (
+                        transaction?.data?.length > 0 && transaction?.data.map((item, index) => (
 
                             <Flex w={'full'} key={index}>
                                 <Flex flex={1.4} gap={10}>
@@ -317,16 +362,23 @@ const LatestTransactions = () => {
                                         <Flex gap={5}>
                                             <Box pt={1}> <Circle bg={'orange'} p={2}><BsBoxArrowInDownRight /></Circle></Box>
                                             <Flex direction={'column'}>
-                                                <Box>Recived</Box>
-                                                <Box fontSize={'12px'}>{new Date().toLocaleString()}</Box>
+                                                <Box>{item.method === 'receive' ? "received" : 'Send'}</Box>
+                                                <Box fontSize={'12px'}>{new Date(Number(item.date_time) * 1000).toLocaleString('en-GB')}</Box>
+
                                             </Flex>
                                         </Flex>
                                     </Flex>
                                     <Flex display={{ base: 'none', md: 'Flex' }} direction={'column'} flex={1.2} gap={2}>
-                                        Sent To : 0x1234567890
+                                        <Box maxW={'250px'}>
+
+                                            {
+                                                item.method === "receive" ? `receive from ${item.from_address}` : `send to ${item.from_address}`
+                                            }
+                                        </Box>
                                         <Flex display={{ base: 'flex', lg: 'none' }}>
 
-                                            <Button variant={'outline'} size={'sm'} colorScheme='green'>Completed</Button>
+                                            <Button variant={'outline'} size={'sm'} colorScheme={item.status === 'success' ? 'green' : 'red'}>{item.status}</Button>
+
                                         </Flex>
 
                                     </Flex>
@@ -335,12 +387,12 @@ const LatestTransactions = () => {
                                     <Flex justifyContent={{ base: 'end', lg: 'space-between' }} w={'full'} gap={10}>
 
                                         <Flex display={{ base: 'none', lg: 'Flex' }}>
-                                            <Button variant={'outline'} size={'sm'} colorScheme='green'>Completed</Button>
+                                            <Button variant={'outline'} size={'sm'} colorScheme={item.status === 'success' ? 'green' : 'red'}>{item.status}</Button>
                                         </Flex>
                                         <Flex>
                                             <Flex direction={'column'} textAlign={'end'}  >
-                                                <Box alignItems={'end'}  >-0.000000254 BTC</Box>
-                                                <Box alignItems={'end'} fontSize={'12px'} >-0.73 BTC</Box>
+                                                <Box alignItems={'end'}  >{`${item.paid_amount} ${item.asset}`}</Box>
+                                                {/* <Box alignItems={'end'} fontSize={'12px'} >-0.73 BTC</Box> */}
                                             </Flex>
                                         </Flex>
                                     </Flex>
@@ -360,7 +412,7 @@ const LatestTransactions = () => {
 
 
 
-const Receive1 = () => {
+export const Receive1 = () => {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [copied, setCopied] = useState(false);
     const { web3wallet } = useAccount();
@@ -440,7 +492,7 @@ const Receive1 = () => {
         </>
     )
 }
-const Receive2 = () => {
+export const Receive2 = () => {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const address = '0xae2244e9bD6fC01b52d8E1b634eE5Db94eA6Ca48'
     const [copied, setCopied] = useState(false);
@@ -515,7 +567,7 @@ const Receive2 = () => {
         </>
     )
 }
-const Receive3 = () => {
+export const Receive3 = () => {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const address = '0xae2244e9bD6fC01b52d8E1b634eE5Db94eA6Ca48'
     const [copied, setCopied] = useState(false);
@@ -596,7 +648,7 @@ const Receive3 = () => {
     )
 }
 
-const Receive4 = () => {
+export const Receive4 = () => {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [istron, setTron] = React.useState(false)
     const [active, setActive] = React.useState('eth')
@@ -758,7 +810,8 @@ const Receive4 = () => {
     )
 }
 
-const Send1 = () => {
+export const Send1 = () => {
+    const cryptoOption = useCryptoOption();
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [headername, setHeaderName] = useState(cryptoOption[0].name);
     const [headerlogo, setHeaderLogo] = useState(cryptoOption[0].logo);
@@ -788,8 +841,16 @@ const Send1 = () => {
                     </ModalHeader>
                     <ModalBody>
                         <Flex direction={'column'} gap={10} my={10}>
+                            <Flex as={Button} py={8} w={'full'} borderRadius={5} bg={'gray.100'} _hover={{ bg: 'gray.100' }} justifyContent={'space-between'}  >
+                                <Flex gap={2}>
+                                    <Image boxSize={5} src='/imagelogo/bitcoin-btc-logo.png'></Image>
+                                    Bitcoin
+                                </Flex>
+                                <MdKeyboardArrowRight />
 
-                            <SelectToken index={0} setHeaderName={setHeaderName} setHeaderLogo={setHeaderLogo} />
+                            </Flex>
+
+                            {/* <SelectToken index={0} setHeaderName={setHeaderName} setHeaderLogo={setHeaderLogo} /> */}
                             <Flex direction={'column'} bg={'gray.100'} borderRadius={5} py={4}>
 
                                 <Flex justifyContent={'space-between'} p={4} >
@@ -830,7 +891,8 @@ const Send1 = () => {
 
 
 
-const Send2 = () => {
+export const Send2 = () => {
+    const cryptoOption = useCryptoOption();
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [headername, setHeaderName] = useState(cryptoOption[1].name);
     const [headerlogo, setHeaderLogo] = useState(cryptoOption[1].logo);
@@ -900,7 +962,8 @@ const Send2 = () => {
         </>
     )
 }
-const Send3 = () => {
+export const Send3 = () => {
+    const cryptoOption = useCryptoOption();
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [headername, setHeaderName] = useState(cryptoOption[2].name);
     const [headerlogo, setHeaderLogo] = useState(cryptoOption[2].logo);
@@ -971,7 +1034,8 @@ const Send3 = () => {
     )
 }
 
-const Send4 = () => {
+export const Send4 = () => {
+    const cryptoOption = useCryptoOption();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [headername, setHeaderName] = useState(cryptoOption[3].name);
     const [headerlogo, setHeaderLogo] = useState(cryptoOption[3].logo);
@@ -1045,6 +1109,7 @@ const Send4 = () => {
 
 
 export const SelectToken = ({ index, setHeaderName, setHeaderLogo }) => {
+    const cryptoOption = useCryptoOption();
     const [option, setOption] = useState(cryptoOption[index].name);
     const [logo, setlogo] = useState(cryptoOption[index].logo);
     return (
@@ -1076,15 +1141,6 @@ export const SelectToken = ({ index, setHeaderName, setHeaderLogo }) => {
     )
 }
 
-
-
-
-// const cryptoOption = [
-//     { shrotName: 'BTC', name: 'Bitcoin', logo: 'https://cryptologos.cc/logos/thumbs/bitcoin.png?v=040', pricePerCoin: '1 BTC = 8,448,496.2999 INR', blc: 0, INR: '0.00', table: 'true', receive: <Receive1 />, send: <Send1 /> },
-//     { shrotName: 'ETH', name: 'Ethereum', logo: 'https://cryptologos.cc/logos/thumbs/ethereum.png?v=040', pricePerCoin: '1 ETH = 8,448,496.2999 INR', blc: 0, INR: '0.00', table: 'true', receive: <Receive2 />, send: <Send2 /> },
-//     { shrotName: 'USDC', name: 'USDC', logo: 'https://cryptologos.cc/logos/thumbs/usd-coin.png?v=040', pricePerCoin: '1 USDC = 8,448,496.2999 INR', blc: 0, INR: '0.00', receive: <Receive3 />, send: <Send3 /> },
-//     { shrotName: 'USDT', name: 'Tether', logo: 'https://cryptologos.cc/logos/thumbs/tether.png?v=040', pricePerCoin: '1 USDT = 8,448,496.2999 INR', blc: 0, INR: '0.00', receive: <Receive4 />, send: <Send4 /> },
-// ]
 const cryptoOption1 = [
     { name: 'Bitcoin', logo: 'https://cryptologos.cc/logos/thumbs/bitcoin.png?v=040' },
     { name: 'Ethereum', logo: 'https://cryptologos.cc/logos/thumbs/ethereum.png?v=040' },
@@ -1103,77 +1159,83 @@ const cryptoStatus1 = [
     { name: 'Sell BTC', icon: <GoArrowUpRight /> }
 ]
 
-const cryptoOption = [
-    {
-        shrotName: 'BTC',
-        name: 'Bitcoin',
-        logo: 'https://cryptologos.cc/logos/thumbs/bitcoin.png?v=040',
-        pricePerCoin: '1 BTC = 8,448,496.2999 INR',
-        blc: 0, INR: '0.00',
-        table: 'true',
-        receive: <Receive1 />,
-        send: <Send1 />,
-        threedots: <ThreeDotMenu1 btnName={'BTC'} />,
+// const wallet = useWalletStore.getState().web3wallet;
+// console.log(wallet);
+// const cryptoOption = [
+//     {
+//         status: wallet?.data?.bitcoin ? true : false,
+//         shrotName: 'BTC',
+//         name: 'Bitcoin',
+//         logo: '/imagelogo/bitcoin-btc-logo.png',
+//         pricePerCoin: '1 BTC = 8,448,496.2999 INR',
+//         blc: 0, INR: '0.00',
+//         table: 'true',
+//         receive: <Receive1 />,
+//         send: <Send1 />,
+//         threedots: <ThreeDotMenu1 btnName={'BTC'} />,
 
-        actions: [
-            { action: <Send1 /> },
-            { action: <Receive1 /> },
-            { name: 'Convert', icon: <SiConvertio />, to: 'convert' },
-            { name: 'Buy BTC', icon: <GoArrowDownLeft />, to: '/buy' },
-            { name: 'Sell BTC', icon: <GoArrowUpRight />, to: '/sell' }
-        ]
-    },
-    {
-        shrotName: 'ETH',
-        name: 'Ethereum',
-        logo: 'https://cryptologos.cc/logos/thumbs/ethereum.png?v=040',
-        pricePerCoin: '1 ETH = 8,448,496.2999 INR',
-        blc: 0, INR: '0.00',
-        table: 'true',
-        receive: <Receive2 />,
-        send: <Send2 />,
-        threedots: <ThreeDotMenu1 btnName={'ETH'} />,
+//         actions: [
+//             { action: <Send1 /> },
+//             { action: <Receive1 /> },
+//             { name: 'Convert', icon: <SiConvertio />, to: 'convert' },
+//             { name: 'Buy BTC', icon: <GoArrowDownLeft />, to: '/buy' },
+//             { name: 'Sell BTC', icon: <GoArrowUpRight />, to: '/sell' }
+//         ]
+//     },
+//     {
+//         status: wallet?.data?.ethereum ? true : false,
+//         shrotName: 'ETH',
+//         name: 'Ethereum',
+//         logo: '/imagelogo/ethereum-eth-logo.png',
+//         pricePerCoin: '1 ETH = 8,448,496.2999 INR',
+//         blc: 0, INR: '0.00',
+//         table: 'true',
+//         receive: <Receive2 />,
+//         send: <Send2 />,
+//         threedots: <ThreeDotMenu1 btnName={'ETH'} />,
 
-        actions: [
-            { action: <Send2 /> },
-            { action: <Receive2 /> },
-            { name: 'Convert', icon: <SiConvertio />, to: 'convert' },
-            { name: 'Buy ETH', icon: <GoArrowDownLeft />, to: '/buy' },
-            { name: 'Sell ETH', icon: <GoArrowUpRight />, to: '/sell' }
-        ]
-    },
-    {
-        shrotName: 'USDC', name: 'USDC',
-        logo: 'https://cryptologos.cc/logos/thumbs/usd-coin.png?v=040',
-        pricePerCoin: '1 USDC = 8,448,496.2999 INR',
-        blc: 0, INR: '0.00',
-        receive: <Receive3 />, send: <Send3 />,
-        threedots: <ThreeDotMenu1 btnName={'USDC'} />,
+//         actions: [
+//             { action: <Send2 /> },
+//             { action: <Receive2 /> },
+//             { name: 'Convert', icon: <SiConvertio />, to: 'convert' },
+//             { name: 'Buy ETH', icon: <GoArrowDownLeft />, to: '/buy' },
+//             { name: 'Sell ETH', icon: <GoArrowUpRight />, to: '/sell' }
+//         ]
+//     },
+//     {
+//         status: wallet?.data?.binance ? true : false,
+//         shrotName: 'BNB', name: 'Binance',
+//         logo: '/imagelogo/bnb-bnb-logo.png',
+//         pricePerCoin: '1 BNB = 8,448,496.2999 INR',
+//         blc: 0, INR: '0.00',
+//         receive: <Receive3 />, send: <Send3 />,
+//         threedots: <ThreeDotMenu1 btnName={'USDC'} />,
 
-        actions: [
-            { action: <Send3 /> },
-            { action: <Receive3 /> },
-            { name: 'Convert', icon: <SiConvertio />, to: 'convert' },
-            { name: 'Buy USDC', icon: <GoArrowDownLeft />, to: '/buy' },
-            { name: 'Sell USDC', icon: <GoArrowUpRight />, to: '/sell' }
-        ]
-    },
-    {
-        shrotName: 'USDT', name: 'Tether',
-        logo: 'https://cryptologos.cc/logos/thumbs/tether.png?v=040',
-        pricePerCoin: '1 USDT = 8,448,496.2999 INR',
-        blc: 0, INR: '0.00',
-        receive: <Receive4 />, send: <Send4 />,
-        threedots: <ThreeDotMenu1 btnName={'USDT'} />,
-        actions: [
-            { action: <Send4 /> },
-            { action: <Receive4 /> },
-            { name: 'Convert', icon: <SiConvertio />, to: 'convert' },
-            { name: 'Buy USDT', icon: <GoArrowDownLeft />, to: '/buy' },
-            { name: 'Sell USDT', icon: <GoArrowUpRight />, to: '/sell' }
-        ]
-    }
-];
+//         actions: [
+//             { action: <Send3 /> },
+//             { action: <Receive3 /> },
+//             { name: 'Convert', icon: <SiConvertio />, to: 'convert' },
+//             { name: 'Buy USDC', icon: <GoArrowDownLeft />, to: '/buy' },
+//             { name: 'Sell USDC', icon: <GoArrowUpRight />, to: '/sell' }
+//         ]
+//     },
+//     {
+//         status: true,
+//         shrotName: 'USDT', name: 'Tether',
+//         logo: '/imagelogo/tether-usdt-logo.png',
+//         pricePerCoin: '1 USDT = 8,448,496.2999 INR',
+//         blc: 0, INR: '0.00',
+//         receive: <Receive4 />, send: <Send4 />,
+//         threedots: <ThreeDotMenu1 btnName={'USDT'} />,
+//         actions: [
+//             { action: <Send4 /> },
+//             { action: <Receive4 /> },
+//             { name: 'Convert', icon: <SiConvertio />, to: 'convert' },
+//             { name: 'Buy USDT', icon: <GoArrowDownLeft />, to: '/buy' },
+//             { name: 'Sell USDT', icon: <GoArrowUpRight />, to: '/sell' }
+//         ]
+//     }
+// ];
 
 
 export default Balance

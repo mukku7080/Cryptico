@@ -28,27 +28,33 @@ function OTPInput({ verification, email, onSuccess, onEvent }) {
         if (verification == 'Email') {
 
             try {
-
-                const res = await handleVerifyEmailOtp({ otp });
-                if (onEvent === 'register') {
-
-                    toast({
-                        title: "Email Verified",
-                        description: "Successfully Registered",
-                        status: "success",
-                        duration: 2000,
-                        isClosable: true,
-                        position: "top-right",
-                    });
+                const verifyObject = {
+                    otp: otp,
+                    operation: onEvent
                 }
-                else {
-                    toast({
-                        title: "Login Successfully",
-                        status: "success",
-                        duration: 3000,
-                        isClosable: true,
-                        position: "top-right",
-                    });
+
+                const res = await handleVerifyEmailOtp(verifyObject);
+                if (res.status) {
+
+                    if (onEvent === 'email_verification') {
+
+                        toast({
+                            title: "Email Verified",
+                            status: "success",
+                            duration: 2000,
+                            isClosable: true,
+                            position: "top-right",
+                        });
+                    }
+                    else {
+                        toast({
+                            title: "Login Successfully",
+                            status: "success",
+                            duration: 3000,
+                            isClosable: true,
+                            position: "top-right",
+                        });
+                    }
                 }
 
                 onSuccess();
@@ -70,7 +76,7 @@ function OTPInput({ verification, email, onSuccess, onEvent }) {
 
             navigate('/user-dashboard');
             // login(email);
-            console.log(email.value);
+            // console.log(email.value);
         }
 
     }

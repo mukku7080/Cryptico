@@ -36,6 +36,8 @@ import Testing from './CustomComponents/Wallet/Testing';
 import OtpVerification from './CustomComponents/LoginSignup/OtpVerification';
 import AllNotification from './CustomComponents/NotificationFile/AllNotification';
 import NotFound from './CustomComponents/NotFound/NotFound';
+import EmailVerification from './CustomComponents/LoginSignup/EmailVerification';
+import EmailProtectedRoute from './CustomComponents/AuthContext/EmailProtectedRoute';
 // import BitcoinWallet1 from './CustomComponents/Testwallet/BitCoinWallet1';
 
 
@@ -46,7 +48,7 @@ const RoutesConfig = () => {
             <Route path='/login' element={<Loginnew />} />
             <Route path='/signup' element={<Signupnew />} />
             <Route path='/testing' element={<Testing />} />
-            <Route path='*' element={<NotFound/>} />
+            <Route path='*' element={<NotFound />} />
             {/* <Route path='/bitcoinTesting' element={<BitcoinWallet1 />} /> */}
             {/* <Route path='/phoneVerification' element={<OtpVerification />} /> */}
             <Route path='/allNotification' element={<AllNotification />} />
@@ -54,6 +56,7 @@ const RoutesConfig = () => {
             <Route path='/forgetPassword' element={<ForgetPasswrod />} />
 
             <Route path="/number-verification" element={<ProtectedRoute><Numberwithotp /></ProtectedRoute>} />
+            <Route path="/email-verification" element={<EmailVerification />}/>
             <Route path="/user-dashboard" element={<ProtectedRoute><UserDashboardNew /></ProtectedRoute>} >
                 <Route index element={<TradeHistoryNew />} />
                 <Route path="tradehistory" element={<TradeHistoryNew />} />

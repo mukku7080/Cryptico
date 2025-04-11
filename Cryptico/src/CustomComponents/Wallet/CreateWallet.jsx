@@ -6,6 +6,7 @@ import { IoMdEye, IoMdEyeOff } from 'react-icons/io';
 import { useAuth } from '../../Context/AuthContext';
 import { useAccount } from '../../Context/AccountContext';
 import { MdKeyboardArrowDown } from 'react-icons/md';
+import { useUser } from '../../Context/userContext';
 
 
 const CreateWallet = () => {
@@ -71,6 +72,7 @@ const PasswordVerification = ({ blockChainType = {}, onClose }) => {
     const { handlePasswordMatch, passwordmatch } = useAuth();
     const [showpassword, setShowPassword] = useState(false);
     const [isLoading, setLoading] = useState(false);
+    const [isProceeding, setProceeding] = useState(false);
     const { handleCreateWallet, handleUpdateweb3WalletAddress, handleGetWeb3Wallet } = useAccount();
     const [keyphrase, setKeyPhrase] = useState();
     const [walletid, setWalletId] = useState();
@@ -79,6 +81,7 @@ const PasswordVerification = ({ blockChainType = {}, onClose }) => {
     const [isInputDisabled, setIsInputDisabled] = useState(false);
     const [walletAddressUpdate, setWalletAddressUpdate] = useState(false);
     const [createWalletErrorMessage, setCreateWalletErrorMessage] = useState(false);
+    const { user } = useUser();
 
 
     const handleClick = async () => {
@@ -90,6 +93,7 @@ const PasswordVerification = ({ blockChainType = {}, onClose }) => {
                 setIsInputDisabled(true);
 
                 const response = await handleCreateWallet(blockChainType);
+
                 // console.log(response)
                 if (response?.status) {
                     if (!response.walletAddressUpdate) {
@@ -104,15 +108,14 @@ const PasswordVerification = ({ blockChainType = {}, onClose }) => {
 
                         setCelebrate(true);
                         setTimeout(() => {
-                            setIsInputDisabled(false);
                             onClose();
+                            setIsInputDisabled(false);
                         }, 3000);
                     }
 
                 }
                 else {
                     setWalletError(response?.message);
-                    console.log(response?.message);
                 }
 
 
@@ -128,37 +131,23 @@ const PasswordVerification = ({ blockChainType = {}, onClose }) => {
 
     }
 
-    const generateWalletAddress = async () => {
-        // console.log('hello');
-        // console.log(keyphrase);
-
-        const decrypted = await decryptWithKey(keyphrase, 99);
-        // console.log("Decrypted Data:", decrypted);
+    const generateWalletAddress = async () => {     
+        setProceeding(true);
+        const decrypted = await decryptWithKey(keyphrase, user.user_id);
         const finalDecryption = await decryptWithKey(decrypted.phrase, decrypted.key);
-        // console.log(finalDecryption);
-
-        // const decy = await decryptData(keyphrase);
-
-
-
-        // Create an HD Wallet from the mnemonic
         const mnemonic = finalDecryption;
         const hdNode = ethers.utils.HDNode.fromMnemonic(mnemonic);
-
-        // console.log("Master Wallet Address:", hdNode.address); // First address
-
-        // Generate multiple wallet addresses
         const wallet = new ethers.Wallet(hdNode.derivePath(`m/44'/60'/0'/0/${walletid}`).privateKey);
         const values = {
             "wallet_id": walletid,
             "wallet_address": wallet.address,
             "wallet_key": wallet.privateKey
-
         }
         const response = await handleUpdateweb3WalletAddress(values);
         if (response.data.status) {
 
             await handleGetWeb3Wallet();
+            setProceeding(false);
             setCelebrate(true);
             setTimeout(() => {
                 setIsInputDisabled(false);
@@ -211,6 +200,7 @@ const PasswordVerification = ({ blockChainType = {}, onClose }) => {
             console.error('Decryption failed:', error);
             throw new Error('Decryption failed.');
         }
+
     }
     return (
         <>
@@ -262,9 +252,9 @@ const PasswordVerification = ({ blockChainType = {}, onClose }) => {
                         </Button>
                     </Flex>
                     {
-                        isInputDisabled && !walletAddressUpdate &&
+                         !walletAddressUpdate && isInputDisabled && !iscelebrate &&
 
-                        <Button sx={gradientButtonStyle} onClick={generateWalletAddress}>Procced to wallet creation</Button>
+                        <Button isLoading={isProceeding} loadingText='Procceding...' sx={gradientButtonStyle} onClick={generateWalletAddress}>Proceed to wallet creation</Button>
                     }
                     {
                         walleterror &&
@@ -325,7 +315,7 @@ const SelectBlockChain = ({ index, setHeaderName, setHeaderLogo, setblockChainTy
 const cryptoOption = [
     {
         name: 'Bitcoin',
-        logo: 'https://cryptologos.cc/logos/thumbs/bitcoin.png?v=040',
+        logo: '/imagelogo/bitcoin-btc-logo.png',
         blockchainDetail: {
             blockchain: "bitcoin",
             network: "btc",
@@ -334,7 +324,7 @@ const cryptoOption = [
     },
     {
         name: 'Ethereum',
-        logo: 'https://cryptologos.cc/logos/thumbs/ethereum.png?v=040',
+        logo: '/imagelogo/ethereum-eth-logo.png',
         blockchainDetail: {
             blockchain: "ethereum",
             network: "erc20",
@@ -343,7 +333,7 @@ const cryptoOption = [
     },
     {
         name: 'Binance',
-        logo: 'https://cryptologos.cc/logos/thumbs/bnb.png?v=040',
+        logo: '/imagelogo/bnb-bnb-logo.png',
         blockchainDetail: {
             blockchain: "binance",
             network: "bep20",
@@ -352,7 +342,7 @@ const cryptoOption = [
     },
     {
         name: 'Tether',
-        logo: 'https://cryptologos.cc/logos/thumbs/tether.png?v=040',
+        logo: '/imagelogo/tether-usdt-logo.png',
         blockchainDetail: {
             blockchain: "ethereum",
             network: "erc20",

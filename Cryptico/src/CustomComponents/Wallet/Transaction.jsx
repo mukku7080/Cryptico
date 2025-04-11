@@ -1,5 +1,5 @@
 import { Box, Button, Card, Divider, Flex, Heading, Icon, Image, Menu, MenuButton, MenuList, MenuItem, Circle } from '@chakra-ui/react'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { LuEqualApproximately } from "react-icons/lu";
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 import { TbSend } from "react-icons/tb";
@@ -11,9 +11,9 @@ import { PiDotsThreeCircleVerticalThin } from "react-icons/pi";
 import { RiArrowRightDownLine } from "react-icons/ri";
 import { BsBoxArrowInUpRight, BsBoxArrowInDownRight } from "react-icons/bs";
 import TokenDropdown from '../Dropdown/TokenDropdown';
+import { useAccount } from '../../Context/AccountContext';
 
 const Transaction = () => {
-
 
     return (
         <Flex w={'container.xxl'} gap={10} direction={'column'} alignItems={'center'} justifyContent={'start'} my={20} marginTop={'50px'} minH={'86vh'}>
@@ -39,6 +39,8 @@ const Transaction = () => {
 }
 
 const LatestTransactions = () => {
+    const { transaction } = useAccount();
+
     const arr = [1, 2]
 
     return (
@@ -66,45 +68,49 @@ const LatestTransactions = () => {
 
                         {/* Data Part start */}
                         {
-                            arr.map(() => (
-                                <>
+                            transaction?.data?.length > 0 && transaction?.data.map((item, index) => (
 
-                                    <Flex w={'full'} bg={'white'} p={{ base: 3, sm: 4 }}>
-                                        <Flex flex={1.4} gap={10}>
-                                            <Flex flex={.8}>
-                                                <Flex gap={{ base: 1, sm: 5 }}>
-                                                    <Box pt={1}> <Circle bg={'orange'} p={2}><BsBoxArrowInDownRight /></Circle></Box>
-                                                    <Flex direction={'column'} >
-                                                        <Box>Recived</Box>
-                                                        <Box fontSize={'12px'}>{new Date().toLocaleString()}</Box>
-                                                    </Flex>
+                                <Flex w={'full'} key={index} p={{ base: 3, sm: 4 }} borderBottom={'1px solid #dcdcdc'} borderTop={'1px solid #dcdcdc'}>
+                                    <Flex flex={1.4} gap={10}>
+                                        <Flex flex={.8}>
+                                            <Flex gap={5}>
+                                                <Box pt={1}> <Circle bg={'orange'} p={2}><BsBoxArrowInDownRight /></Circle></Box>
+                                                <Flex direction={'column'}>
+                                                    <Box>{item.method === 'receive' ? "received" : 'Send'}</Box>
+
+                                                    <Box fontSize={'12px'}>{new Date(Number(item.date_time) * 1000).toLocaleString('en-GB')}</Box>
                                                 </Flex>
-                                            </Flex>
-                                            <Flex display={{ base: 'none', md: 'Flex' }} direction={'column'} flex={1.2} gap={2}>
-                                                Sent To : 0x1234567890
-                                                <Flex display={{ base: 'flex', lg: 'none' }}>
-
-                                                    <Button variant={'outline'} size={'sm'} colorScheme='green'>Completed</Button>
-                                                </Flex>
-
                                             </Flex>
                                         </Flex>
-                                        <Flex flex={.6} >
-                                            <Flex justifyContent={{ base: 'end', lg: 'space-between' }} w={'full'} gap={10}>
+                                        <Flex display={{ base: 'none', md: 'Flex' }} direction={'column'} flex={1.2} gap={2}>
+                                            <Box maxW={'250px'}>
 
-                                                <Flex display={{ base: 'none', lg: 'Flex' }}>
-                                                    <Button variant={'outline'} size={'sm'} colorScheme='green'>Completed</Button>
-                                                </Flex>
-                                                <Flex>
-                                                    <Flex direction={'column'} textAlign={'end'}  >
-                                                        <Box alignItems={'end'}  >-0.000000254 BTC</Box>
-                                                        <Box alignItems={'end'} fontSize={'12px'} >-0.73 BTC</Box>
-                                                    </Flex>
+                                                {
+                                                    item.method === "receive" ? `receive from ${item.from_address}` : `send to ${item.from_address}`
+                                                }
+                                            </Box>
+                                            <Flex display={{ base: 'flex', lg: 'none' }}>
+
+                                                <Button variant={'outline'} size={'sm'} colorScheme={item.status === 'success' ? 'green' : 'red'}>{item.status}</Button>
+
+                                            </Flex>
+
+                                        </Flex>
+                                    </Flex>
+                                    <Flex flex={.6} >
+                                        <Flex justifyContent={{ base: 'end', lg: 'space-between' }} w={'full'} gap={10}>
+
+                                            <Flex display={{ base: 'none', lg: 'Flex' }}>
+                                                <Button variant={'outline'} size={'sm'} colorScheme={item.status === 'success' ? 'green' : 'red'}>{item.status}</Button>
+                                            </Flex>
+                                            <Flex>
+                                                <Flex direction={'column'} textAlign={'end'}  >
+                                                    <Box alignItems={'end'}  >{`${item.paid_amount} ${item.asset}`}</Box>
                                                 </Flex>
                                             </Flex>
                                         </Flex>
                                     </Flex>
-                                </>
+                                </Flex>
                             ))
                         }
                         {/* Data Part End */}

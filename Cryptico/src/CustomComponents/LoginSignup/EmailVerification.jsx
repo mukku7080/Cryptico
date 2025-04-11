@@ -27,7 +27,7 @@ import { useUser } from '../../Context/userContext';
 import OTPInput from './OtpInput';
 
 
-const Loginnew = () => {
+const EmailVerification = () => {
 
     const { handleLogin, handleLoginWithGoogle, handleForgotPassword, handleEmailOtp } = useAuth();
     const toast = useToast();
@@ -111,17 +111,12 @@ const Loginnew = () => {
 
                 const res = await handleLogin(values);
                 if (res.status === true) {
-                    if (!res.emailVerified) {
-                        sessionStorage.setItem('emailVerified', res.emailVerified);
-                        sessionStorage.setItem("authToken", res.token);
-                        await handleEmailOtp("email_verification");
-                    }
-                    else if (res.twoFactorAuth) {
+                    if (res.twoFactorAuth) {
                         set2FAshow(true);
                         sessionStorage.setItem("authToken", res.token);
+
                         return;
                     }
-
                     else {
                         localStorage.setItem("authToken", res.token);
                     }
@@ -193,116 +188,25 @@ const Loginnew = () => {
 
                             <Card borderRadius={'none'} >
                                 <Flex justifyContent={'space-between'} px={3} alignItems={'center'} mt={5}>
-                                    <Heading size={'lg'} fontWeight={'500'}>Login</Heading>
+                                    <Heading size={'sm'} fontWeight={'500'}>EmailVerification</Heading>
                                     <Button leftIcon={<CgArrowsExchange />} bg={'transparent'} color={'orange'} onClick={() => navigate('/signup')}>Sign up</Button>
                                 </Flex>
 
-                                <Box as='p' color={'gray'} maxW={'400px'} px={3} mt={5} my={3}  >Ready to Make Waves in Crypto? Let’s revolutionize your trading journey.</Box>
+                                <Box as='p' color={'gray'} maxW={'400px'} px={3} mt={5} my={3}  >email verification enhaced security of your trading journey.</Box>
                                 <Divider color={'gray'} opacity={0.5} />
 
                                 <CardBody display={'flex'} justifyContent={'center'}>
                                     <Box maxW="md" borderRadius="md" w={'90%'}  >
-                                        {
-                                            is2FAshow ?
-                                                <OTPInput
-                                                    verification={"Email"}
-                                                    email={values.email}
-                                                    onEvent={'login'}
-                                                    onSuccess={() => {
-                                                        navigate('/user-dashboard');
-                                                    }}
 
-                                                />
-                                                :
-                                                <form onSubmit={(e) => {
-                                                    e.preventDefault();
-                                                    handleSubmit();
-                                                }} >
-                                                    {/* user Field */}
+                                        <OTPInput
+                                            verification={"Email"}
+                                            onEvent={'email_verification'}
+                                        onSuccess={() => {
+                                            navigate('/user-dashboard');
+                                        }}
 
-                                                    <FormControl isInvalid={errors.email && touched.email} mb={3}>
-                                                        <FormLabel color={'gray'}  >Email</FormLabel>
-                                                        <Input name="email" placeholder="Email" bg={bgcolor}  // Light gray background
-                                                            _focus={{ bgcolor }}
-                                                            value={values.email}
-                                                            onChange={(e) => {
-                                                                setEmail(e.target.value);
-                                                                handleChange(e);
-                                                            }}
-                                                            onBlur={handleBlur} />
-                                                        <FormErrorMessage>{errors.email}</FormErrorMessage>
-                                                    </FormControl>
+                                        />
 
-
-
-                                                    {/* password Field */}
-                                                    <FormControl isInvalid={errors.password && touched.password} mb={3}>
-                                                        <FormLabel color={'gray'}>Password</FormLabel>
-                                                        <InputGroup>
-
-                                                            <Input name="password" type={showPassword ? "text" : "password"}
-                                                                placeholder="Passwrod" bg={bgcolor}  // Light gray background
-                                                                _focus={{ bgcolor }}
-                                                                value={values.password}
-                                                                onChange={handleChange}
-                                                                onBlur={handleBlur} />
-
-                                                            <InputRightElement>
-                                                                <IconButton
-                                                                    bg={'transparent'}
-                                                                    h="1.75rem"
-                                                                    size=""
-                                                                    onClick={() => setShowPassword((prev) => !prev)}
-                                                                    icon={showPassword ? <IoMdEye /> : <IoMdEyeOff />}
-                                                                    aria-label="Toggle Password Visibility"
-                                                                    _hover={{ bg: 'transparent' }}
-                                                                />
-                                                            </InputRightElement>
-                                                        </InputGroup>
-                                                        <FormErrorMessage>{errors.password}</FormErrorMessage>
-                                                    </FormControl>
-
-
-
-
-
-
-
-                                                    {/* CheckBox */}
-                                                    <Flex justifyContent={'space-between'}>
-
-                                                        <Checkbox mt={3}>
-                                                            <Box color={'gray'} display={'flex'} justifyContent={'space-between'}  >
-                                                                <Box>
-
-                                                                    Remember me
-                                                                </Box>
-                                                            </Box>
-                                                        </Checkbox>
-                                                        <Link mt={3} color={isVisited ? 'gray' : 'green'} display={'flex'} justifyContent={'flex-end'} onClick={() => {
-                                                            setIsVisited(true);
-                                                            navigate('/forgetPassword')
-                                                        }
-                                                        }
-                                                            isLoading
-                                                            colorScheme='blue'
-                                                        > Forgot Password ?</Link>
-                                                    </Flex>
-                                                    {/* Submit Button */}
-                                                    <Button
-                                                        sx={gradientButtonStyle}
-                                                        isLoading={isLoading}
-                                                        loadingText='Loading'
-                                                        type="submit" bg={'orange'}
-                                                        width="full"
-                                                        mt={5}
-                                                        _hover={{ bg: 'orange.500' }}>
-
-                                                        Login
-
-                                                    </Button>
-                                                </form>
-                                        }
 
 
                                     </Box>
@@ -338,7 +242,7 @@ const Loginnew = () => {
     )
 }
 
-export default Loginnew
+export default EmailVerification
 
 
 

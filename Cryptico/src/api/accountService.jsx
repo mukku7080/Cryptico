@@ -93,6 +93,17 @@ export const getWeb3Wallet = async () => {
 
     }
 }
+export const getTransactionDetail = async () => {
+    try {
+
+        const response = await axiosInstance.get('/transaction/get-transaction')
+        return response.data
+    }
+    catch (error) {
+        throw error.response ? error.response.data : error.message;
+    }
+
+}
 
 
 

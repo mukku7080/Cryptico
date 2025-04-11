@@ -26,11 +26,9 @@ export const AuthProvider = ({ children }) => {
     const handleLogin = async ({ email, password }) => {
         try {
 
-            const data = await login({ email, password });
-            // sessionStorage.setItem("authToken", data.token);
-            localStorage.setItem("authToken", data.token);
-            setUser(data.user);
-            return data;
+            const response = await login({ email, password });
+            setUser(response.user);
+            return response;
         }
         catch (error) {
             console.error("Login error:", error);
@@ -69,10 +67,9 @@ export const AuthProvider = ({ children }) => {
     const handleSignup = async ({ email, password }) => {
         try {
 
-            const data = await signup({ email, password });
-            localStorage.setItem("authToken", data.token);
-            setUser(data.user);
-            return data;
+            const response = await signup({ email, password });
+            setUser(response.user);
+            return response;
         }
         catch (error) {
             setError(error);
@@ -93,6 +90,18 @@ export const AuthProvider = ({ children }) => {
     const handleVerifyEmailOtp = async (verifyOtp) => {
         try {
             const response = await verifyEmailOtp(verifyOtp);
+            console.log(response);
+            console.log(verifyOtp);
+            if (response.status === true && verifyOtp?.operation === 'login') {
+                localStorage.setItem("authToken", sessionStorage.getItem('authToken'));
+                sessionStorage.removeItem('authToken');
+            }
+            if (response.status === true && verifyOtp?.operation === 'email_verification') {
+                sessionStorage.removeItem('emailVerified');
+                localStorage.setItem("authToken", sessionStorage.getItem('authToken'));
+                sessionStorage.removeItem('authToken');
+            }
+
             return response;
         }
         catch (error) {

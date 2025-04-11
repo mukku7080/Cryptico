@@ -16,6 +16,7 @@ import { useUser } from '../../../Context/userContext';
 import BuySellWithNotification from '../../Buy&Sell/BuySellWithNotification';
 import { gradientButtonStyle } from '../../Wallet/CreateWallet';
 import { useOtherDetail } from '../../../Context/otherContext';
+import { useAccount } from '../../../Context/AccountContext';
 
 
 
@@ -30,6 +31,7 @@ const UserDashboardNew = () => {
     const { user, error } = useUser();
     const { handleGetAllNotification } = useOtherDetail();
     const location = useLocation();
+
 
     // useEffect(() => {
     //     const lastSegment = location.pathname.split("/").filter(Boolean).pop();
@@ -288,9 +290,11 @@ const UserDashboardNew = () => {
                                                 <Image src='/imagelogo/eaglesecure.png' h={'50px'} w={'50px'} />
                                             </Box>
                                             <Flex direction={'column'}>
-                                                <Box color={'red'}>
+                                                <Box color={user?.twoFactorAuth ? 'green' : 'red'} fontWeight={500}>
+                                                    {
+                                                        user?.twoFactorAuth ? '2FA Enabled' : '2FA Disabled'
+                                                    }
 
-                                                    2FA Not Enabled
                                                 </Box>
                                                 <Box maxW={'200px'}>
                                                     Enabling 2FA  is to enhance security.

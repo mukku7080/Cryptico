@@ -65,7 +65,7 @@ export const emailOtp = async (operation) => {
 export const verifyEmailOtp = async (verifyOtp) => {
     try {
         const response = await axiosInstance.post('/verify-email-otp', verifyOtp);
-        return response;
+        return response.data;
     }
     catch (error) {
         throw error.response ? error.response.data : error;

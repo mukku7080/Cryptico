@@ -88,7 +88,7 @@ const Signupnew = () => {
                 const res = await handleSignup(values);
                 if (res.status === true) {
                     try {
-
+                        sessionStorage.setItem('authToken', res.token);
                         setToken(res.token);
                         setSignup(true);
                         toast({
@@ -195,7 +195,7 @@ const Signupnew = () => {
                                             <OTPInput
                                                 verification={"Email"}
                                                 email={values.email}
-                                                onEvent={'register'}
+                                                onEvent={'email_verification'}
                                                 onSuccess={() => {
                                                     navigate('/user-dashboard');
                                                 }}
@@ -231,7 +231,7 @@ const Signupnew = () => {
                                                             <FormErrorMessage>{errors.email}</FormErrorMessage>
                                                             {error &&
                                                                 <>
-                                                                    <Box m={3} as='p' color={'red'}>{error.message}</Box>
+                                                                    <Box m={3} as='p' color={'red'}>{error?.errors?.email[0]}</Box>
                                                                 </>}
                                                         </FormControl>
 
