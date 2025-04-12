@@ -105,135 +105,133 @@ const Balance = () => {
                             isloading ?
                                 <Heading size={'lg'} alignSelf={'center'} fontSize={'14px'} mt={10} color={'gray.500'}>Loading...</Heading>
                                 :
-                                count > 0 &&
-
-
-                                <Flex p={4} gap={2} direction={'column'} >
-                                    {/* TableHeading start -------------------------------------------------------------------------------------------------------------- */}
-                                    {
-                                        count > 0 &&
-                                        <Flex w={'full'} p={2} gap={10} >
-                                            <Flex flex={1.2} color={'gray'} direction={'column'} gap={10}>
-                                                <Flex fontSize={'12px'}>
-                                                    <Flex flex={1}  >
-                                                        <Box ml={10}>
-                                                            Currency
-                                                        </Box>
+                                count > 0 ?
+                                    <Flex p={4} gap={2} direction={'column'} >
+                                        {/* TableHeading start -------------------------------------------------------------------------------------------------------------- */}
+                                        {
+                                            count > 0 &&
+                                            <Flex w={'full'} p={2} gap={10} >
+                                                <Flex flex={1.2} color={'gray'} direction={'column'} gap={10}>
+                                                    <Flex fontSize={'12px'}>
+                                                        <Flex flex={1}  >
+                                                            <Box ml={10}>
+                                                                Currency
+                                                            </Box>
+                                                        </Flex>
+                                                        <Flex flex={.5} justifyContent={{ base: 'end', xl: 'center' }} mr={{ base: 10, xl: 0 }} >Balance</Flex>
+                                                        <Flex flex={.5} justifyContent={'center'} w={'full'} display={{ base: 'none', xl: 'flex' }} > In INR</Flex>
                                                     </Flex>
-                                                    <Flex flex={.5} justifyContent={{ base: 'end', xl: 'center' }} mr={{ base: 10, xl: 0 }} >Balance</Flex>
-                                                    <Flex flex={.5} justifyContent={'center'} w={'full'} display={{ base: 'none', xl: 'flex' }} > In INR</Flex>
+                                                </Flex>
+                                                <Flex flex={.8} color={'green'} gap={20} justifyContent={'space-between'} direction={'column'} display={{ base: 'none', md: 'flex' }} >
+
                                                 </Flex>
                                             </Flex>
-                                            <Flex flex={.8} color={'green'} gap={20} justifyContent={'space-between'} direction={'column'} display={{ base: 'none', md: 'flex' }} >
+                                        }
 
-                                            </Flex>
-                                        </Flex>
-                                    }
+                                        {/* TableHeading End -------------------------------------------------------------------------------------------------------*/}
 
-                                    {/* TableHeading End -------------------------------------------------------------------------------------------------------*/}
-
-                                    {
-                                        cryptoOption.map((item, optionIndex) => (
-                                            item.status &&
+                                        {
+                                            cryptoOption.map((item, optionIndex) => (
+                                                item.status &&
 
 
-                                            <Flex key={optionIndex} w={'full'} p={2} gap={10}>
-                                                <Flex flex={1.2} color={'gray'} direction={'column'} >
+                                                <Flex key={optionIndex} w={'full'} p={2} gap={10}>
+                                                    <Flex flex={1.2} color={'gray'} direction={'column'} >
 
-                                                    {/* Left Side Table Data */}
-                                                    <Flex borderRight={{ base: '0', md: '1px solid #dcdcdc' }}  >
+                                                        {/* Left Side Table Data */}
+                                                        <Flex borderRight={{ base: '0', md: '1px solid #dcdcdc' }}  >
 
 
-                                                        <Flex flex={1} gap={2} direction={'column'} justifyContent={'space-between'}  >
+                                                            <Flex flex={1} gap={2} direction={'column'} justifyContent={'space-between'}  >
 
-                                                            <Flex gap={0}>
+                                                                <Flex gap={0}>
 
-                                                                <Box display={'flex'} pt={1} width={'40px'} height={'40px'}>
-                                                                    <Image boxSize={5} src={item.logo} alt={item.name} />
+                                                                    <Box display={'flex'} pt={1} width={'40px'} height={'40px'}>
+                                                                        <Image boxSize={5} src={item.logo} alt={item.name} />
 
-                                                                </Box>
-                                                                <Flex direction={'column'}>
-
-                                                                    <Flex gap={2}>
-                                                                        <Heading size={'md'}>
-                                                                            {item.shrotName}
-                                                                        </Heading>
-                                                                        <Box display={'flex'} alignItems={'center'} as='span' color={'gray.300'} fontWeight={500}>
-                                                                            {item.name}
-                                                                        </Box>
-                                                                    </Flex>
-                                                                    <Box>{item.pricePerCoin}</Box>
-                                                                </Flex>
-                                                            </Flex>
-
-                                                        </Flex>
-                                                        <Flex flex={.5} justifyContent={'center'} alignItems={{ base: 'end', xl: 'center' }} direction={'column'} mr={{ base: 0, md: 10, xl: 0 }}>
-
-                                                            <Flex gap={2}>
-                                                                <Flex direction={'column'} textAlign={'end'}>
-
-                                                                    <Box fontWeight={600} color={'black'}>
-                                                                        {item.blc}
                                                                     </Box>
-                                                                    <Flex gap={1} display={{ base: 'flex', xl: 'none' }} >
-                                                                        <Box pt={1}>
-                                                                            <LuEqualApproximately />
+                                                                    <Flex direction={'column'}>
+
+                                                                        <Flex gap={2}>
+                                                                            <Heading size={'md'}>
+                                                                                {item.shrotName}
+                                                                            </Heading>
+                                                                            <Box display={'flex'} alignItems={'center'} as='span' color={'gray.300'} fontWeight={500}>
+                                                                                {item.name}
+                                                                            </Box>
+                                                                        </Flex>
+                                                                        <Box>{item.pricePerCoin}</Box>
+                                                                    </Flex>
+                                                                </Flex>
+
+                                                            </Flex>
+                                                            <Flex flex={.5} justifyContent={'center'} alignItems={{ base: 'end', xl: 'center' }} direction={'column'} mr={{ base: 0, md: 10, xl: 0 }}>
+
+                                                                <Flex gap={2}>
+                                                                    <Flex direction={'column'} textAlign={'end'}>
+
+                                                                        <Box fontWeight={600} color={'black'}>
+                                                                            {item.blc}
                                                                         </Box>
-                                                                        {`  ${item.INR} INR`}
+                                                                        <Flex gap={1} display={{ base: 'flex', xl: 'none' }} >
+                                                                            <Box pt={1}>
+                                                                                <LuEqualApproximately />
+                                                                            </Box>
+                                                                            {`  ${item.INR} INR`}
+                                                                        </Flex>
                                                                     </Flex>
-                                                                </Flex>
-                                                                <Flex display={{ base: 'flex', md: 'none' }}>
+                                                                    <Flex display={{ base: 'flex', md: 'none' }}>
 
-                                                                    <ThreeDotMenu2 option={item.actions} />
+                                                                        <ThreeDotMenu2 option={item.actions} />
+                                                                    </Flex>
+
+                                                                </Flex>
+
+
+                                                            </Flex>
+                                                            <Flex flex={.5} justifyContent={'center'} alignItems={'center'} direction={'column'} gap={1} fontSize={'12px'} display={{ base: 'none', xl: 'flex' }}>
+
+                                                                <Flex>
+
+                                                                    <Box pt={1}>
+                                                                        <LuEqualApproximately />
+                                                                    </Box>
+                                                                    {item.INR}
                                                                 </Flex>
 
                                                             </Flex>
-
-
                                                         </Flex>
-                                                        <Flex flex={.5} justifyContent={'center'} alignItems={'center'} direction={'column'} gap={1} fontSize={'12px'} display={{ base: 'none', xl: 'flex' }}>
-
-                                                            <Flex>
-
-                                                                <Box pt={1}>
-                                                                    <LuEqualApproximately />
-                                                                </Box>
-                                                                {item.INR}
-                                                            </Flex>
-
-                                                        </Flex>
+                                                        {/* Left Side Table Data End */}
                                                     </Flex>
-                                                    {/* Left Side Table Data End */}
-                                                </Flex>
 
 
-                                                {/* Right side Table Data Start */}
-                                                <Flex flex={.8} justifyContent={{ md: 'space-between', lg: 'space-around' }} display={{ base: 'none', md: 'flex' }}  >
-                                                    {item.send}
+                                                    {/* Right side Table Data Start */}
+                                                    <Flex flex={.8} justifyContent={{ md: 'space-between', lg: 'space-around' }} display={{ base: 'none', md: 'flex' }}  >
+                                                        {item.send}
 
-                                                    {item.receive}
+                                                        {item.receive}
 
-                                                    {
-                                                        cryptoStatus.map((item, index) => (
-                                                            <React.Fragment key={index}>
+                                                        {
+                                                            cryptoStatus.map((item, index) => (
+                                                                <React.Fragment key={index}>
 
-                                                                <Flex key={index} cursor={'pointer'} direction={'column'} onClick={() => navigate(item.to)} >
-                                                                    <Flex display={'flex'} alignItems={'center'} justifyContent={'center'}>{item.icon}</Flex>
-                                                                    <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>{item.name}</Flex>
-                                                                    <Flex>
+                                                                    <Flex key={index} cursor={'pointer'} direction={'column'} onClick={() => navigate(item.to)} >
+                                                                        <Flex display={'flex'} alignItems={'center'} justifyContent={'center'}>{item.icon}</Flex>
+                                                                        <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>{item.name}</Flex>
+                                                                        <Flex>
+
+                                                                        </Flex>
 
                                                                     </Flex>
+                                                                </React.Fragment>
+                                                            ))
+                                                        }
+                                                        {item.threedots}
 
-                                                                </Flex>
-                                                            </React.Fragment>
-                                                        ))
-                                                    }
-                                                    {item.threedots}
+                                                    </Flex>
+                                                    {/* Right side Table Data End */}
 
                                                 </Flex>
-                                                {/* Right side Table Data End */}
-
-                                            </Flex>
 
 
 
@@ -241,10 +239,15 @@ const Balance = () => {
 
 
 
-                                        ))
-                                    }
+                                            ))
+                                        }
 
-                                </Flex>
+                                    </Flex>
+                                    :
+                                    <Flex justifyContent={'center'} alignItems={'center'} direction={'column'} gap={2} mt={50} mb={5}>
+                                        <Image opacity={0.6} boxSize={10} src='/imagelogo/Fa6SolidWallet.png'></Image>
+                                        <Heading size={'sm'} color={'gray.300'}>oops! no wallet exist</Heading>
+                                    </Flex>
 
                         }
 
@@ -326,6 +329,12 @@ export const ThreeDotMenu2 = ({ option }) => {
 export const LatestTransactions = () => {
     const { transaction } = useAccount();
     console.log(transaction);
+    const [isloading, setIsLoading] = useState(true);
+    useEffect(() => {
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 2000);
+    })
 
 
 
@@ -335,74 +344,96 @@ export const LatestTransactions = () => {
         <>
             <Card w={'100%'} p={4}>
                 <Heading size={'md'}> Latest Transactions</Heading>
-                <Flex w={'full'} p={{ base: 2, sm: 8 }} color={'gray'} direction={'column'} gap={10}>
-                    {/* Heading start */}
-                    <Flex w={'full'} fontSize={'12px'} fontWeight={500}>
-                        <Flex flex={1.4} gap={10}>
-                            <Flex flex={.8}> <Box ml={12} >TRANSACTION</Box></Flex>
-                            <Flex flex={1.2} display={{ base: 'none', md: 'Flex' }} ml={0}>DETAILS</Flex>
-                        </Flex>
-                        <Flex flex={.6}>
-                            <Flex justifyContent={{ base: 'end', lg: 'space-between' }} w={'full'} gap={10}>
 
-                                <Flex display={{ base: 'none', lg: 'flex' }}>STATUS</Flex>
-                                <Flex><Box display={'flex'} justifyContent={'end'} >AMOUNT</Box></Flex>
-                            </Flex>
-                        </Flex>
-                    </Flex>
-                    {/* Heading End */}
+                {
 
-                    {/* Data Part start */}
-                    {
-                        transaction?.data?.length > 0 && transaction?.data.map((item, index) => (
+                    isloading ? <Heading size={'sm'} color={'gray'} alignSelf={'center'}>
+                        Loading...
+                    </Heading> :
+                        transaction?.data?.length > 0 ?
+                            <Flex w={'full'} p={{ base: 2, sm: 8 }} color={'gray'} direction={'column'} gap={10}>
+                                {/* Heading start */}
 
-                            <Flex w={'full'} key={index}>
-                                <Flex flex={1.4} gap={10}>
-                                    <Flex flex={.8}>
-                                        <Flex gap={5}>
-                                            <Box pt={1}> <Circle bg={'orange'} p={2}><BsBoxArrowInDownRight /></Circle></Box>
-                                            <Flex direction={'column'}>
-                                                <Box>{item.method === 'receive' ? "received" : 'Send'}</Box>
-                                                <Box fontSize={'12px'}>{new Date(Number(item.date_time) * 1000).toLocaleString('en-GB')}</Box>
-
-                                            </Flex>
-                                        </Flex>
+                                <Flex Flex w={'full'} fontSize={'12px'} fontWeight={500}>
+                                    <Flex flex={1.4} gap={10}>
+                                        <Flex flex={.8}> <Box ml={12} >TRANSACTION</Box></Flex>
+                                        <Flex flex={1.2} display={{ base: 'none', md: 'Flex' }} ml={0}>DETAILS</Flex>
                                     </Flex>
-                                    <Flex display={{ base: 'none', md: 'Flex' }} direction={'column'} flex={1.2} gap={2}>
-                                        <Box maxW={'250px'}>
+                                    <Flex flex={.6}>
+                                        <Flex justifyContent={{ base: 'end', lg: 'space-between' }} w={'full'} gap={10}>
 
-                                            {
-                                                item.method === "receive" ? `receive from ${item.from_address}` : `send to ${item.from_address}`
-                                            }
-                                        </Box>
-                                        <Flex display={{ base: 'flex', lg: 'none' }}>
-
-                                            <Button variant={'outline'} size={'sm'} colorScheme={item.status === 'success' ? 'green' : 'red'}>{item.status}</Button>
-
-                                        </Flex>
-
-                                    </Flex>
-                                </Flex>
-                                <Flex flex={.6} >
-                                    <Flex justifyContent={{ base: 'end', lg: 'space-between' }} w={'full'} gap={10}>
-
-                                        <Flex display={{ base: 'none', lg: 'Flex' }}>
-                                            <Button variant={'outline'} size={'sm'} colorScheme={item.status === 'success' ? 'green' : 'red'}>{item.status}</Button>
-                                        </Flex>
-                                        <Flex>
-                                            <Flex direction={'column'} textAlign={'end'}  >
-                                                <Box alignItems={'end'}  >{`${item.paid_amount} ${item.asset}`}</Box>
-                                                {/* <Box alignItems={'end'} fontSize={'12px'} >-0.73 BTC</Box> */}
-                                            </Flex>
+                                            <Flex display={{ base: 'none', lg: 'flex' }}>STATUS</Flex>
+                                            <Flex><Box display={'flex'} justifyContent={'end'} >AMOUNT</Box></Flex>
                                         </Flex>
                                     </Flex>
                                 </Flex>
-                            </Flex>
-                        ))
-                    }
-                    {/* Data Part End */}
 
-                </Flex>
+                                {/* Heading End */}
+
+                                {/*  Data Part start */}
+                                {
+
+                                    transaction?.data?.length > 0 ?
+                                        transaction?.data.map((item, index) => (
+                                            <Flex w={'full'} key={index}>
+                                                <Flex flex={1.4} gap={10}>
+                                                    <Flex flex={.8}>
+                                                        <Flex gap={5}>
+                                                            <Box pt={1}> <Circle bg={'orange'} p={2}><BsBoxArrowInDownRight /></Circle></Box>
+                                                            <Flex direction={'column'}>
+                                                                <Box>{item.method === 'receive' ? "received" : 'Send'}</Box>
+                                                                <Box fontSize={'12px'}>{new Date(Number(item.date_time) * 1000).toLocaleString('en-GB')}</Box>
+
+                                                            </Flex>
+                                                        </Flex>
+                                                    </Flex>
+                                                    <Flex display={{ base: 'none', md: 'Flex' }} direction={'column'} flex={1.2} gap={2}>
+                                                        <Box maxW={'250px'}>
+
+                                                            {
+                                                                item.method === "receive" ? `receive from ${item.from_address}` : `send to ${item.from_address}`
+                                                            }
+                                                        </Box>
+                                                        <Flex display={{ base: 'flex', lg: 'none' }}>
+
+                                                            <Button variant={'outline'} size={'sm'} colorScheme={item.status === 'success' ? 'green' : 'red'}>{item.status}</Button>
+
+                                                        </Flex>
+
+                                                    </Flex>
+                                                </Flex>
+                                                <Flex flex={.6} >
+                                                    <Flex justifyContent={{ base: 'end', lg: 'space-between' }} w={'full'} gap={10}>
+
+                                                        <Flex display={{ base: 'none', lg: 'Flex' }}>
+                                                            <Button variant={'outline'} size={'sm'} colorScheme={item.status === 'success' ? 'green' : 'red'}>{item.status}</Button>
+                                                        </Flex>
+                                                        <Flex>
+                                                            <Flex direction={'column'} textAlign={'end'}  >
+                                                                <Box alignItems={'end'}  >{`${item.paid_amount} ${item.asset}`}</Box>
+                                                                {/* <Box alignItems={'end'} fontSize={'12px'} >-0.73 BTC</Box> */}
+                                                            </Flex>
+                                                        </Flex>
+                                                    </Flex>
+                                                </Flex>
+                                            </Flex>
+                                        ))
+                                        :
+                                        <Flex w={'full'} justifyContent={'center'} alignItems={'center'}>
+
+                                            <Image boxSize={120} src='https://2.bp.blogspot.com/-X9sVvOD0hrs/W5cz8WKyknI/AAAAAAAAEKI/s6mNIUQdsy4KGnCgtF1VSZlnj237ArxawCLcBGAs/s1600/not%2Bfound.gif'></Image>
+                                        </Flex>
+                                }
+                                {/* Data Part End */}
+
+                            </Flex>
+                            :
+                            <Flex justifyContent={'center'} alignItems={'center'} direction={'column'} gap={2} mt={50} mb={5} p={4}>
+                                <Image opacity={0.6} boxSize={10} src='/imagelogo/HugeiconsExchange03.png'></Image>
+                                <Heading size={'sm'} color={'gray.300'}>No Transaction Found</Heading>
+                            </Flex>
+                }
+
             </Card>
         </>
     )

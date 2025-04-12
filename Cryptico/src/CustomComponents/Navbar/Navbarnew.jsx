@@ -489,7 +489,7 @@ const NAV_ITEMS = [
                 href: '/sell?index=2',
             }, {
                 label: 'Sell Tether',
-                logo: 'https://cryptologos.cc/logos/thumbs/tether.png?v=040',
+                logo: '/imagelogo/tether-usdt-logo.png',
                 subLabel: 'Search for offer to sell Tether',
                 href: '/sell?index=3',
             },
