@@ -17,6 +17,7 @@ import { MdKeyboardArrowDown } from "react-icons/md";
 import { IoMdSearch } from "react-icons/io";
 import { IoLocationOutline } from "react-icons/io5";
 import { useOtherDetail } from "../../Context/otherContext";
+import { grayGradient } from "../../Styles/Gradient";
 
 const OfferLocation = ({ formikHelpers = {}, name }) => {
     // const { values = {}, handleChange = {}, handleBlur = {}, errors = {}, touched = {} } = formikHelpers;

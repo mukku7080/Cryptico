@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../../Context/AuthContext";
 import { useUser } from "../../Context/userContext";
+import { gradientButtonStyle } from "../Wallet/CreateWallet";
 
 
 const UserAvatar = () => {
@@ -61,10 +62,10 @@ const UserAvatar = () => {
                         <MenuItem bg={'none'} display={'flex'} justifyContent={'end'}>
                             <Flex justifyContent={'space-between'} alignItems={'center'} w={'100%'} py={1} >
 
-                                <Box display={'flex'} justifyContent={'center'} alignItems={'center'} textAlign={'center'} onClick={() => {
+                                <Box  display={'flex'} sx={gradientButtonStyle} justifyContent={'center'} alignItems={'center'} textAlign={'center'} onClick={() => {
                                     setDark(!isdark)
                                     toggleColorMode();
-                                }} boxSize={6}
+                                }} boxSize={8}
                                     bg={bgColor}
                                     borderRadius={'full'}
                                 >

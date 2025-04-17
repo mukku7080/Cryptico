@@ -35,25 +35,29 @@ import { MdDoubleArrow } from "react-icons/md";
 import OfferLocation from '../Dropdown/OfferLocation';
 import TraderLocation from '../Dropdown/TraderLocation';
 import { MyPaymentModal } from '../Dropdown/PaymentModal/MyPaymentModal';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import TokenDropdown from '../Dropdown/TokenDropdown';
 import BuySellWithNotification from './BuySellWithNotification';
 import { motion } from 'framer-motion';
 import { gradientButtonStyle } from '../Wallet/CreateWallet';
+import { useOffer } from '../../Context/OfferContext';
+import { grayGradient } from '../../Styles/Gradient';
 const MotionFlex = motion(Flex);
 
 const SellNew = () => {
+    const { handleGetOffer, offers, buyOffer } = useOffer();
+
 
 
     return (
         <>
-            <Flex maxW={'container.xxl'} justifyContent={'center'} alignItems={'center'} paddingTop={20} minH={'90vh'} direction={'column'} >
+            <Flex maxW={'container.xxl'} justifyContent={'center'} alignItems={'center'} paddingTop={{ base: 0, lg: 20 }} minH={'90vh'} direction={'column'} >
                 <Flex
                     maxW={{ base: "100%", lg: '90%', xl: "90%" }}
                     minW={{ base: "100%", sm: '90%', lg: '90%', xl: "none" }}
                     w={'100%'}
                     gap={5}
-                    mt={{ base: 5, lg: 0 }}
+                    // mt={{ base: 5, lg: 0 }}
                     direction={{ base: 'column', lg: 'row' }}
 
                 >
@@ -67,7 +71,7 @@ const SellNew = () => {
                     {/* RightSide start */}
                     {/* <Flex w={'full'} justifyContent={'center'} alignItems={'center'} direction={'column'} > */}
 
-                    <Flex alignSelf={'center'} flex={{ lg: 1.4, xl: 1.6 }} direction={'column'} gap={5} overflowY={'auto'} w={{ base: '95%', lg: 'full' }} >
+                    <Flex alignSelf={{ base: 'center', lg: 'start' }} mt={{ base: 24, lg: 0 }} flex={{ lg: 1.4, xl: 1.6 }} direction={'column'} gap={5} overflowY={'auto'} w={{ base: '95%', lg: 'full' }} >
                         <Card borderRadius={5} gap={5} p={2} >
                             <Flex direction={'column'} py={5} px={2} gap={5} >
 
@@ -95,7 +99,7 @@ const SellNew = () => {
 
                                         {/* Table Heading */}
 
-                                        <Flex w={'full'} bg={'gray.200'} p={4} fontWeight={500} gap={10}>
+                                        <Flex w={'full'} sx={grayGradient} p={4} fontWeight={500} gap={10}>
 
                                             <Flex flex={1} >
                                                 <Box>Sell to</Box>
@@ -141,47 +145,17 @@ const SellNew = () => {
 
 
                                         {/* Offer Details */}
+                                        {
+                                            buyOffer.length > 0 &&
+                                            buyOffer.map((data, index) => (
+
+                                                <OfferList key={index} data={data} />
+                                            ))
+                                        }
 
 
 
 
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
-                                        <OfferList />
 
 
                                     </Flex>
@@ -210,9 +184,21 @@ const SellNew = () => {
 
 
 const LeftSideContent = () => {
+    const [searchParams] = useSearchParams();
+    const [index, setIndex] = useState(0);
+    useEffect(() => {
+        const queryValue = searchParams.get('index');
+        // Check if the value is not null and is a valid number
+        if (queryValue !== null) {
+            setIndex(queryValue);
+        } else {
+            setIndex(0);
+        }
+    }, [searchParams]);
 
     return (
         <Flex flex={{ lg: .6, xl: .4 }}
+
             width={'full'}
             gap={{ base: 5, xl: 5 }}
             direction={{ base: 'column', md: 'row', lg: 'row', xl: 'column' }}
@@ -222,19 +208,17 @@ const LeftSideContent = () => {
             zIndex={1}
             overflowY={'auto'}
             overflowX={'hidden'}
-
         >
             <Flex w={'full'} direction={'column'} >
                 <Card boxShadow={'lg'}
                     borderRadius={{ md: 0, lg: 5 }}
                     border={'1px solid #dcdcdc'}
-                    h={{ md: 'full', xl: 'auto' }}
+                    h='auto'
                     p={{ base: 4, sm: 4, md: 6, xl: 4 }}
                     gap={5}>
 
                     <Flex display={{ base: 'none', lg: 'flex' }} direction={'column'} gap={5}>
-
-                        <TokenDropdown />
+                        <TokenDropdown index={index} />
                         <Flex gap={4} color={'gray'}>
                             <Box>1 BTC = 458254.23 INR</Box>
                             <Box display={'flex'} alignItems={'center'}>
@@ -263,7 +247,8 @@ const LeftSideContent = () => {
                                     </InputRightElement>
                                 }
                             </InputGroup>
-                            <CurrencyDropdown />
+
+                            <CurrencyDropdown width='20%' />
                         </Flex>
                     </Flex>
 
@@ -319,7 +304,7 @@ const LeftSideContent = () => {
                             </Flex>
                         </Flex>
 
-                        <Button borderRadius={5} variant={'solid'} justifyContent={'space-between'} sx={gradientButtonStyle} rightIcon={<MdDoubleArrow />}>Find Offers</Button>
+                        <Button borderRadius={5} sx={gradientButtonStyle} justifyContent={'space-between'} colorScheme={'orange'} rightIcon={<MdDoubleArrow />}>Find Offers</Button>
 
 
                     </Flex>
@@ -486,13 +471,12 @@ const MoreFilter = () => {
 }
 
 
-const OfferList = () => {
+const OfferList = ({ index, data }) => {
     const navigate = useNavigate();
-
     return (
-        <Flex w={'full'} p={4} borderBottom={'1px solid #dcdcdc'} borderBottomRadius={5} direction={'column'} gap={5} >
+        <Flex w={'full'} borderBottom={'1px solid #dcdcdc'} borderBottomRadius={0} direction={'column'} gap={5} >
             {/* Row1 */}
-            <Flex w={'full'} gap={{ base: 2, sm: 10 }}>
+            <Flex w={'full'} gap={{ base: 2, sm: 10 }} p={4}>
 
                 {/* Buy from */}
                 <Flex direction={'column'} flex={1}  >
@@ -500,8 +484,8 @@ const OfferList = () => {
                         <Avatar border={'1px solid white'} name='M' size="sm" src='' />
                         <Box>
 
-                            <Heading fontWeight={500} size={'sm'}>Bit_Traders</Heading>
-                            <Heading fontWeight={500} size={'xs'}>Trades 804</Heading>
+                            <Heading as={Link} _hover={{ textDecoration: 'underline' }} fontWeight={500} size={'sm'}>{data?.user?.username}</Heading>
+                            {/* <Heading fontWeight={500} size={'xs'}>Trades 804</Heading> */}
                         </Box>
 
                     </Flex>
@@ -529,11 +513,11 @@ const OfferList = () => {
 
                 {/* Pay With */}
                 <Flex direction={'column'} flex={2} display={{ base: 'none', md: 'flex' }} gap={3}>
-                    <Flex fontWeight={600} gap={2}>
-                        <Box>
-                            Bhim
-                        </Box>
-                        <Flex border={'1px solid green'} color={'green'} px={2} fontSize={'10px'} fontWeight={'bold'} gap={2} justifyContent={'center'} alignItems={'center'} borderRadius={5}>
+                    <Flex fontWeight={600} gap={2} direction={'column'}>
+                        <Flex wrap={'wrap'} >
+                            {data?.payment_method}
+                        </Flex>
+                        <Flex maxW={'80px'} border={'1px solid green'} color={'green'} px={2} fontSize={'10px'} fontWeight={'bold'} gap={2} justifyContent={'center'} borderRadius={5} alignItems={'center'}>
                             <FaCheck />
                             <Box as='span'>
 
@@ -541,24 +525,34 @@ const OfferList = () => {
                             </Box>
                         </Flex>
                     </Flex>
-                    <Flex color={'gray'}> Only For Indian Traders</Flex>
+                    <Flex wrap={'wrap'} color={'gray'}> {data?.offer_terms}</Flex>
                     <Flex gap={2} flexWrap={'wrap'} >
-                        <Box p={1} fontSize={'14px'} bg={'gray.200'} borderRadius={5}>receipt req. </Box>
-                        <Box p={1} fontSize={'14px'} bg={'gray.200'} borderRadius={5}>photo id req. </Box>
-                        <Box p={1} fontSize={'14px'} bg={'gray.200'} borderRadius={5}>no third parties </Box>
+                        {
+                            data?.offer_tags.length > 0 && data?.offer_tags.map((tag, index) => (
+
+                                <Box
+                                    p={1}
+                                    key={index}
+                                    fontSize={'12px'}
+                                    borderRadius={5}
+                                    sx={grayGradient}
+                                >{tag}</Box>
+                            ))
+                        }
+
                     </Flex>
                 </Flex>
                 {/* Trade speed */}
                 <Flex flex={1} display={{ base: 'none', md: 'flex' }} justifyContent={'end'}>
                     <Flex gap={2} color={'gray'} justifyContent={'end'}>
-                        <Box display={'flex'} mt={1} alignItems={'start'} justifyContent={'center'} gap={2}>
-                            2 min
-                            <Box mt={1}>
+                        <Flex wrap={'nowrap'} mt={1} alignItems={'start'} justifyContent={'center'} gap={2}>
 
-                                <MdOutlineWatchLater />
-                            </Box>
+                            2&nbsp;min
+                            <MdOutlineWatchLater size={20} />
 
-                        </Box>
+
+
+                        </Flex>
                     </Flex>
                 </Flex>
 
@@ -627,15 +621,16 @@ const OfferList = () => {
                 <Flex direction={'row'} flex={2} display={{ base: 'none', md: 'flex' }} gap={3} fontSize={'14px'} color={'gray'} bg={'red.100'} p={1} borderRadius={5}>
 
                     <Box as='span'  >
-                        <Flex gap={2} justifyContent={'start'} alignItems={'start'} >
+                        <Flex gap={2} justifyContent={'start'} alignItems={'start'}  >
                             <Flex mt={1} >
 
                                 <AiOutlineExclamationCircle color='orange' />
                             </Flex>
 
-                            <Box as='span' >
+                            <Box as='span'  >
                                 <Link >
                                     <Box as='span' textDecoration={'underline'} color={'black'}>
+
                                         Show your full name
                                     </Box>
                                 </Link>
@@ -665,16 +660,16 @@ const OfferList = () => {
 
                                 <Box textAlign={'end'}>
 
-                                    Min purchase: 4,000 INR
+                                    {`Min purchase: ${data?.min_trade_limit} INR`}
                                 </Box>
                                 <Box textAlign={'end'}>
 
-                                    Max purchase: 33,297 INR
+                                    {`Max purchase: ${data?.max_trade_limit} INR`}
                                 </Box>
                             </Flex>
                             <Flex alignItems={'center'} gap={2} >
                                 <Button size={'sm'} variant='outline' bg={'transparent'}><CiStar /></Button>
-                                <Button sx={gradientButtonStyle} size={'sm'} bg={'orange'} onClick={() => navigate('/sellOffer')}>Sell</Button>
+                                <Button sx={gradientButtonStyle} size={'sm'} onClick={() => navigate('/buyOffer')}>Sell</Button>
                             </Flex>
 
                         </Flex>

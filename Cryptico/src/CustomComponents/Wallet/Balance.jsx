@@ -139,19 +139,14 @@ const Balance = () => {
                                                     <Flex flex={1.2} color={'gray'} direction={'column'} >
 
                                                         {/* Left Side Table Data */}
-                                                        <Flex borderRight={{ base: '0', md: '1px solid #dcdcdc' }}  >
+                                                        <Flex borderRight={{ base: '0', md: '1px solid #dcdcdc' }} >
 
-
-                                                            <Flex flex={1} gap={2} direction={'column'} justifyContent={'space-between'}  >
-
+                                                            <Flex flex={1} gap={2} direction={'column'} justifyContent={'space-between'} >
                                                                 <Flex gap={0}>
-
                                                                     <Box display={'flex'} pt={1} width={'40px'} height={'40px'}>
                                                                         <Image boxSize={5} src={item.logo} alt={item.name} />
-
                                                                     </Box>
                                                                     <Flex direction={'column'}>
-
                                                                         <Flex gap={2}>
                                                                             <Heading size={'md'}>
                                                                                 {item.shrotName}
@@ -163,10 +158,8 @@ const Balance = () => {
                                                                         <Box>{item.pricePerCoin}</Box>
                                                                     </Flex>
                                                                 </Flex>
-
                                                             </Flex>
                                                             <Flex flex={.5} justifyContent={'center'} alignItems={{ base: 'end', xl: 'center' }} direction={'column'} mr={{ base: 0, md: 10, xl: 0 }}>
-
                                                                 <Flex gap={2}>
                                                                     <Flex direction={'column'} textAlign={'end'}>
 
@@ -184,10 +177,7 @@ const Balance = () => {
 
                                                                         <ThreeDotMenu2 option={item.actions} />
                                                                     </Flex>
-
                                                                 </Flex>
-
-
                                                             </Flex>
                                                             <Flex flex={.5} justifyContent={'center'} alignItems={'center'} direction={'column'} gap={1} fontSize={'12px'} display={{ base: 'none', xl: 'flex' }}>
 
@@ -296,27 +286,35 @@ export const ThreeDotMenu2 = ({ option }) => {
                 <PiDotsThreeCircleVerticalThin size={30} />
             </MenuButton>
             <MenuList borderRadius={0} >
+                <MenuItem mb={2}>
+                    {
+                        option.map((item, index) => (
+                            item.action &&
+                            <Flex gap={5} w={'full'}>
+                                <Flex key={index} p={2} borderRadius={5} border={'1px solid #dcdcdc'}>{item.action}</Flex>
+                            </Flex>
+
+                        ))
+                    }
+                </MenuItem>
+
                 {
-                    option.map((item, index) => (
+                    option.slice(2).map((item, index) => (
                         <React.Fragment key={index}>
                             <MenuItem key={index}
                                 onClick={() => {
                                     navigate(item.to);
                                 }} >
-                                <Flex cursor={'pointer'} gap={5} >
-
-                                    {item.action}
-
-
-
+                                <Flex cursor={'pointer'} gap={5} w={'full'}>
                                     <Flex display={'flex'} alignItems={'center'} justifyContent={'center'}>{item.icon}</Flex>
                                     <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>{item.name}</Flex>
-
                                 </Flex>
                             </MenuItem>
                         </React.Fragment>
                     ))
                 }
+
+
 
             </MenuList>
         </Menu>
@@ -328,7 +326,6 @@ export const ThreeDotMenu2 = ({ option }) => {
 
 export const LatestTransactions = () => {
     const { transaction } = useAccount();
-    console.log(transaction);
     const [isloading, setIsLoading] = useState(true);
     useEffect(() => {
         setTimeout(() => {
@@ -338,7 +335,6 @@ export const LatestTransactions = () => {
 
 
 
-    const arr = [1, 2]
 
     return (
         <>
@@ -460,18 +456,18 @@ export const Receive1 = () => {
     return (
         <>
 
-            <Flex cursor={'pointer'} direction={{ base: 'row', md: 'column' }} gap={{ base: 5, md: 0 }} onClick={onOpen} >
+            <Flex cursor={'pointer'} direction={{ base: 'row', md: 'column' }} gap={{ base: 2, md: 0 }} onClick={onOpen} w={'auto'} >
                 <Flex display={'flex'} alignItems={'center'} justifyContent={'center'}><RiArrowRightDownLine /></Flex>
                 <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>Receive</Flex>
 
             </Flex>
-            <Modal isOpen={isOpen} onClose={onClose}>
+            <Modal isOpen={isOpen} onClose={onClose} size={{ base: 'xs', md: 'md' }}>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader bg={'orange.50'} borderTopRadius={5}>
                         <Flex alignItems={'center'} gap={5} p={1}>
 
-                            <Image src='https://cryptologos.cc/logos/thumbs/bitcoin.png?v=040' boxSize={5}></Image>
+                            <Image src='/imagelogo/bitcoin-btc-logo.png' boxSize={5}></Image>
                             Receive Bitcoin
 
                             <ModalCloseButton mt={2} />
@@ -540,18 +536,18 @@ export const Receive2 = () => {
     }
     return (
         <>
-            <Flex cursor={'pointer'} direction={{ base: 'row', md: 'column' }} gap={{ base: 5, md: 0 }} onClick={onOpen} >
+            <Flex cursor={'pointer'} direction={{ base: 'row', md: 'column' }} gap={{ base: 2, md: 0 }} onClick={onOpen} >
                 <Flex display={'flex'} alignItems={'center'} justifyContent={'center'}><RiArrowRightDownLine /></Flex>
                 <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>Receive</Flex>
 
             </Flex>
-            <Modal isOpen={isOpen} onClose={onClose} >
+            <Modal isOpen={isOpen} onClose={onClose} size={{ base: 'xs', md: 'md' }} >
                 <ModalOverlay />
                 <ModalContent >
                     <ModalHeader bg={'orange.50'} borderTopRadius={5}>
                         <Flex alignItems={'center'} gap={5} p={1}>
 
-                            <Image src='https://cryptologos.cc/logos/thumbs/ethereum.png?v=040' boxSize={5}></Image>
+                            <Image src='/imagelogo/ethereum-eth-logo.png' boxSize={5}></Image>
                             Receive Etherum
 
                             <ModalCloseButton mt={2} />
@@ -617,20 +613,20 @@ export const Receive3 = () => {
     }
     return (
         <>
-            <Flex cursor={'pointer'} direction={{ base: 'row', md: 'column' }} gap={{ base: 5, md: 0 }} onClick={onOpen} >
+            <Flex cursor={'pointer'} direction={{ base: 'row', md: 'column' }} gap={{ base: 2, md: 0 }} onClick={onOpen} >
                 <Flex display={'flex'} alignItems={'center'} justifyContent={'center'}><RiArrowRightDownLine /></Flex>
                 <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>Receive</Flex>
 
             </Flex>
-            <Modal isOpen={isOpen} onClose={onClose} >
+            <Modal isOpen={isOpen} onClose={onClose} size={{ base: 'xs', md: 'md' }}>
                 <ModalOverlay />
                 <ModalContent >
                     {/* <Flex bg={'gray.100'} p={2} alignItems={'center'} justifyContent={'space-between'}> */}
                     <ModalHeader bg={'orange.50'} borderTopRadius={5}>
                         <Flex alignItems={'center'} gap={5} p={1}>
 
-                            <Image src='https://cryptologos.cc/logos/thumbs/usd-coin.png?v=040' boxSize={5}></Image>
-                            Receive USDC
+                            <Image src='/imagelogo/bnb-bnb-logo.png' boxSize={5}></Image>
+                            Receive BNB
 
                             <ModalCloseButton mt={2} />
                         </Flex>
@@ -648,7 +644,7 @@ export const Receive3 = () => {
                             <Heading size={'lg'}>Your ERC-20 address</Heading>
                             <Flex direction={'column'}>
 
-                                <Box color={'gray'}>Use this address to deposit USDC (USDC):</Box>
+                                <Box color={'gray'}>Use this address to deposit BNB (BNB):</Box>
                                 <Box fontWeight={500}>{web3wallet?.data?.binance?.length > 0 ? web3wallet?.data?.binance[0]?.wallet_address : 'No Bitcoin wallet address available'}</Box>
                             </Flex>
                             <Tooltip label={copied ? "Copied!" : "Copy to clipboard"} bg={'gray.100'} color={'black'} closeDelay={500} hasArrow>
@@ -667,7 +663,7 @@ export const Receive3 = () => {
                             </Box>
                             <Box p={4}>
 
-                                <Box as='span' fontWeight={500}>Make sure to only send USDC through the selected network: ERC-20. &nbsp; </Box>
+                                <Box as='span' fontWeight={500}>Make sure to only send BNB through the selected network: ERC-20. &nbsp; </Box>
                                 Sending incompatible cryptocurrencies or sending through a different network may result in irreversible loss.
                             </Box>
                         </Flex>
@@ -711,18 +707,18 @@ export const Receive4 = () => {
     return (
         <>
 
-            <Flex cursor={'pointer'} direction={{ base: 'row', md: 'column' }} gap={{ base: 5, md: 0 }} onClick={onOpen} >
+            <Flex cursor={'pointer'} direction={{ base: 'row', md: 'column' }} gap={{ base: 2, md: 0 }} onClick={onOpen} >
                 <Flex display={'flex'} alignItems={'center'} justifyContent={'center'}><RiArrowRightDownLine /></Flex>
                 <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>Receive</Flex>
 
             </Flex>
-            <Modal isOpen={isOpen} onClose={onClose} >
+            <Modal isOpen={isOpen} onClose={onClose} size={{ base: 'xs', md: 'md' }} >
                 <ModalOverlay />
                 <ModalContent >
                     <ModalHeader bg={'orange.50'} borderTopRadius={5}>
                         <Flex alignItems={'center'} gap={5} p={1}>
 
-                            <Image src='https://cryptologos.cc/logos/thumbs/tether.png?v=040' boxSize={5}></Image>
+                            <Image src='/imagelogo/tether-usdt-logo.png' boxSize={5}></Image>
                             Receive USDT
 
                             <ModalCloseButton mt={2} />
@@ -731,35 +727,40 @@ export const Receive4 = () => {
                     <ModalBody>
                         <Flex direction={'column'} gap={5}>
                             <Flex direction={'column'}>
-                                <ButtonGroup gap={2}>
+                                <ButtonGroup gap={2} >
+                                    <Flex gap={2} >
 
-                                    <Button
-                                        p={0}
-                                        borderBottom={active === 'eth' ? '1px solid black' : '0px'}
-                                        borderRadius={0}
-                                        bg={'transparent'}
-                                        _hover={{ bg: 'transparent' }}
-                                        onClick={() => {
-                                            setTron(false);
-                                            setActive('eth');
-                                        }
-                                        }
-                                    >
-                                        Ethereum network
-                                    </Button>
-                                    <Button
-                                        gap={2}
-                                        p={0}
-                                        borderBottom={active === 'tron' ? '1px solid black' : '0px'}
-                                        borderRadius={0} bg={'transparent'}
-                                        _hover={{ bg: 'transparent' }}
-                                        onClick={() => {
-                                            setTron(true)
-                                            setActive('tron');
-                                        }
-                                        }>TRON network <Tag bg={'orange.100'} >cheaper</Tag>
+                                        <Button
+                                            p={0}
+                                            size={'sm'}
+                                            borderBottom={active === 'eth' ? '1px solid black' : '0px'}
+                                            borderRadius={0}
+                                            bg={'transparent'}
+                                            _hover={{ bg: 'transparent' }}
+                                            onClick={() => {
+                                                setTron(false);
+                                                setActive('eth');
+                                            }
+                                            }
+                                        >
+                                            Eth network
+                                        </Button>
+                                        <Button
+                                            gap={2}
+                                            p={0}
+                                            size={'sm'}
+                                            borderBottom={active === 'tron' ? '1px solid black' : '0px'}
+                                            borderRadius={0} bg={'transparent'}
+                                            _hover={{ bg: 'transparent' }}
+                                            onClick={() => {
+                                                setTron(true)
+                                                setActive('tron');
+                                            }
+                                            }>TRON network <Tag bg={'orange.100'} >cheaper</Tag>
 
-                                    </Button>
+                                        </Button>
+                                    </Flex>
+
                                 </ButtonGroup>
                                 <Divider />
                             </Flex>
@@ -853,12 +854,12 @@ export const Send1 = () => {
     return (
         <>
 
-            <Flex cursor={'pointer'} direction={{ base: 'row', md: 'column' }} gap={{ base: 5, md: 0 }} onClick={onOpen}  >
+            <Flex cursor={'pointer'} direction={{ base: 'row', md: 'column' }} gap={{ base: 2, md: 0 }} onClick={onOpen}  >
                 <Flex display={'flex'} alignItems={'center'} justifyContent={'center'}><TbSend /></Flex>
                 <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>Send</Flex>
 
             </Flex>
-            <Modal isOpen={isOpen} onClose={onClose} onCloseComplete={resetState}>
+            <Modal isOpen={isOpen} onClose={onClose} onCloseComplete={resetState} size={{ base: 'xs', md: 'md' }}>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader bg={'orange.50'} borderTopRadius={5}>
@@ -934,12 +935,12 @@ export const Send2 = () => {
     return (
         <>
 
-            <Flex cursor={'pointer'} direction={{ base: 'row', md: 'column' }} gap={{ base: 5, md: 0 }} onClick={onOpen} >
+            <Flex cursor={'pointer'} direction={{ base: 'row', md: 'column' }} gap={{ base: 2, md: 0 }} onClick={onOpen} >
                 <Flex display={'flex'} alignItems={'center'} justifyContent={'center'}><TbSend /></Flex>
                 <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>Send</Flex>
 
             </Flex>
-            <Modal isOpen={isOpen} onClose={onClose} onCloseComplete={resetState}>
+            <Modal isOpen={isOpen} onClose={onClose} onCloseComplete={resetState} size={{ base: 'xs', md: 'md' }}>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader bg={'orange.50'} borderTopRadius={5}>
@@ -1005,12 +1006,12 @@ export const Send3 = () => {
     return (
         <>
 
-            <Flex cursor={'pointer'} direction={{ base: 'row', md: 'column' }} gap={{ base: 5, md: 0 }} onClick={onOpen} >
+            <Flex cursor={'pointer'} direction={{ base: 'row', md: 'column' }} gap={{ base: 2, md: 0 }} onClick={onOpen} >
                 <Flex display={'flex'} alignItems={'center'} justifyContent={'center'}><TbSend /></Flex>
                 <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>Send</Flex>
 
             </Flex>
-            <Modal isOpen={isOpen} onClose={onClose} onCloseComplete={resetState}>
+            <Modal isOpen={isOpen} onClose={onClose} onCloseComplete={resetState} size={{ base: 'xs', md: 'md' }}>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader bg={'orange.50'} borderTopRadius={5}>
@@ -1077,12 +1078,12 @@ export const Send4 = () => {
     return (
         <>
 
-            <Flex cursor={'pointer'} direction={{ base: 'row', md: 'column' }} gap={{ base: 5, md: 0 }} onClick={onOpen} >
+            <Flex cursor={'pointer'} direction={{ base: 'row', md: 'column' }} gap={{ base: 2, md: 0 }} onClick={onOpen} >
                 <Flex display={'flex'} alignItems={'center'} justifyContent={'center'}><TbSend /></Flex>
                 <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>Send</Flex>
 
             </Flex>
-            <Modal isOpen={isOpen} onClose={onClose} onCloseComplete={resetState}>
+            <Modal isOpen={isOpen} onClose={onClose} onCloseComplete={resetState} size={{ base: 'xs', md: 'md' }}>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader bg={'orange.50'} borderTopRadius={5}>
@@ -1172,101 +1173,10 @@ export const SelectToken = ({ index, setHeaderName, setHeaderLogo }) => {
     )
 }
 
-const cryptoOption1 = [
-    { name: 'Bitcoin', logo: 'https://cryptologos.cc/logos/thumbs/bitcoin.png?v=040' },
-    { name: 'Ethereum', logo: 'https://cryptologos.cc/logos/thumbs/ethereum.png?v=040' },
-    { name: 'USDC', logo: 'https://cryptologos.cc/logos/thumbs/usd-coin.png?v=040' },
-    { name: 'Tether', logo: 'https://cryptologos.cc/logos/thumbs/tether.png?v=040' },
-]
 const cryptoStatus = [
     { name: 'Convert', icon: <SiConvertio />, to: 'convert' },
 ]
 
-const cryptoStatus1 = [
-    { name: 'Send', icon: <TbSend /> },
-    { name: 'Receive', icon: <RiArrowRightDownLine /> },
-    { name: 'Convert', icon: <SiConvertio /> },
-    { name: 'Buy BTC', icon: <GoArrowDownLeft /> },
-    { name: 'Sell BTC', icon: <GoArrowUpRight /> }
-]
-
-// const wallet = useWalletStore.getState().web3wallet;
-// console.log(wallet);
-// const cryptoOption = [
-//     {
-//         status: wallet?.data?.bitcoin ? true : false,
-//         shrotName: 'BTC',
-//         name: 'Bitcoin',
-//         logo: '/imagelogo/bitcoin-btc-logo.png',
-//         pricePerCoin: '1 BTC = 8,448,496.2999 INR',
-//         blc: 0, INR: '0.00',
-//         table: 'true',
-//         receive: <Receive1 />,
-//         send: <Send1 />,
-//         threedots: <ThreeDotMenu1 btnName={'BTC'} />,
-
-//         actions: [
-//             { action: <Send1 /> },
-//             { action: <Receive1 /> },
-//             { name: 'Convert', icon: <SiConvertio />, to: 'convert' },
-//             { name: 'Buy BTC', icon: <GoArrowDownLeft />, to: '/buy' },
-//             { name: 'Sell BTC', icon: <GoArrowUpRight />, to: '/sell' }
-//         ]
-//     },
-//     {
-//         status: wallet?.data?.ethereum ? true : false,
-//         shrotName: 'ETH',
-//         name: 'Ethereum',
-//         logo: '/imagelogo/ethereum-eth-logo.png',
-//         pricePerCoin: '1 ETH = 8,448,496.2999 INR',
-//         blc: 0, INR: '0.00',
-//         table: 'true',
-//         receive: <Receive2 />,
-//         send: <Send2 />,
-//         threedots: <ThreeDotMenu1 btnName={'ETH'} />,
-
-//         actions: [
-//             { action: <Send2 /> },
-//             { action: <Receive2 /> },
-//             { name: 'Convert', icon: <SiConvertio />, to: 'convert' },
-//             { name: 'Buy ETH', icon: <GoArrowDownLeft />, to: '/buy' },
-//             { name: 'Sell ETH', icon: <GoArrowUpRight />, to: '/sell' }
-//         ]
-//     },
-//     {
-//         status: wallet?.data?.binance ? true : false,
-//         shrotName: 'BNB', name: 'Binance',
-//         logo: '/imagelogo/bnb-bnb-logo.png',
-//         pricePerCoin: '1 BNB = 8,448,496.2999 INR',
-//         blc: 0, INR: '0.00',
-//         receive: <Receive3 />, send: <Send3 />,
-//         threedots: <ThreeDotMenu1 btnName={'USDC'} />,
-
-//         actions: [
-//             { action: <Send3 /> },
-//             { action: <Receive3 /> },
-//             { name: 'Convert', icon: <SiConvertio />, to: 'convert' },
-//             { name: 'Buy USDC', icon: <GoArrowDownLeft />, to: '/buy' },
-//             { name: 'Sell USDC', icon: <GoArrowUpRight />, to: '/sell' }
-//         ]
-//     },
-//     {
-//         status: true,
-//         shrotName: 'USDT', name: 'Tether',
-//         logo: '/imagelogo/tether-usdt-logo.png',
-//         pricePerCoin: '1 USDT = 8,448,496.2999 INR',
-//         blc: 0, INR: '0.00',
-//         receive: <Receive4 />, send: <Send4 />,
-//         threedots: <ThreeDotMenu1 btnName={'USDT'} />,
-//         actions: [
-//             { action: <Send4 /> },
-//             { action: <Receive4 /> },
-//             { name: 'Convert', icon: <SiConvertio />, to: 'convert' },
-//             { name: 'Buy USDT', icon: <GoArrowDownLeft />, to: '/buy' },
-//             { name: 'Sell USDT', icon: <GoArrowUpRight />, to: '/sell' }
-//         ]
-//     }
-// ];
 
 
 export default Balance

@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from 'react'
-import { addAccount, createWebWallet, getPaymentDetails, getTransactionDetail, getWalletKeyPhrase, getWeb3Wallet, updateWeb3WalletAddress } from '../api/accountService';
+import { addAccount, createWebWallet, getPaymentDetails, getTransactionDetail, getWalletKeyPhrase, getWeb3Wallet, updateWeb3WalletAddress, updateIsPrimaryAccount, AddUpiDetails } from '../api/accountService';
 
 const AccountContext = createContext();
 
@@ -8,10 +8,11 @@ const AccountProvider = ({ children }) => {
     const [walletkeyphrase, setWalletKeyPhrase] = useState(null);
     const [web3wallet, setWeb3Wallet] = useState(null);
     const [transaction, setTransaction] = useState(null);
+    const [upidetails, setUpiDetails] = useState();
 
 
     useEffect(() => {
-        getAccountDetail();
+        handleGetAccountDetail();
         handleGetWeb3Wallet();
         handleGetAllTransaction();
 
@@ -22,27 +23,36 @@ const AccountProvider = ({ children }) => {
             const res = await addAccount(values);
             return res;
         }
-        catch (error) {
-            // console.log(error);
-            // console.error("API error in handleAddAccount:", error.response?.data || error.message);
-
-            // throw error.response?.data || { message: "An unexpected error occurred" };
+        catch (error) {           
             throw error;
         }
 
     }
 
-    const getAccountDetail = async () => {
+    const handleAddUpiDetails = async (values) => {
+        const response = await AddUpiDetails(values);
+        return response;
+    }
+    const handleGetAccountDetail = async () => {
         try {
             const res = await getPaymentDetails();
             setAccountDetails(res?.payment_details);
+            setUpiDetails(res?.upi_details);
         }
         catch (error) {
             throw error;
         }
     }
+    const updateIsPrimary = async (value) => {
+        try {
+            const res = await updateIsPrimaryAccount(value);
+            return res;
 
-
+        }
+        catch (error) {
+            throw error;
+        }
+    }
     const getKeyPhrase = async () => {
         try {
             const res = await getWalletKeyPhrase();
@@ -101,7 +111,7 @@ const AccountProvider = ({ children }) => {
 
 
     return (
-        <AccountContext.Provider value={{ handleAddAccount, accountDetails, getKeyPhrase, walletkeyphrase, setWalletKeyPhrase, handleCreateWallet, handleUpdateweb3WalletAddress, web3wallet, handleGetWeb3Wallet, handleGetAllTransaction, transaction }}>
+        <AccountContext.Provider value={{ handleAddAccount, accountDetails, getKeyPhrase, walletkeyphrase, setWalletKeyPhrase, handleCreateWallet, handleUpdateweb3WalletAddress, web3wallet, handleGetWeb3Wallet, handleGetAllTransaction, transaction, updateIsPrimary, handleGetAccountDetail, handleAddUpiDetails,upidetails }}>
             {children}
         </AccountContext.Provider>
     )

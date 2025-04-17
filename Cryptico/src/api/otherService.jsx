@@ -1,4 +1,8 @@
+import axios from "axios";
 import { axiosInstance } from "./axiosInstance";
+
+
+
 
 
 export const getOtherService = async () => {
@@ -101,5 +105,16 @@ export const markAsReadById = async (id) => {
     }
     catch (error) {
         throw error.response ? error.response.data : error.message;
+    }
+}
+export const realTimePrice = async () => {
+    try {
+        const response = await axios('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,tether,binancecoin&vs_currencies=inr');
+        return response.data;
+
+
+    }
+    catch (error) {
+        console.log(error);
     }
 }

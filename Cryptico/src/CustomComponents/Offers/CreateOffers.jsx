@@ -25,9 +25,10 @@ import {
     Icon,
     FormErrorMessage,
     FormLabel,
-    useToast
+    useToast,
+    Card
 } from '@chakra-ui/react'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import CurrencyDropdown from '../Dropdown/CurrencyDropdown'
 import { MdKeyboardArrowDown } from "react-icons/md";
 import PaymentDropdown from '../Dropdown/PaymentDropdown';
@@ -153,24 +154,31 @@ const CreateOffers = () => {
                                 ({ values, handleChange, handleBlur, setFieldValue, handleSubmit, touched, errors }) =>
                                 (
                                     <Form onSubmit={handleSubmit} >
-                                        <Flex w={'100%'} direction={{ base: 'column', lg: 'row' }} flexWrap={'wrap'}  >
+                                        <Flex w={'100%'} direction={{ base: 'column', lg: 'row' }} flexWrap={'wrap'} gap={5} >
 
                                             <Flex
-                                                borderRight={{ base: 0, lg: '1px solid #dcdcdc' }}
+                                                // borderRight={{ base: 0, lg: '1px solid #dcdcdc' }}
                                                 flex={1.2} width={{ base: '100%', lg: '50%' }}
                                                 direction={'column'}
-                                                p={{ base: 2, sm: 4, md: 6, lg: 8, xl: 10 }}
-                                                gap={10}
+
                                             >
+                                                <Card
+                                                    boxShadow={'md'}
+                                                    p={{ base: 2, sm: 4, md: 6, lg: 8, xl: 10 }}
+                                                    gap={10}
+                                                >
 
-                                                <Heading size={'lg'}>{`Create an Offer to ${action} ${crypto}`}</Heading>
-                                                <Steper step={page} />
+                                                    <Heading size={'lg'}>{`Create an Offer to ${action} ${crypto}`}</Heading>
+                                                    <Steper step={page} />
 
-                                                {React.cloneElement(pages[page], { values, handleChange, handleBlur, setFieldValue, touched, errors })}
+                                                    {React.cloneElement(pages[page], { values, handleChange, handleBlur, setFieldValue, touched, errors })}
+                                                </Card>
+
 
 
 
                                             </Flex>
+
 
 
                                             {/* Right side Section start */}
@@ -182,31 +190,34 @@ const CreateOffers = () => {
                                                 // height={{ base: 'auto', lg: "calc(100vh - 60px)" }}
                                                 zIndex={1}
                                             >
-                                                <Flex w={'full'} direction={'column'} gap={5}
-                                                    sx={
-                                                        {
-                                                            "@media screen and (max-width: 350px)": {
-                                                                maxW: "300px",
-                                                            },
-                                                        }
+                                                <Card w={'full'} boxShadow={'md'}>
 
-                                                    }
-                                                >
-                                                    <Flex direction={'column'} gap={5} py={{ base: 2, sm: 10 }} px={{ base: 4, lg: 10 }}>
-                                                        <Heading size={'md'}>About This Step</Heading>
-                                                        <Flex> Start creating your offer by selecting the cryptocurrency you want to trade, whether or not you want to buy or sell, and the payment method you want to use.</Flex>
-                                                        <Flex gap={5} >
-                                                            <Button variant={'outline'} _hover={{ bg: 'orange.50' }} border={'1px solid #dcdcdc'} onClick={prevPage} disabled={page === 0}>Previous Step</Button>
+                                                    <Flex w={'full'} direction={'column'} gap={5}
+                                                        sx={
                                                             {
-                                                                (page === pages.length - 1) ?
-
-                                                                    <Button variant={'outline'} colorScheme='orange' type='submit' isDisabled={!values.term.length > 0} onClick={handleSubmit}  >Create Offers</Button>
-                                                                    :
-                                                                    <Button variant={'outline'} colorScheme='orange' onClick={nextPage} isDisabled={!isDisable}>Next Step</Button>
+                                                                "@media screen and (max-width: 350px)": {
+                                                                    maxW: "300px",
+                                                                },
                                                             }
+
+                                                        }
+                                                    >
+                                                        <Flex direction={'column'} gap={5} py={{ base: 2, sm: 10 }} px={{ base: 4, lg: 10 }}>
+                                                            <Heading size={'md'}>About This Step</Heading>
+                                                            <Flex> Start creating your offer by selecting the cryptocurrency you want to trade, whether or not you want to buy or sell, and the payment method you want to use.</Flex>
+                                                            <Flex gap={5} >
+                                                                <Button variant={'outline'} _hover={{ bg: 'orange.50' }} border={'1px solid #dcdcdc'} onClick={prevPage} disabled={page === 0}>Previous Step</Button>
+                                                                {
+                                                                    (page === pages.length - 1) ?
+
+                                                                        <Button variant={'outline'} colorScheme='orange' type='submit' isDisabled={!values.term.length > 0} onClick={handleSubmit}  >Create Offers</Button>
+                                                                        :
+                                                                        <Button variant={'outline'} colorScheme='orange' onClick={nextPage} isDisabled={!isDisable}>Next Step</Button>
+                                                                }
+                                                            </Flex>
                                                         </Flex>
                                                     </Flex>
-                                                </Flex>
+                                                </Card>
 
                                             </Flex>
                                         </Flex>
@@ -269,6 +280,9 @@ function Steper({ step }) {
 
 const PaymentSection = ({ values, handleChange, handleBlur, setFieldValue, touched, errors, setAction, setCrypto, crypto, setDisable }) => {
     const formikHelpers = { values, handleChange, handleBlur, setFieldValue, touched, errors };
+    useEffect(() => {
+        console.log(values);
+    }, [values]);
 
     const [value, setValue] = React.useState('Buy')//Radio button
     const [isShow, setShow] = useState(true);
@@ -401,9 +415,6 @@ const PaymentSection = ({ values, handleChange, handleBlur, setFieldValue, touch
 
                 }
 
-
-
-
             </Flex>
 
         </Flex>
@@ -418,10 +429,9 @@ const bankAccounts = [
 ];
 
 const cryptoOption = [
-    { name: 'Bitcoin', logo: 'https://cryptologos.cc/logos/thumbs/bitcoin.png?v=040' },
-    { name: 'Ethereum', logo: 'https://cryptologos.cc/logos/thumbs/ethereum.png?v=040' },
-    { name: 'USDC', logo: 'https://cryptologos.cc/logos/thumbs/usd-coin.png?v=040' },
-    { name: 'Tether', logo: 'https://cryptologos.cc/logos/thumbs/tether.png?v=040' },
+    { name: 'Bitcoin', logo: '/imagelogo/bitcoin-btc-logo.png' },
+    { name: 'Ethereum', logo: '/imagelogo/ethereum-eth-logo.png' },
+    { name: 'Binance', logo: '/imagelogo/bnb-bnb-logo.png' },
+    { name: 'Tether', logo: '/imagelogo/tether-usdt-logo.png' },
 ];
 export default CreateOffers
-// width={{base:'100%',sm:'83.8%',md:'48.5%'}}

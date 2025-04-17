@@ -24,8 +24,10 @@ import { AiFillExclamationCircle, AiOutlineExclamationCircle, AiOutlineQuestion,
 import { BiDislike, BiLike } from 'react-icons/bi'
 import { LuSquareArrowOutUpRight } from 'react-icons/lu'
 import { MdCheck, MdStar, MdStarOutline } from 'react-icons/md'
+import { useOffer } from '../../Context/OfferContext'
 
 const BuyOffer = () => {
+    const [amount, setAmount] = useState('');
     return (
         <>
             {/* <Image src='imagelogo/buybackground5.png' w={'80%'} alignSelf={'center'} position={'absolute'} mt={24}></Image> */}
@@ -61,7 +63,7 @@ const BuyOffer = () => {
                                     <FormLabel>I will pay</FormLabel>
                                     <InputGroup border={'1px solid #ffedd5'} borderRadius={4} _hover={{ boxShadow: 'md' }}>
 
-                                        <Input type="number" placeholder="Enter amount" border={'none'} focusBorderColor='#ffedd5' _focus={{ boxShadow: 'none' }} _hover={{ border: 'none' }} />
+                                        <Input type="number" placeholder="Enter amount" value={amount} onChange={(e) => setAmount(e.target.value)} border={'none'} focusBorderColor='#ffedd5' _focus={{ boxShadow: 'none' }} _hover={{ border: 'none' }} />
                                         <InputRightAddon bg={'white'} color={'orange.500'} border={'none'}>INR</InputRightAddon>
 
                                     </InputGroup>

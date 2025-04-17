@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Box, Button, Card, Flex, Heading, useDisclosure, FormControl, FormLabel, Input, RadioGroup, Radio, Tag, Collapse, FormErrorMessage, useToast, ButtonGroup, IconButton, Image } from '@chakra-ui/react'
+import React, { useEffect, useState } from 'react'
+import { Box, Button, Card, Flex, Heading, useDisclosure, FormControl, FormLabel, Input, RadioGroup, Radio, Tag, Collapse, FormErrorMessage, useToast, ButtonGroup, IconButton, Image, Checkbox, Spinner } from '@chakra-ui/react'
 import { FaBusinessTime, FaPlus, FaUserCircle } from "react-icons/fa";
 import OfferLocation from '../Dropdown/OfferLocation';
 import CurrencyDropdown from '../Dropdown/CurrencyDropdown';
@@ -7,9 +7,9 @@ import { Formik, Form } from 'formik';
 import * as Yup from "yup";
 import { useAccount } from '../../Context/AccountContext';
 import { MdKeyboardArrowDown, MdKeyboardArrowUp, MdModeEdit } from 'react-icons/md';
-import { GoPlus } from "react-icons/go"
 import { RiDeleteBin6Line } from 'react-icons/ri';
 import { gradientButtonStyle } from '../Wallet/CreateWallet';
+import AddOnlineWallet from './AddOnlineWallet';
 
 
 
@@ -20,6 +20,7 @@ const validationSchema = Yup.object({
     accountHolder: Yup.string().required("Account Holder's Name is required"),
     bankCountry: Yup.string().required("Bank Account Country is required"),
     currency: Yup.string().required("Currency is required"),
+    isPrimary: Yup.boolean().optional(),
     ifsc: Yup.string().optional(),
     accountNumber: Yup.string().required("Account Number is required"),
     swiftCode: Yup.string().optional(),
@@ -39,6 +40,7 @@ const PaymentMethod = () => {
         accountHolder: "",
         bankCountry: "",
         currency: "",
+        isPrimary: false,
         ifsc: "",
         accountNumber: "",
         swiftCode: "",
@@ -53,11 +55,29 @@ const PaymentMethod = () => {
 
     const [isNext, setIsNext] = useState(false);
     const [visibility, setVisibility] = useState("personal");
-    const { handleAddAccount, accountDetails } = useAccount();
+    const { handleAddAccount, accountDetails, updateIsPrimary, handleGetAccountDetail, upidetails } = useAccount();
     const [isLoading, setIsLoading] = useState(false);
     const [reload, setReload] = useState(0);
+    const [isChekboxLoading, setChekBoxLoading] = useState(false);
+    const [loadingId, setLoadingId] = useState(null);
 
     const toast = useToast();
+
+    const handleChek = async (data) => {
+        setLoadingId(data);
+        const value = {
+            method: 'bank',
+            id: data
+        }
+        const res = await updateIsPrimary(value);
+        console.log(res);
+        if (res) {
+            await handleGetAccountDetail();
+            setLoadingId(null);
+        }
+
+
+    }
 
 
     return (
@@ -65,29 +85,16 @@ const PaymentMethod = () => {
             <Card borderRadius={0} p={4} gap={5} border={'1px solid rgba(128, 128, 128, 0.3)'}  >
                 <Heading size={'md'} fontWeight={500}>Bank Accounts</Heading>
                 <Box as='p' fontSize={'16px'} color={'gray'}>Add your bank account details below. You can share these details with your trade partner via trade chat, for bank transfer trades.</Box>
-                {/* <ButtonGroup isAttached variant='ghost' colorScheme='orange' onClick={onOpen}>
-                    <Button size={'sm'}>Add Account</Button>
-                    <IconButton size={'sm'} icon={<GoPlus />}></IconButton>
-                </ButtonGroup> */}
                 <Heading size={'md'} my={5}>Add your First Bank Account</Heading>
-
-
-
                 <Flex direction={'column'} gap={5}>
-
-
-
                     {/* BankDetails-------------------------------------------------------------------------------------- */}
                     <Formik
                         initialValues={initialValues}
                         validationSchema={validationSchema}
                         onSubmit={async (values, actions) => {
-
-
                             try {
                                 setIsLoading(true)
                                 const res = await handleAddAccount(values);
-
                                 console.log(res);
                                 const { status, message } = res;
                                 if (status === true) {
@@ -100,13 +107,9 @@ const PaymentMethod = () => {
                                         position: "top-right",
                                     });
                                     actions.resetForm({ values: initialValues });
-
                                 }
-
-
                             }
                             catch (error) {
-
                                 if (error.errors) {
                                     Object.keys(error.errors).forEach((key) => {
                                         error.errors[key].forEach((message, index) => {
@@ -121,32 +124,22 @@ const PaymentMethod = () => {
                                         });
                                     });
                                 }
-
-
-
                             }
                             finally {
                                 setIsLoading(false);
                                 setReload((prev) => prev + 1); // Increment state to force re-render
-
                                 actions.resetForm({ values: initialValues });
-
                             }
-
                             // console.log("Form Data:", values);
-
                         }}
 
                     >
                         {({ values, handleChange, handleBlur, errors, touched, handleSubmit }) =>
                             <Form onSubmit={handleSubmit}>
-
-
                                 {
                                     isNext ?
                                         <>
                                             <BankDetail2 setIsNext={setIsNext} reload={reload} isLoading={isLoading} formikHelpers={{ values, handleChange, handleBlur, handleSubmit, errors, touched }} />
-
 
                                         </>
                                         :
@@ -164,51 +157,55 @@ const PaymentMethod = () => {
 
 
             </Card>
+            <AddOnlineWallet />
+
+            <Heading pl={4} size={'md'} fontWeight={700}>Bank Details</Heading>
+
             {
-                accountDetails &&
-                <Card borderRadius={0} p={4} gap={5} border={'1px solid rgba(128, 128, 128, 0.3)'}>
-                    <Flex border={'1px solid orange'}>
-                        <Flex direction={'column'} gap={3} p={4} w={'full'}>
-                            <Box as='p' fontWeight={600} fontSize={'12px'} color={'gray'}>{(accountDetails?.account_type)}</Box>
-                            <Flex justifyContent={'space-between'} w={'full'} direction={{ base: 'column', sm: 'row' }} gap={5} >
-                                <Flex gap={2} wrap={'wrap'} >
+                accountDetails?.length > 0 &&
+                accountDetails.map((data, index) => (
 
-                                    <Button as={Box} size={'sm'} colorScheme='orange'>{accountDetails?.bank_name}</Button>
-                                    <Flex gap={2} >
+                    <Card borderRadius={0} key={index} p={4} gap={5}>
+                        <Flex border={'1px solid orange'} >
+                            <Flex direction={'column'} gap={5} p={4} w={'full'}>
+                                <Flex justifyContent={'space-between'}>
 
-                                        <Button as={Box} size={'sm'} colorScheme='teal'>{accountDetails?.currency}</Button>
-                                        <Box justifyContent={'center'} alignItems={'center'} display={'flex'} color={'gray'} fontSize={'14px'}>{accountDetails?.account_number}</Box>
+                                    <Box as='p' fontWeight={600} fontSize={'12px'} color={'gray'}>{(data?.account_type)}</Box>
+                                    {
+                                        loadingId === data?.pd_id ? <Heading size={'sm'} color={'gray.300'} fontWeight={500}>updateing...</Heading> :
+                                            <Checkbox size={'sm'} fontWeight={500} colorScheme='orange' isChecked={data?.is_primary} onChange={() => handleChek(data?.pd_id)}><Box color={'gray'} fontSize={'12px'}>primary</Box></Checkbox>
+                                    }
+
+                                </Flex>
+                                <Flex justifyContent={'space-between'} w={'full'} direction={{ base: 'column', sm: 'row' }} gap={5} >
+                                    <Flex gap={2} wrap={'wrap'} >
+
+                                        <Button as={Box} size={'sm'} colorScheme='orange'>{data?.bank_name}</Button>
+                                        <Flex gap={2} >
+
+                                            <Button as={Box} size={'sm'} colorScheme='teal'>{data?.currency}</Button>
+                                            <Box justifyContent={'center'} alignItems={'center'} display={'flex'} color={'gray'} fontSize={'14px'}>{data?.account_number}</Box>
+                                        </Flex>
+                                    </Flex>
+                                    <Flex>
+                                        <Button size={'sm'} bgColor={'transparent'} borderRadius={0} color={'red'} display={{ base: 'flex', sm: 'none' }}><RiDeleteBin6Line /></Button>
+                                        <Button size={'sm'} bgColor={'transparent'} borderRadius={0} color={'green.300'} display={{ base: 'flex', sm: 'none' }}><MdModeEdit /></Button>
+                                        <Button size={'sm'} bgColor={'transparent'} borderRadius={0} color={'red'} leftIcon={<RiDeleteBin6Line />} display={{ base: 'none', sm: 'flex' }}>Delete</Button>
+                                        <Button size={'sm'} bgColor={'transparent'} borderRadius={0} color={'green.300'} leftIcon={<MdModeEdit />} display={{ base: 'none', sm: 'flex' }}>Edit</Button>
                                     </Flex>
                                 </Flex>
-                                <Flex>
-                                    <Button size={'sm'} bgColor={'transparent'} borderRadius={0} color={'red'} display={{ base: 'flex', sm: 'none' }}><RiDeleteBin6Line /></Button>
-                                    <Button size={'sm'} bgColor={'transparent'} borderRadius={0} color={'green.300'} display={{ base: 'flex', sm: 'none' }}><MdModeEdit /></Button>
-                                    <Button size={'sm'} bgColor={'transparent'} borderRadius={0} color={'red'} leftIcon={<RiDeleteBin6Line />} display={{ base: 'none', sm: 'flex' }}>Delete</Button>
-                                    <Button size={'sm'} bgColor={'transparent'} borderRadius={0} color={'green.300'} leftIcon={<MdModeEdit />} display={{ base: 'none', sm: 'flex' }}>Edit</Button>
-                                </Flex>
+
                             </Flex>
                         </Flex>
-                    </Flex>
 
-                    {/* <Heading size={'md'} fontWeight={500}>Online Wallets</Heading>
-                <Box as='p' fontSize={'14px'} color={'gray'}>Add your online wallets below.
-                </Box>
-                <ButtonGroup isAttached variant='ghost' colorScheme='orange'>
-                    <Button size={'sm'}>Add New</Button>
-                    <IconButton size={'sm'} icon={<GoPlus />}></IconButton>
-                </ButtonGroup>
 
-                <Flex justifyContent={'center'}
-                    alignItems={'center'} border={'1px solid orange'}>
-                    <Box
-                    >
-                        <Image p={5} src='imagelogo/cryptico.png' w={'200px'} h={'160px'} opacity={0.1}></Image>
-
-                    </Box>
-
-                </Flex> */}
-                </Card>
+                    </Card>
+                ))
             }
+
+
+
+
 
 
         </Flex>
@@ -217,7 +214,6 @@ const PaymentMethod = () => {
 
 
 const BankDetail1 = ({ setIsNext, formikHelpers }) => {
-    console.log(formikHelpers);
     const { values, handleChange, handleBlur, errors, touched } = formikHelpers;
 
     return (
@@ -278,9 +274,6 @@ const BankDetail2 = ({ setIsNext, formikHelpers, isLoading, reload }) => {
     const { values, handleChange, handleBlur, errors, touched } = formikHelpers;
     const [isShow, setShow] = useState(false);
     const { isOpen, onToggle } = useDisclosure()
-
-
-
     return (
         <>
             <Flex direction='column' gap={10} mt={5} key={reload}>
@@ -348,6 +341,9 @@ const BankDetail2 = ({ setIsNext, formikHelpers, isLoading, reload }) => {
                         <Input placeholder="Enter SWIFT / BIC code" onChange={handleChange} name="swiftCode" />
                     </FormControl>
                 </Flex>
+                <FormControl>
+                    <Checkbox colorScheme='orange' isChecked={values.isPrimary} fontWeight={500} name='isPrimary' onChange={handleChange}>is_Primary</Checkbox>
+                </FormControl>
 
 
 

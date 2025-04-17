@@ -79,8 +79,8 @@ const PasswordVerification = ({ blockChainType = {}, onClose }) => {
     const [iscelebrate, setCelebrate] = useState(false);
     const [walleterror, setWalletError] = useState(null);
     const [isInputDisabled, setIsInputDisabled] = useState(false);
-    const [walletAddressUpdate, setWalletAddressUpdate] = useState(false);
-    const [createWalletErrorMessage, setCreateWalletErrorMessage] = useState(false);
+    const [isPassWordMessageShow, setPasswordMessageShow] = useState(false);
+    // const [createWalletErrorMessage, setCreateWalletErrorMessage] = useState(false);
     const { user } = useUser();
 
 
@@ -91,24 +91,20 @@ const PasswordVerification = ({ blockChainType = {}, onClose }) => {
             const res = await handlePasswordMatch(password);
             if (res.passwordVerified) {
                 setIsInputDisabled(true);
-
+                setPasswordMessageShow(true);
+                setLoading(false);
                 const response = await handleCreateWallet(blockChainType);
-
-                // console.log(response)
                 if (response?.status) {
                     if (!response.walletAddressUpdate) {
-
-                        // console.log(response.data);
                         setKeyPhrase(response?.data.phrase)
                         setWalletId(response?.data.wallet_id);
                     }
                     else {
                         await handleGetWeb3Wallet();
-                        setWalletAddressUpdate(response?.walletAddressUpdate);
-
                         setCelebrate(true);
                         setTimeout(() => {
                             onClose();
+                            setPasswordMessageShow(false);
                             setIsInputDisabled(false);
                         }, 3000);
                     }
@@ -119,6 +115,7 @@ const PasswordVerification = ({ blockChainType = {}, onClose }) => {
                 }
 
 
+
             }
         }
         catch (error) {
@@ -126,12 +123,11 @@ const PasswordVerification = ({ blockChainType = {}, onClose }) => {
         }
         finally {
             setLoading(false);
-            // setPassword('');
         }
 
     }
 
-    const generateWalletAddress = async () => {     
+    const generateWalletAddress = async () => {
         setProceeding(true);
         const decrypted = await decryptWithKey(keyphrase, user.user_id);
         const finalDecryption = await decryptWithKey(decrypted.phrase, decrypted.key);
@@ -152,6 +148,8 @@ const PasswordVerification = ({ blockChainType = {}, onClose }) => {
             setTimeout(() => {
                 setIsInputDisabled(false);
                 onClose();
+                setPasswordMessageShow(false);
+
             }, 3000);
         }
 
@@ -230,18 +228,21 @@ const PasswordVerification = ({ blockChainType = {}, onClose }) => {
                             </InputRightElement>
                         </InputGroup>
                     </FormControl>
-                    <Flex justifyContent={'space-between'}>
+                    <Flex justifyContent={'space-between'} >
                         {
-                            passwordmatch?.passwordVerified === true ?
-                                <Box color={'green'} fontWeight={700}>{passwordmatch?.message}</Box>
+                            isPassWordMessageShow ?
+                                passwordmatch?.passwordVerified === true &&
+                                <Box color={passwordmatch?.passwordVerified ? 'green' : 'red'} fontWeight={700}>{passwordmatch?.message}</Box>
+
                                 :
-                                <Box color={'red'} fontWeight={700}>{passwordmatch?.message}</Box>
+                                <Box></Box>
+
                         }
                         <Button
                             isLoading={isLoading}
                             isDisabled={isInputDisabled}
                             loadingText='wait' onClick={handleClick}
-                            alignSelf={'end'}
+                            alignSelf={'center'}
                             textAlign={'center'}
                             sx={gradientButtonStyle}
                             size={'md'}
@@ -252,9 +253,10 @@ const PasswordVerification = ({ blockChainType = {}, onClose }) => {
                         </Button>
                     </Flex>
                     {
-                         !walletAddressUpdate && isInputDisabled && !iscelebrate &&
+                        keyphrase &&
 
                         <Button isLoading={isProceeding} loadingText='Procceding...' sx={gradientButtonStyle} onClick={generateWalletAddress}>Proceed to wallet creation</Button>
+
                     }
                     {
                         walleterror &&

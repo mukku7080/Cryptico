@@ -6,7 +6,7 @@ import { MdKeyboardArrowDown } from 'react-icons/md';
 
 const OtherSettings = ({ values, handleChange, handleBlur, setFieldValue, touched, errors }) => {
     const [option, setOption] = React.useState('Select offers');
-    values.offerTag = option;
+    values.offerTags = option;
     console.log(values);
 
 

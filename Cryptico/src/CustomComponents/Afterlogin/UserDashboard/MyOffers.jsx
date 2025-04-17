@@ -18,14 +18,21 @@ import {
     FormControl,
     FormLabel,
 } from "@chakra-ui/react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 import { BsExclamationCircle, BsEye } from "react-icons/bs";
 import { MdKeyboardArrowDown, MdKeyboardArrowRight, MdOutlineLocalOffer } from "react-icons/md";
+import { useOffer } from "../../../Context/OfferContext";
 
 const MyOffers = () => {
+
     const [status, setStatus] = useState(true);
     const [isActive, setIsActive] = useState(false);
+    const { myBuyOffer, mySellOffer } = useOffer();
+    const [isSellOffer, setSellOffer] = useState(true);
+    useEffect(() => {
+        console.log(isSellOffer);
+    }, [isSellOffer])
 
     return (
         <Card w={'full'}>
@@ -86,16 +93,15 @@ const MyOffers = () => {
                     <Flex direction={'column'} mb={5}>
                         <Flex >
 
-                            <Button bg={'transparent'} borderBottom={{ base: 'none', md: '1px solid #dcdcdc' }} borderRadius={0} _hover={{ bg: 'transparent', borderBottom: '1px solid black' }} rightIcon={<Tag bg={'orange.50'}>1</Tag>}>Offers to sell</Button>
-                            <Button bg={'transparent'} borderBottom={{ base: 'none', md: '1px solid #dcdcdc' }} borderRadius={0} _hover={{ bg: 'transparent', borderBottom: '1px solid black' }} rightIcon={<Tag bg={'orange.50'}>0</Tag>}>Offers to Buy</Button>
+                            <Button bg={'transparent'} borderBottom={{ base: 'none', md: '1px solid #dcdcdc' }} borderRadius={0} _hover={{ bg: 'transparent', borderBottom: '1px solid black' }} onClick={() => setSellOffer(true)} rightIcon={<Tag bg={'gray.100'} >{mySellOffer?.length}</Tag>}>Offers to sell</Button>
+                            <Button bg={'transparent'} borderBottom={{ base: 'none', md: '1px solid #dcdcdc' }} borderRadius={0} _hover={{ bg: 'transparent', borderBottom: '1px solid black' }} onClick={() => setSellOffer(false)} rightIcon={<Tag bg={'gray.100'}>{myBuyOffer?.length}</Tag>} >Offers to buy</Button>
                         </Flex>
                         <Divider display={{ base: 'flex', md: 'none' }} />
                     </Flex>
                     <MobileAllOffers setIsActive={setIsActive} isActive={isActive} />
 
                     <Flex direction={'column'}>
-
-                        <AllOffers isActive={isActive} setIsActive={setIsActive} />
+                        <AllOffers isActive={isActive} setIsActive={setIsActive} mySellOffer={mySellOffer} myBuyOffer={myBuyOffer} isSellOffer={isSellOffer} />
                     </Flex>
                 </Flex>
             </Flex>
@@ -151,18 +157,14 @@ const MobileActiveOffer = () => {
 
 
 
-const AllOffers = ({ isActive, setIsActive }) => {
+const AllOffers = ({ isActive, setIsActive, mySellOffer, myBuyOffer, isSellOffer }) => {
+
     return (
         <Flex direction={'column'} display={{ base: 'none', md: 'flex' }}>
             {/* Heading ---------------------------- */}
             <Flex px={3} py={6} fontWeight="bold" w={'full'} gap={4} direction={{ base: 'column', sm: 'row' }} border={'1px solid #dcdcdc'} borderTopRadius={5}  >
                 <Box flex="1" textAlign="start">
-                    {/* <Flex border={'1px solid #dcdcdc'} p={2} w={'60%'} gap={5}> */}
-                    {/* <Box mt={1} as="span">
-                            <MdOutlineLocalOffer size={20} />
-                        </Box> */}
                     Highlight offers
-                    {/* </Flex> */}
                 </Box>
                 <Box flex="1.2" textAlign={{ lg: 'center', xl: "start" }}>Rate</Box>
                 <Box flex="1.2" textAlign="start">Min-Max amount</Box>
@@ -170,68 +172,167 @@ const AllOffers = ({ isActive, setIsActive }) => {
                 <Box flex=".4" textAlign="start">Offer Views</Box>
             </Flex>
             {/* Data -------------------- */}
-            <Flex direction={'column'} border={'1px solid #dcdcdc'} bg={'gray.50'} gap={6} py={6} px={3}>
-
-                {/* FirstRow */}
-                <Flex fontWeight="bold" w={'full'} gap={4} direction={{ base: 'column', sm: 'row' }} >
-                    <Flex flex="1" textAlign="start" direction={'column'} gap={5}>
-                        <Flex gap={5}>
-                            <Switch
-                                size={'md'}
-                                isChecked={isActive}
-                                onChange={() => setIsActive(!isActive)}
-                                colorScheme="orange"
-                            />
-                            <Image boxSize={5} src="https://cryptologos.cc/logos/thumbs/bitcoin.png?v=040"></Image>
 
 
+            {/* Offert To sell/buy */}
+            {
+                isSellOffer ?
+
+                    mySellOffer?.length > 0 &&
+                    mySellOffer.map((data, index) => (
+
+                        <Flex key={index} direction={'column'} border={'1px solid #dcdcdc'} bg={'gray.50'} gap={6} py={6} px={3}>
+
+                            {/* FirstRow */}
+                            <Flex fontWeight="bold" w={'full'} gap={4} direction={{ base: 'column', sm: 'row' }} >
+                                <Flex flex="1" textAlign="start" direction={'column'} gap={5}>
+                                    <Flex gap={5}>
+                                        <Switch
+                                            size={'md'}
+                                            isChecked={isActive}
+                                            onChange={() => setIsActive(!isActive)}
+                                            colorScheme="orange"
+                                        />
+                                        <Image boxSize={5} src="https://cryptologos.cc/logos/thumbs/bitcoin.png?v=040"></Image>
+
+
+                                    </Flex>
+                                    <Flex gap={5} >
+                                        <Button size={'sm'}>View</Button>
+                                        <Button size={'sm'}>Edit</Button>
+
+                                    </Flex>
+
+                                </Flex>
+
+                                <Flex flex="1.2" textAlign="end" gap={2} flexWrap={'wrap'} >
+                                    3,131,718.62<Box fontSize={'10px'} mt={1}>INR</Box>
+                                    <Changemargin />
+                                </Flex>
+                                <Flex gap={1} flex="1.2" textAlign="start" flexWrap={'wrap'}>
+
+                                    <Minmaxmodal />
+
+                                </Flex>
+                                <Flex flex="1.2" textAlign="start" direction={'column'}>
+
+                                    <Box>{data?.payment_method}</Box>
+                                    <Box color={'gray'} fontSize={'12px'} p={1}>All Payment Accepted</Box>
+                                    <Flex gap={2} flexWrap={'wrap'} >
+                                        {
+                                            data?.offer_tags.length > 0 && data?.offer_tags.map((tag, index) => (
+
+                                                <Box
+                                                    p={1}
+                                                    key={index}
+                                                    fontSize={'12px'}
+                                                    borderRadius={5}
+                                                    sx={grayGradient}
+                                                >{tag}</Box>
+                                            ))
+                                        }
+
+                                    </Flex>
+                                </Flex>
+                                <Flex flex=".4" justifyContent={'end'} gap={2} >1
+                                    <Box mt={1} color={'gray'}><BsEye /></Box>
+                                </Flex>
+                            </Flex>
+
+
+                            {/* second Row */}
+                            <Flex direction={'column'} gap={2} color={'brown'} pl={3}>
+                                <Flex gap={2}>
+                                    <Box mt={1}><BsExclamationCircle /></Box>
+                                    <Box>
+                                        We've updated the maximum amount
+                                        for this offer according to your current balance
+                                        , deposit more Bitcoin to raise it
+                                    </Box>
+                                </Flex>
+                                <Flex gap={2}>
+                                    <Box mt={1}><BsExclamationCircle /></Box>
+                                    <Box>
+                                        To make your offer public, make sure you have crypto worth at least 500.00 INR in your wallet.
+                                    </Box>
+                                </Flex>
+                            </Flex>
                         </Flex>
-                        <Flex gap={5} >
-                            <Button size={'sm'}>View</Button>
-                            <Button size={'sm'}>Edit</Button>
+                    ))
 
+
+
+                    :
+
+                    myBuyOffer?.length > 0 &&
+                    myBuyOffer.map((data, index) => (
+
+                        <Flex direction={'column'} key={index} border={'1px solid #dcdcdc'} bg={'gray.50'} gap={6} py={6} px={3}>
+
+                            {/* FirstRow */}
+                            <Flex fontWeight="bold" w={'full'} gap={4} direction={{ base: 'column', sm: 'row' }} >
+                                <Flex flex="1" textAlign="start" direction={'column'} gap={5}>
+                                    <Flex gap={5}>
+                                        <Switch
+                                            size={'md'}
+                                            isChecked={isActive}
+                                            onChange={() => setIsActive(!isActive)}
+                                            colorScheme="orange"
+                                        />
+                                        <Image boxSize={5} src="https://cryptologos.cc/logos/thumbs/bitcoin.png?v=040"></Image>
+
+
+                                    </Flex>
+                                    <Flex gap={5} >
+                                        <Button size={'sm'}>View</Button>
+                                        <Button size={'sm'}>Edit</Button>
+
+                                    </Flex>
+
+                                </Flex>
+
+                                <Flex flex="1.2" textAlign="end" gap={2} flexWrap={'wrap'} >
+                                    3,131,718.62<Box fontSize={'10px'} mt={1}>INR</Box>
+                                    <Changemargin />
+                                </Flex>
+                                <Flex gap={1} flex="1.2" textAlign="start" flexWrap={'wrap'}>
+
+                                    <Minmaxmodal />
+
+                                </Flex>
+                                <Flex flex="1.2" textAlign="start" direction={'column'}>
+
+                                    <Box>{data?.payment_method}</Box>
+                                    <Box color={'gray'} fontSize={'12px'} p={1}>All Payment Accepted</Box>
+                                </Flex>
+                                <Flex flex=".4" justifyContent={'end'} gap={2} >1
+                                    <Box mt={1} color={'gray'}><BsEye /></Box>
+                                </Flex>
+                            </Flex>
+
+
+                            {/* second Row */}
+                            <Flex direction={'column'} gap={2} color={'brown'} pl={3}>
+                                <Flex gap={2}>
+                                    <Box mt={1}><BsExclamationCircle /></Box>
+                                    <Box>
+                                        We've updated the maximum amount
+                                        for this offer according to your current balance
+                                        , deposit more Bitcoin to raise it
+                                    </Box>
+                                </Flex>
+                                <Flex gap={2}>
+                                    <Box mt={1}><BsExclamationCircle /></Box>
+                                    <Box>
+                                        To make your offer public, make sure you have crypto worth at least 500.00 INR in your wallet.
+                                    </Box>
+                                </Flex>
+                            </Flex>
                         </Flex>
-
-                    </Flex>
-
-                    <Flex flex="1.2" textAlign="end" gap={2} flexWrap={'wrap'} >
-                        3,131,718.62<Box fontSize={'10px'} mt={1}>INR</Box>
-                        <Changemargin />
-                    </Flex>
-                    <Flex gap={1} flex="1.2" textAlign="start" flexWrap={'wrap'}>
-
-                        <Minmaxmodal />
-
-                    </Flex>
-                    <Flex flex="1.2" textAlign="start" direction={'column'}>
-
-                        <Box>Bhim</Box>
-                        <Box color={'gray'} fontSize={'12px'} p={1}>All Payment Accepted</Box>
-                    </Flex>
-                    <Flex flex=".4" justifyContent={'end'} gap={2} >1
-                        <Box mt={1} color={'gray'}><BsEye /></Box>
-                    </Flex>
-                </Flex>
+                    ))
 
 
-                {/* second Row */}
-                <Flex direction={'column'} gap={2} color={'brown'} pl={3}>
-                    <Flex gap={2}>
-                        <Box mt={1}><BsExclamationCircle /></Box>
-                        <Box>
-                            We've updated the maximum amount
-                            for this offer according to your current balance
-                            , deposit more Bitcoin to raise it
-                        </Box>
-                    </Flex>
-                    <Flex gap={2}>
-                        <Box mt={1}><BsExclamationCircle /></Box>
-                        <Box>
-                            To make your offer public, make sure you have crypto worth at least 500.00 INR in your wallet.
-                        </Box>
-                    </Flex>
-                </Flex>
-            </Flex>
+            }
         </Flex>
     )
 }

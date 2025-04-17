@@ -3,7 +3,7 @@ import { axiosInstance } from "./axiosInstance"
 export const addAccount = async (values) => {
     try {
 
-        const response = await axiosInstance.post('/add-payment-details',
+        const response = await axiosInstance.post('/payment-details/add-payment-details',
             {
                 account_type: values.accountType,
                 bank_account_country: values.bankCountry,
@@ -13,6 +13,7 @@ export const addAccount = async (values) => {
                 custom_bank_details: values.customBankDetails,
                 ifsc_code: values.ifsc,
                 account_number: values.accountNumber,
+                is_primary: values.isPrimary,
                 swift_bic_code: values.swiftCode,
                 residence_country: values.country,
                 state_region: values.state,
@@ -32,15 +33,34 @@ export const addAccount = async (values) => {
         throw error.response ? error.response.data : error.message;
     }
 }
+export const AddUpiDetails = async (values) => {
+    try {
+        const response = await axiosInstance.post('/payment-details/add-upi-details', values);
+        return response.data;
+    }
+    catch (error) {
+        throw error.response ? error.response.data : error.message;
+    }
+}
 export const getPaymentDetails = async () => {
     try {
-        const response = await axiosInstance.get('/payment-details');
+        const response = await axiosInstance.get('/payment-details/get-payment-details');
         return response.data;
 
     }
     catch (error) {
         throw error.response ? error.response.data : error.message;
 
+    }
+}
+export const updateIsPrimaryAccount = async (value) => {
+    try {
+        const response = await axiosInstance.post('/payment-details/update-is-primary', value);
+        return response.data;
+
+    }
+    catch (error) {
+        throw error.response ? error.response.data : error.message;
     }
 }
 export const getWalletKeyPhrase = async () => {

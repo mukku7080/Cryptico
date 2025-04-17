@@ -174,42 +174,42 @@ const IndianpaymentOptions = [
     {
         id: 1,
         name: 'IMPS Transfer',
-        value: 'imps_transfer',
+        value: 'imps transfer',
         icon: <PiBankLight size={30} />,
         imgSrc: 'https://cdn-icons-png.flaticon.com/512/2111/2111352.png'
     },
     {
         id: 2,
         name: 'Payment Online Wallet',
-        value: 'payment_online_wallet',
+        value: 'payment online wallet',
         icon: <CiWallet size={30} />,
         imgSrc: 'https://cdn-icons-png.flaticon.com/512/2111/2111352.png'
     },
     {
         id: 3,
         name: 'Google Pay',
-        value: 'google_pay',
+        value: 'gpay',
         icon: <FaGooglePay size={30} />,
         imgSrc: 'https://cdn-icons-png.flaticon.com/512/2111/2111352.png'
     },
     {
         id: 4,
         name: 'Game Items',
-        value: 'game_items',
+        value: 'game items',
         icon: <PiGameControllerLight size={30} />,
         imgSrc: 'https://cdn-icons-png.flaticon.com/512/2111/2111352.png'
     },
     {
         id: 5,
         name: 'PhonePe',
-        value: 'phone_pe',
+        value: 'phonepe',
         icon: <CiWallet size={30} />,
         imgSrc: 'https://cdn-icons-png.flaticon.com/512/2111/2111352.png'
     },
     {
         id: 5,
-        name: 'PayPal',
-        value: 'pay_pal',
+        name: 'Paytm',
+        value: 'paytm',
         icon: <PiPaypalLogoThin size={30} />,
         imgSrc: 'https://cdn-icons-png.flaticon.com/512/2111/2111352.png'
     }

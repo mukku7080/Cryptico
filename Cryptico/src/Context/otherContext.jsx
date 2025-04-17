@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { AddSecurityQuestions, getAllNotification, getCountrycode, getLoginHistory, getOtherService, getReferalLink, markAsRead, markAsReadById } from '../api/otherService';
+import { AddSecurityQuestions, getAllNotification, getCountrycode, getLoginHistory, getOtherService, getReferalLink, markAsRead, markAsReadById, realTimePrice } from '../api/otherService';
 
 export const OtherContext = createContext();
 
@@ -13,12 +13,14 @@ const OtherDetailProvider = ({ children }) => {
     const [notificationCount, setNotificationCount] = useState(0);
     const [readNotification, setReadNotification] = useState(null);
     const [unreadNotification, setUnreadNotification] = useState([]);
+    const [price, setPrice] = useState(null);
 
     useEffect(() => {
         handleCountryCode();
         handleOtherDetail();
         handleLoginHistory();
         handleReferralLink();
+        handleRealTimePrice();
         // handleGetAllNotification();
     }, [])
     useEffect(() => {
@@ -116,6 +118,10 @@ const OtherDetailProvider = ({ children }) => {
             throw error;
         }
     }
+    const handleRealTimePrice = async () => {
+        const response = await realTimePrice();
+        setPrice(response);
+    }
 
     return (
         <OtherContext.Provider value={{
@@ -133,7 +139,8 @@ const OtherDetailProvider = ({ children }) => {
             handleMarkAsReadById,
             notificationCount,
             readNotification,
-            setNotificationCount
+            setNotificationCount,
+            price
         }}>
             {children}
         </OtherContext.Provider>

@@ -10,9 +10,9 @@ const WalletQR = ({ walletAddress }) => {
                 size={120}
                 value={walletAddress}
                 bgColor="#ffffff"
-                fgColor="#0d9488" // teal-600
+                fgColor="black" // teal-600
                 level="H"
-                style={{ borderRadius: '8px' }}
+                // style={{ borderRadius: '8px' }}
 
             />
         </div>
