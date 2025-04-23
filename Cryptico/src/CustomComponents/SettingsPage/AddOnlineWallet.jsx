@@ -268,7 +268,7 @@ const AddOnlineWallet = () => {
 
                                                 <Box as='p' fontWeight={600} fontSize={'12px'} color={'gray'}>{(data?.upi_name)}</Box>
                                                 {
-                                                    loadingId === data?.id ? <Heading size={'sm'} color={'gray.300'} fontWeight={500}>updateing...</Heading> :
+                                                    loadingId === data?.id ? <Heading size={'sm'} color={'gray.300'} fontWeight={500}>updating...</Heading> :
                                                         <Checkbox size={'sm'} fontWeight={500} colorScheme='orange' isChecked={data?.is_primary} onChange={() => handleChek(data?.id)}><Box color={'gray'} fontSize={'12px'}>primary</Box></Checkbox>
                                                 }
 

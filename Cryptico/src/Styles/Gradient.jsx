@@ -30,3 +30,20 @@ export const LightOrangeGradiant = {
         color: 'white',
     }
 }
+export const DarkOrangeGradiant = {
+    
+        bgGradient: "linear(to-r, #f46b45 0%, #eea849 51%, #f46b45 100%)",
+        backgroundSize: "200% auto",
+        color: "white",
+        boxShadow: "0 0 20px #eee",
+      
+        textTransform: "uppercase",
+        transition: "all 0.5s ease",       
+        _hover: {
+          backgroundPosition: "right center",
+          textDecoration: "none",
+          color: "#fff",
+        },
+      
+      
+}

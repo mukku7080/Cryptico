@@ -35,6 +35,7 @@ export const MyPaymentModal = ({ formikHelpers = {}, name, setBankShow }) => {
         handleBlur = () => { },
         errors = {},
         touched = {},
+        setFieldValue = () => { }, // Default to a no-op function
     } = formikHelpers || {};
     const bgColor = useColorModeValue("orange.50", "gray.900");
     const [option, setOption] = useState('Select Payment Method');
@@ -102,6 +103,8 @@ export const MyPaymentModal = ({ formikHelpers = {}, name, setBankShow }) => {
                                             onClick={() => {
                                                 setOption(data.name);
                                                 handleChange({ target: { name: name, value: data.value } });
+                                                setFieldValue('paymentType', data.type);
+
                                                 onClose();
                                                 setBankShow(true);
 
@@ -175,41 +178,63 @@ const IndianpaymentOptions = [
         id: 1,
         name: 'IMPS Transfer',
         value: 'imps transfer',
+        type: 'bank',
         icon: <PiBankLight size={30} />,
         imgSrc: 'https://cdn-icons-png.flaticon.com/512/2111/2111352.png'
     },
     {
         id: 2,
-        name: 'Payment Online Wallet',
-        value: 'payment online wallet',
-        icon: <CiWallet size={30} />,
+        name: 'NEFT Transfer',
+        value: 'neft transfer',
+        type: 'bank',
+        icon: <PiBankLight size={30} />,
         imgSrc: 'https://cdn-icons-png.flaticon.com/512/2111/2111352.png'
     },
     {
         id: 3,
-        name: 'Google Pay',
-        value: 'gpay',
-        icon: <FaGooglePay size={30} />,
+        name: 'RTGS Transfer',
+        value: 'rtgs transfer',
+        type: 'bank',
+        icon: <PiBankLight size={30} />,
         imgSrc: 'https://cdn-icons-png.flaticon.com/512/2111/2111352.png'
     },
     {
         id: 4,
-        name: 'Game Items',
-        value: 'game items',
-        icon: <PiGameControllerLight size={30} />,
-        imgSrc: 'https://cdn-icons-png.flaticon.com/512/2111/2111352.png'
-    },
-    {
-        id: 5,
-        name: 'PhonePe',
-        value: 'phonepe',
+        name: 'Amazon Pay',
+        value: 'amazon pay',
+        type: 'upi',
         icon: <CiWallet size={30} />,
         imgSrc: 'https://cdn-icons-png.flaticon.com/512/2111/2111352.png'
     },
     {
         id: 5,
+        name: 'Google Pay',
+        value: 'gpay',
+        type: 'upi',
+        icon: <FaGooglePay size={30} />,
+        imgSrc: 'https://cdn-icons-png.flaticon.com/512/2111/2111352.png'
+    },
+    {
+        id: 6,
+        name: 'Game Items',
+        value: 'game items',
+        type: 'upi',
+        icon: <PiGameControllerLight size={30} />,
+        imgSrc: 'https://cdn-icons-png.flaticon.com/512/2111/2111352.png'
+    },
+    {
+        id: 7,
+        name: 'PhonePe',
+        value: 'phonepe',
+        type: 'upi',
+        icon: <CiWallet size={30} />,
+        imgSrc: 'https://cdn-icons-png.flaticon.com/512/2111/2111352.png'
+    },
+    {
+        id: 8,
         name: 'Paytm',
         value: 'paytm',
+        type: 'upi',
         icon: <PiPaypalLogoThin size={30} />,
         imgSrc: 'https://cdn-icons-png.flaticon.com/512/2111/2111352.png'
     }

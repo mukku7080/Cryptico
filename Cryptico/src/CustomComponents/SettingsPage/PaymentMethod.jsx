@@ -54,14 +54,18 @@ const PaymentMethod = () => {
 
 
     const [isNext, setIsNext] = useState(false);
-    const [visibility, setVisibility] = useState("personal");
+    // const [visibility, setVisibility] = useState("personal");
     const { handleAddAccount, accountDetails, updateIsPrimary, handleGetAccountDetail, upidetails } = useAccount();
     const [isLoading, setIsLoading] = useState(false);
     const [reload, setReload] = useState(0);
-    const [isChekboxLoading, setChekBoxLoading] = useState(false);
+    // const [isChekboxLoading, setChekBoxLoading] = useState(false);
     const [loadingId, setLoadingId] = useState(null);
 
     const toast = useToast();
+    useEffect(() => {
+        handleGetAccountDetail('');
+
+    }, []);
 
     const handleChek = async (data) => {
         setLoadingId(data);
@@ -72,7 +76,7 @@ const PaymentMethod = () => {
         const res = await updateIsPrimary(value);
         console.log(res);
         if (res) {
-            await handleGetAccountDetail();
+            await handleGetAccountDetail('');
             setLoadingId(null);
         }
 
@@ -172,7 +176,7 @@ const PaymentMethod = () => {
 
                                     <Box as='p' fontWeight={600} fontSize={'12px'} color={'gray'}>{(data?.account_type)}</Box>
                                     {
-                                        loadingId === data?.pd_id ? <Heading size={'sm'} color={'gray.300'} fontWeight={500}>updateing...</Heading> :
+                                        loadingId === data?.pd_id ? <Heading size={'sm'} color={'gray.300'} fontWeight={500}>updating...</Heading> :
                                             <Checkbox size={'sm'} fontWeight={500} colorScheme='orange' isChecked={data?.is_primary} onChange={() => handleChek(data?.pd_id)}><Box color={'gray'} fontSize={'12px'}>primary</Box></Checkbox>
                                     }
 

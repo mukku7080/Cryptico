@@ -42,9 +42,9 @@ export const AddUpiDetails = async (values) => {
         throw error.response ? error.response.data : error.message;
     }
 }
-export const getPaymentDetails = async () => {
+export const getPaymentDetails = async (paymentType) => {
     try {
-        const response = await axiosInstance.get('/payment-details/get-payment-details');
+        const response = await axiosInstance.get(`/payment-details/get-payment-details?payment_type=${paymentType}`);
         return response.data;
 
     }

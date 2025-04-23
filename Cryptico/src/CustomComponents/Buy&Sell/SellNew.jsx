@@ -18,6 +18,7 @@ import {
     AccordionPanel,
     AccordionIcon,
     useDisclosure,
+    AvatarBadge,
 
 } from '@chakra-ui/react';
 import { FaArrowTrendUp, FaRegThumbsDown } from "react-icons/fa6";
@@ -46,6 +47,10 @@ const MotionFlex = motion(Flex);
 
 const SellNew = () => {
     const { handleGetOffer, offers, buyOffer } = useOffer();
+    const [isloading, setIsLoading] = useState(true);
+    setTimeout(() => {
+        setIsLoading(false);
+    }, 3000);
 
 
 
@@ -95,7 +100,7 @@ const SellNew = () => {
                                 </Flex>
 
                                 <Flex>
-                                    <Flex direction={'column'} w={'full'} borderLeft={'1px solid #dcdcdc'} borderRight={'1px solid #dcdcdc'} borderTop={'none'} borderBottomRadius={5} >
+                                    <Flex direction={'column'} w={'full'} borderBottom={'1px solid #dcdcdc'} borderLeft={'1px solid #dcdcdc'} borderRight={'1px solid #dcdcdc'} borderTop={'none'} borderBottomRadius={5} >
 
                                         {/* Table Heading */}
 
@@ -146,13 +151,23 @@ const SellNew = () => {
 
                                         {/* Offer Details */}
                                         {
-                                            buyOffer.length > 0 &&
-                                            buyOffer.map((data, index) => (
+                                            isloading ?
+                                                <Flex w={'full'} justifyContent={'center'} alignItems={'center'} gap={5} p={10}>
+                                                    <Heading size={'md'} color={'gray.400'}>Loading...</Heading>
+                                                </Flex>
+                                                :
 
-                                                <OfferList key={index} data={data} />
-                                            ))
+                                                buyOffer?.length > 0 ?
+                                                    buyOffer?.map((data, index) => (
+
+                                                        <OfferList key={index} data={data} />
+                                                    ))
+                                                    :
+                                                    <Flex w={'full'} justifyContent={'center'} alignItems={'center'} gap={5} p={10}>
+                                                        <Heading size={'md'} color={'gray.400'}>No offers found</Heading>
+                                                    </Flex>
+
                                         }
-
 
 
 
@@ -473,6 +488,7 @@ const MoreFilter = () => {
 
 const OfferList = ({ index, data }) => {
     const navigate = useNavigate();
+    const parsedData = JSON.parse(data?.payment_method);
     return (
         <Flex w={'full'} borderBottom={'1px solid #dcdcdc'} borderBottomRadius={0} direction={'column'} gap={5} >
             {/* Row1 */}
@@ -481,12 +497,15 @@ const OfferList = ({ index, data }) => {
                 {/* Buy from */}
                 <Flex direction={'column'} flex={1}  >
                     <Flex gap={2} justifyContent={'start'} alignItems={{ base: 'start', sm: 'center' }} direction={{ base: 'column', sm: 'row' }}>
-                        <Avatar border={'1px solid white'} name='M' size="sm" src='' />
-                        <Box>
-
-                            <Heading as={Link} _hover={{ textDecoration: 'underline' }} fontWeight={500} size={'sm'}>{data?.user?.username}</Heading>
-                            {/* <Heading fontWeight={500} size={'xs'}>Trades 804</Heading> */}
-                        </Box>
+                        {
+                            data.user ?
+                                <Avatar border={'1px solid #dcdcdc'} name={data?.user.username ? data?.user.username : user.email} src={data?.user.profile_image} size={'sm'}>
+                                    <AvatarBadge boxSize='1em' bg={data?.user?.login_status === 'login' ? 'green.200' : 'orange.200'} ></AvatarBadge>
+                                </Avatar>
+                                :
+                                <Spinner size={'xl'} />
+                        }
+                        <Heading as={Link} _hover={{ textDecoration: 'underline' }} fontWeight={500} size={'sm'}>{data?.user?.username}</Heading>
 
                     </Flex>
 
@@ -515,7 +534,7 @@ const OfferList = ({ index, data }) => {
                 <Flex direction={'column'} flex={2} display={{ base: 'none', md: 'flex' }} gap={3}>
                     <Flex fontWeight={600} gap={2} direction={'column'}>
                         <Flex wrap={'wrap'} >
-                            {data?.payment_method}
+                            {parsedData?.payment_method}
                         </Flex>
                         <Flex maxW={'80px'} border={'1px solid green'} color={'green'} px={2} fontSize={'10px'} fontWeight={'bold'} gap={2} justifyContent={'center'} borderRadius={5} alignItems={'center'}>
                             <FaCheck />
@@ -535,7 +554,7 @@ const OfferList = ({ index, data }) => {
                                     key={index}
                                     fontSize={'12px'}
                                     borderRadius={5}
-                                    sx={grayGradient}
+                                    bg={'gray.100'}
                                 >{tag}</Box>
                             ))
                         }
@@ -637,7 +656,7 @@ const OfferList = ({ index, data }) => {
 
                                 <Box as='span' textDecoration={'none'}>
 
-                                    &nbsp; to buy cryptocurrency from devuhari
+                                    &nbsp; to buy cryptocurrency from {data?.user?.username}
                                 </Box>
                             </Box>
                         </Flex>
@@ -669,7 +688,7 @@ const OfferList = ({ index, data }) => {
                             </Flex>
                             <Flex alignItems={'center'} gap={2} >
                                 <Button size={'sm'} variant='outline' bg={'transparent'}><CiStar /></Button>
-                                <Button sx={gradientButtonStyle} size={'sm'} onClick={() => navigate('/buyOffer')}>Sell</Button>
+                                <Button sx={gradientButtonStyle} size={'sm'} onClick={() => navigate('/sellOffer', { state: { data: data } })}>Sell</Button>
                             </Flex>
 
                         </Flex>

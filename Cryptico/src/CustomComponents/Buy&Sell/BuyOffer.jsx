@@ -18,16 +18,26 @@ import {
     ModalCloseButton,
     Select,
     Textarea,
+    Spinner,
 } from '@chakra-ui/react'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { AiFillExclamationCircle, AiOutlineExclamationCircle, AiOutlineQuestion, AiOutlineQuestionCircle } from 'react-icons/ai'
 import { BiDislike, BiLike } from 'react-icons/bi'
 import { LuSquareArrowOutUpRight } from 'react-icons/lu'
 import { MdCheck, MdStar, MdStarOutline } from 'react-icons/md'
 import { useOffer } from '../../Context/OfferContext'
+import { useUser } from '../../Context/userContext'
+import { useLocation } from 'react-router-dom'
+import { color } from 'framer-motion'
 
 const BuyOffer = () => {
-    const [amount, setAmount] = useState('');
+    const location = useLocation();
+    const [data, setData] = useState(location.state?.data);
+    useEffect(() => {
+
+        setData(location.state?.data);
+    }, [location.state?.data])
+    const [amount, setAmount] = useState(data?.min_trade_limit);
     return (
         <>
             {/* <Image src='imagelogo/buybackground5.png' w={'80%'} alignSelf={'center'} position={'absolute'} mt={24}></Image> */}
@@ -87,7 +97,7 @@ const BuyOffer = () => {
                         </form>
                         <Flex alignSelf={'center'} flexWrap={'wrap'}>
                             Reserve Bitcoin for this trade and start live chat with &nbsp;
-                            <Link textDecoration={'underline'} color={'orange.300'}>username@123</Link>
+                            <Link textDecoration={'underline'} color={'orange.300'}>{data?.user?.username}</Link>
                         </Flex>
                     </Flex>
                 </Flex>
@@ -103,11 +113,11 @@ const BuyOffer = () => {
 
                     <Flex gap={10} w={'full'} direction={{ base: 'column', lg: 'row' }}   >
                         <Flex flex={1}>
-                            <AboutOffer />
+                            <AboutOffer data={data} />
 
                         </Flex>
                         <Flex flex={1}>
-                            <AboutSeller />
+                            <AboutSeller data={data} />
 
                         </Flex>
                     </Flex>
@@ -122,7 +132,7 @@ const BuyOffer = () => {
 
 
 
-const AboutOffer = () => {
+const AboutOffer = ({ data }) => {
     return (
         <>
             <Flex direction={'column'} gap={4} w={'full'}>
@@ -145,7 +155,7 @@ const AboutOffer = () => {
                             Buy limits
                             <MdStarOutline />
                         </Flex>
-                        <Box fontSize={'18px'} fontWeight={700}><Box as='span' color={'gray'}>Min</Box> 2,000 INR - <Box as='span' color={'gray'}>Max</Box> 51,026 INR</Box>
+                        <Box fontSize={'18px'} fontWeight={700}><Box as='span' color={'gray'}>Min</Box> {data?.min_trade_limit}- <Box as='span' color={'gray'}>Max</Box> {data?.max_trade_limit}</Box>
                     </Flex>
 
                     <Flex>
@@ -156,7 +166,7 @@ const AboutOffer = () => {
                                 Trade time limit
                                 <AiOutlineQuestionCircle />
                             </Flex>
-                            <Box fontSize={'18px'} fontWeight={700}>30 min</Box>
+                            <Box fontSize={'18px'} fontWeight={700}>{data?.offer_time_limit} min</Box>
                         </Flex>
                         <Flex direction={'column'} p={4} >
                             <Flex alignItems={'center'} gap={2} color={'#757576'}>
@@ -164,7 +174,7 @@ const AboutOffer = () => {
                                 Cryptico fee
                                 <AiOutlineQuestionCircle />
                             </Flex>
-                            <Box fontSize={'18px'} fontWeight={700}>5%</Box>
+                            <Box fontSize={'18px'} fontWeight={700}>{data?.offer_margin}</Box>
                         </Flex>
 
                     </Flex>
@@ -178,7 +188,7 @@ const AboutOffer = () => {
 
 
 
-const AboutSeller = () => {
+const AboutSeller = ({ data }) => {
     return (
         <>
             <Flex direction={'column'} gap={4} w={'full'}>
@@ -189,14 +199,27 @@ const AboutSeller = () => {
                     <Flex w={'full'} p={4} gap={4} >
                         <Flex alignItems={'center'} gap={2}>
 
-                            <Avatar name='Arya rai'>
-                                <AvatarBadge boxSize='1em' bg='green.500' ></AvatarBadge>
-                            </Avatar>
+                            {
+                                data?.user ?
+                                    <Avatar border={'1px solid #dcdcdc'} name={data?.user?.name ? data?.user?.name : data?.user?.email} src={data?.user.profile_image} size={'md'}>
+                                        <AvatarBadge boxSize='1em' bg={data?.user?.login_status === 'login' ? 'green.200' : 'orange.200'} ></AvatarBadge>
+                                    </Avatar>
+                                    :
+                                    <Spinner size={'xl'} />
+                            }
+
+
                         </Flex>
                         <Flex direction={'column'}>
 
-                            <Flex alignItems={'center'} gap={2}>UserName <LuSquareArrowOutUpRight /></Flex>
-                            <Flex gap={2} flexWrap={'wrap'}>Seen 10 minute ago
+                            <Flex as={Link} href='/profile' alignItems={'center'} gap={2}>{data?.user?.username} <LuSquareArrowOutUpRight /></Flex>
+                            <Flex gap={2} flexWrap={'wrap'} justifyContent={'space-between'}>
+                                {
+                                    data?.user?.login_status === 'login' ?
+                                        <Box fontWeight={500} fontSize={'16px'} color={'green'}>Active Now</Box>
+                                        :
+                                        <Box color={'gray'}>{timeAgo(data?.user?.last_login)}</Box>
+                                }
                                 <Box px={2} bg={'orange.300'} w={'60px'} borderRadius={5} fontSize={'14px'}>badge</Box>
                             </Flex>
                         </Flex>
@@ -227,12 +250,12 @@ const AboutSeller = () => {
                     <Flex>
 
                         <Flex direction={'column'} p={4} >
-                            <Flex alignItems={'center'} gap={1}><MdCheck color='green' /> ID Verified</Flex>
-                            <Flex alignItems={'center'} gap={1}> <MdCheck color='green' />Email Verified</Flex>
+                            <Flex alignItems={'center'} gap={1} color={data?.user?.id_verified_at === '0000-00-00 00:00:00' ? 'red.500' : 'green'}><MdCheck /> ID Verified</Flex>
+                            <Flex alignItems={'center'} gap={1} color={data?.user?.email_verified_at === '0000-00-00 00:00:00' ? 'red.500' : 'green'}> <MdCheck color='green' />Email Verified</Flex>
                         </Flex>
                         <Flex direction={'column'} p={4} >
-                            <Flex alignItems={'center'} gap={1}><MdCheck color='green' /> Address Verified</Flex>
-                            <Flex alignItems={'center'} gap={1}> <MdCheck color='green' />Phone Verified</Flex>
+                            <Flex alignItems={'center'} gap={1} color={data?.user?.address_verified_at ? 'green' : 'red.500'}><MdCheck /> Address Verified</Flex>
+                            <Flex alignItems={'center'} gap={1} color={data?.user?.number_verified_at === '0000-00-00 00:00:00' ? 'red.500' : 'green'}> <MdCheck />Phone Verified</Flex>
 
                         </Flex>
 
@@ -418,6 +441,36 @@ const Problem = () => {
         </>
     )
 }
+
+
+
+
+// convert time to time ago
+export function timeAgo(dateString) {
+    const now = new Date();
+    const past = new Date(dateString?.replace(' ', 'T')); // ensures correct parsing
+    const seconds = Math.floor((now - past) / 1000);
+
+    const intervals = [
+        { label: 'year', seconds: 31536000 },
+        { label: 'month', seconds: 2592000 },
+        { label: 'day', seconds: 86400 },
+        { label: 'hour', seconds: 3600 },
+        { label: 'minute', seconds: 60 },
+        { label: 'second', seconds: 1 },
+    ];
+
+    for (const interval of intervals) {
+        const count = Math.floor(seconds / interval.seconds);
+        if (count >= 1) {
+            return `${count} ${interval.label}${count > 1 ? 's' : ''} ago`;
+        }
+    }
+    return "just now";
+}
+
+
+
 const trades = [
     {
         userName: "Mukesh rai",

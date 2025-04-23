@@ -9,10 +9,12 @@ const AccountProvider = ({ children }) => {
     const [web3wallet, setWeb3Wallet] = useState(null);
     const [transaction, setTransaction] = useState(null);
     const [upidetails, setUpiDetails] = useState();
+    const [upibankDetails, setUpiBankDetails] = useState(null);
+
 
 
     useEffect(() => {
-        handleGetAccountDetail();
+        handleGetAccountDetail('');
         handleGetWeb3Wallet();
         handleGetAllTransaction();
 
@@ -23,7 +25,7 @@ const AccountProvider = ({ children }) => {
             const res = await addAccount(values);
             return res;
         }
-        catch (error) {           
+        catch (error) {
             throw error;
         }
 
@@ -33,11 +35,12 @@ const AccountProvider = ({ children }) => {
         const response = await AddUpiDetails(values);
         return response;
     }
-    const handleGetAccountDetail = async () => {
+    const handleGetAccountDetail = async (paymentType) => {
         try {
-            const res = await getPaymentDetails();
+            const res = await getPaymentDetails(paymentType);
             setAccountDetails(res?.payment_details);
             setUpiDetails(res?.upi_details);
+            setUpiBankDetails(res);
         }
         catch (error) {
             throw error;
@@ -111,7 +114,7 @@ const AccountProvider = ({ children }) => {
 
 
     return (
-        <AccountContext.Provider value={{ handleAddAccount, accountDetails, getKeyPhrase, walletkeyphrase, setWalletKeyPhrase, handleCreateWallet, handleUpdateweb3WalletAddress, web3wallet, handleGetWeb3Wallet, handleGetAllTransaction, transaction, updateIsPrimary, handleGetAccountDetail, handleAddUpiDetails,upidetails }}>
+        <AccountContext.Provider value={{ handleAddAccount, accountDetails, getKeyPhrase, walletkeyphrase, setWalletKeyPhrase, handleCreateWallet, handleUpdateweb3WalletAddress, web3wallet, handleGetWeb3Wallet, handleGetAllTransaction, transaction, updateIsPrimary, handleGetAccountDetail, handleAddUpiDetails, upidetails,upibankDetails }}>
             {children}
         </AccountContext.Provider>
     )

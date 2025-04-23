@@ -45,6 +45,7 @@ import OtherSettings from './OtherSettings';
 import { Form, Formik } from 'formik';
 import * as Yup from "yup";
 import { useOffer } from '../../Context/OfferContext';
+import { useAccount } from '../../Context/AccountContext';
 
 
 
@@ -58,12 +59,15 @@ const CreateOffers = () => {
     const initialValues = {
         cryptoType: 'bitcoin',
         action: 'sell',
+        paymentType: '',
         paymentMethod: '',
-        preferCurrency: '',
+        paymentMethodId: '',
+        preferCurrency: 'INR',
         priceType: 'market_price',
         minimum: '258',
         maximum: '300',
         offerMargin: '5',
+        fixedPriceValue: '0',
         timeLimit: '30',
         offerTags: [],
         label: '',
@@ -125,7 +129,6 @@ const CreateOffers = () => {
                     maxW={{ base: "90%", lg: '90%', xl: "90%" }}
                     minW={{ base: "90%", sm: '90%', lg: '90%', xl: "90%" }}
                     mt={{ base: 20, lg: 10 }}
-
                 >
                     <Flex w={'full'}  >
                         <Formik
@@ -142,12 +145,9 @@ const CreateOffers = () => {
                                         duration: 2000,
                                         isClosable: true,
                                         position: 'top-right'
-
-
                                     })
                                 }
                             }
-
                             }
                         >
                             {
@@ -233,15 +233,11 @@ const CreateOffers = () => {
         </>
     )
 }
-
-
-
 const steps = [
     { title: 'Payment Method', description: 'Contact Info' },
     { title: 'Pricing', description: 'Date & Time' },
     { title: 'Other Settings', description: 'Select Rooms' },
 ]
-
 function Steper({ step }) {
     // const { activeStep } = useSteps({
     //     index: step,
@@ -280,6 +276,7 @@ function Steper({ step }) {
 
 const PaymentSection = ({ values, handleChange, handleBlur, setFieldValue, touched, errors, setAction, setCrypto, crypto, setDisable }) => {
     const formikHelpers = { values, handleChange, handleBlur, setFieldValue, touched, errors };
+    const { handleGetAccountDetail, upibankDetails } = useAccount()
     useEffect(() => {
         console.log(values);
     }, [values]);
@@ -289,9 +286,13 @@ const PaymentSection = ({ values, handleChange, handleBlur, setFieldValue, touch
     const [isbankShow, setBankShow] = useState(false);
     const [bankDetail, setBankDetail] = useState('Select Your Bank Account');
     setDisable(isbankShow);
+    useEffect(() => {
+        if (isbankShow) {
+            handleGetAccountDetail(values.paymentType);
+        }
+        console.log(upibankDetails);
+    }, [values.paymentType])
     return (
-
-
         <Flex direction={'column'} gap={10}  >
             <Heading size={'md'}>Choose Your Crypto Currency</Heading>
             <FormControl isRequired  >
@@ -397,14 +398,37 @@ const PaymentSection = ({ values, handleChange, handleBlur, setFieldValue, touch
                                 <Divider />
 
                                 {/* List of Bank Accounts */}
-                                {bankAccounts.map((account, index) => (
-                                    <MenuItem key={index} p={3} display="flex" flexDirection="column" alignItems="start"
-                                        onClick={() => setBankDetail(`${account.name} - ${account.bank} - ${account.accountNumber}`)}
-                                    >
-                                        <Text fontWeight="bold">{account.name}</Text>
-                                        <Text fontSize="sm" color="gray.500">{account.bank} - {account.accountNumber}</Text>
-                                    </MenuItem>
-                                ))}
+                                {
+                                    upibankDetails?.payment_details.length > 0 ?
+                                        upibankDetails?.payment_details.map((account, index) => (
+                                            <MenuItem key={index} p={3} display="flex" flexDirection="column" alignItems="start"
+                                                onClick={() => {
+
+                                                    setBankDetail(`${account.account_holder_name} - ${account.bank_name} - ${account.account_number}`);
+                                                    setFieldValue('paymentMethodId', account.pd_id);
+                                                }
+                                                }
+                                            >
+                                                <Text fontWeight="bold">{account.account_holder_name}</Text>
+                                                <Text fontSize="sm" color="gray.500">{account.bank_name} - {account.account_number}</Text>
+                                            </MenuItem>
+                                        ))
+                                        :
+                                        upibankDetails?.upi_details.map((account, index) => (
+                                            <MenuItem key={index} p={3} display="flex" flexDirection="column" alignItems="start"
+                                                onClick={() => {
+
+                                                    setBankDetail(`${account.account_holder_name} - ${account.bank_name} - ${account.account_number}`);
+                                                    setFieldValue('paymentMethodId', account.pd_id);
+                                                }
+                                                }
+                                            >
+                                                <Text fontWeight="bold">{account.account_holder_name}</Text>
+                                                <Text fontSize="sm" color="gray.500">{account.bank_name} - {account.account_number}</Text>
+                                            </MenuItem>
+                                        ))
+
+                                }
                             </MenuList>
                         </Menu>
                         <Flex p={1} color={'#757576'}>Once the trade begins, we’ll automatically share your account holder name and bank’s
@@ -423,9 +447,9 @@ const PaymentSection = ({ values, handleChange, handleBlur, setFieldValue, touch
 
 
 const bankAccounts = [
-    { name: "Mukesh rai", bank: "Bank of India", accountNumber: "****1234" },
-    { name: "Atul Dubey", bank: "kotak mahindra", accountNumber: "****5678" },
-    { name: "Animesh Pandey", bank: "HDFC", accountNumber: "****9101" }
+    { pd_id: 1, name: "Mukesh rai", bank: "Bank of India", accountNumber: "****1234" },
+    { pd_id: 2, name: "Atul Dubey", bank: "kotak mahindra", accountNumber: "****5678" },
+    { pd_id: 3, name: "Animesh Pandey", bank: "HDFC", accountNumber: "****9101" }
 ];
 
 const cryptoOption = [

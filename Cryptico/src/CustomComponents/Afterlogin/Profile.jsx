@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
     Box, Button, Card, Flex, Grid, GridItem, Heading,
     useColorModeValue,
@@ -20,12 +20,31 @@ import { useUser } from '../../Context/userContext';
 import { MdOutlineThumbUp, MdOutlineThumbDownAlt } from "react-icons/md";
 import { PiUserCircleThin } from "react-icons/pi";
 import BuySellWithNotification from '../Buy&Sell/BuySellWithNotification';
-
-
-
+import { useLocation } from 'react-router-dom';
+import { FaIdCard } from 'react-icons/fa6';
 const Profile = () => {
+    const location = useLocation();
+    const [data, setData] = useState();
+    const [userDetail, setUserDetail] = useState();
+    useEffect(() => {
+
+        setData(location.state?.data);
+    }, [location.state?.data])
 
     const { user } = useUser();
+    useEffect(() => {
+        if (data) {
+            setUserDetail(data?.user);
+        }
+        else {
+            setUserDetail(user);
+        }
+    }
+        , [data])
+    console.log(userDetail, "userDetail")
+    // console.log(user, "user")
+    // console.log(data, "data")
+
     return (
         <>
             <Flex w={'container.xxl'} justifyContent={'center'} alignItems={'center'} my={10} marginTop={'54px'} direction={'column'} >
@@ -47,13 +66,13 @@ const Profile = () => {
                                     <Box boxSize={3} bg={'green.400'} borderRadius={'50%'}></Box> Active Now
                                 </Flex>
                                 <Flex alignItems={'center'} justifyContent={'center'} direction={'column'} gap={2}>
-                                    {user ? (<Avatar name={user.name ? user.name : user.email} src={user.profile_image_url} size={'xl'} />) : (<Spinner size={'xl'} />)
+                                    {userDetail ? (<Avatar name={userDetail?.username ? userDetail.username : userDetail.email} src={userDetail.profile_image_url} size={'xl'} />) : (<Spinner size={'xl'} />)
 
                                     }
-                                    <Heading size={'lg'}> {user?.username}</Heading>
+                                    <Heading size={'lg'}> {userDetail?.username}</Heading>
                                     <Flex gap={3} alignItems={'center'}>
-                                        {user?.country}
-                                        <Image boxSize={8} src={user?.country_flag_url}></Image>
+                                        {userDetail?.country}
+                                        <Image boxSize={8} src={userDetail?.country_flag_url}></Image>
                                     </Flex>
 
 
@@ -117,31 +136,52 @@ const Profile = () => {
 
                     <Grid templateColumns={{ base: 'repeat(1,1fr)', sm: 'repeat(1,1fr)', md: 'repeat(1,1fr)', lg: 'repeat(1,1fr)', xl: 'repeat(4, 1fr)' }} rowGap={4} gap={{ xl: 5 }} w={'100%'} >
                         {/* Left Side nav column */}
-
                         <GridItem colSpan={1} bg={''}  >
                             <Flex width={'full'} gap={{ base: 5, xl: 5 }} direction={{ base: 'column', md: 'row', lg: 'row', xl: 'column' }}>
                                 <Flex w={'full'} direction={'column'}>
                                     <Card boxShadow={'lg'} borderRadius={5} border={'1px solid #dcdcdc'} h={{ md: 'full', xl: 'auto' }}>
-
                                         <Box py={2} px={3} borderBottom={'1px solid #dcdcdc'} fontWeight={600} bg={'#f7f7f7'} w={'full'}>Verification</Box>
-                                        {verificationStatus.map((data, index) => (
-                                            <>
-                                                <Box key={index} py={2} px={3}>
-                                                    <Flex gap={5}>
-                                                        <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
+                                        {/* {verificationStatus.map((data, index) => ( */}
+                                        <>
+                                            <Box py={2} px={3} >
+                                                <Flex gap={5} color={userDetail?.phone_verified ? 'green.500' : 'red.500'}>
+                                                    <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
 
-                                                            {data.icon}
-                                                        </Box>
-                                                        <Box fontSize={'16px'}>{data.label}</Box>
-                                                    </Flex>
-                                                </Box>
-                                            </>
-                                        ))}
+                                                        <FaPhoneAlt />
+                                                    </Box>
+                                                    <Box fontSize={'16px'}>Phone Verified</Box>
+                                                </Flex>
+                                            </Box>
+                                            <Box py={2} px={3} >
+                                                <Flex gap={5}>
+                                                    <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
+
+                                                        <FaEnvelope />
+                                                    </Box>
+                                                    <Box fontSize={'16px'}>Email Verified</Box>
+                                                </Flex>
+                                            </Box>
+                                            <Box py={2} px={3} >
+                                                <Flex gap={5}>
+                                                    <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
+
+                                                        <FaIdCard />
+                                                    </Box>
+                                                    <Box fontSize={'16px'}>id Verified</Box>
+                                                </Flex>
+                                            </Box>
+                                            <Box py={2} px={3} >
+                                                <Flex gap={5}>
+                                                    <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
+                                                        <FaMapMarkerAlt />
+                                                    </Box>
+                                                    <Box fontSize={'16px'}>Address Verified</Box>
+                                                </Flex>
+                                            </Box>
+                                        </>
+                                        {/* ))} */}
                                     </Card>
-
-
                                 </Flex>
-
                                 <Flex w={'full'} direction={'column'}>
                                     <Card boxShadow={'lg'} border={'1px solid #dcdcdc'} borderRadius={5}>
 
@@ -166,7 +206,6 @@ const Profile = () => {
 
                         </GridItem>
                         {/* Left Side nav column end */}
-
                         <GridItem colSpan={3} bg={''}>
                             <Flex w={'full'} direction={'column'} gap={5}>
                                 <Card borderRadius={5} gap={5}>
@@ -289,24 +328,7 @@ const userValueDetail2 = [
     { label: "TRADE VOLUME", value: "150000-5000000 USD" },
 ]
 
-const verificationStatus = [
-    {
-        label: "Phone Verified",
-        icon: <FaPhoneAlt color="green" />
-    },
-    {
-        label: "Email Verified",
-        icon: <FaEnvelope color="green" />
-    },
-    {
-        label: "Profile Verified",
-        icon: <FaUserCircle color="green" />
-    },
-    {
-        label: "Address Verified",
-        icon: <FaMapMarkerAlt color="green" />
-    },
-]
+
 const userDetails = [
     { label: "Location:", value: "India" },
     { label: "Languages:", value: "English (English)" },

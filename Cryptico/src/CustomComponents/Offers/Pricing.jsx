@@ -14,12 +14,15 @@ import {
 } from '@chakra-ui/react'
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 const Pricing = ({ values, handleChange, handleBlur, setFieldValue }) => {
 
     const formikHelpers = { values, handleChange, handleBlur, setFieldValue };
-    console.log(values);
+    useEffect(() => {
+        console.log(values);
+    }, [values]);
+    // console.log(values);
 
 
 
@@ -139,6 +142,10 @@ const Offermargin = ({ formikHelpers = {} }) => {
         setFieldValue = () => { }
     } = formikHelpers || {}; // Ensure formikHelpers is not undefined
     const [show, setShow] = useState(false);
+    useEffect(() => {
+        console.log(values);
+
+    }, [values]);
 
     return (
         <>
@@ -151,27 +158,52 @@ const Offermargin = ({ formikHelpers = {} }) => {
                 </GridItem>
                 <GridItem colSpan={3} borderLeft={{ base: 0, lg: '1px solid #dcdcdc' }} borderTop={{ base: '1px solid #dcdcdc', lg: 0 }}>
                     <Flex justifyContent={'center'} alignItems={'center'} gap={5} direction={'column'} px={4} my={10} >
+                        {
+                            values.priceType === 'market_price' ?
+                                <FormControl>
+                                    <FormLabel>Amount</FormLabel>
+                                    <InputGroup >
+                                        <InputLeftAddon bg={'transparent'} >%</InputLeftAddon>
 
-                        <FormControl>
-                            <FormLabel>Amount</FormLabel>
-                            <InputGroup >
-                                <InputLeftAddon bg={'transparent'} >%</InputLeftAddon>
+                                        <NumberInput borderRadius={0}
+                                            value={values.offerMargin}
+                                            onChange={(value) =>
+                                                setFieldValue('offerMargin', value)
+                                            }
 
-                                <NumberInput borderRadius={0}
-                                    value={values.offerMargin}
-                                    onChange={(value) =>
-                                        setFieldValue('offerMargin', value)
-                                    }
+                                        >
+                                            <NumberInputField borderLeftRadius={0} name='offerMargin' />
+                                            <NumberInputStepper>
+                                                <NumberIncrementStepper />
+                                                <NumberDecrementStepper />
+                                            </NumberInputStepper>
+                                        </NumberInput>
+                                    </InputGroup>
+                                </FormControl>
+                                :
+                                <FormControl>
+                                    <FormLabel>Fixed Amound</FormLabel>
+                                    <InputGroup >
+                                        <InputLeftAddon bg={'transparent'} >INR</InputLeftAddon>
 
-                                >
-                                    <NumberInputField borderLeftRadius={0} name='offerMargin' />
-                                    <NumberInputStepper>
-                                        <NumberIncrementStepper />
-                                        <NumberDecrementStepper />
-                                    </NumberInputStepper>
-                                </NumberInput>
-                            </InputGroup>
-                        </FormControl>
+                                        <NumberInput borderRadius={0}
+                                            value={values.fixedPriceValue}
+                                            onChange={(value) =>
+                                                setFieldValue('fixedPriceValue', value)
+                                            }
+
+                                        >
+                                            <NumberInputField borderLeftRadius={0} name='fixedPriceValue' />
+                                            <NumberInputStepper>
+                                                <NumberIncrementStepper />
+                                                <NumberDecrementStepper />
+                                            </NumberInputStepper>
+                                        </NumberInput>
+                                    </InputGroup>
+                                </FormControl>
+                        }
+
+
 
 
                         <Flex bg={'orange.50'} border={'1px solid orange'} p={2} color={'gray'} gap={2} borderRadius={5}>
