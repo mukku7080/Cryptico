@@ -276,7 +276,7 @@ function Steper({ step }) {
 
 const PaymentSection = ({ values, handleChange, handleBlur, setFieldValue, touched, errors, setAction, setCrypto, crypto, setDisable }) => {
     const formikHelpers = { values, handleChange, handleBlur, setFieldValue, touched, errors };
-    const { handleGetAccountDetail, upibankDetails } = useAccount()
+    const { handleGetAccountDetail, upibankDetails } = useAccount();
     useEffect(() => {
         console.log(values);
     }, [values]);
@@ -285,7 +285,9 @@ const PaymentSection = ({ values, handleChange, handleBlur, setFieldValue, touch
     const [isShow, setShow] = useState(true);
     const [isbankShow, setBankShow] = useState(false);
     const [bankDetail, setBankDetail] = useState('Select Your Bank Account');
-    setDisable(isbankShow);
+    const EnableNextStep = () => {
+        setDisable(true);
+    }
     useEffect(() => {
         if (isbankShow) {
             handleGetAccountDetail(values.paymentType);
@@ -406,6 +408,7 @@ const PaymentSection = ({ values, handleChange, handleBlur, setFieldValue, touch
 
                                                     setBankDetail(`${account.account_holder_name} - ${account.bank_name} - ${account.account_number}`);
                                                     setFieldValue('paymentMethodId', account.pd_id);
+                                                    EnableNextStep();
                                                 }
                                                 }
                                             >
@@ -420,6 +423,7 @@ const PaymentSection = ({ values, handleChange, handleBlur, setFieldValue, touch
 
                                                     setBankDetail(`${account.account_holder_name} - ${account.bank_name} - ${account.account_number}`);
                                                     setFieldValue('paymentMethodId', account.pd_id);
+                                                    EnableNextStep();
                                                 }
                                                 }
                                             >

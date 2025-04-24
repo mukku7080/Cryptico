@@ -22,6 +22,9 @@ import { PiUserCircleThin } from "react-icons/pi";
 import BuySellWithNotification from '../Buy&Sell/BuySellWithNotification';
 import { useLocation } from 'react-router-dom';
 import { FaIdCard } from 'react-icons/fa6';
+import { grayGradient } from '../../Styles/Gradient';
+import { gradientButtonStyle } from '../Wallet/CreateWallet';
+import CryptoAccordianOthers from '../Accordian/CrtypAccordianOthers';
 const Profile = () => {
     const location = useLocation();
     const [data, setData] = useState();
@@ -40,10 +43,8 @@ const Profile = () => {
             setUserDetail(user);
         }
     }
-        , [data])
-    console.log(userDetail, "userDetail")
-    // console.log(user, "user")
-    // console.log(data, "data")
+        , [data, user])
+
 
     return (
         <>
@@ -77,7 +78,7 @@ const Profile = () => {
 
 
 
-                                    <Button bg={'transparent'} _hover={{ bg: 'transparent' }} rightIcon={<MdModeEdit />}> Edit Profile</Button>
+                                    <Button bg={'transparent'} _hover={{ bg: 'transparent' }} fontWeight={500} rightIcon={<MdModeEdit />}> Edit Profile</Button>
                                 </Flex>
                             </Card>
 
@@ -209,8 +210,14 @@ const Profile = () => {
                         <GridItem colSpan={3} bg={''}>
                             <Flex w={'full'} direction={'column'} gap={5}>
                                 <Card borderRadius={5} gap={5}>
+                                {
+                                    data?.user?.user_id ?
 
+                                    <CryptoAccordianOthers title={'Active Offers'} btn1={'Buy Crypto'} btn2={'Sell Crypto'} isOptionButton={true} other_user_id={data?.user?.user_id} />
+                                    :
                                     <CryptoAccordion title={'Active Offers'} btn1={'Buy Crypto'} btn2={'Sell Crypto'} isOptionButton={true} />
+                                }
+
                                 </Card>
                                 <Card borderRadius={5}>
 

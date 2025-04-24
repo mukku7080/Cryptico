@@ -542,30 +542,30 @@ const userOption = [
     {
         icon: <FaArrowTrendUp />,
         btn_name: "Trade History",
-        to: 'tradehistory'
+        to: '/user-dashboard/tradehistory'
     },
     {
         icon: <HiMiniArrowPath />,
         btn_name: "Recent Trade Partners",
-        to: 'recentTradePartners'
+        to: '/user-dashboard/recentTradePartners'
 
     },
     {
         icon: <IoBagOutline />,
         btn_name: " My Offers",
-        to: 'myOffers'
+        to: '/user-dashboard/myOffers'
 
     },
     {
         icon: <LiaHandPointRightSolid />,
         btn_name: "Favorite Offers",
-        to: 'favoriteOffers'
+        to: '/user-dashboard/favoriteOffers'
 
     },
     {
         icon: <MdOutlineFileDownload />,
         btn_name: "Trade Statistics",
-        to: 'tradeStatistics'
+        to: '/user-dashboard/tradeStatistics'
 
     },
     {

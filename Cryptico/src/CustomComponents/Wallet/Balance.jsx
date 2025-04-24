@@ -889,7 +889,7 @@ export const Send1 = () => {
                                     <Heading size={'md'}>Send to </Heading>
                                     <ButtonGroup size={'sm'} >
                                         <Button colorScheme='orange' fontSize={'12px'}>Address</Button>
-                                        <Button fontSize={'12px'}>Cryptico Address</Button>
+                                        <Button fontSize={'12px'}>Cryptico User</Button>
                                     </ButtonGroup>
 
                                 </Flex>
@@ -963,7 +963,7 @@ export const Send2 = () => {
                                     <Heading size={'md'}>Send to </Heading>
                                     <ButtonGroup size={'sm'} >
                                         <Button colorScheme='orange' fontSize={'12px'}>Address</Button>
-                                        <Button fontSize={'12px'}>Cryptico Address</Button>
+                                        <Button fontSize={'12px'}>Cryptico User</Button>
                                     </ButtonGroup>
 
                                 </Flex>
@@ -1034,7 +1034,7 @@ export const Send3 = () => {
                                     <Heading size={'md'}>Send to </Heading>
                                     <ButtonGroup size={'sm'} >
                                         <Button colorScheme='orange' fontSize={'12px'}>Address</Button>
-                                        <Button fontSize={'12px'}>Cryptico Address</Button>
+                                        <Button fontSize={'12px'}>Cryptico User</Button>
                                     </ButtonGroup>
 
                                 </Flex>
@@ -1106,7 +1106,7 @@ export const Send4 = () => {
                                     <Heading size={'md'}>Send to </Heading>
                                     <ButtonGroup size={'sm'} >
                                         <Button colorScheme='orange' fontSize={'12px'}>Address</Button>
-                                        <Button fontSize={'12px'}>Cryptico Address</Button>
+                                        <Button fontSize={'12px'}>Cryptico User</Button>
                                     </ButtonGroup>
 
                                 </Flex>

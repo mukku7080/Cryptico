@@ -280,7 +280,7 @@ const AllOffers = ({ isActive, setIsActive, mySellOffer, myBuyOffer, isSellOffer
             {/* Offert To sell/buy */}
             {
                 isloading ?
-                        <Heading p={10} alignSelf={'center'} fontSize={'lg'} color={'gray.400'}>Loading...</Heading>
+                    <Heading p={10} alignSelf={'center'} fontSize={'lg'} color={'gray.400'}>Loading...</Heading>
                     :
                     (
 
@@ -370,11 +370,12 @@ const AllOffers = ({ isActive, setIsActive, mySellOffer, myBuyOffer, isSellOffer
                                                         data?.offer_tags.length > 0 && data?.offer_tags.map((tag, index) => (
 
                                                             <Box
-                                                                p={1}
+                                                                p={2}
                                                                 key={index}
                                                                 fontSize={'12px'}
+                                                                fontWeight={500}
                                                                 borderRadius={5}
-                                                                sx={grayGradient}
+                                                                bg={'gray.200'}
                                                             >{tag}</Box>
                                                         ))
                                                     }

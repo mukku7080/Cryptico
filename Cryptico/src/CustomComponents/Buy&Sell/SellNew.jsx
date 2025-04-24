@@ -48,6 +48,15 @@ const MotionFlex = motion(Flex);
 const SellNew = () => {
     const { handleGetOffer, offers, buyOffer } = useOffer();
     const [isloading, setIsLoading] = useState(true);
+    const queryParamsOther = {
+        user_id: '',
+        txn_type: '',
+        cryptocurrency: '',
+        per_page: 10
+    };
+    useEffect(() => {
+        handleGetOffer(queryParamsOther);
+    }, [])
     setTimeout(() => {
         setIsLoading(false);
     }, 3000);

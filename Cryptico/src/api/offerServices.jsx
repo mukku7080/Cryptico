@@ -33,9 +33,17 @@ export const AddOffer = async (values) => {
         throw error.response ? error.response.data : response;
     }
 }
-export const GetOffers = async () => {
+export const GetOffers = async (queryParamsOther) => {
+
+    const queryParams = {
+        user_id: queryParamsOther.user_id ? queryParamsOther.user_id : '',
+        txn_type: queryParamsOther.txn_type ? queryParamsOther.txn_type : '',
+        cryptocurrency: queryParamsOther.cryptocurrency ? queryParamsOther.cryptocurrency : '',
+        per_page: 10
+    }
+    console.log(queryParams);
     try {
-        const response = await axiosInstance.get('/crypto-ad');
+        const response = await axiosInstance.get(`/crypto-ad?user_id=${queryParams?.user_id} &txn_type=${queryParams?.txn_type}&cryptocurrency=${queryParams?.cryptocurrency}&per_page=${queryParams?.per_page}`);
         return response.data;
     }
     catch (error) {

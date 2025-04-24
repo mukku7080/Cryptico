@@ -80,6 +80,7 @@ const PasswordVerification = ({ blockChainType = {}, onClose }) => {
     const [walleterror, setWalletError] = useState(null);
     const [isInputDisabled, setIsInputDisabled] = useState(false);
     const [isPassWordMessageShow, setPasswordMessageShow] = useState(false);
+    const [passworSEMessage, setPasswordSEMessage] = useState('');
     // const [createWalletErrorMessage, setCreateWalletErrorMessage] = useState(false);
     const { user } = useUser();
 
@@ -92,6 +93,8 @@ const PasswordVerification = ({ blockChainType = {}, onClose }) => {
             if (res.passwordVerified) {
                 setIsInputDisabled(true);
                 setPasswordMessageShow(true);
+                console.log(res?.message);
+                setPasswordSEMessage(res?.message);
                 setLoading(false);
                 const response = await handleCreateWallet(blockChainType);
                 if (response?.status) {
@@ -106,6 +109,7 @@ const PasswordVerification = ({ blockChainType = {}, onClose }) => {
                             onClose();
                             setPasswordMessageShow(false);
                             setIsInputDisabled(false);
+                            setPasswordSEMessage('');
                         }, 3000);
                     }
 
@@ -117,12 +121,18 @@ const PasswordVerification = ({ blockChainType = {}, onClose }) => {
 
 
             }
+            else {
+
+                setPasswordSEMessage(res?.message);
+            }
         }
         catch (error) {
             console.log(error);
         }
         finally {
+
             setLoading(false);
+           
         }
 
     }
@@ -232,10 +242,10 @@ const PasswordVerification = ({ blockChainType = {}, onClose }) => {
                         {
                             isPassWordMessageShow ?
                                 passwordmatch?.passwordVerified === true &&
-                                <Box color={passwordmatch?.passwordVerified ? 'green' : 'red'} fontWeight={700}>{passwordmatch?.message}</Box>
+                                <Box color='green.500' fontWeight={700}>{passworSEMessage}</Box>
 
                                 :
-                                <Box></Box>
+                                <Box color={'red.500'}>{passworSEMessage}</Box>
 
                         }
                         <Button

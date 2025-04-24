@@ -8,12 +8,14 @@ const OfferProvider = ({ children }) => {
     const [offers, setOffers] = useState([]);
     const [sellOffer, setSellOffer] = useState([]);
     const [buyOffer, setBuyOffer] = useState([]);
+    const [analytics, setAnalytics] = useState([]);
     const [mySellOffer, setMySellOffer] = useState();
     const [myBuyOffer, setMyBuyOffer] = useState();
     const [myOfferAnalytics, setMyOfferAnalytics] = useState();
+
     const { user } = useUser()
     useEffect(() => {
-        handleGetOffer();
+        // handleGetOffer('');
     }, [user]);
 
 
@@ -24,7 +26,6 @@ const OfferProvider = ({ children }) => {
         try {
             console.log(values);
             const response = await AddOffer(values);
-            console.log(response);
             setSatus(response.status);
             return response;
         }
@@ -32,14 +33,27 @@ const OfferProvider = ({ children }) => {
 
         }
     }
-    const handleGetOffer = async () => {
+    const handleGetOffer = async (queryParamsOther) => {
         try {
 
-            const response = await GetOffers();
+            const response = await GetOffers(queryParamsOther);
+            if (queryParamsOther?.user_id) {
+                const selldata = response?.data?.offer?.filter(offer => offer.transaction_type === 'sell');
+                const buydata = response?.data?.offer?.filter(offer => offer.transaction_type === 'buy');
+                setSellOffer(selldata);
+                setBuyOffer(buydata);
+            }
+            else {
+                const selldata = response?.data?.filter(offer => offer.transaction_type === 'sell' && offer.user_id !== user?.user_id);
+                const buydata = response?.data?.filter(offer => offer.transaction_type === 'buy' && offer.user_id !== user?.user_id);
+                setSellOffer(selldata);
+                setBuyOffer(buydata);
+
+            }
+            setAnalytics(response?.analytics);
 
             const selldata = response?.data?.filter(offer => offer.transaction_type === 'sell' && offer.user_id !== user?.user_id);
             const buydata = response?.data?.filter(offer => offer.transaction_type === 'buy' && offer.user_id !== user?.user_id);
-
             setSellOffer(selldata);
             setBuyOffer(buydata);
             setOffers(response.data);
@@ -64,7 +78,7 @@ const OfferProvider = ({ children }) => {
     }
 
     return (
-        <OfferContext.Provider value={{ handleAddOffer, handleGetOffer, handleGetMyOffer, offers, sellOffer, buyOffer, mySellOffer, myBuyOffer, myOfferAnalytics, handlechangeActiveStatus }}>
+        <OfferContext.Provider value={{ handleAddOffer, handleGetOffer, handleGetMyOffer, offers, sellOffer, buyOffer, mySellOffer, myBuyOffer, myOfferAnalytics, handlechangeActiveStatus, analytics }}>
             {children}
         </OfferContext.Provider>
     )

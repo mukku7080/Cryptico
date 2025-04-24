@@ -54,7 +54,7 @@ function CryptoAccordion({ title, btn1, btn2, isOptionButton }) {
   useEffect(() => {
     handleGetMyOffer(queryParams);
   }, [queryParams?.cryptocurrency]);
-  
+
   return (
     <Accordion allowMultiple gap={10} width={'100%'}  >
 
@@ -77,7 +77,7 @@ function CryptoAccordion({ title, btn1, btn2, isOptionButton }) {
                 variant={'outline'}
                 borderTopRadius={5}
                 borderBottomRadius={0}
-                rightIcon={<Mybadge bgcolor={'orange'} count={myBuyOffer?.length} />}
+                rightIcon={<Mybadge bgcolor={'orange'} count={queryParams.cryptocurrency !== '' ? myBuyOffer?.length : myOfferAnalytics?.totalUserActiveBuyAds} />}
                 _hover={{ bg: 'transparent', borderBottom: '1px solid gray' }}
                 onClick={() => handleBuySellOfferShow('buy')}
                 _active={{ borderBottom: '1px solid black' }}
@@ -91,7 +91,7 @@ function CryptoAccordion({ title, btn1, btn2, isOptionButton }) {
                 bg={'transparent'}
                 borderTopRadius={5}
                 borderBottomRadius={0}
-                rightIcon={<Mybadge bgcolor={'orange'} count={mySellOffer?.length} />}
+                rightIcon={<Mybadge bgcolor={'orange'} count={queryParams.cryptocurrency !== '' ? mySellOffer?.length : myOfferAnalytics?.totalUserActiveSellAds} />}
                 _hover={{ bg: 'transparent', borderBottom: '1px solid gray' }}
                 onClick={() => handleBuySellOfferShow('sell')}
                 _active={{ borderBottom: '1px solid black' }}

@@ -19,6 +19,7 @@ import {
     AccordionIcon,
     useDisclosure,
     AvatarBadge,
+    Spinner,
 
 } from '@chakra-ui/react';
 import { FaArrowTrendUp, FaRegThumbsDown } from "react-icons/fa6";
@@ -43,9 +44,19 @@ import { gradientButtonStyle } from '../Wallet/CreateWallet';
 import { grayGradient } from '../../Styles/Gradient';
 
 const BuyNew = () => {
+
     const context = useOffer();
     const { handleGetOffer, offers, sellOffer } = useOffer();
     const [isloading, setIsLoading] = useState(true);
+    const queryParamsOther = {
+        user_id: '',
+        txn_type: '',
+        cryptocurrency: '',
+        per_page: 10
+    };
+    useEffect(() => {
+        handleGetOffer(queryParamsOther);
+    }, [])
     setTimeout(() => {
         setIsLoading(false);
     }, 3000);
@@ -474,7 +485,6 @@ const MoreFilter = () => {
 
 const OfferList = ({ index, data }) => {
     const navigate = useNavigate();
-    console.log('data', data);
     const parsedData = JSON.parse(data?.payment_method);
     return (
         <Flex w={'full'} borderBottom={'1px solid #dcdcdc'} borderBottomRadius={0} direction={'column'} gap={5} >
