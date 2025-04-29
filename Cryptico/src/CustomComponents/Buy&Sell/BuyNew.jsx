@@ -43,23 +43,64 @@ import { useOffer } from '../../Context/OfferContext';
 import { gradientButtonStyle } from '../Wallet/CreateWallet';
 import { grayGradient } from '../../Styles/Gradient';
 
+
 const BuyNew = () => {
 
-    const context = useOffer();
-    const { handleGetOffer, offers, sellOffer } = useOffer();
+
+    const { handleGetOffer, offers, queryParams, setQueryParams } = useOffer();
     const [isloading, setIsLoading] = useState(true);
-    const queryParamsOther = {
+    const OfferFilter = {
         user_id: '',
-        txn_type: '',
+        txn_type: 'sell',
         cryptocurrency: '',
-        per_page: 10
-    };
+        paymentMethod: '',
+        maxAmount: '',
+        offerLocation: '',
+        traderLocation: '',
+        activeTrader: false,
+        per_page: 10,
+    }
     useEffect(() => {
-        handleGetOffer(queryParamsOther);
-    }, [])
+        setQueryParams(() => ({
+            user_id: null,
+            txn_type: 'sell',
+            cryptocurrency: null,
+            paymentMethod: null,
+            maxAmount: null,
+            offerLocation: null,
+            traderLocation: null,
+            activeTrader: false,
+            per_page: 10
+        }));
+    }, []);
+
+    useEffect(() => {
+        if (!queryParams.txn_type) return;
+        OfferFilter.cryptocurrency = queryParams.cryptocurrency;
+        OfferFilter.paymentMethod = queryParams.paymentMethod;
+        OfferFilter.maxAmount = queryParams.maxAmount;
+        OfferFilter.offerLocation = queryParams.offerLocation;
+        OfferFilter.traderLocation = queryParams.traderLocation;
+        OfferFilter.activeTrader = queryParams.activeTrader;
+        OfferFilter.per_page = queryParams.per_page;
+
+        handleGetOffer(OfferFilter);
+    }, [
+        queryParams.cryptocurrency,
+        queryParams.paymentMethod,
+        queryParams.maxAmount,
+        queryParams.offerLocation,
+        queryParams.traderLocation,
+        queryParams.activeTrader,
+        queryParams.per_page,
+        queryParams.txn_type,
+    ]);
     setTimeout(() => {
         setIsLoading(false);
     }, 3000);
+
+
+
     return (
         <>
             <Flex maxW={'container.xxl'} justifyContent={'start'} alignItems={'center'} paddingTop={{ base: 0, lg: 20 }} minH={'90vh'} direction={'column'} >
@@ -158,8 +199,8 @@ const BuyNew = () => {
                                                 </Flex>
                                                 :
 
-                                                sellOffer?.length > 0 ?
-                                                    sellOffer?.map((data, index) => (
+                                                offers?.length > 0 ?
+                                                    offers?.map((data, index) => (
 
                                                         <OfferList key={index} data={data} />
                                                     ))
@@ -167,10 +208,7 @@ const BuyNew = () => {
                                                     <Flex w={'full'} justifyContent={'center'} alignItems={'center'} gap={5} p={10}>
                                                         <Heading size={'md'} color={'gray.400'}>No offers found</Heading>
                                                     </Flex>
-
                                         }
-
-
                                     </Flex>
                                 </Flex>
                             </Flex>
@@ -198,6 +236,7 @@ const BuyNew = () => {
 const LeftSideContent = () => {
     const [searchParams] = useSearchParams();
     const [index, setIndex] = useState(0);
+    const { setQueryParams } = useOffer();
     useEffect(() => {
         const queryValue = searchParams.get('index');
         // Check if the value is not null and is a valid number
@@ -250,6 +289,7 @@ const LeftSideContent = () => {
                                     border={'none'}
                                     _hover={{ border: "none" }}
                                     _focus={{ boxShadow: "none", border: "none" }}
+                                    onChange={(e) => setQueryParams((prev) => ({ ...prev, maxAmount: e.target.value }))}
 
                                 ></Input>
                                 {
@@ -301,7 +341,10 @@ const LeftSideContent = () => {
                                 <Box display={'flex'} alignItems={'center'}><AiOutlineExclamationCircle /></Box>
                             </Flex>
                             <Flex alignItems={'center'}>
-                                <Switch colorScheme='orange' />
+                                <Switch colorScheme='orange' onChange={(e) => setQueryParams((prev) => ({
+                                    ...prev,
+                                    activeTrader: e.target.checked
+                                }))} />
 
                             </Flex>
                         </Flex>
@@ -373,11 +416,7 @@ const LeftContentmobileView = () => {
                                     <FaArrowTrendUp />
                                 </Box>
                             </Flex>
-                            {/* <PaymentDropdown /> */}
                             <MyPaymentModal />
-
-                            {/* currency type input */}
-                            {/* <CurrencyDropdown /> */}
                             <Flex justifyContent={'space-between'} border={'1px solid #dcdcdc'} borderRadius={5} display={'flex'} alignItems={'center'} >
                                 <InputGroup>
 
@@ -506,7 +545,7 @@ const OfferList = ({ index, data }) => {
                                 :
                                 <Spinner size={'xl'} />
                         }
-                        <Button p={0} bg={'transparent'} _hover={{ textDecoration: 'underline' }} fontWeight={500} size={'sm'} onClick={() => navigate('/profile', { state: { data: data } })}>{data?.user?.username}</Button>
+                        <Button p={0} bg={'transparent'} _hover={{ textDecoration: 'underline' }} fontWeight={500} size={'sm'} onClick={() => navigate('/trade-partner-profile', { state: { data: data } })}>{data?.user?.username}</Button>
 
 
                     </Flex>

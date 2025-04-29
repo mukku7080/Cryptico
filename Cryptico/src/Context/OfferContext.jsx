@@ -13,10 +13,25 @@ const OfferProvider = ({ children }) => {
     const [myBuyOffer, setMyBuyOffer] = useState();
     const [myOfferAnalytics, setMyOfferAnalytics] = useState();
 
+    const [queryParams, setQueryParams] = useState({
+        user_id: '',
+        txn_type: '',
+        cryptocurrency: '',
+        paymentMethod: '',
+        maxAmount: '',
+        offerLocation: '',
+        traderLocation: '',
+        activeTrader: false,
+        per_page: 10,
+
+    });
+
+
     const { user } = useUser()
-    useEffect(() => {
-        // handleGetOffer('');
-    }, [user]);
+    // useEffect(() => {
+    //     // handleGetOffer('');
+    // }, [user]);
+
 
 
 
@@ -34,32 +49,41 @@ const OfferProvider = ({ children }) => {
         }
     }
     const handleGetOffer = async (queryParamsOther) => {
+
+
+        const newQueryParams = {
+            user_id: queryParamsOther.user_id || '',
+            txn_type: queryParamsOther.txn_type || '',
+            cryptocurrency: queryParamsOther.cryptocurrency || '',
+            paymentMethod: queryParamsOther.paymentMethod || '',
+            maxAmount: queryParamsOther.maxAmount || '',
+            offerLocation: queryParamsOther.offerLocation || '',
+            traderLocation: queryParamsOther.traderLocation || '',
+            activeTrader: queryParamsOther.activeTrader || false,
+            per_page: 10,
+        };
+        setQueryParams(newQueryParams);
         try {
 
-            const response = await GetOffers(queryParamsOther);
-            if (queryParamsOther?.user_id) {
-                const selldata = response?.data?.offer?.filter(offer => offer.transaction_type === 'sell');
-                const buydata = response?.data?.offer?.filter(offer => offer.transaction_type === 'buy');
-                setSellOffer(selldata);
-                setBuyOffer(buydata);
+            const response = await GetOffers(newQueryParams);
+            if (queryParams?.user_id) {
+
+                setOffers(response?.data?.offer);
+                response?.data;
             }
             else {
-                const selldata = response?.data?.filter(offer => offer.transaction_type === 'sell' && offer.user_id !== user?.user_id);
-                const buydata = response?.data?.filter(offer => offer.transaction_type === 'buy' && offer.user_id !== user?.user_id);
-                setSellOffer(selldata);
-                setBuyOffer(buydata);
+                setOffers(response?.data);
 
             }
             setAnalytics(response?.analytics);
 
-            const selldata = response?.data?.filter(offer => offer.transaction_type === 'sell' && offer.user_id !== user?.user_id);
-            const buydata = response?.data?.filter(offer => offer.transaction_type === 'buy' && offer.user_id !== user?.user_id);
-            setSellOffer(selldata);
-            setBuyOffer(buydata);
-            setOffers(response.data);
+
             return response;
         } catch (error) {
             console.log(error);
+        }
+        finally {
+
         }
     }
     const handleGetMyOffer = async (queryParams) => {
@@ -78,7 +102,7 @@ const OfferProvider = ({ children }) => {
     }
 
     return (
-        <OfferContext.Provider value={{ handleAddOffer, handleGetOffer, handleGetMyOffer, offers, sellOffer, buyOffer, mySellOffer, myBuyOffer, myOfferAnalytics, handlechangeActiveStatus, analytics }}>
+        <OfferContext.Provider value={{ handleAddOffer, handleGetOffer, handleGetMyOffer, offers, sellOffer, buyOffer, mySellOffer, myBuyOffer, myOfferAnalytics, handlechangeActiveStatus, analytics, queryParams, setQueryParams, setOffers, setAnalytics }}>
             {children}
         </OfferContext.Provider>
     )

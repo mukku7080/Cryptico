@@ -28,7 +28,10 @@ import { CiWallet, CiCreditCard2, CiGift } from "react-icons/ci";
 import { FaGooglePay } from "react-icons/fa";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { useState } from 'react';
-export const MyPaymentModal = ({ formikHelpers = {}, name, setBankShow }) => {
+import { useOffer } from '../../../Context/OfferContext';
+export const MyPaymentModal = ({ formikHelpers = {}, name, setBankShow = () => { } }) => {
+    const { queryParams, setQueryParams } = useOffer()
+
     const {
         values = {},
         handleChange = () => { }, // Default to a no-op function
@@ -104,9 +107,9 @@ export const MyPaymentModal = ({ formikHelpers = {}, name, setBankShow }) => {
                                                 setOption(data.name);
                                                 handleChange({ target: { name: name, value: data.value } });
                                                 setFieldValue('paymentType', data.type);
-
                                                 onClose();
                                                 setBankShow(true);
+                                                setQueryParams((prev) => ({ ...prev, paymentMethod: data.value }))
 
                                             }}
                                         >
@@ -177,7 +180,7 @@ const IndianpaymentOptions = [
     {
         id: 1,
         name: 'IMPS Transfer',
-        value: 'imps transfer',
+        value: 'imps',
         type: 'bank',
         icon: <PiBankLight size={30} />,
         imgSrc: 'https://cdn-icons-png.flaticon.com/512/2111/2111352.png'
@@ -185,7 +188,7 @@ const IndianpaymentOptions = [
     {
         id: 2,
         name: 'NEFT Transfer',
-        value: 'neft transfer',
+        value: 'neft',
         type: 'bank',
         icon: <PiBankLight size={30} />,
         imgSrc: 'https://cdn-icons-png.flaticon.com/512/2111/2111352.png'
@@ -193,7 +196,7 @@ const IndianpaymentOptions = [
     {
         id: 3,
         name: 'RTGS Transfer',
-        value: 'rtgs transfer',
+        value: 'rtgs',
         type: 'bank',
         icon: <PiBankLight size={30} />,
         imgSrc: 'https://cdn-icons-png.flaticon.com/512/2111/2111352.png'
@@ -201,7 +204,7 @@ const IndianpaymentOptions = [
     {
         id: 4,
         name: 'Amazon Pay',
-        value: 'amazon pay',
+        value: 'amazon_pay',
         type: 'upi',
         icon: <CiWallet size={30} />,
         imgSrc: 'https://cdn-icons-png.flaticon.com/512/2111/2111352.png'

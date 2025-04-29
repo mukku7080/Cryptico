@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Menu,
     MenuButton,
@@ -17,18 +17,30 @@ import { MdKeyboardArrowDown } from "react-icons/md";
 import { IoMdSearch } from "react-icons/io";
 import { IoLocationOutline } from "react-icons/io5";
 import { useOtherDetail } from "../../Context/otherContext";
+import { grayGradient } from "../../Styles/Gradient";
+import { useOffer } from "../../Context/OfferContext";
 
-const TraderLocation = ({ isDisabled }) => {
+const TraderLocation = ({ }) => {
+
+    const { setQueryParams } = useOffer()
+    const { countryCode } = useOtherDetail();
+    const defaultOption = countryCode?.find(country => country.name.toLowerCase() === 'india')?.name || "Loading.....";
 
 
     const [searchTerm, setSearchTerm] = useState("");
-    const [btnName, setBtnName] = useState(location[0]);
-    const { data } = useOtherDetail();
+    const [btnName, setBtnName] = useState(defaultOption);
 
-
-    const filteredItems = location.filter((location) =>
-        location.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredItems = (countryCode || []).filter((location) =>
+        location.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+
+    useEffect(() => {
+        setBtnName(defaultOption);
+        setQueryParams((prev) => ({ ...prev, location: defaultOption.toLocaleLowerCase() }))
+    }, [countryCode]);
+
+
     return (
         <>
             <Menu matchWidth>
@@ -36,10 +48,10 @@ const TraderLocation = ({ isDisabled }) => {
                     as={Button}
                     rightIcon={<MdKeyboardArrowDown />}
                     borderRadius={5}
-                    isDisabled={isDisabled}
+                    w={'100%'}
 
                 >
-                    <Flex>
+                    <Flex gap={2}>
                         <Box display={'flex'} alignItems={'center'} >
 
                             <IoLocationOutline />
@@ -49,10 +61,11 @@ const TraderLocation = ({ isDisabled }) => {
                     </Flex>
                 </MenuButton>
 
-                <MenuList p={2} borderRadius={0} isDisabled={isDisabled}
+                <MenuList p={2} borderRadius={0}
                     maxHeight="300px" // Limit height
-                    overflowY="auto" // Enable scrolling 
+                    overflowY="auto" // Enable scrolling
 
+                    maxW={{ base: '252px', sm: 'none' }}
 
                 >
                     {/* Search Box */}
@@ -72,8 +85,17 @@ const TraderLocation = ({ isDisabled }) => {
                     <VStack align="stretch" spacing={1}>
                         {filteredItems.length > 0 ? (
                             filteredItems.map((location, index) => (
-                                <MenuItem key={index} _hover={{ bg: "blue.100" }} onClick={() => setBtnName(location)} isDisabled={isDisabled}>
-                                    {location}
+                                <MenuItem key={index}
+                                    _hover={{ bg: "blue.100" }}
+                                    onClick={() => {
+
+                                        setBtnName(location.name);
+                                        setQueryParams((prev) => ({ ...prev, traderLocation: location?.name.toLocaleLowerCase() }))
+                                    }
+
+                                    }
+                                >
+                                    {location.name}
                                 </MenuItem>
                             ))
                         ) : (

@@ -18,6 +18,7 @@ import { IoMdSearch } from "react-icons/io";
 import { IoLocationOutline } from "react-icons/io5";
 import { useOtherDetail } from "../../Context/otherContext";
 import { grayGradient } from "../../Styles/Gradient";
+import { useOffer } from "../../Context/OfferContext";
 
 const OfferLocation = ({ formikHelpers = {}, name }) => {
     // const { values = {}, handleChange = {}, handleBlur = {}, errors = {}, touched = {} } = formikHelpers;
@@ -29,8 +30,9 @@ const OfferLocation = ({ formikHelpers = {}, name }) => {
         touched = {},
     } = formikHelpers || {}; // Ensure formikHelpers is not undefined
 
+    const { setQueryParams } = useOffer()
     const { countryCode } = useOtherDetail();
-    const defaultOption = countryCode?.[0]?.name || "Loading.....";
+    const defaultOption = countryCode?.find(country => country.name.toLowerCase() === 'india')?.name || "Loading.....";
 
 
     const [searchTerm, setSearchTerm] = useState("");
@@ -42,12 +44,9 @@ const OfferLocation = ({ formikHelpers = {}, name }) => {
 
 
     useEffect(() => {
-        // If no option is selected, set the default one
         setBtnName(defaultOption);
         handleChange({ target: { name, value: defaultOption } });
-
-        // deaultLocation();
-
+        setQueryParams((prev) => ({ ...prev, location: defaultOption.toLocaleLowerCase() }))
     }, [countryCode]);
 
 
@@ -101,6 +100,7 @@ const OfferLocation = ({ formikHelpers = {}, name }) => {
 
                                         setBtnName(location.name);
                                         handleChange({ target: { name, value: location?.name || defaultOption } });
+                                        setQueryParams((prev) => ({ ...prev, offerLocation: location?.name.toLocaleLowerCase() }))
                                     }
 
                                     }

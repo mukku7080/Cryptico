@@ -13,23 +13,19 @@ import {
 
 import { FaPhoneAlt, FaEnvelope, FaUserCircle, FaMapMarkerAlt } from "react-icons/fa";
 import CryptoAccordion, { Mybadge } from '../Accordian/CryptoAccordion';
-import { IoEyeOutline } from "react-icons/io5";
 import { MdModeEdit } from "react-icons/md";
 import { FaTwitter, FaFacebook } from "react-icons/fa";
-import { useUser } from '../../Context/userContext';
 import { MdOutlineThumbUp, MdOutlineThumbDownAlt } from "react-icons/md";
 import { PiUserCircleThin } from "react-icons/pi";
-import BuySellWithNotification from '../Buy&Sell/BuySellWithNotification';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { FaIdCard } from 'react-icons/fa6';
-import { grayGradient } from '../../Styles/Gradient';
-import { gradientButtonStyle } from '../Wallet/CreateWallet';
 import CryptoAccordianOthers from '../Accordian/CrtypAccordianOthers';
-const Profile = () => {
+const TradePartnerProfile = () => {
     const location = useLocation();
-    const { user } = useUser();
-    const navigate = useNavigate();
-
+    const [data, setData] = useState();
+    useEffect(() => {
+        setData(location.state?.data);
+    }, [location.state?.data])
 
 
     return (
@@ -45,21 +41,18 @@ const Profile = () => {
 
                 >
                     <Grid templateColumns={{ base: 'repeat(1,1fr)', sm: 'repeat(1,1fr)', md: 'repeat(1,1fr)', lg: 'repeat(1,1fr)', xl: 'repeat(4, 1fr)' }} rowGap={4} gap={{ xl: 5 }} w={'100%'}>
-
-
                         <GridItem colSpan={1} >
                             <Card borderRadius={5} py={4}>
                                 <Flex alignItems={'center'} gap={2} pl={5} mb={5}>
-                                    <Box boxSize={3} bg={'green.400'} borderRadius={'50%'}></Box> Active now
+                                    <Box boxSize={3} bg={'green.400'} borderRadius={'50%'}></Box> {data?.user?.last_seen_at}
                                 </Flex>
                                 <Flex alignItems={'center'} justifyContent={'center'} direction={'column'} gap={2}>
-                                    {
-                                        user ? (<Avatar name={user?.username ? user.username : user.email} src={user.profile_image_url} size={'xl'} />) : (<Spinner size={'xl'} />)
+                                    {data?.user ? (<Avatar name={data?.user?.username ? data?.user?.username : data?.user?.email} src={data?.user?.profile_image_url} size={'xl'} />) : (<Spinner size={'xl'} />)
                                     }
-                                    <Heading size={'lg'}> {user?.username}</Heading>
+                                    <Heading size={'lg'}> {data?.user?.username}</Heading>
                                     <Flex gap={3} alignItems={'center'}>
-                                        {user?.country}
-                                        <Image boxSize={8} src={user?.country_flag_url}></Image>
+                                        {data?.user?.country_flag_url}
+                                        <Image boxSize={8} src={data?.user?.country_flag_url}></Image>
                                     </Flex>
                                     <Button bg={'transparent'} _hover={{ bg: 'transparent' }} fontWeight={500} rightIcon={<MdModeEdit />}> Edit Profile</Button>
                                 </Flex>
@@ -67,55 +60,12 @@ const Profile = () => {
                         </GridItem>
                         <GridItem colSpan={3}  >
                             <Card width={'full'} h={'full'} p={1} borderRadius={5}>
-                                {/* <Flex justifyContent={'space-between'} alignItems={'center'} mx={2} direction={{ base: 'column', sm: 'row', md: 'row' }} gap={5}>
-
-                                    <Flex direction={'column'} gap={4} color={'gray'} alignItems={{ base: 'center', sm: 'start' }} >
-                                        <Box>Trust:Block</Box>
-                                        <Flex gap={3}>
-                                            <Box display={'flex'} alignItems={'center'}>
-
-                                                <IoEyeOutline />
-                                            </Box>
-                                            <Box as='p'>
-
-                                                Seen 21 our ago
-                                            </Box>
-                                        </Flex>
-                                        <Flex gap={5}  >
-                                            <Box border={'1px solid #228B22'} py={2} px={5} position={'relative'} color={'#228B22'}>  Feedback
-                                                <Box as='span' position={'absolute'} top={-3} right={-3} >
-
-                                                    <Mybadge bgcolor={'#228B22'} />
-                                                </Box>
-
-                                            </Box>
-                                            <Box border={'1px solid #B22222'} py={2} px={5} position={'relative'} color={'#B22222'}>
-
-                                                Feedback
-                                                <Box as='span' position={'absolute'} top={-3} right={-3} >
-
-                                                    <Mybadge bgcolor={'#B22222'} />
-                                                </Box>
-
-                                            </Box>
-                                        </Flex>
-
-                                    </Flex>
-                                    <Flex gap={5} direction={{ base: 'row', sm: 'column', lg: 'row' }}>
-                                        {
-                                            socialIcons.map((data, index) => (
-
-                                                <Button key={index} as={Link} href={data.link} borderRadius={0} bg={data.color} >{data.icon}</Button>
-                                            ))
-                                        }
-
-                                    </Flex>
-                                </Flex> */}
                                 <UserDetails />
                             </Card>
 
                         </GridItem>
                     </Grid>
+
                     <Grid templateColumns={{ base: 'repeat(1,1fr)', sm: 'repeat(1,1fr)', md: 'repeat(1,1fr)', lg: 'repeat(1,1fr)', xl: 'repeat(4, 1fr)' }} rowGap={4} gap={{ xl: 5 }} w={'100%'} >
                         {/* Left Side nav column */}
                         <GridItem colSpan={1} bg={''}  >
@@ -125,39 +75,39 @@ const Profile = () => {
                                         <Box py={2} px={3} borderBottom={'1px solid #dcdcdc'} fontWeight={600} bg={'#f7f7f7'} w={'full'}>Verification</Box>
                                         {/* {verificationStatus.map((data, index) => ( */}
                                         <>
-                                            <Box py={1} px={3} >
-                                                <Flex gap={5} fontWeight={500} color={user?.phone_verified ? 'green.500' : 'red.500'}>
+                                            <Box py={2} px={3} >
+                                                <Flex gap={5} color={data?.user?.phone_verified ? 'green.500' : 'red.500'}>
                                                     <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
 
                                                         <FaPhoneAlt />
                                                     </Box>
-                                                    <Box color={user?.phone_verified ? 'green.500' : 'red.500'} _hover={{ bg: 'transparent' }} bg={'transparent'} p={0} fontSize={'16px'} as={Button} onClick={() => navigate('/settings/verification')} isDisabled={user?.phone_verified}  >Phone Verified</Box>
+                                                    <Box fontSize={'16px'} fontWeight={500}>Phone Verified</Box>
                                                 </Flex>
                                             </Box>
-                                            <Box py={1} px={3} >
-                                                <Flex gap={5} fontWeight={500} color={user?.email_verified ? 'green.500' : 'red.500'}>
+                                            <Box py={2} px={3} >
+                                                <Flex gap={5} color={data?.user?.email_verified ? 'green.500' : 'red.500'}>
                                                     <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
 
                                                         <FaEnvelope />
                                                     </Box>
-                                                    <Box color={user?.email_verified ? 'green.500' : 'red.500'} _hover={{ bg: 'transparent' }} bg={'transparent'} p={0} fontSize={'16px'} as={Button} onClick={() => navigate('/settings/verification')} isDisabled={user?.email_verified} >Email Verified</Box>
+                                                    <Box fontSize={'16px'} fontWeight={500}>Email Verified</Box>
                                                 </Flex>
                                             </Box>
-                                            <Box py={1} px={3} >
-                                                <Flex gap={5} fontWeight={500} color={user?.id_verified ? 'green.500' : 'red.500'}>
+                                            <Box py={2} px={3} >
+                                                <Flex gap={5} color={data?.user?.id_verified ? 'green.500' : 'red.500'}>
                                                     <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
 
                                                         <FaIdCard />
                                                     </Box>
-                                                    <Box color={user?.id_verified ? 'green.500' : 'red.500'} _hover={{ bg: 'transparent' }} bg={'transparent'} p={0} fontSize={'16px'} as={Button} onClick={() => navigate('/settings/verification')} isDisabled={user?.id_verified}  >id Verified</Box>
+                                                    <Box fontSize={'16px'} fontWeight={500}>id Verified</Box>
                                                 </Flex>
                                             </Box>
-                                            <Box py={1} px={3}>
-                                                <Flex gap={5} fontWeight={500} color={user?.address_verified ? 'green.500' : 'red.500'}>
+                                            <Box py={2} px={3} >
+                                                <Flex gap={5} color={data?.user?.address_verified ? 'green.500' : 'red.500'}>
                                                     <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
                                                         <FaMapMarkerAlt />
                                                     </Box>
-                                                    <Box color={user?.address_verified ? 'green.500' : 'red.500'} _hover={{ bg: 'transparent' }} bg={'transparent'} p={0} fontSize={'16px'} as={Button} onClick={() => navigate('/settings/verification')} isDisabled={user?.address_verified}  >Address Verified</Box>
+                                                    <Box fontSize={'16px'} fontWeight={500}>Address Verified</Box>
                                                 </Flex>
                                             </Box>
                                         </>
@@ -168,7 +118,7 @@ const Profile = () => {
                                     <Card boxShadow={'lg'} border={'1px solid #dcdcdc'} borderRadius={5}>
 
                                         <Box py={2} px={3} borderBottom={'1px solid #dcdcdc'} fontWeight={600} bg={'#f7f7f7'} w={'full'}>Info</Box>
-                                        {users.map((data, index) => (
+                                        {datas.map((data, index) => (
                                             <>
                                                 <Box key={index} py={2} px={3}>
                                                     <Flex gap={5} justifyContent={'space-between'}>
@@ -185,14 +135,13 @@ const Profile = () => {
 
                                 </Flex>
                             </Flex>
+
                         </GridItem>
                         {/* Left Side nav column end */}
                         <GridItem colSpan={3} bg={''}>
                             <Flex w={'full'} direction={'column'} gap={5}>
                                 <Card borderRadius={5} gap={5}>
-
-                                    <CryptoAccordion title={'Active Offers'} btn1={'Buy Crypto'} btn2={'Sell Crypto'} isOptionButton={true} />
-
+                                    <CryptoAccordianOthers title={'Active Offers'} btn1={'Buy Crypto'} btn2={'Sell Crypto'} isOptionButton={true} other_user_id={data?.user?.user_id} />
                                 </Card>
                                 {/* <Card borderRadius={5}>
 
@@ -253,7 +202,7 @@ const UserDetails = () => {
                 </Flex>
                 <Divider border={'1px solid #dcdcdc'} display={{ base: 'block', md: 'none' }} />
                 <Flex gap={{ base: 5, sm: 10, lg: 20 }} w={'full'} flex={1} justifyContent={'space-around'}>
-                    {/* user1 */}
+                    {/* data1 */}
                     <Flex direction={'column'} gap={4}  >
 
                         {
@@ -311,7 +260,7 @@ const userValueDetail2 = [
 ]
 
 
-const users = [
+const datas = [
     { label: "Location:", value: "India" },
     { label: "Languages:", value: "English (English)" },
     { label: "Trade Partners:", value: 20 },
@@ -334,4 +283,4 @@ const socialIcons = [
 
 
 
-export default Profile
+export default TradePartnerProfile

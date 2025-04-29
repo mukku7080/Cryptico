@@ -38,6 +38,7 @@ import AllNotification from './CustomComponents/NotificationFile/AllNotification
 import NotFound from './CustomComponents/NotFound/NotFound';
 import EmailVerification from './CustomComponents/LoginSignup/EmailVerification';
 import EmailProtectedRoute from './CustomComponents/AuthContext/EmailProtectedRoute';
+import TradePartnerProfile from './CustomComponents/Afterlogin/TradePartnerProfile';
 // import BitcoinWallet1 from './CustomComponents/Testwallet/BitCoinWallet1';
 
 
@@ -56,7 +57,7 @@ const RoutesConfig = () => {
             <Route path='/forgetPassword' element={<ForgetPasswrod />} />
 
             <Route path="/number-verification" element={<ProtectedRoute><Numberwithotp /></ProtectedRoute>} />
-            <Route path="/email-verification" element={<EmailVerification />}/>
+            <Route path="/email-verification" element={<EmailVerification />} />
             <Route path="/user-dashboard" element={<ProtectedRoute><UserDashboardNew /></ProtectedRoute>} >
                 <Route index element={<TradeHistoryNew />} />
                 <Route path="tradehistory" element={<TradeHistoryNew />} />
@@ -65,6 +66,7 @@ const RoutesConfig = () => {
                 <Route path="inviteFriends" element={<InviteFriend />} />
             </Route>
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+            <Route path="/trade-partner-profile" element={<ProtectedRoute><TradePartnerProfile /></ProtectedRoute>} />
             <Route path='/buy' element={<ProtectedRoute><BuyNew /></ProtectedRoute>} />
             <Route path='/buyOffer' element={<ProtectedRoute><BuyOffer /></ProtectedRoute>} />
             <Route path='/sellOffer' element={<ProtectedRoute><SellOffer /></ProtectedRoute>} />

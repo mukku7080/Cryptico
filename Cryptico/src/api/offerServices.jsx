@@ -23,7 +23,7 @@ export const AddOffer = async (values) => {
                 require_verification: values.isVerified,
                 visibility: values.visibility,
                 min_trades_required: 5,
-                new_user_limit: 100
+                // new_user_limit: 100
             }
         );
         console.log(response.data);
@@ -33,17 +33,11 @@ export const AddOffer = async (values) => {
         throw error.response ? error.response.data : response;
     }
 }
-export const GetOffers = async (queryParamsOther) => {
+export const GetOffers = async (queryParams) => {
 
-    const queryParams = {
-        user_id: queryParamsOther.user_id ? queryParamsOther.user_id : '',
-        txn_type: queryParamsOther.txn_type ? queryParamsOther.txn_type : '',
-        cryptocurrency: queryParamsOther.cryptocurrency ? queryParamsOther.cryptocurrency : '',
-        per_page: 10
-    }
-    console.log(queryParams);
+
     try {
-        const response = await axiosInstance.get(`/crypto-ad?user_id=${queryParams?.user_id} &txn_type=${queryParams?.txn_type}&cryptocurrency=${queryParams?.cryptocurrency}&per_page=${queryParams?.per_page}`);
+        const response = await axiosInstance.get(`/crypto-ad?user_id=${queryParams?.user_id}&txn_type=${queryParams?.txn_type}&cryptocurrency=${queryParams?.cryptocurrency}&paymentMethod=${queryParams?.paymentMethod}&maxAmount=${queryParams?.maxAmount}&offerLocation=${queryParams?.offerLocation}&traderLocation=${queryParams?.traderLocation}&activeTrader=${queryParams?.activeTrader}&per_page=${queryParams?.per_page}`);
         return response.data;
     }
     catch (error) {

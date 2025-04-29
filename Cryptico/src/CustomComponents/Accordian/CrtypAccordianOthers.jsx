@@ -25,39 +25,100 @@ import { useLocation } from 'react-router-dom';
 
 function CryptoAccordianOthers({ title, btn1, btn2, isOptionButton, other_user_id }) {
 
-    const { handleGetOffer, analytics, sellOffer, buyOffer } = useOffer();
-    const [isbuyOffer, setBuyOffer] = useState(true);
+    const { handleGetOffer, analytics, offers, setOffers, setAnalytics } = useOffer();
+    const [isoffers, setIsOffer] = useState(true);
     const [option, setOption] = useState(cryptoOption[0].name);
-    const queryParamsOther = {
-        user_id: other_user_id,
+    const [sellCount, setSellCount] = useState(0);
+    const [buyCount, setBuyCount] = useState(0);
+    const [sellOffer, setSellOffer] = useState([]);
+    const [buyOffer, setBuyOffer] = useState([]);
+
+    const OfferFilter = {
+        user_id: other_user_id || '',
         txn_type: '',
         cryptocurrency: option === 'All CryptoCurrencies' ? '' : option,
-        per_page: 10
+        paymentMethod: '',
+        maxAmount: '',
+        offerLocation: '',
+        traderLocation: '',
+        activeTrader: false,
+        per_page: 10,
+    }
+
+    const fetchData = async () => {
+        if (!OfferFilter.user_id) return;
+        const res = await handleGetOffer(OfferFilter);
+        if (OfferFilter.cryptocurrency !== '' || null) {
+            // console.log(res?.data?.offer, 'offerData');
+            setSellCount(res?.data?.offer?.filter((item) => item.transaction_type === 'sell').length);
+            setBuyCount(res?.data?.offer?.filter((item) => item.transaction_type === 'buy').length);
+
+
+        };
+        setBuyOffer(res?.data?.offer?.filter((item) => item.transaction_type === 'buy'));
+        setSellOffer(res?.data?.offer?.filter((item) => item.transaction_type === 'sell'));
+        setOffers(res?.data?.offer);
+        setAnalytics(res?.analytics);
     };
-    const handleBuySellOfferShow = async (offerType) => {
-        if (offerType === 'buy') {
-            setBuyOffer(true);
-            queryParamsOther.txn_type = 'buy'
-            await handleGetOffer(queryParamsOther);
+    console.log(sellOffer, 'sellOffer');
+    console.log(buyOffer, 'buyOffer');
+
+
+
+
+    // useEffect(() => {
+    //     if (!other_user_id) return;
+
+    //     setQueryParams((prev) => ({
+    //         user_id: other_user_id || '',
+    //         txn_type: '',
+    //         cryptocurrency: option === 'All CryptoCurrencies' ? '' : option,
+    //         paymentMethod: '',
+    //         maxAmount: '',
+    //         offerLocation: '',
+    //         traderLocation: '',
+    //         activeTrader: false,
+    //         per_page: 10,
+    //     }));
+    // }, [other_user_id, option]);
+    // console.log(analytics);
+
+    useEffect(() => {
+        if (option === 'All CryptoCurrencies') {
+            setOption(cryptoOption[0].name);
+            OfferFilter.cryptocurrency = null;
+            OfferFilter.txn_type = '';
+            fetchData();
         }
         else {
-            setBuyOffer(false);
-            queryParamsOther.txn_type = 'sell'
-            await handleGetOffer(queryParamsOther);
+            OfferFilter.cryptocurrency = option;
+            OfferFilter.txn_type = '';
+            fetchData();
         }
-    }
-    useEffect(() => {
-        if (queryParamsOther.user_id) {
+    }, [option]);
 
-            handleGetOffer(queryParamsOther);
+    useEffect(() => {
+        fetchData();
+    }, [OfferFilter.user_id, setAnalytics, setBuyOffer]);
+
+    const handleBuySellOfferShow = async (offerType) => {
+
+        if (offerType === 'buy') {
+            setIsOffer(true);
+            OfferFilter.txn_type = 'buy';
+            fetchData();
         }
-    }, [queryParamsOther?.cryptocurrency]);
+        else {
+            setIsOffer(false);
+            OfferFilter.txn_type = 'sell';
+            fetchData();
+        }
+
+    }
 
 
     return (
-        <Accordion allowMultiple gap={10} width={'100%'}  >
-
-
+        <Accordion allowMultiple gap={10} width={'100%'}>
             <AccordionItem  >
                 <h2>
                     <AccordionButton borderBottom={'1px solid #dcdcdc'} >
@@ -76,12 +137,11 @@ function CryptoAccordianOthers({ title, btn1, btn2, isOptionButton, other_user_i
                                 variant={'outline'}
                                 borderTopRadius={5}
                                 borderBottomRadius={0}
-                                rightIcon={<Mybadge bgcolor={'orange'} count={buyOffer?.length} />}
+                                rightIcon={<Mybadge bgcolor={'orange'} count={OfferFilter.cryptocurrency === '' ? analytics?.totalBuyAds : buyCount} />}
                                 _hover={{ bg: 'transparent', borderBottom: '1px solid gray' }}
                                 onClick={() => handleBuySellOfferShow('buy')}
                                 _active={{ borderBottom: '1px solid black' }}
-                                isActive={isbuyOffer}
-
+                                isActive={isoffers}
                             >
                                 {btn1}
                             </Button>
@@ -90,12 +150,11 @@ function CryptoAccordianOthers({ title, btn1, btn2, isOptionButton, other_user_i
                                 bg={'transparent'}
                                 borderTopRadius={5}
                                 borderBottomRadius={0}
-                                rightIcon={<Mybadge bgcolor={'orange'} count={sellOffer?.length} />}
+                                rightIcon={<Mybadge bgcolor={'orange'} count={OfferFilter.cryptocurrency === '' ? analytics?.totalSellAds : sellCount} />}
                                 _hover={{ bg: 'transparent', borderBottom: '1px solid gray' }}
                                 onClick={() => handleBuySellOfferShow('sell')}
                                 _active={{ borderBottom: '1px solid black' }}
-                                isActive={!isbuyOffer}
-
+                                isActive={!isoffers}
                             >
                                 {btn2}
                             </Button>
@@ -116,10 +175,10 @@ function CryptoAccordianOthers({ title, btn1, btn2, isOptionButton, other_user_i
                                                 onClick={() => {
                                                     setOption(data.name)
                                                     if (data.name === 'All CryptoCurrencies') {
-                                                        queryParamsOther.cryptocurrency = null;
+                                                        OfferFilter.cryptocurrency = null;
                                                     }
                                                     else {
-                                                        queryParamsOther.cryptocurrency = data.name;
+                                                        OfferFilter.cryptocurrency = data.name;
                                                     }
                                                 }}
                                                 color={'gray'}
@@ -198,7 +257,7 @@ function CryptoAccordianOthers({ title, btn1, btn2, isOptionButton, other_user_i
                     {/* Table Heading End --------------------------------------------- */}
 
                     {
-                        isbuyOffer ?
+                        isoffers ?
                             buyOffer?.length > 0 ?
                                 buyOffer?.map((data, index) => (
 

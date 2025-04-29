@@ -24,7 +24,7 @@ const ActiveOfferListComponent = ({ index, data }) => {
     const navigate = useNavigate();
     const parsedData = JSON.parse(data?.payment_method);
     return (
-        <Flex w={'full'} border={'1px solid #dcdcdc'} borderBottomRadius={0} direction={'column'}  >
+        <Flex key={index} w={'full'} border={'1px solid #dcdcdc'} borderBottomRadius={0} direction={'column'}  >
             {/* Row1 */}
             <Flex w={'full'} gap={{ base: 2, sm: 10 }} p={4} >
                 {/* Pay With */}
