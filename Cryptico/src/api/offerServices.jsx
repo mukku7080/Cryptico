@@ -37,7 +37,7 @@ export const GetOffers = async (queryParams) => {
 
 
     try {
-        const response = await axiosInstance.get(`/crypto-ad?user_id=${queryParams?.user_id}&txn_type=${queryParams?.txn_type}&cryptocurrency=${queryParams?.cryptocurrency}&paymentMethod=${queryParams?.paymentMethod}&maxAmount=${queryParams?.maxAmount}&offerLocation=${queryParams?.offerLocation}&traderLocation=${queryParams?.traderLocation}&activeTrader=${queryParams?.activeTrader}&per_page=${queryParams?.per_page}`);
+        const response = await axiosInstance.get(`/crypto-advertisement/crypto-ad?user_id=${queryParams?.user_id}&txn_type=${queryParams?.txn_type}&cryptocurrency=${queryParams?.cryptocurrency}&paymentMethod=${queryParams?.paymentMethod}&maxAmount=${queryParams?.maxAmount}&offerLocation=${queryParams?.offerLocation}&traderLocation=${queryParams?.traderLocation}&activeTrader=${queryParams?.activeTrader}&per_page=${queryParams?.per_page}`);
         return response.data;
     }
     catch (error) {
@@ -46,7 +46,7 @@ export const GetOffers = async (queryParams) => {
 }
 export const GetMyOffer = async (queryParams) => {
     try {
-        const response = await axiosInstance.get(`/my-crypto-ad?txn_type=${queryParams?.txn_type}&is_active=${queryParams?.is_active}&cryptocurrency=${queryParams?.cryptocurrency}&per_page=${queryParams?.per_page}`);
+        const response = await axiosInstance.get(`/crypto-advertisement/my-crypto-ad?txn_type=${queryParams?.txn_type}&is_active=${queryParams?.is_active}&cryptocurrency=${queryParams?.cryptocurrency}&per_page=${queryParams?.per_page}`);
         return response.data;
     }
     catch (error) {

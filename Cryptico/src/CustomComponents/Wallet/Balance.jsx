@@ -12,7 +12,7 @@ import { RiArrowRightDownLine } from "react-icons/ri";
 import { BsBoxArrowInUpRight, BsBoxArrowInDownRight } from "react-icons/bs";
 import { IoWarningOutline } from 'react-icons/io5';
 import { MdArrowRightAlt, MdContentCopy, MdKeyboardArrowDown, MdKeyboardArrowRight } from 'react-icons/md';
-import { FaArrowRightFromBracket, FaArrowRightLong, FaCopy } from 'react-icons/fa6';
+import { FaArrowRightFromBracket, FaArrowRightLong, FaCopy, FaLessThanEqual } from 'react-icons/fa6';
 import { Link, useNavigate } from 'react-router-dom';
 import CreateWallet, { gradientButtonStyle } from './CreateWallet';
 import { useAccount } from '../../Context/AccountContext';
@@ -996,6 +996,9 @@ export const Send1 = () => {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [headername, setHeaderName] = useState(cryptoOption[0].name);
     const [headerlogo, setHeaderLogo] = useState(cryptoOption[0].logo);
+    const [asset, setAsset] = useState(cryptoOption[0].asset);
+    const [network, setNetwork] = useState(cryptoOption[0].network);
+    const [isbyaddress, setIsByAddress] = useState(true);
     const resetState = () => {
         setHeaderName(cryptoOption[0].name);
         setHeaderLogo(cryptoOption[0].logo);
@@ -1022,33 +1025,42 @@ export const Send1 = () => {
                     </ModalHeader>
                     <ModalBody>
                         <Flex direction={'column'} gap={10} my={10}>
-                            <Flex as={Button} py={8} w={'full'} borderRadius={5} bg={'gray.100'} _hover={{ bg: 'gray.100' }} justifyContent={'space-between'}  >
+                            {/* <Flex as={Button} py={8} w={'full'} borderRadius={5} bg={'gray.100'} _hover={{ bg: 'gray.100' }} justifyContent={'space-between'}  >
                                 <Flex gap={2}>
                                     <Image boxSize={5} src='/imagelogo/bitcoin-btc-logo.png'></Image>
                                     Bitcoin
                                 </Flex>
                                 <MdKeyboardArrowRight />
 
-                            </Flex>
+                            </Flex> */}
 
-                            {/* <SelectToken index={0} setHeaderName={setHeaderName} setHeaderLogo={setHeaderLogo} /> */}
+                            <SelectToken index={0} setHeaderName={setHeaderName} setHeaderLogo={setHeaderLogo} setAsset={setAsset} setNetwork={setNetwork} />
+
                             <Flex direction={'column'} bg={'gray.100'} borderRadius={5} py={4}>
 
                                 <Flex justifyContent={'space-between'} p={4} >
                                     <Heading size={'md'}>Send to </Heading>
                                     <ButtonGroup size={'sm'} >
-                                        <Button colorScheme='orange' fontSize={'12px'}>Address</Button>
-                                        <Button fontSize={'12px'}>Cryptico User</Button>
+                                        <Button bg={isbyaddress ? 'orange' : 'gray.300'} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} fontSize={'12px'} onClick={() => setIsByAddress(true)}>Address</Button>
+                                        <Button bg={isbyaddress ? 'gray.300' : 'orange'} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} fontSize={'12px'} onClick={() => setIsByAddress(false)}>Cryptico User</Button>
                                     </ButtonGroup>
 
                                 </Flex>
-                                <FormControl p={4} borderRadius={5}>
-                                    <Input fontWeight={'700'} px={0} py={5} border={'none'} _hover={{ border: 'none' }} _focus={{ boxShadow: 'none' }} placeholder='Paste or Enter wallet address here '></Input>
-                                </FormControl>
+                                {
+                                    isbyaddress ?
+
+                                        <FormControl p={4} borderRadius={5}>
+                                            <Input fontWeight={'700'} px={0} py={5} border={'none'} _hover={{ border: 'none' }} _focus={{ boxShadow: 'none' }} placeholder='Paste or Enter wallet address here '></Input>
+                                        </FormControl>
+                                        :
+                                        <FormControl p={4} borderRadius={5}>
+                                            <Input fontWeight={'700'} px={0} py={5} border={'none'} _hover={{ border: 'none' }} _focus={{ boxShadow: 'none' }} placeholder='Enter username '></Input>
+                                        </FormControl>
+                                }
                             </Flex>
 
 
-                            <FormControl isDisabled bg={'gray.100'}>
+                            <FormControl bg={'gray.100'}>
                                 <Input fontSize={'22px'} fontWeight={700} py={10} placeholder='Amount to send'></Input>
                             </FormControl>
                             <Button fontWeight={600} fontSize={'18px'} _hover={{ bg: 'gray.100' }} bg={'gray.100'} p={10} isDisabled >
@@ -1077,10 +1089,20 @@ export const Send2 = () => {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [headername, setHeaderName] = useState(cryptoOption[1].name);
     const [headerlogo, setHeaderLogo] = useState(cryptoOption[1].logo);
+    const [asset, setAsset] = useState(cryptoOption[1].asset);
+    const [network, setNetwork] = useState(cryptoOption[1].network);
+    const [isbyaddress, setIsByAddress] = useState(true);
+
     const resetState = () => {
         setHeaderName(cryptoOption[1].name);
         setHeaderLogo(cryptoOption[1].logo);
     }
+
+    useEffect(() => {
+        console.log(asset);
+        console.log(network);
+    }, [asset, network]);
+
     return (
         <>
 
@@ -1105,20 +1127,27 @@ export const Send2 = () => {
                     <ModalBody>
                         <Flex direction={'column'} gap={10} my={10}>
 
-                            <SelectToken index={1} setHeaderName={setHeaderName} setHeaderLogo={setHeaderLogo} />
+                            <SelectToken index={1} setHeaderName={setHeaderName} setHeaderLogo={setHeaderLogo} setAsset={setAsset} setNetwork={setNetwork} />
                             <Flex direction={'column'} bg={'gray.100'} borderRadius={5} py={4}>
 
                                 <Flex justifyContent={'space-between'} p={4} >
                                     <Heading size={'md'}>Send to </Heading>
                                     <ButtonGroup size={'sm'} >
-                                        <Button colorScheme='orange' fontSize={'12px'}>Address</Button>
-                                        <Button fontSize={'12px'}>Cryptico User</Button>
+                                        <Button bg={isbyaddress ? 'orange' : 'gray.300'} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} fontSize={'12px'} onClick={() => setIsByAddress(true)}>Address</Button>
+                                        <Button bg={isbyaddress ? 'gray.300' : 'orange'} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} fontSize={'12px'} onClick={() => setIsByAddress(false)}>Cryptico User</Button>
                                     </ButtonGroup>
-
                                 </Flex>
-                                <FormControl p={4} borderRadius={5}>
-                                    <Input fontWeight={'700'} px={0} py={5} border={'none'} _hover={{ border: 'none' }} _focus={{ boxShadow: 'none' }} placeholder='Paste or Enter wallet address here '></Input>
-                                </FormControl>
+                                {
+                                    isbyaddress ?
+
+                                        <FormControl p={4} borderRadius={5}>
+                                            <Input fontWeight={'700'} px={0} py={5} border={'none'} _hover={{ border: 'none' }} _focus={{ boxShadow: 'none' }} placeholder='Paste or Enter wallet address here '></Input>
+                                        </FormControl>
+                                        :
+                                        <FormControl p={4} borderRadius={5}>
+                                            <Input fontWeight={'700'} px={0} py={5} border={'none'} _hover={{ border: 'none' }} _focus={{ boxShadow: 'none' }} placeholder='Enter username '></Input>
+                                        </FormControl>
+                                }
                             </Flex>
 
 
@@ -1148,10 +1177,16 @@ export const Send3 = () => {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [headername, setHeaderName] = useState(cryptoOption[2].name);
     const [headerlogo, setHeaderLogo] = useState(cryptoOption[2].logo);
+    const [asset, setAsset] = useState(cryptoOption[2].asset);
+    const [network, setNetwork] = useState(cryptoOption[3].network);
+    const [isbyaddress, setIsByAddress] = useState(true);
+
     const resetState = () => {
         setHeaderName(cryptoOption[2].name);
         setHeaderLogo(cryptoOption[2].logo);
     }
+    console.log(asset);
+    console.log(network);
     return (
         <>
 
@@ -1176,20 +1211,28 @@ export const Send3 = () => {
                     <ModalBody>
                         <Flex direction={'column'} gap={10} my={10}>
 
-                            <SelectToken index={2} setHeaderName={setHeaderName} setHeaderLogo={setHeaderLogo} />
+                            <SelectToken index={2} setHeaderName={setHeaderName} setHeaderLogo={setHeaderLogo} setAsset={setAsset} setNetwork={setNetwork} />
                             <Flex direction={'column'} bg={'gray.100'} borderRadius={5} py={4}>
 
                                 <Flex justifyContent={'space-between'} p={4} >
                                     <Heading size={'md'}>Send to </Heading>
                                     <ButtonGroup size={'sm'} >
-                                        <Button colorScheme='orange' fontSize={'12px'}>Address</Button>
-                                        <Button fontSize={'12px'}>Cryptico User</Button>
+                                        <Button bg={isbyaddress ? 'orange' : 'gray.300'} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} fontSize={'12px'} onClick={() => setIsByAddress(true)}>Address</Button>
+                                        <Button bg={isbyaddress ? 'gray.300' : 'orange'} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} fontSize={'12px'} onClick={() => setIsByAddress(false)}>Cryptico User</Button>
                                     </ButtonGroup>
 
                                 </Flex>
-                                <FormControl p={4} borderRadius={5}>
-                                    <Input fontWeight={'700'} px={0} py={5} border={'none'} _hover={{ border: 'none' }} _focus={{ boxShadow: 'none' }} placeholder='Paste or Enter wallet address here '></Input>
-                                </FormControl>
+                                {
+                                    isbyaddress ?
+
+                                        <FormControl p={4} borderRadius={5}>
+                                            <Input fontWeight={'700'} px={0} py={5} border={'none'} _hover={{ border: 'none' }} _focus={{ boxShadow: 'none' }} placeholder='Paste or Enter wallet address here '></Input>
+                                        </FormControl>
+                                        :
+                                        <FormControl p={4} borderRadius={5}>
+                                            <Input fontWeight={'700'} px={0} py={5} border={'none'} _hover={{ border: 'none' }} _focus={{ boxShadow: 'none' }} placeholder='Enter username '></Input>
+                                        </FormControl>
+                                }
                             </Flex>
 
 
@@ -1220,6 +1263,10 @@ export const Send4 = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [headername, setHeaderName] = useState(cryptoOption[3].name);
     const [headerlogo, setHeaderLogo] = useState(cryptoOption[3].logo);
+    const [asset, setAsset] = useState(cryptoOption[3].asset);
+    const [network, setNetwork] = useState(cryptoOption[3].network);
+    const [isbyaddress, setIsByAddress] = useState(true);
+
     const resetState = () => {
         setHeaderName(cryptoOption[3].name);
         setHeaderLogo(cryptoOption[3].logo);
@@ -1248,20 +1295,28 @@ export const Send4 = () => {
                     <ModalBody>
                         <Flex direction={'column'} gap={10} my={10}>
 
-                            <SelectToken index={3} setHeaderName={setHeaderName} setHeaderLogo={setHeaderLogo} />
+                            <SelectToken index={3} setHeaderName={setHeaderName} setHeaderLogo={setHeaderLogo} setAsset={setAsset} setNetwork={setNetwork} />
                             <Flex direction={'column'} bg={'gray.100'} borderRadius={5} py={4}>
 
                                 <Flex justifyContent={'space-between'} p={4} >
                                     <Heading size={'md'}>Send to </Heading>
                                     <ButtonGroup size={'sm'} >
-                                        <Button colorScheme='orange' fontSize={'12px'}>Address</Button>
-                                        <Button fontSize={'12px'}>Cryptico User</Button>
+                                        <Button bg={isbyaddress ? 'orange' : 'gray.300'} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} fontSize={'12px'} onClick={() => setIsByAddress(true)}>Address</Button>
+                                        <Button bg={isbyaddress ? 'gray.300' : 'orange'} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} fontSize={'12px'} onClick={() => setIsByAddress(false)}>Cryptico User</Button>
                                     </ButtonGroup>
 
                                 </Flex>
-                                <FormControl p={4} borderRadius={5}>
-                                    <Input fontWeight={'700'} px={0} py={5} border={'none'} _hover={{ border: 'none' }} _focus={{ boxShadow: 'none' }} placeholder='Paste or Enter wallet address here '></Input>
-                                </FormControl>
+                                {
+                                    isbyaddress ?
+
+                                        <FormControl p={4} borderRadius={5}>
+                                            <Input fontWeight={'700'} px={0} py={5} border={'none'} _hover={{ border: 'none' }} _focus={{ boxShadow: 'none' }} placeholder='Paste or Enter wallet address here '></Input>
+                                        </FormControl>
+                                        :
+                                        <FormControl p={4} borderRadius={5}>
+                                            <Input fontWeight={'700'} px={0} py={5} border={'none'} _hover={{ border: 'none' }} _focus={{ boxShadow: 'none' }} placeholder='Enter username '></Input>
+                                        </FormControl>
+                                }
                             </Flex>
 
 
@@ -1289,10 +1344,11 @@ export const Send4 = () => {
 
 
 
-export const SelectToken = ({ index, setHeaderName, setHeaderLogo }) => {
+export const SelectToken = ({ index, setHeaderName, setHeaderLogo, setAsset, setNetwork }) => {
     const cryptoOption = useCryptoOption();
     const [option, setOption] = useState(cryptoOption[index].name);
     const [logo, setlogo] = useState(cryptoOption[index].logo);
+
     return (
         <>
             <Menu matchWidth >
@@ -1312,6 +1368,9 @@ export const SelectToken = ({ index, setHeaderName, setHeaderLogo }) => {
                                 setHeaderName(data.name);
                                 setHeaderLogo(data.logo);
                                 setlogo(data.logo);
+                                setAsset(data.asset);
+                                setNetwork(data.network);
+
                             }} gap={3} _hover={{ bg: "blue.100" }}><Image boxSize={5} src={data.logo}></Image>{data.name}</MenuItem>
                         </>
                     ))}
