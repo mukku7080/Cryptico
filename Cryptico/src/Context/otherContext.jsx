@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { AddSecurityQuestions, getAllNotification, getCountrycode, getLoginHistory, getOtherService, getReferalLink, markAsRead, markAsReadById, realTimePrice } from '../api/otherService';
 
 export const OtherContext = createContext();
@@ -14,6 +14,7 @@ const OtherDetailProvider = ({ children }) => {
     const [readNotification, setReadNotification] = useState(null);
     const [unreadNotification, setUnreadNotification] = useState([]);
     const [price, setPrice] = useState(null);
+    const priceRef = useRef(null);
 
     useEffect(() => {
         handleCountryCode();
@@ -120,6 +121,7 @@ const OtherDetailProvider = ({ children }) => {
     }
     const handleRealTimePrice = async () => {
         const response = await realTimePrice();
+        priceRef.current = response;
         setPrice(response);
     }
 
@@ -140,7 +142,8 @@ const OtherDetailProvider = ({ children }) => {
             notificationCount,
             readNotification,
             setNotificationCount,
-            price
+            price,
+            priceRef
         }}>
             {children}
         </OtherContext.Provider>

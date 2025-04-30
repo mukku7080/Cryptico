@@ -669,7 +669,7 @@ const OfferList = ({ index, data }) => {
 
                             <Flex boxSize={3} mt={1} bg={'orange.400'} borderRadius={'50%'}></Flex>
                         </Box>
-                        Seen 1 minute ago
+                        {data?.user?.last_seen_at}
                     </Flex>
 
 

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { login, signup, logout, emailOtp, verifyEmailOtp, loginWithGoogle, SignupWithGoogle, forgetPassword, resetPassword, passwordMatch, enable2FA } from '../api/authService';
+import { login, signup, logout, emailOtp, verifyEmailOtp, loginWithGoogle, SignupWithGoogle, forgetPassword, resetPassword, passwordMatch, enable2FA, getUserDetail } from '../api/authService';
 import { useNavigate } from 'react-router-dom';
 
 export const AuthContext = createContext();
@@ -10,6 +10,7 @@ export const AuthProvider = ({ children }) => {
     const [error, setError] = React.useState(null);
     const [passwordmatch, setPasswordMatch] = useState(null);
     const [verifyOtpResponse, setVerifyOtpResponse] = useState(null);
+    const [otherUserDetail, setOtherUserDetail] = useState(null);
     const navigate = useNavigate('');
 
 
@@ -21,6 +22,7 @@ export const AuthProvider = ({ children }) => {
 
         }
     }, [])
+  
 
 
 
@@ -164,6 +166,12 @@ export const AuthProvider = ({ children }) => {
             console.error("Enable 2FA error:", error);
         }
     }
+    const handleOtherUserDetail = async (userDetail) => {
+        const data = await getUserDetail(userDetail);
+        setOtherUserDetail(data);
+        return data;
+    }
+
 
     return (
         <AuthContext.Provider value={
@@ -182,7 +190,10 @@ export const AuthProvider = ({ children }) => {
                 handlePasswordMatch,
                 passwordmatch,
                 handleEnable2FA,
-                verifyOtpResponse
+                verifyOtpResponse,
+                handleOtherUserDetail,
+                otherUserDetail,
+                setOtherUserDetail
             }
         }>
             {children}

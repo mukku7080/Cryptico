@@ -216,7 +216,7 @@ const AboutSeller = ({ data }) => {
                             <Flex gap={2} flexWrap={'wrap'} justifyContent={'space-between'}>
                                 {
                                     data?.user?.login_status === 'login' ?
-                                        <Box fontWeight={500} fontSize={'16px'} color={'green'}>Active Now</Box>
+                                        <Box fontWeight={500} fontSize={'16px'} color={'green'}>{data?.user?.last_seen_at}</Box>
                                         :
                                         <Box color={'gray'}>{timeAgo(data?.user?.last_login)}</Box>
                                 }
@@ -250,12 +250,12 @@ const AboutSeller = ({ data }) => {
                     <Flex>
 
                         <Flex direction={'column'} p={4} >
-                            <Flex alignItems={'center'} gap={1} color={data?.user?.id_verified_at === '0000-00-00 00:00:00' ? 'red.500' : 'green'}><MdCheck /> ID Verified</Flex>
-                            <Flex alignItems={'center'} gap={1} color={data?.user?.email_verified_at === '0000-00-00 00:00:00' ? 'red.500' : 'green'}> <MdCheck color='green' />Email Verified</Flex>
+                            <Flex alignItems={'center'} fontWeight={500} gap={1} color={data?.user?.id_verified ? 'green.500' : 'red.500'}><MdCheck /> ID Verified</Flex>
+                            <Flex alignItems={'center'} fontWeight={500} gap={1} color={data?.user?.email_verified ? 'green.500' : 'red.500'}> <MdCheck />Email Verified</Flex>
                         </Flex>
                         <Flex direction={'column'} p={4} >
-                            <Flex alignItems={'center'} gap={1} color={data?.user?.address_verified_at ? 'green' : 'red.500'}><MdCheck /> Address Verified</Flex>
-                            <Flex alignItems={'center'} gap={1} color={data?.user?.number_verified_at === '0000-00-00 00:00:00' ? 'red.500' : 'green'}> <MdCheck />Phone Verified</Flex>
+                            <Flex alignItems={'center'} fontWeight={500} gap={1} color={data?.user?.address_verified_at ? 'green' : 'red.500'}><MdCheck /> Address Verified</Flex>
+                            <Flex alignItems={'center'} fontWeight={500} gap={1} color={data?.user?.number_verified_at ? 'green.500' : 'red.500'}> <MdCheck />Phone Verified</Flex>
 
                         </Flex>
 

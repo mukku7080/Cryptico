@@ -124,6 +124,17 @@ export const getTransactionDetail = async () => {
     }
 
 }
+export const sendInternalTransfer = async (userDetail) => {
+    try {
+        const response = await axiosInstance.post('/transaction/send-asset', userDetail)
+        return response.data;
+    }
+    catch (error) {
+        throw error.response ? error.response.data : error.message;
+
+    }
+
+}
 
 
 

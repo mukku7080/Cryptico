@@ -1,5 +1,5 @@
-import { Box, Button, Card, Divider, Flex, Heading, Icon, Image, Menu, MenuButton, MenuList, MenuItem, Circle, Modal, ModalOverlay, ModalContent, ModalFooter, useDisclosure, ModalHeader, ModalCloseButton, ModalBody, ButtonGroup, Tag, ScaleFade, Fade, Tooltip, FormControl, Input } from '@chakra-ui/react'
-import React, { useEffect, useState } from 'react'
+import { Box, Button, Card, Divider, Flex, Heading, Icon, Image, Menu, MenuButton, MenuList, MenuItem, Circle, Modal, ModalOverlay, ModalContent, ModalFooter, useDisclosure, ModalHeader, ModalCloseButton, ModalBody, ButtonGroup, Tag, ScaleFade, Fade, Tooltip, FormControl, Input, List, ListItem, useOutsideClick, Avatar } from '@chakra-ui/react'
+import React, { useEffect, useRef, useState } from 'react'
 import { LuEqualApproximately } from "react-icons/lu";
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 import { TbSend } from "react-icons/tb";
@@ -20,6 +20,7 @@ import WalletQR from './WalletQR';
 import { useWalletStore } from '../Store/useWalletStore';
 import { useCryptoOption } from '../Store/CryptoOption';
 import TransactionModal from './TransactionModal';
+import { useAuth } from '../../Context/AuthContext';
 
 const Balance = () => {
     const navigate = useNavigate()
@@ -171,7 +172,7 @@ const Balance = () => {
                                                                             <Box pt={1}>
                                                                                 <LuEqualApproximately />
                                                                             </Box>
-                                                                            {`  ${item.INR} INR`}
+                                                                            {`  ${item.currentPrice * item.blc} INR`}
                                                                         </Flex>
                                                                     </Flex>
                                                                     <Flex display={{ base: 'flex', md: 'none' }}>
@@ -187,7 +188,7 @@ const Balance = () => {
                                                                     <Box pt={1}>
                                                                         <LuEqualApproximately />
                                                                     </Box>
-                                                                    {item.INR}
+                                                                    {item.currentPrice * item.blc}
                                                                 </Flex>
 
                                                             </Flex>
@@ -448,7 +449,7 @@ export const LatestTransactions = () => {
                                                                 </Flex>
                                                                 <Flex>
                                                                     <Flex direction={'column'} textAlign={'end'}  >
-                                                                        <Box alignItems={'end'}  >{`${item.paid_amount} ${item.asset}`}</Box>
+                                                                        <Box alignItems={'end'}  >{`${item.method === 'receive' ? item.paid_amount : item.debit_amount} ${item.asset}`}</Box>
                                                                         {/* <Box alignItems={'end'} fontSize={'12px'} >-0.73 BTC</Box> */}
                                                                     </Flex>
                                                                 </Flex>
@@ -992,6 +993,8 @@ export const Receive4 = () => {
 }
 
 export const Send1 = () => {
+    const { handleOtherUserDetail, otherUserDetail, setOtherUserDetail } = useAuth();
+    const { handleSendInternalTransaction } = useAccount()
     const cryptoOption = useCryptoOption();
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [headername, setHeaderName] = useState(cryptoOption[0].name);
@@ -999,10 +1002,81 @@ export const Send1 = () => {
     const [asset, setAsset] = useState(cryptoOption[0].asset);
     const [network, setNetwork] = useState(cryptoOption[0].network);
     const [isbyaddress, setIsByAddress] = useState(true);
+    const [inputValue, setInputValue] = useState("");
+    const [suggestions, setSuggestions] = useState([]);
+    const [isopen, setIsOpen] = useState(false);
+    const [amount, setAmount] = useState(null);
+    const wrapperRef = useRef();
+    const [currentPrice, setCurrentPrice] = useState(cryptoOption[0].currentPrice);
+    const allUsersRef = useRef([]);
+    const Dto = {
+        username: inputValue,
+        address: '',
+        network: network,
+        asset: asset,
+        amount: amount,
+        price: currentPrice
+    }
+    useEffect(() => {
+        const fetchdata = async () => {
+            try {
+                if (inputValue) {
+                    const response = await handleOtherUserDetail(Dto);
+                    allUsersRef.current = response.data || [];
+                    filterSuggestions(inputValue);
+
+                }
+                else {
+                    setSuggestions([]);
+                }
+            }
+            catch (error) {
+                throw error?.response ? error?.response?.data : error?.response?.message;
+            }
+        }
+        fetchdata();
+    }, [inputValue]);
+
     const resetState = () => {
         setHeaderName(cryptoOption[0].name);
         setHeaderLogo(cryptoOption[0].logo);
     }
+    useOutsideClick({
+        ref: wrapperRef,
+        handler: () => setIsOpen(false),
+    });
+    const filterSuggestions = (value) => {
+        const filtered = allUsersRef.current.filter((item) =>
+            item.username.toLowerCase().startsWith(value.toLowerCase())
+        );
+        setSuggestions(filtered);
+        setIsOpen(filtered.length > 0);
+    };
+    const handleChange = (e) => {
+        const value = e.target.value;
+        setInputValue(value);
+    };
+
+    const handleSelect = (name) => {
+        setInputValue(name);
+        setIsOpen(false);
+    };
+    const handleAmount = (e) => {
+        setAmount(e.target.value);
+
+    }
+
+    const handleSubmit = async () => {
+        await handleSendInternalTransaction(Dto);
+
+
+    }
+
+
+
+
+
+
     return (
         <>
 
@@ -1034,7 +1108,7 @@ export const Send1 = () => {
 
                             </Flex> */}
 
-                            <SelectToken index={0} setHeaderName={setHeaderName} setHeaderLogo={setHeaderLogo} setAsset={setAsset} setNetwork={setNetwork} />
+                            <SelectToken index={0} setHeaderName={setHeaderName} setHeaderLogo={setHeaderLogo} setAsset={setAsset} setNetwork={setNetwork} setCurrentPrice={setCurrentPrice} />
 
                             <Flex direction={'column'} bg={'gray.100'} borderRadius={5} py={4}>
 
@@ -1050,20 +1124,72 @@ export const Send1 = () => {
                                     isbyaddress ?
 
                                         <FormControl p={4} borderRadius={5}>
-                                            <Input fontWeight={'700'} px={0} py={5} border={'none'} _hover={{ border: 'none' }} _focus={{ boxShadow: 'none' }} placeholder='Paste or Enter wallet address here '></Input>
+                                            <Input fontWeight={'700'}
+                                                px={0}
+                                                border={'none'}
+                                                _hover={{ border: 'none' }}
+                                                _focus={{ boxShadow: 'none' }}
+                                                placeholder='Paste or Enter wallet address here '
+                                            />
                                         </FormControl>
                                         :
                                         <FormControl p={4} borderRadius={5}>
-                                            <Input fontWeight={'700'} px={0} py={5} border={'none'} _hover={{ border: 'none' }} _focus={{ boxShadow: 'none' }} placeholder='Enter username '></Input>
+                                            <Box ref={wrapperRef}>
+                                                <Input fontWeight={'700'}
+                                                    px={0}
+                                                    border={'none'}
+                                                    _hover={{ border: 'none' }}
+                                                    _focus={{ boxShadow: 'none' }}
+                                                    placeholder='Enter username '
+                                                    value={inputValue}
+                                                    onChange={handleChange}
+
+                                                />
+
+                                                {isopen && suggestions?.length > 0 && (
+                                                    <Box
+                                                        px={4}
+                                                        position="absolute"
+                                                        top="100%"
+                                                        left="0"
+                                                        right="0"
+                                                        bg="gray.100"
+                                                        borderRadius="md"
+                                                        mt={1}
+                                                        zIndex="dropdown"
+                                                        boxShadow="md"
+                                                    >
+                                                        <List spacing={0}>
+                                                            {suggestions?.map((item, index) => (
+                                                                <Flex mb={2} >
+                                                                    <Avatar name={item.username} src={item.profile_image}></Avatar>
+                                                                    <ListItem mt={1}
+                                                                        key={index}
+                                                                        px={3}
+                                                                        py={2}
+                                                                        fontSize={'14px'}
+                                                                        fontWeight={500}
+                                                                        _hover={{ bg: "gray.100", cursor: "pointer" }}
+                                                                        onClick={() => handleSelect(item.username)}
+                                                                    >
+                                                                        {`Cryptico user ${item.username}`}
+                                                                    </ListItem>
+                                                                </Flex>
+
+                                                            ))}
+                                                        </List>
+                                                    </Box>
+                                                )}
+                                            </Box>
                                         </FormControl>
                                 }
                             </Flex>
 
 
                             <FormControl bg={'gray.100'}>
-                                <Input fontSize={'22px'} fontWeight={700} py={10} placeholder='Amount to send'></Input>
+                                <Input fontSize={'22px'} onChange={handleAmount} fontWeight={700} py={10} placeholder='Amount to send'></Input>
                             </FormControl>
-                            <Button fontWeight={600} fontSize={'18px'} _hover={{ bg: 'gray.100' }} bg={'gray.100'} p={10} isDisabled >
+                            <Button fontWeight={600} fontSize={'18px'} _hover={{ bg: 'gray.100' }} bg={'gray.100'} p={10} onClick={handleSubmit}  >
                                 <Flex gap={2} alignItems={'center'} justifyContent={'center'}>
                                     Continue
                                     <FaArrowRightLong />
@@ -1097,11 +1223,6 @@ export const Send2 = () => {
         setHeaderName(cryptoOption[1].name);
         setHeaderLogo(cryptoOption[1].logo);
     }
-
-    useEffect(() => {
-        console.log(asset);
-        console.log(network);
-    }, [asset, network]);
 
     return (
         <>
@@ -1185,8 +1306,7 @@ export const Send3 = () => {
         setHeaderName(cryptoOption[2].name);
         setHeaderLogo(cryptoOption[2].logo);
     }
-    console.log(asset);
-    console.log(network);
+
     return (
         <>
 
@@ -1344,7 +1464,7 @@ export const Send4 = () => {
 
 
 
-export const SelectToken = ({ index, setHeaderName, setHeaderLogo, setAsset, setNetwork }) => {
+export const SelectToken = ({ index, setHeaderName, setHeaderLogo, setAsset, setNetwork, setCurrentPrice }) => {
     const cryptoOption = useCryptoOption();
     const [option, setOption] = useState(cryptoOption[index].name);
     const [logo, setlogo] = useState(cryptoOption[index].logo);
@@ -1370,6 +1490,8 @@ export const SelectToken = ({ index, setHeaderName, setHeaderLogo, setAsset, set
                                 setlogo(data.logo);
                                 setAsset(data.asset);
                                 setNetwork(data.network);
+                                setCurrentPrice(data.currentPrice);
+
 
                             }} gap={3} _hover={{ bg: "blue.100" }}><Image boxSize={5} src={data.logo}></Image>{data.name}</MenuItem>
                         </>
@@ -1386,5 +1508,12 @@ const cryptoStatus = [
 ]
 
 
+const data = [
+    { name: "Alice" },
+    { name: "Bob" },
+    { name: "Charlie" },
+    { name: "David" },
+    { name: "Daniel" },
+];
 
 export default Balance

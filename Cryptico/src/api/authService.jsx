@@ -139,3 +139,13 @@ export const enable2FA = async (checked) => {
         throw error.response ? error.response.data : error.message;
     }
 }
+export const getUserDetail = async (userDetail) => {
+    try {
+        const response = await axiosInstance.get(`/web3-wallet/get-user-detail?username=${userDetail.username}&wallet_address=${userDetail.address}&network=${userDetail.network}&asset=${userDetail.asset}`)
+        return response.data;
+    }
+    catch (error) {
+        throw error.response ? error.response.data : error.message;
+    }
+
+}

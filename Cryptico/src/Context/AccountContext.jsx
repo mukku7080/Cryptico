@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from 'react'
-import { addAccount, createWebWallet, getPaymentDetails, getTransactionDetail, getWalletKeyPhrase, getWeb3Wallet, updateWeb3WalletAddress, updateIsPrimaryAccount, AddUpiDetails } from '../api/accountService';
+import { addAccount, createWebWallet, getPaymentDetails, getTransactionDetail, getWalletKeyPhrase, getWeb3Wallet, updateWeb3WalletAddress, updateIsPrimaryAccount, AddUpiDetails, sendInternalTransfer } from '../api/accountService';
 
 const AccountContext = createContext();
 
@@ -111,10 +111,15 @@ const AccountProvider = ({ children }) => {
             throw error;
         }
     }
+    const handleSendInternalTransaction = async (userDetail) => {
+        const response = await sendInternalTransfer(userDetail);
+        return response;
+
+    }
 
 
     return (
-        <AccountContext.Provider value={{ handleAddAccount, accountDetails, getKeyPhrase, walletkeyphrase, setWalletKeyPhrase, handleCreateWallet, handleUpdateweb3WalletAddress, web3wallet, handleGetWeb3Wallet, handleGetAllTransaction, transaction, updateIsPrimary, handleGetAccountDetail, handleAddUpiDetails, upidetails,upibankDetails }}>
+        <AccountContext.Provider value={{ handleAddAccount, accountDetails, getKeyPhrase, walletkeyphrase, setWalletKeyPhrase, handleCreateWallet, handleUpdateweb3WalletAddress, web3wallet, handleGetWeb3Wallet, handleGetAllTransaction, transaction, updateIsPrimary, handleGetAccountDetail, handleAddUpiDetails, upidetails, upibankDetails, handleSendInternalTransaction }}>
             {children}
         </AccountContext.Provider>
     )
