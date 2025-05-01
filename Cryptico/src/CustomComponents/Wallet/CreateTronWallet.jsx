@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Heading, Icon, Image, Menu, MenuButton, MenuList, MenuItem, Modal, ModalOverlay, ModalContent, ModalFooter, useDisclosure, ModalHeader, ModalCloseButton, ModalBody, ButtonGroup, FormControl, Input, FormLabel, IconButton, InputRightElement, InputGroup, InputRightAddon } from '@chakra-ui/react'
+import { Box, Button, Flex, Heading, Icon, Image, Menu, MenuButton, MenuList, MenuItem, Modal, ModalOverlay, ModalContent, ModalFooter, useDisclosure, ModalHeader, ModalCloseButton, ModalBody, ButtonGroup, FormControl, Input, FormLabel, IconButton, InputRightElement, InputGroup, InputRightAddon, Link } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { ethers } from 'ethers';
 import CryptoJS from 'crypto-js';
@@ -12,10 +12,11 @@ import * as bip39 from "bip39";
 import BIP32Factory from "bip32";
 import * as tinysecp from "tiny-secp256k1";
 import { Buffer } from "buffer";
+import { TronWalletGenerator } from './TronWalletGenerator';
 const bip32 = BIP32Factory(tinysecp);
 
 
-const CreateWallet = () => {
+const CreateTronWallet = () => {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [blockChainType, setblockChainType] = useState(cryptoOption[0].blockchainDetail);
 
@@ -29,7 +30,7 @@ const CreateWallet = () => {
         <>
 
 
-            <Button onClick={onOpen}
+            <Button as={Link} onClick={onOpen}
                 sx={gradientButtonStyle}
 
             >
@@ -141,96 +142,32 @@ const PasswordVerification = ({ blockChainType = {}, onClose }) => {
         }
 
     }
-    const generateBitcoinWallet = async (mnemonic) => {
-        setProceeding(true);
-        // const decrypted = await decryptWithKey(keyphrase, user.user_id);
-        // const finalDecryption = await decryptWithKey(decrypted.phrase, decrypted.key);
-        // const mnemonic = finalDecryption;
-
-        const seed = await bip39.mnemonicToSeed(mnemonic);
-        const root = bip32.fromSeed(seed, bitcoin.networks.bitcoin);
-
-        let generatedAddresses = [];
-        let generatedPrivateKeys = [];
-
-        // Generate multiple addresses (e.g., first 5)
-        const path = `m/84'/0'/0'/0/${walletid}`; // BIP84 path for Bech32 addresses
-        const keyPair = root.derivePath(path);
-
-        // Generate Bech32 (bc1...) address
-        const { address } = bitcoin.payments.p2wpkh({
-            pubkey: Buffer.from(keyPair.publicKey),
-            network: bitcoin.networks.bitcoin,
-        });
-
-        // Get private key in Wallet Import Format (WIF)
-        const privateKeyWIF = keyPair.toWIF();
-
-        generatedAddresses.push(address);
-        generatedPrivateKeys.push(privateKeyWIF);
-
-        setAddresses(generatedAddresses);
-        setPrivateKeys(generatedPrivateKeys);
-        const response = {
-            address: address,
-            key: privateKeyWIF
-        }
-        return response;
-
-    }
 
     const generateWalletAddress = async () => {
         setProceeding(true);
         const decrypted = await decryptWithKey(keyphrase, user.user_id);
         const finalDecryption = await decryptWithKey(decrypted.phrase, decrypted.key);
         const mnemonic = finalDecryption;
-        if (blockChainType.network === 'btc') {
-            const resp = await generateBitcoinWallet(mnemonic);
-            const values = {
-                "wallet_id": walletid,
-                "wallet_address": resp.address,
-                "wallet_key": resp.key
-            }
-            const response = await handleUpdateweb3WalletAddress(values);
-            if (response.data.status) {
-
-                await handleGetWeb3Wallet();
-                setProceeding(false);
-                setCelebrate(true);
-                setTimeout(() => {
-                    setIsInputDisabled(false);
-                    onClose();
-                    setPasswordMessageShow(false);
-
-                }, 3000);
-            }
+        const resp = await TronWalletGenerator(mnemonic,walletid);
+        console.log(resp);
+        const values = {
+            "wallet_id": walletid,
+            "wallet_address": resp.address,
+            "wallet_key": resp.key
         }
-        else {
+        const response = await handleUpdateweb3WalletAddress(values);
+        if (response.data.status) {
 
-            const hdNode = ethers.utils.HDNode.fromMnemonic(mnemonic);
-            const wallet = new ethers.Wallet(hdNode.derivePath(`m/44'/60'/0'/0/${walletid}`).privateKey);
-            const values = {
-                "wallet_id": walletid,
-                "wallet_address": wallet.address,
-                "wallet_key": wallet.privateKey
-            }
-            const response = await handleUpdateweb3WalletAddress(values);
-            if (response.data.status) {
+            await handleGetWeb3Wallet();
+            setProceeding(false);
+            setCelebrate(true);
+            setTimeout(() => {
+                setIsInputDisabled(false);
+                onClose();
+                setPasswordMessageShow(false);
 
-                await handleGetWeb3Wallet();
-                setProceeding(false);
-                setCelebrate(true);
-                setTimeout(() => {
-                    setIsInputDisabled(false);
-                    onClose();
-                    setPasswordMessageShow(false);
-
-                }, 3000);
-            }
+            }, 3000);
         }
-
-
-
     };
     async function decryptWithKey(encryptedData, customKey) {
         try {
@@ -385,45 +322,14 @@ const SelectBlockChain = ({ index, setHeaderName, setHeaderLogo, setblockChainTy
         </>
     )
 }
-
-
-
-
-
 const cryptoOption = [
-    {
-        name: 'Bitcoin',
-        logo: '/imagelogo/bitcoin-btc-logo.png',
-        blockchainDetail: {
-            blockchain: "bitcoin",
-            network: "btc",
-            asset: "btc"
-        }
-    },
-    {
-        name: 'Ethereum',
-        logo: '/imagelogo/ethereum-eth-logo.png',
-        blockchainDetail: {
-            blockchain: "ethereum",
-            network: "erc20",
-            asset: "eth"
-        },
-    },
-    {
-        name: 'Binance',
-        logo: '/imagelogo/bnb-bnb-logo.png',
-        blockchainDetail: {
-            blockchain: "binance",
-            network: "bep20",
-            asset: "bnb"
-        },
-    },
+
     {
         name: 'Tether',
         logo: '/imagelogo/tether-usdt-logo.png',
         blockchainDetail: {
-            blockchain: "ethereum",
-            network: "erc20",
+            blockchain: "tron",
+            network: "trc20",
             asset: "usdt"
         },
     },
@@ -447,4 +353,4 @@ export const gradientButtonStyle = {
         textDecoration: 'none',
     },
 };
-export default CreateWallet;
+export default CreateTronWallet;

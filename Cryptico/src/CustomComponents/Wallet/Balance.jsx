@@ -21,6 +21,7 @@ import { useWalletStore } from '../Store/useWalletStore';
 import { useCryptoOption } from '../Store/CryptoOption';
 import TransactionModal from './TransactionModal';
 import { useAuth } from '../../Context/AuthContext';
+import CreateTronWallet from './CreateTronWallet';
 
 const Balance = () => {
     const navigate = useNavigate()
@@ -168,11 +169,11 @@ const Balance = () => {
                                                                         <Box fontWeight={600} color={'black'}>
                                                                             {item.blc}
                                                                         </Box>
-                                                                        <Flex gap={1} display={{ base: 'flex', xl: 'none' }} >
+                                                                        <Flex gap={1} display={{ base: 'flex', xl: 'none' }} justifyContent={'end'} >
                                                                             <Box pt={1}>
                                                                                 <LuEqualApproximately />
                                                                             </Box>
-                                                                            {`  ${item.currentPrice * item.blc} INR`}
+                                                                            {`  ${(item.currentPrice * item.blc).toFixed(2)} INR`}
                                                                         </Flex>
                                                                     </Flex>
                                                                     <Flex display={{ base: 'flex', md: 'none' }}>
@@ -188,7 +189,7 @@ const Balance = () => {
                                                                     <Box pt={1}>
                                                                         <LuEqualApproximately />
                                                                     </Box>
-                                                                    {item.currentPrice * item.blc}
+                                                                    {(item.currentPrice * item.blc).toFixed(2)}
                                                                 </Flex>
 
                                                             </Flex>
@@ -224,13 +225,6 @@ const Balance = () => {
                                                     {/* Right side Table Data End */}
 
                                                 </Flex>
-
-
-
-
-
-
-
                                             ))
                                         }
 
@@ -240,9 +234,7 @@ const Balance = () => {
                                         <Image opacity={0.6} boxSize={10} src='/imagelogo/Fa6SolidWallet.png'></Image>
                                         <Heading size={'sm'} color={'gray.300'}>oops! no wallet exist</Heading>
                                     </Flex>
-
                         }
-
                     </Card>
 
                 </Flex>
@@ -917,31 +909,55 @@ export const Receive4 = () => {
                             {
                                 istron ?
 
-                                    <Flex my={5} direction={'column'} gap={7}>
+                                    web3wallet.data.tron ?
 
-                                        <Flex>
-                                            <WalletQR walletAddress={web3wallet?.data?.ethereum?.length > 0 ? web3wallet?.data?.ethereum[1]?.wallet_address : 'No Bitcoin wallet address available'} />
+                                        <Flex my={5} direction={'column'} gap={7}>
 
-                                            {/* <Image src='/imagelogo/Qr.png' boxSize={150}></Image> */}
+                                            <Flex>
+                                                <WalletQR walletAddress={web3wallet?.data?.tron[0]?.wallet_address} />
+
+                                                {/* <Image src='/imagelogo/Qr.png' boxSize={150}></Image> */}
+
+                                            </Flex>
+                                            <Heading size={'lg'}>Your TRC-20 address</Heading>
+                                            <Flex direction={'column'}>
+
+                                                <Box color={'gray'}>Use this address to deposit Tether (USDT):</Box>
+                                                <Box fontWeight={500}>{web3wallet?.data?.tron?.[0]?.wallet_address}</Box>
+                                            </Flex>
+                                            <Tooltip label={copied ? "Copied!" : "Copy to clipboard"} bg={'gray.100'} color={'black'} closeDelay={500} hasArrow>
+                                                <Button mb={5} colorScheme='orange' w={'150px'} onClick={handleCopyTron}>Copy address</Button>
+                                            </Tooltip>
 
                                         </Flex>
-                                        <Heading size={'lg'}>Your TRC-20 address</Heading>
-                                        <Flex direction={'column'}>
+                                        :
+                                        <Flex my={5} direction={'column'} gap={7}>
 
-                                            <Box color={'gray'}>Use this address to deposit Tether (USDT):</Box>
-                                            <Box fontWeight={500}>{addressTron}</Box>
+                                            <Flex>
+                                                <WalletQR walletAddress={'Plz create wallet'} />
+
+                                                {/* <Image src='/imagelogo/Qr.png' boxSize={150}></Image> */}
+
+                                            </Flex>
+                                            <Heading size={'lg'}>Your TRC-20 address</Heading>
+                                            <Flex direction={'column'}>
+
+                                                <Box border={'1px solid #dcdcdc'} borderRadius={5} bg={'red.50'} fontWeight={500} p={4} color={'gray.500'}>Wallet not create yet!</Box>
+                                            </Flex>
+                                            {/* <Tooltip label={copied ? "Copied!" : "Copy to clipboard"} bg={'gray.100'} color={'black'} closeDelay={500} hasArrow>
+                                                <Button mb={5} colorScheme='orange' w={'150px'} onClick={handleCopyTron}>Copy address</Button>
+                                            </Tooltip> */}
+                                            <CreateTronWallet />
+
                                         </Flex>
-                                        <Tooltip label={copied ? "Copied!" : "Copy to clipboard"} bg={'gray.100'} color={'black'} closeDelay={500} hasArrow>
-                                            <Button mb={5} colorScheme='orange' w={'150px'} onClick={handleCopyTron}>Copy address</Button>
-                                        </Tooltip>
-                                    </Flex>
+
                                     :
 
                                     <Flex my={5} direction={'column'} gap={7}>
 
                                         <Flex >
                                             {/* <Image src='/imagelogo/Qr.png' boxSize={150}></Image> */}
-                                            <WalletQR walletAddress={web3wallet?.data?.ethereum?.length > 0 ? web3wallet?.data?.ethereum[1]?.wallet_address : 'No Bitcoin wallet address available'} />
+                                            <WalletQR walletAddress={web3wallet?.data?.tron?.length > 0 ? web3wallet?.data?.ethereum[1]?.wallet_address : 'No Bitcoin wallet address available'} />
 
                                         </Flex>
                                         <Heading size={'lg'}>Your ERC-20 address</Heading>
@@ -1172,7 +1188,12 @@ export const Send1 = () => {
                                                                         _hover={{ bg: "gray.100", cursor: "pointer" }}
                                                                         onClick={() => handleSelect(item.username)}
                                                                     >
-                                                                        {`Cryptico user ${item.username}`}
+                                                                        Cryptico user &nbsp;
+                                                                        <Box as='span' color='orange' _hover={{ textDecoration: 'underline' }} >
+
+                                                                            {item.username}
+
+                                                                        </Box>
                                                                     </ListItem>
                                                                 </Flex>
 

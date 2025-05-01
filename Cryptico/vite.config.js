@@ -1,15 +1,98 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+// import { defineConfig } from 'vite'
+// import react from '@vitejs/plugin-react'
 
-// https://vite.dev/config/
+// // https://vite.dev/config/
+// export default defineConfig({
+//   plugins: [react()],
+//   resolve: {
+//     alias: {
+//       buffer: 'buffer/', // Polyfill Buffer
+//     },
+//   },
+//   define: {
+//     global: 'window', // Polyfill global if needed
+//   },
+// })
+// import { defineConfig } from 'vite';
+// import react from '@vitejs/plugin-react';
+// import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
+// import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill';
+// import rollupNodePolyFill from 'rollup-plugin-node-polyfills';
+// import wasm from 'vite-plugin-wasm';
+// import topLevelAwait from 'vite-plugin-top-level-await';
+
+// // Vite configuration
+// export default defineConfig({
+//   plugins: [
+//     react(),
+//     wasm(),
+//     topLevelAwait(),
+//   ],
+//   resolve: {
+//     alias: {
+//       // Polyfill buffer for the browser
+//       buffer: 'buffer/',
+//       process: 'process/browser',  // Polyfill for process object
+//     },
+//   },
+//   optimizeDeps: {
+//     esbuildOptions: {
+//       define: {
+//         global: 'globalThis',  // Set global as globalThis for compatibility
+//       },
+//       plugins: [
+//         NodeGlobalsPolyfillPlugin({
+//           buffer: true,
+//           process: true,
+//         }),
+//         NodeModulesPolyfillPlugin(),
+//       ],
+//     },
+//   },
+//   build: {
+//     rollupOptions: {
+//       plugins: [rollupNodePolyFill()],
+//     },
+//   },
+// });
+
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
+import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill';
+import rollupNodePolyFill from 'rollup-plugin-node-polyfills';
+import wasm from 'vite-plugin-wasm';
+import topLevelAwait from 'vite-plugin-top-level-await';
+
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    wasm(),
+    topLevelAwait(),
+  ],
   resolve: {
     alias: {
       buffer: 'buffer/', // Polyfill Buffer
+      process: 'process/browser', // Polyfill process object
     },
   },
-  define: {
-    global: 'window', // Polyfill global if needed
+  optimizeDeps: {
+    esbuildOptions: {
+      define: {
+        global: 'globalThis', // Set global as globalThis for compatibility
+      },
+      plugins: [
+        NodeGlobalsPolyfillPlugin({
+          buffer: true,
+          process: true,
+        }),
+        NodeModulesPolyfillPlugin(),
+      ],
+    },
   },
-})
+  build: {
+    rollupOptions: {
+      plugins: [rollupNodePolyFill()],
+    },
+  },
+});
