@@ -52,7 +52,7 @@ const BuyNew = () => {
     const OfferFilter = {
         user_id: '',
         txn_type: 'sell',
-        cryptocurrency: '',
+        cryptocurrency: 'bitcoin',
         paymentMethod: '',
         maxAmount: '',
         offerLocation: '',
@@ -64,7 +64,7 @@ const BuyNew = () => {
         setQueryParams(() => ({
             user_id: null,
             txn_type: 'sell',
-            cryptocurrency: null,
+            cryptocurrency: 'bitcoin',
             paymentMethod: null,
             maxAmount: null,
             offerLocation: null,
@@ -72,6 +72,7 @@ const BuyNew = () => {
             activeTrader: false,
             per_page: 10
         }));
+
     }, []);
 
     useEffect(() => {
@@ -85,6 +86,8 @@ const BuyNew = () => {
         OfferFilter.per_page = queryParams.per_page;
 
         handleGetOffer(OfferFilter);
+
+
     }, [
         queryParams.cryptocurrency,
         queryParams.paymentMethod,
@@ -95,6 +98,11 @@ const BuyNew = () => {
         queryParams.per_page,
         queryParams.txn_type,
     ]);
+
+    // const handleFindOffer = () => {
+    //     handleGetOffer(OfferFilter);
+
+    // }
     setTimeout(() => {
         setIsLoading(false);
     }, 3000);
@@ -115,7 +123,7 @@ const BuyNew = () => {
                 >
                     {/* Left Side nav column */}
 
-                    <LeftSideContent />
+                    <LeftSideContent  />
 
                     {/* Left Side nav column end */}
 
@@ -127,7 +135,7 @@ const BuyNew = () => {
                         <Card borderRadius={5} gap={5} p={2} >
                             <Flex direction={'column'} py={5} px={2} gap={5} >
 
-                                <Heading size={'lg'}>Buy Bitcoin (BTC).</Heading>
+                                <Heading size={'lg'}>{`Buy ${CoinNameMap[(queryParams.cryptocurrency)]} (${CoinSymbolMap[queryParams.cryptocurrency]})`}.</Heading>
                                 <Box as='p' fontWeight={500} color={'gray'} fontSize={'18px'}>Buy Bitcoin with over 500 payment methods to choose from, including bank transfers, online wallets, and gift cards.</Box>
                                 <Flex direction={'column'}>
 
@@ -359,7 +367,7 @@ const LeftSideContent = () => {
                             </Flex>
                         </Flex>
 
-                        <Button borderRadius={5} sx={gradientButtonStyle} justifyContent={'space-between'} colorScheme={'orange'} rightIcon={<MdDoubleArrow />}>Find Offers</Button>
+                        <Button borderRadius={5} sx={gradientButtonStyle} justifyContent={'space-between'} colorScheme={'orange'}  rightIcon={<MdDoubleArrow />}>Find Offers</Button>
 
 
                     </Flex>
@@ -762,4 +770,16 @@ const sortby = [
     { lable: 'Avg. Trade Speed: Fastest to Slowest' },
     { lable: 'Avg. Trade Speed: Fastest to Slowest' },
 ]
+export const CoinSymbolMap = {
+    bitcoin: 'BTC',
+    ethereum: 'ETH',
+    bnb: 'BNB',
+    tether: 'USDT'
+}
+export const CoinNameMap = {
+    bitcoin: 'Bitcoin',
+    ethereum: 'Ethereum',
+    bnb: 'Binance',
+    tether: 'Tether'
+}
 export default BuyNew

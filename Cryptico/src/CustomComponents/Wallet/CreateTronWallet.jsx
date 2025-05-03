@@ -28,11 +28,8 @@ const CreateTronWallet = () => {
     }
     return (
         <>
-
-
             <Button as={Link} onClick={onOpen}
                 sx={gradientButtonStyle}
-
             >
                 Create Wallet
             </Button>
@@ -148,7 +145,7 @@ const PasswordVerification = ({ blockChainType = {}, onClose }) => {
         const decrypted = await decryptWithKey(keyphrase, user.user_id);
         const finalDecryption = await decryptWithKey(decrypted.phrase, decrypted.key);
         const mnemonic = finalDecryption;
-        const resp = await TronWalletGenerator(mnemonic,walletid);
+        const resp = await TronWalletGenerator(mnemonic, walletid);
         console.log(resp);
         const values = {
             "wallet_id": walletid,

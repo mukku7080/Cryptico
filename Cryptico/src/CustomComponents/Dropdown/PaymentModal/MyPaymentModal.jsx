@@ -100,7 +100,7 @@ export const MyPaymentModal = ({ formikHelpers = {}, name, setBankShow = () => {
                                             gap={2}
                                             border={'1px solid #dcdcdc'}
                                             p={2}
-                                            w={{ base: '100%', sm: '45%', md: '30%' }}
+                                            w={{ base: '100%', sm: '45%', md: '30%', lg:'20%' }}
                                             borderRadius={5}
                                             cursor={'pointer'}
                                             onClick={() => {
