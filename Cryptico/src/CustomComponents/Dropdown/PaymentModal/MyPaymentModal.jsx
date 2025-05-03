@@ -20,15 +20,19 @@ import {
     Icon,
     useColorModeValue,
     Grid,
-    GridItem
+    GridItem, IconButton,
+    ButtonGroup
 } from '@chakra-ui/react'
-import { RiSearchLine } from "react-icons/ri";
-import { PiBankLight, PiCurrencyCircleDollarThin, PiMoneyThin, PiGameControllerLight, PiPaypalLogoThin } from "react-icons/pi";
-import { CiWallet, CiCreditCard2, CiGift } from "react-icons/ci";
+import { RiBankLine, RiSearchLine } from "react-icons/ri";
+import { PiBankLight, PiCurrencyCircleDollarThin, PiMoneyThin, PiGameControllerLight, PiPaypalLogoThin, PiBankBold, PiBankDuotone } from "react-icons/pi";
+import { CiWallet, CiCreditCard2, CiGift, CiBank } from "react-icons/ci";
 import { FaGooglePay } from "react-icons/fa";
-import { RxHamburgerMenu } from "react-icons/rx";
+import { RxHamburgerMenu, RxReset } from "react-icons/rx";
 import { useState } from 'react';
 import { useOffer } from '../../../Context/OfferContext';
+import { IoCloseCircle, IoLockClosedOutline } from 'react-icons/io5';
+import { FaClosedCaptioning, FaPlus } from 'react-icons/fa6';
+import { IoIosClose } from 'react-icons/io';
 export const MyPaymentModal = ({ formikHelpers = {}, name, setBankShow = () => { } }) => {
     const { queryParams, setQueryParams } = useOffer()
 
@@ -41,16 +45,43 @@ export const MyPaymentModal = ({ formikHelpers = {}, name, setBankShow = () => {
         setFieldValue = () => { }, // Default to a no-op function
     } = formikHelpers || {};
     const bgColor = useColorModeValue("orange.50", "gray.900");
-    const [option, setOption] = useState('Select Payment Method');
+    const [option, setOption] = useState('All Payment Method');
 
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [searchTerm, setSearchTerm] = useState("");
+    const [isCloseShow, setCloseShow] = useState(false);
     const filteredIndianOptions = IndianpaymentOptions.filter(option =>
         option.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
     return (
         <>
-            <Button variant={'outline'} bg={'transparent'} _hover={{ bg: 'transparent' }} onClick={onOpen} rightIcon={<RxHamburgerMenu />} display={'flex'} justifyContent={'space-between'} fontWeight={400} fontSize={'14px'}>{option}</Button>
+            <ButtonGroup isAttached variant={'outline'} w={'full'}>
+
+                <Button variant={'outline'} w={'full'} bg={'transparent'} _hover={{ bg: 'transparent' }} isTruncated onClick={onOpen} leftIcon={<PiBankDuotone size={20} />} display={'flex'} justifyContent={'start'} gap={1} fontWeight={400} fontSize={'14px'} >
+                    {option}
+                </Button>
+                {
+                    isCloseShow &&
+                    <IconButton
+                        icon={<RxReset boxSize={3} />}
+                        size="md"
+                        bg={'gray.200'}
+                        aria-label="Clear selection"
+                        onClick={(e) => {
+                            e.stopPropagation(); // Prevent modal from opening
+                            setOption('All Payment Method');     // Reset selected option
+                            setQueryParams((prev) => ({ ...prev, paymentMethod: null }))
+                            setCloseShow(false);
+
+
+                        }}
+                    />
+                }
+
+
+            </ButtonGroup>
+
+
 
             <Modal isOpen={isOpen} size={'2xl'} onClose={onClose} isCentered>
                 <ModalOverlay />
@@ -100,7 +131,7 @@ export const MyPaymentModal = ({ formikHelpers = {}, name, setBankShow = () => {
                                             gap={2}
                                             border={'1px solid #dcdcdc'}
                                             p={2}
-                                            w={{ base: '100%', sm: '45%', md: '30%', lg:'20%' }}
+                                            w={{ base: '100%', sm: '45%', md: '30%', lg: '20%' }}
                                             borderRadius={5}
                                             cursor={'pointer'}
                                             onClick={() => {
@@ -110,6 +141,7 @@ export const MyPaymentModal = ({ formikHelpers = {}, name, setBankShow = () => {
                                                 onClose();
                                                 setBankShow(true);
                                                 setQueryParams((prev) => ({ ...prev, paymentMethod: data.value }))
+                                                setCloseShow(true);
 
                                             }}
                                         >

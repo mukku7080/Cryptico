@@ -49,11 +49,10 @@ const MotionFlex = motion(Flex);
 const SellNew = () => {
     const { handleGetOffer, offers, queryParams, setQueryParams } = useOffer();
     const [isloading, setIsLoading] = useState(true);
-
     const OfferFilter = {
         user_id: '',
         txn_type: 'buy',
-        cryptocurrency: '',
+        cryptocurrency: 'bitcoin',
         paymentMethod: '',
         maxAmount: '',
         offerLocation: '',
@@ -61,12 +60,11 @@ const SellNew = () => {
         activeTrader: false,
         per_page: 10,
     }
-
     useEffect(() => {
         setQueryParams(() => ({
             user_id: null,
             txn_type: 'buy',
-            cryptocurrency: null,
+            cryptocurrency: 'bitcoin',
             paymentMethod: null,
             maxAmount: null,
             offerLocation: null,
@@ -74,6 +72,9 @@ const SellNew = () => {
             activeTrader: false,
             per_page: 10
         }));
+        handleGetOffer(OfferFilter);
+
+
     }, []);
 
     useEffect(() => {
@@ -86,7 +87,6 @@ const SellNew = () => {
         OfferFilter.activeTrader = queryParams.activeTrader;
         OfferFilter.per_page = queryParams.per_page;
 
-        handleGetOffer(OfferFilter);
     }, [
         queryParams.cryptocurrency,
         queryParams.paymentMethod,
@@ -97,9 +97,18 @@ const SellNew = () => {
         queryParams.per_page,
         queryParams.txn_type,
     ]);
+
+    const handleFindOffer = async () => {
+        const resp = await handleGetOffer(queryParams);
+        if (resp) {
+            setSelectedCrypto(queryParams.cryptocurrency);
+        }
+
+    }
     setTimeout(() => {
         setIsLoading(false);
     }, 3000);
+    const [selectedCrypto, setSelectedCrypto] = useState(OfferFilter.cryptocurrency);
 
 
 
@@ -117,7 +126,7 @@ const SellNew = () => {
                 >
                     {/* Left Side nav column */}
 
-                    <LeftSideContent />
+                    <LeftSideContent handleFindOffer={handleFindOffer} />
 
                     {/* Left Side nav column end */}
 
@@ -129,7 +138,8 @@ const SellNew = () => {
                         <Card borderRadius={5} gap={5} p={2} >
                             <Flex direction={'column'} py={5} px={2} gap={5} >
 
-                                <Heading size={'lg'}>Sell Bitcoin (BTC).</Heading>
+                                <Heading size={'lg'}>{`Sell ${CoinNameMap[(selectedCrypto)]} (${CoinSymbolMap[selectedCrypto]})`}.</Heading>
+
                                 <Box as='p' fontWeight={500} color={'gray'} fontSize={'18px'}>Sell your Bitcoin and get paid via over 500 payment methods, including bank transfers, online wallets, and gift cards.</Box>
                                 <Flex direction={'column'}>
 
@@ -244,7 +254,7 @@ const SellNew = () => {
 }
 
 
-const LeftSideContent = () => {
+const LeftSideContent = ({ handleFindOffer }) => {
     const [searchParams] = useSearchParams();
     const [index, setIndex] = useState(0);
     const { setQueryParams } = useOffer();
@@ -321,12 +331,6 @@ const LeftSideContent = () => {
 
                         <LeftContentmobileView />
                     </Box>
-
-
-
-
-
-
                     {/* </MotionFlex> */}
                     <Flex direction={'column'} gap={5} w={'full'} display={{ base: 'none', lg: 'flex' }}>
                         <Flex gap={2}>
@@ -372,7 +376,7 @@ const LeftSideContent = () => {
                             </Flex>
                         </Flex>
 
-                        <Button borderRadius={5} sx={gradientButtonStyle} justifyContent={'space-between'} colorScheme={'orange'} rightIcon={<MdDoubleArrow />}>Find Offers</Button>
+                        <Button borderRadius={5} sx={gradientButtonStyle} justifyContent={'space-between'} colorScheme={'orange'} onClick={handleFindOffer} rightIcon={<MdDoubleArrow />}>Find Offers</Button>
 
 
                     </Flex>
@@ -773,4 +777,16 @@ const sortby = [
     { lable: 'Avg. Trade Speed: Fastest to Slowest' },
     { lable: 'Avg. Trade Speed: Fastest to Slowest' },
 ]
+export const CoinSymbolMap = {
+    bitcoin: 'BTC',
+    ethereum: 'ETH',
+    bnb: 'BNB',
+    tether: 'USDT'
+}
+export const CoinNameMap = {
+    bitcoin: 'Bitcoin',
+    ethereum: 'Ethereum',
+    bnb: 'Binance',
+    tether: 'Tether'
+}
 export default SellNew

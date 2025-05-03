@@ -72,6 +72,8 @@ const BuyNew = () => {
             activeTrader: false,
             per_page: 10
         }));
+        handleGetOffer(OfferFilter);
+
 
     }, []);
 
@@ -85,9 +87,6 @@ const BuyNew = () => {
         OfferFilter.activeTrader = queryParams.activeTrader;
         OfferFilter.per_page = queryParams.per_page;
 
-        handleGetOffer(OfferFilter);
-
-
     }, [
         queryParams.cryptocurrency,
         queryParams.paymentMethod,
@@ -99,13 +98,22 @@ const BuyNew = () => {
         queryParams.txn_type,
     ]);
 
-    // const handleFindOffer = () => {
-    //     handleGetOffer(OfferFilter);
+    const handleFindOffer = async () => {
+        const resp = await handleGetOffer(queryParams);
+        if (resp) {
+            setSelectedCrypto(queryParams.cryptocurrency);
+        }
 
-    // }
+    }
     setTimeout(() => {
         setIsLoading(false);
     }, 3000);
+    const [selectedCrypto, setSelectedCrypto] = useState(OfferFilter.cryptocurrency);
+
+
+
+
+
 
 
 
@@ -123,7 +131,7 @@ const BuyNew = () => {
                 >
                     {/* Left Side nav column */}
 
-                    <LeftSideContent  />
+                    <LeftSideContent handleFindOffer={handleFindOffer} />
 
                     {/* Left Side nav column end */}
 
@@ -135,7 +143,7 @@ const BuyNew = () => {
                         <Card borderRadius={5} gap={5} p={2} >
                             <Flex direction={'column'} py={5} px={2} gap={5} >
 
-                                <Heading size={'lg'}>{`Buy ${CoinNameMap[(queryParams.cryptocurrency)]} (${CoinSymbolMap[queryParams.cryptocurrency]})`}.</Heading>
+                                <Heading size={'lg'}>{`Buy ${CoinNameMap[(selectedCrypto)]} (${CoinSymbolMap[selectedCrypto]})`}.</Heading>
                                 <Box as='p' fontWeight={500} color={'gray'} fontSize={'18px'}>Buy Bitcoin with over 500 payment methods to choose from, including bank transfers, online wallets, and gift cards.</Box>
                                 <Flex direction={'column'}>
 
@@ -241,7 +249,7 @@ const BuyNew = () => {
 }
 
 
-const LeftSideContent = () => {
+const LeftSideContent = ({ handleFindOffer }) => {
     const [searchParams] = useSearchParams();
     const [index, setIndex] = useState(0);
     const { setQueryParams } = useOffer();
@@ -254,6 +262,21 @@ const LeftSideContent = () => {
             setIndex(0);
         }
     }, [searchParams]);
+    const handleRestfilter = () => {
+        setQueryParams({
+            user_id: '',
+            txn_type: 'sell',
+            cryptocurrency: 'bitcoin',
+            paymentMethod: '',
+            maxAmount: '',
+            offerLocation: '',
+            traderLocation: '',
+            activeTrader: false,
+            per_page: 10,
+
+        })
+
+    }
 
     return (
         <Flex flex={{ lg: .6, xl: .4 }}
@@ -367,8 +390,7 @@ const LeftSideContent = () => {
                             </Flex>
                         </Flex>
 
-                        <Button borderRadius={5} sx={gradientButtonStyle} justifyContent={'space-between'} colorScheme={'orange'}  rightIcon={<MdDoubleArrow />}>Find Offers</Button>
-
+                        <Button borderRadius={5} sx={gradientButtonStyle} justifyContent={'space-between'} onClick={handleFindOffer} colorScheme={'orange'} rightIcon={<MdDoubleArrow />}>Find Offers</Button>
 
                     </Flex>
 
