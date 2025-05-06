@@ -49,10 +49,11 @@ const BuyNew = () => {
 
     const { handleGetOffer, offers, queryParams, setQueryParams } = useOffer();
     const [isloading, setIsLoading] = useState(true);
+    const [isFindOfferLoading, setFindOfferLoading] = useState(false);
     const OfferFilter = {
         user_id: '',
         txn_type: 'sell',
-        cryptocurrency: 'bitcoin',
+        cryptocurrency: queryParams.cryptocurrency,
         paymentMethod: '',
         maxAmount: '',
         offerLocation: '',
@@ -61,17 +62,17 @@ const BuyNew = () => {
         per_page: 10,
     }
     useEffect(() => {
-        setQueryParams(() => ({
-            user_id: null,
-            txn_type: 'sell',
-            cryptocurrency: 'bitcoin',
-            paymentMethod: null,
-            maxAmount: null,
-            offerLocation: null,
-            traderLocation: null,
-            activeTrader: false,
-            per_page: 10
-        }));
+        // setQueryParams(() => ({
+        //     user_id: null,
+        //     txn_type: 'sell',
+        //     cryptocurrency: 'bitcoin',
+        //     paymentMethod: null,
+        //     maxAmount: null,
+        //     offerLocation: null,
+        //     traderLocation: null,
+        //     activeTrader: false,
+        //     per_page: 10
+        // }));
         handleGetOffer(OfferFilter);
 
 
@@ -99,9 +100,11 @@ const BuyNew = () => {
     ]);
 
     const handleFindOffer = async () => {
+        setFindOfferLoading(true);
         const resp = await handleGetOffer(queryParams);
         if (resp) {
             setSelectedCrypto(queryParams.cryptocurrency);
+            setFindOfferLoading(false);
         }
 
     }
@@ -131,7 +134,7 @@ const BuyNew = () => {
                 >
                     {/* Left Side nav column */}
 
-                    <LeftSideContent handleFindOffer={handleFindOffer} />
+                    <LeftSideContent handleFindOffer={handleFindOffer} isFindOfferLoading={isFindOfferLoading} />
 
                     {/* Left Side nav column end */}
 
@@ -249,10 +252,10 @@ const BuyNew = () => {
 }
 
 
-const LeftSideContent = ({ handleFindOffer }) => {
+export const LeftSideContent = ({ handleFindOffer, isFindOfferLoading }) => {
+    const { setQueryParams } = useOffer();
     const [searchParams] = useSearchParams();
     const [index, setIndex] = useState(0);
-    const { setQueryParams } = useOffer();
     useEffect(() => {
         const queryValue = searchParams.get('index');
         // Check if the value is not null and is a valid number
@@ -261,22 +264,7 @@ const LeftSideContent = ({ handleFindOffer }) => {
         } else {
             setIndex(0);
         }
-    }, [searchParams]);
-    const handleRestfilter = () => {
-        setQueryParams({
-            user_id: '',
-            txn_type: 'sell',
-            cryptocurrency: 'bitcoin',
-            paymentMethod: '',
-            maxAmount: '',
-            offerLocation: '',
-            traderLocation: '',
-            activeTrader: false,
-            per_page: 10,
-
-        })
-
-    }
+    }, []);
 
     return (
         <Flex flex={{ lg: .6, xl: .4 }}
@@ -330,14 +318,11 @@ const LeftSideContent = ({ handleFindOffer }) => {
                                     </InputRightElement>
                                 }
                             </InputGroup>
-
                             <CurrencyDropdown width='20%' />
                         </Flex>
                     </Flex>
-
                     <Box display={{ base: 'block', lg: 'none' }}>
-
-                        <LeftContentmobileView />
+                        <LeftContentmobileView handleFindOffer={handleFindOffer} isFindOfferLoading={isFindOfferLoading} />
                     </Box>
 
 
@@ -390,7 +375,7 @@ const LeftSideContent = ({ handleFindOffer }) => {
                             </Flex>
                         </Flex>
 
-                        <Button borderRadius={5} sx={gradientButtonStyle} justifyContent={'space-between'} onClick={handleFindOffer} colorScheme={'orange'} rightIcon={<MdDoubleArrow />}>Find Offers</Button>
+                        <Button spinnerPlacement='end' isLoading={isFindOfferLoading} loadingText='Filtering...' borderRadius={5} sx={gradientButtonStyle} justifyContent={'space-between'} onClick={handleFindOffer} colorScheme={'orange'} rightIcon={<MdDoubleArrow />}>Find Offers</Button>
 
                     </Flex>
 
@@ -404,15 +389,37 @@ const LeftSideContent = ({ handleFindOffer }) => {
     )
 }
 
-const LeftContentmobileView = () => {
+export const LeftContentmobileView = ({ handleFindOffer, isFindOfferLoading }) => {
+    const [searchParams] = useSearchParams();
+    const [index, setIndex] = useState(0);
+    const { setQueryParams, queryParams } = useOffer();
+    useEffect(() => {
+        const queryValue = searchParams.get('index');
+        // Check if the value is not null and is a valid number
+        if (queryValue !== null) {
+            setIndex(queryValue);
+        } else {
+            setIndex(0);
+        }
+    }, [searchParams]);
     const { isOpen, onToggle, onClose } = useDisclosure();
     const accordionRef = useRef(null);
+    const modalRef = useRef(null);
+    // useEffect(() => {
+    //     console.log(queryParams);
+    // }, [queryParams])
 
     useEffect(() => {
         function handleClickOutside(event) {
-            if (accordionRef.current && !accordionRef.current.contains(event.target)) {
+            const clickedOutsideAccordion = accordionRef.current && !accordionRef.current.contains(event.target);
+            // const clickedOutsideModal = modalRef.current && !modalRef.current.contains(event.target);
+            // console.log(clickedOutsideAccordion);
+            // console.log(clickedOutsideModal);
+            if (clickedOutsideAccordion) {
                 onClose();
             }
+
+
         }
 
         document.addEventListener("mousedown", handleClickOutside);
@@ -454,7 +461,7 @@ const LeftContentmobileView = () => {
                                         border={'none'}
                                         _hover={{ border: "none" }}
                                         _focus={{ boxShadow: "none", border: "none" }}
-
+                                        onChange={(e) => setQueryParams((prev) => ({ ...prev, maxAmount: e.target.value }))}
                                     ></Input>
                                     {
                                         false &&
@@ -465,7 +472,7 @@ const LeftContentmobileView = () => {
                                 </InputGroup>
                                 <CurrencyDropdown />
                             </Flex>
-                            <MoreFilter />
+                            <MoreFilter handleFindOffer={handleFindOffer} isFindOfferLoading={isFindOfferLoading} />
                         </Flex>
                     </AccordionPanel>
                 </AccordionItem>
@@ -475,12 +482,18 @@ const LeftContentmobileView = () => {
 
 }
 
-const MoreFilter = () => {
+export const MoreFilter = ({ handleFindOffer, isFindOfferLoading }) => {
     const [show, setShow] = useState(false);
 
     return (
         <>
             <Flex direction={'column'} gap={5}>
+                {
+                    !show &&
+                    <Button spinnerPlacement='end' isLoading={isFindOfferLoading} loadingText='Filtering...' borderRadius={5} sx={gradientButtonStyle} justifyContent={'space-between'} onClick={handleFindOffer} colorScheme={'orange'} rightIcon={<MdDoubleArrow />}>Find Offers</Button>
+
+                }
+
                 <Divider />
 
 
@@ -489,14 +502,6 @@ const MoreFilter = () => {
                     <Heading size={'sm'} color={'gray'}>{show ? "Hide filters" : 'Show more filters'}</Heading>
 
                 </Flex>
-                {/* <MotionFlex
-        initial={{ opacity: 0, maxHeight: 0, overflow: "hidden" }}
-        animate={{ opacity: show ? 1 : 0, maxHeight: show ? "600px" : "0px" }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        direction={'column'}
-        display={{ base: 'flex', lg: 'none' }}
-
-    > */}
                 {/* LocationFilter */}
                 {show &&
 
@@ -527,7 +532,6 @@ const MoreFilter = () => {
                             </Flex>
                             <Flex alignItems={'center'}>
                                 <Switch colorScheme='orange' />
-
                             </Flex>
                         </Flex>
                         <Flex gap={2} justifyContent={'space-between'}>
@@ -537,13 +541,10 @@ const MoreFilter = () => {
                             </Flex>
                             <Flex alignItems={'center'}>
                                 <Switch colorScheme='orange' />
-
                             </Flex>
                         </Flex>
 
-                        <Button borderRadius={5} variant={'solid'} justifyContent={'space-between'} colorScheme={'orange'} rightIcon={<MdDoubleArrow />}>Find Offers</Button>
-
-
+                        <Button spinnerPlacement='end' isLoading={isFindOfferLoading} loadingText='Filtering...' borderRadius={5} sx={gradientButtonStyle} justifyContent={'space-between'} onClick={handleFindOffer} colorScheme={'orange'} rightIcon={<MdDoubleArrow />}>Find Offers</Button>
                     </Flex>
                 }
             </Flex>
@@ -552,7 +553,7 @@ const MoreFilter = () => {
 }
 
 
-const OfferList = ({ index, data }) => {
+export const OfferList = ({ index, data }) => {
     const navigate = useNavigate();
     const parsedData = JSON.parse(data?.payment_method);
     return (
@@ -580,13 +581,13 @@ const OfferList = ({ index, data }) => {
 
                     </Flex>
 
-                    <Flex gap={2} p={2}>
-                        <Flex gap={2} wrap={'wrap'}>
+                    <Flex gap={2} p={2} >
+                        <Flex gap={2} wrap={'wrap'} fontSize={{ base: '12px', md: '16px' }}>
 
                             <Box color={'green'} display={'flex'} alignItems={'center'} gap={2}>
 
                                 <FaRegThumbsUp />
-                                <Box> 5421</Box>
+                                <Box > 5421</Box>
 
                             </Box>
                             <Box color={'red.500'} display={'flex'} alignItems={'center'} gap={2}>
@@ -597,6 +598,39 @@ const OfferList = ({ index, data }) => {
                             </Box>
                         </Flex>
                     </Flex>
+
+                    {/* payWith mobile View */}
+                    <Flex direction={'column'} flex={2} display={{ base: 'flex', md: 'none' }} gap={3}>
+                        <Flex fontWeight={600} gap={2} >
+                            <Flex wrap={'wrap'} >
+                                {parsedData?.payment_method}
+                            </Flex>
+                            <Flex maxW={'70px'} border={'1px solid green'} color={'green'} px={1} fontSize={'10px'} fontWeight={'bold'} justifyContent={'center'} borderRadius={5} alignItems={'center'}>
+                                <Box as='span'>
+
+                                    VERIFIED
+                                </Box>
+                            </Flex>
+                        </Flex>
+                        <Flex wrap={'wrap'} color={'gray'} fontSize={'10px'}> {data?.offer_terms}</Flex>
+                        <Flex gap={2} flexWrap={'wrap'}  >
+                            {
+                                data?.offer_tags.length > 0 && data?.offer_tags.map((tag, index) => (
+
+                                    <Box
+                                        p={1}
+                                        key={index}
+                                        fontSize={'10px'}
+                                        borderRadius={5}
+                                        bg={'gray.100'}
+                                    >{tag}</Box>
+                                ))
+                            }
+
+                        </Flex>
+                    </Flex>
+                    {/* payWith mobile View End*/}
+
 
 
                 </Flex>
@@ -683,6 +717,8 @@ const OfferList = ({ index, data }) => {
 
 
                     </Flex>
+
+
 
 
                 </Flex>
@@ -795,13 +831,13 @@ const sortby = [
 export const CoinSymbolMap = {
     bitcoin: 'BTC',
     ethereum: 'ETH',
-    bnb: 'BNB',
+    binance: 'BNB',
     tether: 'USDT'
 }
 export const CoinNameMap = {
     bitcoin: 'Bitcoin',
     ethereum: 'Ethereum',
-    bnb: 'Binance',
+    binance: 'Binance',
     tether: 'Tether'
 }
 export default BuyNew

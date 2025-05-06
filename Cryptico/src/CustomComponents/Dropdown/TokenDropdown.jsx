@@ -23,7 +23,7 @@ const TokenDropdown = ({ index }) => {
         if (cryptoOption[safeIndex]) {
             setOption(cryptoOption[safeIndex].name);
             setLogo(cryptoOption[safeIndex].logo);
-            // setQueryParams((prev) => ({ ...prev, cryptocurrency: cryptoOption[safeIndex].name.toLocaleLowerCase() }))
+            setQueryParams((prev) => ({ ...prev, cryptocurrency: cryptoOption[safeIndex].name.toLocaleLowerCase() }))
         }
     }, [safeIndex]);
 
@@ -61,7 +61,7 @@ const TokenDropdown = ({ index }) => {
 const cryptoOption = [
     { name: 'Bitcoin', logo: '/imagelogo/bitcoin-btc-logo.png' },
     { name: 'Ethereum', logo: '/imagelogo/ethereum-eth-logo.png' },
-    { name: 'BNB', logo: '/imagelogo/bnb-bnb-logo.png' },
+    { name: 'Binance', logo: '/imagelogo/bnb-bnb-logo.png' },
     { name: 'Tether', logo: '/imagelogo/tether-usdt-logo.png' },
 ]
 export default TokenDropdown

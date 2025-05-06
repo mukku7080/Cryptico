@@ -1,4 +1,4 @@
-import { Box, Button, Card, Divider, Flex, Heading, Icon, Image, Menu, MenuButton, MenuList, MenuItem, Circle, Modal, ModalOverlay, ModalContent, ModalFooter, useDisclosure, ModalHeader, ModalCloseButton, ModalBody, ButtonGroup, Tag, ScaleFade, Fade, Tooltip, FormControl, Input, List, ListItem, useOutsideClick, Avatar } from '@chakra-ui/react'
+import { Box, Button, Card, Divider, Flex, Heading, Icon, Image, Menu, MenuButton, MenuList, MenuItem, Circle, Modal, ModalOverlay, ModalContent, ModalFooter, useDisclosure, ModalHeader, ModalCloseButton, ModalBody, ButtonGroup, Tag, ScaleFade, Fade, Tooltip, FormControl, Input, List, ListItem, useOutsideClick, Avatar, InputGroup, InputRightAddon } from '@chakra-ui/react'
 import React, { useEffect, useRef, useState } from 'react'
 import { LuEqualApproximately } from "react-icons/lu";
 import { AiOutlineExclamationCircle } from "react-icons/ai";
@@ -22,6 +22,9 @@ import { useCryptoOption } from '../Store/CryptoOption';
 import TransactionModal from './TransactionModal';
 import { useAuth } from '../../Context/AuthContext';
 import CreateTronWallet from './CreateTronWallet';
+import { wrap } from 'framer-motion';
+import { useOffer } from '../../Context/OfferContext';
+import { useOtherDetail } from '../../Context/otherContext';
 
 const Balance = () => {
     const navigate = useNavigate()
@@ -325,6 +328,8 @@ export const LatestTransactions = () => {
     const [copiedAddress, setCopiedAddress] = useState(false);
     const [copiedTrasactionId, setCopiedTransactionId] = useState(false);
     const [selectedTransaction, setSelectedTransaction] = useState(null);
+    const { priceRef } = useOtherDetail()
+
 
     useEffect(() => {
         setTimeout(() => {
@@ -360,9 +365,10 @@ export const LatestTransactions = () => {
 
 
 
+
     return (
         <>
-            <Card w={'100%'} p={4}>
+            <Card w={'100%'} p={4} >
                 <Heading size={'md'}> Latest Transactions</Heading>
 
                 {
@@ -373,10 +379,10 @@ export const LatestTransactions = () => {
                         transaction?.data?.length > 0 ?
                             <>
 
-                                <Flex w={'full'} p={{ base: 2, sm: 8 }} color={'gray'} direction={'column'} gap={10}>
+                                <Flex w={'full'} p={{ base: 2, sm: 8 }} color={'gray'} direction={'column'} gap={10} >
                                     {/* Heading start */}
 
-                                    <Flex Flex w={'full'} fontSize={'12px'} fontWeight={500}>
+                                    <Flex Flex w={'full'} fontSize={'12px'} fontWeight={500} px={5}>
                                         <Flex flex={1.4} gap={10}>
                                             <Flex flex={.8}> <Box ml={12} >TRANSACTION</Box></Flex>
                                             <Flex flex={1.2} display={{ base: 'none', md: 'Flex' }} ml={0}>DETAILS</Flex>
@@ -399,9 +405,16 @@ export const LatestTransactions = () => {
                                             transaction?.data.map((item, index) => (
 
                                                 <>
-                                                    <Flex w={'full'} key={item.txn_id} onClick={() => handleClick(item)}
-                                                        cursor={'pointer'} pb={3} borderBottom={'1px solid #dcdcdc'}>
-                                                        <Flex flex={1.4} gap={10}>
+                                                    <Flex w={'full'}
+                                                        p={5}
+                                                        key={item.txn_id}
+                                                        onClick={() => handleClick(item)}
+                                                        cursor={'pointer'}
+                                                        pb={3}
+                                                        borderBottom={'1px solid #dcdcdc'}
+                                                        bg={item.method === 'receive' ? 'green.50' : 'red.50'}
+                                                    >
+                                                        <Flex flex={1.4} gap={10} >
                                                             <Flex flex={.8}>
                                                                 <Flex gap={5}>
                                                                     <Box pt={1}>
@@ -412,7 +425,7 @@ export const LatestTransactions = () => {
                                                                         </Circle>
                                                                     </Box>
                                                                     <Flex direction={'column'}>
-                                                                        <Box>{item.method === 'receive' ? "received" : 'Send'}</Box>
+                                                                        <Box fontWeight={500}>{item.method === 'receive' ? "received" : 'Send'}</Box>
                                                                         <Box fontSize={'12px'}>{new Date(Number(item.date_time) * 1000).toLocaleString('en-GB')}</Box>
 
                                                                     </Flex>
@@ -440,9 +453,32 @@ export const LatestTransactions = () => {
                                                                     <Button variant={'outline'} size={'sm'} colorScheme={item.status === 'success' ? 'green' : 'red'}>{item.status}</Button>
                                                                 </Flex>
                                                                 <Flex>
-                                                                    <Flex direction={'column'} textAlign={'end'}  >
-                                                                        <Box alignItems={'end'}  >{`${item.method === 'receive' ? item.paid_amount : item.debit_amount} ${item.asset}`}</Box>
-                                                                        {/* <Box alignItems={'end'} fontSize={'12px'} >-0.73 BTC</Box> */}
+                                                                    <Flex direction={'column'} textAlign={'end'} fontWeight={500} flexWrap={'wrap'} >
+                                                                        {
+                                                                            item.method === 'receive' ?
+                                                                                <Box whiteSpace={'wrap'} color={'green.400'}>
+                                                                                    {`+${Number(item.paid_amount).toFixed(8)} ${(item.asset).toUpperCase()}`}
+                                                                                </Box>
+                                                                                :
+                                                                                <Flex color={'red.400'}>
+                                                                                    {`-${Number(item.debit_amount).toFixed(8)} ${(item.asset).toUpperCase()}`}
+                                                                                </Flex>
+
+
+                                                                        }
+                                                                        {/* <Flex alignItems={'end'}  >{`${item.method === 'receive' ? `+ ${item.paid_amount}` : `- ${item.debit_amount}`} ${item.asset.toUpperCase()}`}</Flex> */}
+                                                                        {
+                                                                            item.method === 'receive' ?
+                                                                                <Box alignItems={'end'} fontSize={'12px'} color={'green.400'} >
+                                                                                    {`+${(Number(item.paid_amount) * Number(priceRef?.current?.[CoinSymbolMap[item.asset]].inr)).toFixed(2)} INR`}
+
+                                                                                </Box>
+                                                                                :
+                                                                                <Box alignItems={'end'} fontSize={'12px'} color={'red.400'} >
+                                                                                    {`-${(Number(item.debit_amount) * Number(priceRef?.current?.[CoinSymbolMap[item.asset]].inr)).toFixed(2)} INR`}
+
+                                                                                </Box>
+                                                                        }
                                                                     </Flex>
                                                                 </Flex>
                                                             </Flex>
@@ -475,12 +511,27 @@ export const LatestTransactions = () => {
                                                                         selectedTransaction.method === 'receive' ? <BsBoxArrowInDownRight size={20} /> : <BsBoxArrowInUpRight size={20} />
                                                                     }
                                                                 </Circle>
-                                                                <Flex direction={'column'}>
+                                                                <Flex direction={'column'} alignItems={'center'}>
                                                                     <Box fontWeight={500} >{selectedTransaction.method === 'receive' ? "Received" : 'Send'}</Box>
 
                                                                 </Flex>
                                                             </Flex>
-                                                            <Heading alignSelf={'center'} color={'green.400'}>{`+${selectedTransaction.credit_amount}  ${selectedTransaction.asset.toUpperCase()}`}</Heading>
+                                                            {
+                                                                selectedTransaction.method === 'receive' ?
+                                                                    <Heading alignSelf={'center'} textAlign={'end'} color={'green.400'}>
+
+                                                                        {`+${Number(selectedTransaction.paid_amount).toFixed(8)} 
+                                                             ${selectedTransaction.asset.toUpperCase()}`}
+
+                                                                    </Heading>
+                                                                    :
+                                                                    <Heading alignSelf={'center'} textAlign={'end'} color={'green.400'}>
+
+
+                                                                        {`+${Number(selectedTransaction.debit_amount).toFixed(8)} 
+                                                             ${selectedTransaction.asset.toUpperCase()}`}
+                                                                    </Heading>
+                                                            }
                                                             <Flex alignselectedTransactions={'center'} justifyContent={'center'} p={2} fontSize={'12px'} color={'gray.500'} fontWeight={500}>
                                                                 {`send to ${selectedTransaction.to_address}`}
                                                             </Flex>
@@ -1021,23 +1072,34 @@ export const Send1 = () => {
     const [inputValue, setInputValue] = useState("");
     const [suggestions, setSuggestions] = useState([]);
     const [isopen, setIsOpen] = useState(false);
-    const [amount, setAmount] = useState(null);
+    const [amount, setAmount] = useState(0);
     const wrapperRef = useRef();
     const [currentPrice, setCurrentPrice] = useState(cryptoOption[0].currentPrice);
     const allUsersRef = useRef([]);
+    const [isBtc, setBtc] = useState(true);
+    const { priceRef } = useOtherDetail();
+    const [isUserValid, setUserValid] = useState(false);
+
+    const assetValue = isBtc ? amount : amount / priceRef.current?.[CoinSymbolMap[asset]]?.inr;
     const Dto = {
         username: inputValue,
         address: '',
         network: network,
         asset: asset,
-        amount: amount,
-        price: currentPrice
+        assetValue: assetValue
     }
     useEffect(() => {
         const fetchdata = async () => {
             try {
                 if (inputValue) {
                     const response = await handleOtherUserDetail(Dto);
+                    if (response.data[0].username === inputValue) {
+                        setUserValid(true);
+                    }
+                    else {
+                        setUserValid(false);
+                    }
+
                     allUsersRef.current = response.data || [];
                     filterSuggestions(inputValue);
 
@@ -1087,12 +1149,6 @@ export const Send1 = () => {
 
 
     }
-
-
-
-
-
-
     return (
         <>
 
@@ -1101,7 +1157,7 @@ export const Send1 = () => {
                 <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>Send</Flex>
 
             </Flex>
-            <Modal isOpen={isOpen} onClose={onClose} onCloseComplete={resetState} size={{ base: 'xs', md: 'md' }}>
+            <Modal isOpen={isOpen} onClose={onClose} onCloseComplete={resetState} size={{ base: 'xs', md: 'lg' }}>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader bg={'orange.50'} borderTopRadius={5}>
@@ -1114,15 +1170,7 @@ export const Send1 = () => {
                         </Flex>
                     </ModalHeader>
                     <ModalBody>
-                        <Flex direction={'column'} gap={10} my={10}>
-                            {/* <Flex as={Button} py={8} w={'full'} borderRadius={5} bg={'gray.100'} _hover={{ bg: 'gray.100' }} justifyContent={'space-between'}  >
-                                <Flex gap={2}>
-                                    <Image boxSize={5} src='/imagelogo/bitcoin-btc-logo.png'></Image>
-                                    Bitcoin
-                                </Flex>
-                                <MdKeyboardArrowRight />
-
-                            </Flex> */}
+                        <Flex direction={'column'} gap={5} my={5}>
 
                             <SelectToken index={0} setHeaderName={setHeaderName} setHeaderLogo={setHeaderLogo} setAsset={setAsset} setNetwork={setNetwork} setCurrentPrice={setCurrentPrice} />
 
@@ -1151,7 +1199,7 @@ export const Send1 = () => {
                                         :
                                         <FormControl p={4} borderRadius={5}>
                                             <Box ref={wrapperRef}>
-                                                <Input fontWeight={'700'}
+                                                <Input
                                                     px={0}
                                                     border={'none'}
                                                     _hover={{ border: 'none' }}
@@ -1207,9 +1255,94 @@ export const Send1 = () => {
                             </Flex>
 
 
-                            <FormControl bg={'gray.100'}>
-                                <Input fontSize={'22px'} onChange={handleAmount} fontWeight={700} py={10} placeholder='Amount to send'></Input>
-                            </FormControl>
+                            {
+                                isUserValid ?
+                                    <Card bg={'gray.100'} gap={1}>
+                                        <Flex justifyContent={'space-between'} p={4}>
+
+                                            <Heading size={'md'}>Amount to send</Heading>
+                                            <Box>Available : 00</Box>
+
+                                        </Flex>
+
+
+                                        <FormControl px={4}>
+                                            <InputGroup>
+
+                                                {
+                                                    isBtc ?
+                                                        <>
+                                                            <Input
+                                                                type='number'
+                                                                fontSize={'22px'}
+                                                                border={'none'}
+                                                                onChange={handleAmount}
+                                                                fontWeight={700}
+                                                                py={10}
+                                                                placeholder='0.00000000'
+                                                                _hover={{ border: 'none' }}
+                                                                _focus={{ boxShadow: 'none' }}
+                                                            ></Input>
+
+                                                            <InputRightAddon color={'gray'} fontSize={'16px'} border={'none'} fontWeight={700} py={10}>{asset.toLocaleUpperCase()}</InputRightAddon>
+                                                        </>
+
+                                                        :
+                                                        <>
+                                                            <Input
+                                                                type='number'
+                                                                fontSize={'22px'}
+                                                                border={'none'}
+                                                                onChange={handleAmount}
+                                                                fontWeight={700}
+                                                                py={10}
+                                                                placeholder='≈ 0.00'
+                                                                _hover={{ border: 'none' }}
+                                                                _focus={{ boxShadow: 'none' }}
+                                                            ></Input>
+
+                                                            <InputRightAddon color={'gray'} fontSize={'16px'} border={'none'} fontWeight={700} py={10}>INR</InputRightAddon>
+                                                        </>
+
+                                                }
+                                            </InputGroup>
+                                        </FormControl>
+                                        {
+                                            isBtc ?
+                                                <Box borderRadius={5} fontWeight={500} m={4} w={'auto'} p={4} py={2} bg={'#e8f0fe'}>{`${amount * priceRef?.current?.[CoinSymbolMap[asset]]?.inr}`} INR</Box>
+                                                :
+                                                <Box borderRadius={5} fontWeight={500} m={4} w={'auto'} p={4} py={2} bg={'#e8f0fe'}>{`${(amount / priceRef?.current?.[CoinSymbolMap[asset]]?.inr).toFixed(8)}`}  {asset.toLocaleUpperCase()}</Box>
+
+
+                                        }
+                                        <Flex justifyContent={'space-between'} p={4}>
+                                            <ButtonGroup gap={1}>
+                                                <Button size={'sm'} bg={'gray.200'}>min</Button>
+                                                <Button size={'sm'} bg={'gray.200'}>max</Button>
+                                            </ButtonGroup>
+                                            <ButtonGroup gap={1}>
+                                                <Button isActive={isBtc} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} size={'sm'} bg={'gray.200'} onClick={() => setBtc(true)}>{asset.toLocaleUpperCase()}</Button>
+                                                <Button _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} size={'sm'} bg={'gray.200'} onClick={() => setBtc(false)}>INR</Button>
+                                            </ButtonGroup>
+                                        </Flex>
+                                    </Card>
+                                    :
+                                    <FormControl bg={'gray.100'}>
+                                        <Input
+                                            disabled
+                                            type='number'
+                                            fontSize={'22px'}
+                                            border={'none'}
+                                            onChange={handleAmount}
+                                            fontWeight={700}
+                                            py={10}
+                                            placeholder='Amount to send'
+                                            _hover={{ border: 'none' }}
+                                            _focus={{ boxShadow: 'none' }}
+                                        ></Input>
+                                    </FormControl>
+
+                            }
                             <Button fontWeight={600} fontSize={'18px'} _hover={{ bg: 'gray.100' }} bg={'gray.100'} p={10} onClick={handleSubmit}  >
                                 <Flex gap={2} alignItems={'center'} justifyContent={'center'}>
                                     Continue
@@ -1244,23 +1377,35 @@ export const Send2 = () => {
     const [inputValue, setInputValue] = useState("");
     const [suggestions, setSuggestions] = useState([]);
     const [isopen, setIsOpen] = useState(false);
-    const [amount, setAmount] = useState(null);
+    const [amount, setAmount] = useState(0);
     const wrapperRef = useRef();
-    const [currentPrice, setCurrentPrice] = useState(cryptoOption[0].currentPrice);
+    const [currentPrice, setCurrentPrice] = useState(cryptoOption[1].currentPrice);
     const allUsersRef = useRef([]);
+    const [isBtc, setBtc] = useState(true);
+    const { priceRef } = useOtherDetail();
+    const [isUserValid, setUserValid] = useState(false);
+
+    const assetValue = isBtc ? amount : amount / priceRef.current?.[CoinSymbolMap[asset]]?.inr;
     const Dto = {
         username: inputValue,
         address: '',
         network: network,
         asset: asset,
-        amount: amount,
-        price: currentPrice
+        assetValue: assetValue
     }
+
     useEffect(() => {
         const fetchdata = async () => {
             try {
                 if (inputValue) {
                     const response = await handleOtherUserDetail(Dto);
+                    if (response.data[0].username === inputValue) {
+                        setUserValid(true);
+                    }
+                    else {
+                        setUserValid(false);
+                    }
+
                     allUsersRef.current = response.data || [];
                     filterSuggestions(inputValue);
 
@@ -1277,8 +1422,8 @@ export const Send2 = () => {
     }, [inputValue]);
 
     const resetState = () => {
-        setHeaderName(cryptoOption[0].name);
-        setHeaderLogo(cryptoOption[0].logo);
+        setHeaderName(cryptoOption[1].name);
+        setHeaderLogo(cryptoOption[1].logo);
     }
     useOutsideClick({
         ref: wrapperRef,
@@ -1318,7 +1463,7 @@ export const Send2 = () => {
                 <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>Send</Flex>
 
             </Flex>
-            <Modal isOpen={isOpen} onClose={onClose} onCloseComplete={resetState} size={{ base: 'xs', md: 'md' }}>
+            <Modal isOpen={isOpen} onClose={onClose} onCloseComplete={resetState} size={{ base: 'xs', md: 'lg' }}>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader bg={'orange.50'} borderTopRadius={5}>
@@ -1331,7 +1476,7 @@ export const Send2 = () => {
                         </Flex>
                     </ModalHeader>
                     <ModalBody>
-                        <Flex direction={'column'} gap={10} my={10}>
+                        <Flex direction={'column'} gap={5} my={5}>
                             {/* <Flex as={Button} py={8} w={'full'} borderRadius={5} bg={'gray.100'} _hover={{ bg: 'gray.100' }} justifyContent={'space-between'}  >
                                 <Flex gap={2}>
                                     <Image boxSize={5} src='/imagelogo/bitcoin-btc-logo.png'></Image>
@@ -1368,7 +1513,7 @@ export const Send2 = () => {
                                         :
                                         <FormControl p={4} borderRadius={5}>
                                             <Box ref={wrapperRef}>
-                                                <Input fontWeight={'700'}
+                                                <Input
                                                     px={0}
                                                     border={'none'}
                                                     _hover={{ border: 'none' }}
@@ -1424,9 +1569,94 @@ export const Send2 = () => {
                             </Flex>
 
 
-                            <FormControl bg={'gray.100'}>
-                                <Input fontSize={'22px'} onChange={handleAmount} fontWeight={700} py={10} placeholder='Amount to send'></Input>
-                            </FormControl>
+                            {
+                                isUserValid ?
+                                    <Card bg={'gray.100'} gap={1}>
+                                        <Flex justifyContent={'space-between'} p={4}>
+
+                                            <Heading size={'md'}>Amount to send</Heading>
+                                            <Box>Available : 00</Box>
+
+                                        </Flex>
+
+
+                                        <FormControl px={4}>
+                                            <InputGroup>
+
+                                                {
+                                                    isBtc ?
+                                                        <>
+                                                            <Input
+                                                                type='number'
+                                                                fontSize={'22px'}
+                                                                border={'none'}
+                                                                onChange={handleAmount}
+                                                                fontWeight={700}
+                                                                py={10}
+                                                                placeholder='0.00000000'
+                                                                _hover={{ border: 'none' }}
+                                                                _focus={{ boxShadow: 'none' }}
+                                                            ></Input>
+
+                                                            <InputRightAddon color={'gray'} fontSize={'16px'} border={'none'} fontWeight={700} py={10}>{asset.toLocaleUpperCase()}</InputRightAddon>
+                                                        </>
+
+                                                        :
+                                                        <>
+                                                            <Input
+                                                                type='number'
+                                                                fontSize={'22px'}
+                                                                border={'none'}
+                                                                onChange={handleAmount}
+                                                                fontWeight={700}
+                                                                py={10}
+                                                                placeholder='≈ 0.00'
+                                                                _hover={{ border: 'none' }}
+                                                                _focus={{ boxShadow: 'none' }}
+                                                            ></Input>
+
+                                                            <InputRightAddon color={'gray'} fontSize={'16px'} border={'none'} fontWeight={700} py={10}>INR</InputRightAddon>
+                                                        </>
+
+                                                }
+                                            </InputGroup>
+                                        </FormControl>
+                                        {
+                                            isBtc ?
+                                                <Box borderRadius={5} fontWeight={500} m={4} w={'auto'} p={4} py={2} bg={'#e8f0fe'}>{`${amount * priceRef?.current?.[CoinSymbolMap[asset]]?.inr}`} INR</Box>
+                                                :
+                                                <Box borderRadius={5} fontWeight={500} m={4} w={'auto'} p={4} py={2} bg={'#e8f0fe'}>{`${(amount / priceRef?.current?.[CoinSymbolMap[asset]]?.inr).toFixed(8)}`}  {asset.toLocaleUpperCase()}</Box>
+
+
+                                        }
+                                        <Flex justifyContent={'space-between'} p={4}>
+                                            <ButtonGroup gap={1}>
+                                                <Button size={'sm'} bg={'gray.200'}>min</Button>
+                                                <Button size={'sm'} bg={'gray.200'}>max</Button>
+                                            </ButtonGroup>
+                                            <ButtonGroup gap={1}>
+                                                <Button isActive={isBtc} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} size={'sm'} bg={'gray.200'} onClick={() => setBtc(true)}>{asset.toLocaleUpperCase()}</Button>
+                                                <Button _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} size={'sm'} bg={'gray.200'} onClick={() => setBtc(false)}>INR</Button>
+                                            </ButtonGroup>
+                                        </Flex>
+                                    </Card>
+                                    :
+                                    <FormControl bg={'gray.100'}>
+                                        <Input
+                                            disabled
+                                            type='number'
+                                            fontSize={'22px'}
+                                            border={'none'}
+                                            onChange={handleAmount}
+                                            fontWeight={700}
+                                            py={10}
+                                            placeholder='Amount to send'
+                                            _hover={{ border: 'none' }}
+                                            _focus={{ boxShadow: 'none' }}
+                                        ></Input>
+                                    </FormControl>
+
+                            }
                             <Button fontWeight={600} fontSize={'18px'} _hover={{ bg: 'gray.100' }} bg={'gray.100'} p={10} onClick={handleSubmit}  >
                                 <Flex gap={2} alignItems={'center'} justifyContent={'center'}>
                                     Continue
@@ -1458,23 +1688,33 @@ export const Send3 = () => {
     const [inputValue, setInputValue] = useState("");
     const [suggestions, setSuggestions] = useState([]);
     const [isopen, setIsOpen] = useState(false);
-    const [amount, setAmount] = useState(null);
+    const [amount, setAmount] = useState(0);
     const wrapperRef = useRef();
-    const [currentPrice, setCurrentPrice] = useState(cryptoOption[0].currentPrice);
+    const [currentPrice, setCurrentPrice] = useState(cryptoOption[2].currentPrice);
     const allUsersRef = useRef([]);
+    const [isBtc, setBtc] = useState(true);
+    const { priceRef } = useOtherDetail();
+    const [isUserValid, setUserValid] = useState(false);
+    const assetValue = isBtc ? amount : amount / priceRef.current?.[CoinSymbolMap[asset]]?.inr;
     const Dto = {
         username: inputValue,
         address: '',
         network: network,
         asset: asset,
-        amount: amount,
-        price: currentPrice
+        assetValue: assetValue
     }
     useEffect(() => {
         const fetchdata = async () => {
             try {
                 if (inputValue) {
                     const response = await handleOtherUserDetail(Dto);
+                    if (response.data[0].username === inputValue) {
+                        setUserValid(true);
+                    }
+                    else {
+                        setUserValid(false);
+                    }
+
                     allUsersRef.current = response.data || [];
                     filterSuggestions(inputValue);
 
@@ -1491,8 +1731,8 @@ export const Send3 = () => {
     }, [inputValue]);
 
     const resetState = () => {
-        setHeaderName(cryptoOption[0].name);
-        setHeaderLogo(cryptoOption[0].logo);
+        setHeaderName(cryptoOption[1].name);
+        setHeaderLogo(cryptoOption[1].logo);
     }
     useOutsideClick({
         ref: wrapperRef,
@@ -1524,21 +1764,16 @@ export const Send3 = () => {
 
 
     }
-
-
-
-
-
-
     return (
         <>
+
 
             <Flex cursor={'pointer'} direction={{ base: 'row', md: 'column' }} gap={{ base: 2, md: 0 }} onClick={onOpen}  >
                 <Flex display={'flex'} alignItems={'center'} justifyContent={'center'}><TbSend /></Flex>
                 <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>Send</Flex>
 
             </Flex>
-            <Modal isOpen={isOpen} onClose={onClose} onCloseComplete={resetState} size={{ base: 'xs', md: 'md' }}>
+            <Modal isOpen={isOpen} onClose={onClose} onCloseComplete={resetState} size={{ base: 'xs', md: 'lg' }}>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader bg={'orange.50'} borderTopRadius={5}>
@@ -1551,15 +1786,7 @@ export const Send3 = () => {
                         </Flex>
                     </ModalHeader>
                     <ModalBody>
-                        <Flex direction={'column'} gap={10} my={10}>
-                            {/* <Flex as={Button} py={8} w={'full'} borderRadius={5} bg={'gray.100'} _hover={{ bg: 'gray.100' }} justifyContent={'space-between'}  >
-                                <Flex gap={2}>
-                                    <Image boxSize={5} src='/imagelogo/bitcoin-btc-logo.png'></Image>
-                                    Bitcoin
-                                </Flex>
-                                <MdKeyboardArrowRight />
-
-                            </Flex> */}
+                        <Flex direction={'column'} gap={5} my={5}>
 
                             <SelectToken index={2} setHeaderName={setHeaderName} setHeaderLogo={setHeaderLogo} setAsset={setAsset} setNetwork={setNetwork} setCurrentPrice={setCurrentPrice} />
 
@@ -1588,7 +1815,7 @@ export const Send3 = () => {
                                         :
                                         <FormControl p={4} borderRadius={5}>
                                             <Box ref={wrapperRef}>
-                                                <Input fontWeight={'700'}
+                                                <Input
                                                     px={0}
                                                     border={'none'}
                                                     _hover={{ border: 'none' }}
@@ -1643,10 +1870,96 @@ export const Send3 = () => {
                                 }
                             </Flex>
 
+                            {
+                                isUserValid ?
+                                    <Card bg={'gray.100'} gap={1}>
+                                        <Flex justifyContent={'space-between'} p={4}>
 
-                            <FormControl bg={'gray.100'}>
-                                <Input fontSize={'22px'} onChange={handleAmount} fontWeight={700} py={10} placeholder='Amount to send'></Input>
-                            </FormControl>
+                                            <Heading size={'md'}>Amount to send</Heading>
+                                            <Box>Available : 00</Box>
+
+                                        </Flex>
+
+
+                                        <FormControl px={4}>
+                                            <InputGroup>
+
+                                                {
+                                                    isBtc ?
+                                                        <>
+                                                            <Input
+                                                                type='number'
+                                                                fontSize={'22px'}
+                                                                border={'none'}
+                                                                onChange={handleAmount}
+                                                                fontWeight={700}
+                                                                py={10}
+                                                                placeholder='0.00000000'
+                                                                _hover={{ border: 'none' }}
+                                                                _focus={{ boxShadow: 'none' }}
+                                                            ></Input>
+
+                                                            <InputRightAddon color={'gray'} fontSize={'16px'} border={'none'} fontWeight={700} py={10}>{asset.toLocaleUpperCase()}</InputRightAddon>
+                                                        </>
+
+                                                        :
+                                                        <>
+                                                            <Input
+                                                                type='number'
+                                                                fontSize={'22px'}
+                                                                border={'none'}
+                                                                onChange={handleAmount}
+                                                                fontWeight={700}
+                                                                py={10}
+                                                                placeholder='≈ 0.00'
+                                                                _hover={{ border: 'none' }}
+                                                                _focus={{ boxShadow: 'none' }}
+                                                            ></Input>
+
+                                                            <InputRightAddon color={'gray'} fontSize={'16px'} border={'none'} fontWeight={700} py={10}>INR</InputRightAddon>
+                                                        </>
+
+                                                }
+                                            </InputGroup>
+                                        </FormControl>
+                                        {
+                                            isBtc ?
+                                                <Box borderRadius={5} fontWeight={500} m={4} w={'auto'} p={4} py={2} bg={'#e8f0fe'}>{`${amount * priceRef?.current?.[CoinSymbolMap[asset]]?.inr}`} INR</Box>
+                                                :
+                                                <Box borderRadius={5} fontWeight={500} m={4} w={'auto'} p={4} py={2} bg={'#e8f0fe'}>{`${(amount / priceRef?.current?.[CoinSymbolMap[asset]]?.inr).toFixed(8)}`}  {asset.toLocaleUpperCase()}</Box>
+
+
+                                        }
+                                        <Flex justifyContent={'space-between'} p={4}>
+                                            <ButtonGroup gap={1}>
+                                                <Button size={'sm'} bg={'gray.200'}>min</Button>
+                                                <Button size={'sm'} bg={'gray.200'}>max</Button>
+                                            </ButtonGroup>
+                                            <ButtonGroup gap={1}>
+                                                <Button isActive={isBtc} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} size={'sm'} bg={'gray.200'} onClick={() => setBtc(true)}>{asset.toLocaleUpperCase()}</Button>
+                                                <Button _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} size={'sm'} bg={'gray.200'} onClick={() => setBtc(false)}>INR</Button>
+                                            </ButtonGroup>
+                                        </Flex>
+                                    </Card>
+                                    :
+                                    <FormControl bg={'gray.100'}>
+                                        <Input
+                                            disabled
+                                            type='number'
+                                            fontSize={'22px'}
+                                            border={'none'}
+                                            onChange={handleAmount}
+                                            fontWeight={700}
+                                            py={10}
+                                            placeholder='Amount to send'
+                                            _hover={{ border: 'none' }}
+                                            _focus={{ boxShadow: 'none' }}
+                                        ></Input>
+                                    </FormControl>
+
+                            }
+
+
                             <Button fontWeight={600} fontSize={'18px'} _hover={{ bg: 'gray.100' }} bg={'gray.100'} p={10} onClick={handleSubmit}  >
                                 <Flex gap={2} alignItems={'center'} justifyContent={'center'}>
                                     Continue
@@ -1679,23 +1992,35 @@ export const Send4 = () => {
     const [inputValue, setInputValue] = useState("");
     const [suggestions, setSuggestions] = useState([]);
     const [isopen, setIsOpen] = useState(false);
-    const [amount, setAmount] = useState(null);
+    const [amount, setAmount] = useState(0);
     const wrapperRef = useRef();
-    const [currentPrice, setCurrentPrice] = useState(cryptoOption[0].currentPrice);
+    const [currentPrice, setCurrentPrice] = useState(cryptoOption[3].currentPrice);
     const allUsersRef = useRef([]);
+    const [isBtc, setBtc] = useState(true);
+    const { priceRef } = useOtherDetail();
+    const [isUserValid, setUserValid] = useState(false);
+
+    const assetValue = isBtc ? amount : amount / priceRef.current?.[CoinSymbolMap[asset]]?.inr;
     const Dto = {
         username: inputValue,
         address: '',
         network: network,
         asset: asset,
-        amount: amount,
-        price: currentPrice
+        assetValue: assetValue
     }
+
     useEffect(() => {
         const fetchdata = async () => {
             try {
                 if (inputValue) {
                     const response = await handleOtherUserDetail(Dto);
+                    if (response.data[0].username === inputValue) {
+                        setUserValid(true);
+                    }
+                    else {
+                        setUserValid(false);
+                    }
+
                     allUsersRef.current = response.data || [];
                     filterSuggestions(inputValue);
 
@@ -1712,8 +2037,8 @@ export const Send4 = () => {
     }, [inputValue]);
 
     const resetState = () => {
-        setHeaderName(cryptoOption[0].name);
-        setHeaderLogo(cryptoOption[0].logo);
+        setHeaderName(cryptoOption[3].name);
+        setHeaderLogo(cryptoOption[3].logo);
     }
     useOutsideClick({
         ref: wrapperRef,
@@ -1745,12 +2070,6 @@ export const Send4 = () => {
 
 
     }
-
-
-
-
-
-
     return (
         <>
 
@@ -1759,7 +2078,7 @@ export const Send4 = () => {
                 <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>Send</Flex>
 
             </Flex>
-            <Modal isOpen={isOpen} onClose={onClose} onCloseComplete={resetState} size={{ base: 'xs', md: 'md' }}>
+            <Modal isOpen={isOpen} onClose={onClose} onCloseComplete={resetState} size={{ base: 'xs', md: 'lg' }}>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader bg={'orange.50'} borderTopRadius={5}>
@@ -1772,7 +2091,7 @@ export const Send4 = () => {
                         </Flex>
                     </ModalHeader>
                     <ModalBody>
-                        <Flex direction={'column'} gap={10} my={10}>
+                        <Flex direction={'column'} gap={5} my={5}>
                             {/* <Flex as={Button} py={8} w={'full'} borderRadius={5} bg={'gray.100'} _hover={{ bg: 'gray.100' }} justifyContent={'space-between'}  >
                                 <Flex gap={2}>
                                     <Image boxSize={5} src='/imagelogo/bitcoin-btc-logo.png'></Image>
@@ -1809,7 +2128,7 @@ export const Send4 = () => {
                                         :
                                         <FormControl p={4} borderRadius={5}>
                                             <Box ref={wrapperRef}>
-                                                <Input fontWeight={'700'}
+                                                <Input
                                                     px={0}
                                                     border={'none'}
                                                     _hover={{ border: 'none' }}
@@ -1865,9 +2184,94 @@ export const Send4 = () => {
                             </Flex>
 
 
-                            <FormControl bg={'gray.100'}>
-                                <Input fontSize={'22px'} onChange={handleAmount} fontWeight={700} py={10} placeholder='Amount to send'></Input>
-                            </FormControl>
+                            {
+                                isUserValid ?
+                                    <Card bg={'gray.100'} gap={1}>
+                                        <Flex justifyContent={'space-between'} p={4}>
+
+                                            <Heading size={'md'}>Amount to send</Heading>
+                                            <Box>Available : 00</Box>
+
+                                        </Flex>
+
+
+                                        <FormControl px={4}>
+                                            <InputGroup>
+
+                                                {
+                                                    isBtc ?
+                                                        <>
+                                                            <Input
+                                                                type='number'
+                                                                fontSize={'22px'}
+                                                                border={'none'}
+                                                                onChange={handleAmount}
+                                                                fontWeight={700}
+                                                                py={10}
+                                                                placeholder='0.00000000'
+                                                                _hover={{ border: 'none' }}
+                                                                _focus={{ boxShadow: 'none' }}
+                                                            ></Input>
+
+                                                            <InputRightAddon color={'gray'} fontSize={'16px'} border={'none'} fontWeight={700} py={10}>{asset.toLocaleUpperCase()}</InputRightAddon>
+                                                        </>
+
+                                                        :
+                                                        <>
+                                                            <Input
+                                                                type='number'
+                                                                fontSize={'22px'}
+                                                                border={'none'}
+                                                                onChange={handleAmount}
+                                                                fontWeight={700}
+                                                                py={10}
+                                                                placeholder='≈ 0.00'
+                                                                _hover={{ border: 'none' }}
+                                                                _focus={{ boxShadow: 'none' }}
+                                                            ></Input>
+
+                                                            <InputRightAddon color={'gray'} fontSize={'16px'} border={'none'} fontWeight={700} py={10}>INR</InputRightAddon>
+                                                        </>
+
+                                                }
+                                            </InputGroup>
+                                        </FormControl>
+                                        {
+                                            isBtc ?
+                                                <Box borderRadius={5} fontWeight={500} m={4} w={'auto'} p={4} py={2} bg={'#e8f0fe'}>{`${amount * priceRef?.current?.[CoinSymbolMap[asset]]?.inr}`} INR</Box>
+                                                :
+                                                <Box borderRadius={5} fontWeight={500} m={4} w={'auto'} p={4} py={2} bg={'#e8f0fe'}>{`${(amount / priceRef?.current?.[CoinSymbolMap[asset]]?.inr).toFixed(8)}`}  {asset.toLocaleUpperCase()}</Box>
+
+
+                                        }
+                                        <Flex justifyContent={'space-between'} p={4}>
+                                            <ButtonGroup gap={1}>
+                                                <Button size={'sm'} bg={'gray.200'}>min</Button>
+                                                <Button size={'sm'} bg={'gray.200'}>max</Button>
+                                            </ButtonGroup>
+                                            <ButtonGroup gap={1}>
+                                                <Button isActive={isBtc} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} size={'sm'} bg={'gray.200'} onClick={() => setBtc(true)}>{asset.toLocaleUpperCase()}</Button>
+                                                <Button _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} size={'sm'} bg={'gray.200'} onClick={() => setBtc(false)}>INR</Button>
+                                            </ButtonGroup>
+                                        </Flex>
+                                    </Card>
+                                    :
+                                    <FormControl bg={'gray.100'}>
+                                        <Input
+                                            disabled
+                                            type='number'
+                                            fontSize={'22px'}
+                                            border={'none'}
+                                            onChange={handleAmount}
+                                            fontWeight={700}
+                                            py={10}
+                                            placeholder='Amount to send'
+                                            _hover={{ border: 'none' }}
+                                            _focus={{ boxShadow: 'none' }}
+                                        ></Input>
+                                    </FormControl>
+
+                            }
                             <Button fontWeight={600} fontSize={'18px'} _hover={{ bg: 'gray.100' }} bg={'gray.100'} p={10} onClick={handleSubmit}  >
                                 <Flex gap={2} alignItems={'center'} justifyContent={'center'}>
                                     Continue
@@ -1940,5 +2344,11 @@ const data = [
     { name: "David" },
     { name: "Daniel" },
 ];
+const CoinSymbolMap = {
+    btc: 'bitcoin',
+    eth: 'ethereum',
+    bnb: 'binancecoin',
+    usdt: 'tether'
+}
 
 export default Balance

@@ -16,7 +16,7 @@ const OfferProvider = ({ children }) => {
     const [queryParams, setQueryParams] = useState({
         user_id: '',
         txn_type: '',
-        cryptocurrency: '',
+        cryptocurrency: 'bitcoin',
         paymentMethod: '',
         maxAmount: '',
         offerLocation: '',
