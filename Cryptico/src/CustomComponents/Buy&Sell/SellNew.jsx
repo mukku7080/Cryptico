@@ -168,7 +168,7 @@ const SellNew = () => {
 
                                         {/* Table Heading */}
 
-                                        <Flex w={'full'} sx={grayGradient} p={4} fontWeight={500} gap={10}>
+                                        <Flex w={'full'} bg={'gray.200'} p={4} fontWeight={500} gap={10}>
 
                                             <Flex flex={1} >
                                                 <Box>Sell to</Box>

@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from 'react'
-import { addAccount, createWebWallet, getPaymentDetails, getTransactionDetail, getWalletKeyPhrase, getWeb3Wallet, updateWeb3WalletAddress, updateIsPrimaryAccount, AddUpiDetails, sendInternalTransfer } from '../api/accountService';
+import { addAccount, createWebWallet, getPaymentDetails, getTransactionDetail, getWalletKeyPhrase, getWeb3Wallet, updateWeb3WalletAddress, updateIsPrimaryAccount, AddUpiDetails, sendInternalTransfer, WalletAddressTransaction } from '../api/accountService';
 
 const AccountContext = createContext();
 
@@ -116,10 +116,34 @@ const AccountProvider = ({ children }) => {
         return response;
 
     }
+    const handleWalletAddressTransaction = async (userDetail) => {
+        const response = await WalletAddressTransaction(userDetail);
+        return response;
+
+    }
 
 
     return (
-        <AccountContext.Provider value={{ handleAddAccount, accountDetails, getKeyPhrase, walletkeyphrase, setWalletKeyPhrase, handleCreateWallet, handleUpdateweb3WalletAddress, web3wallet, handleGetWeb3Wallet, handleGetAllTransaction, transaction, updateIsPrimary, handleGetAccountDetail, handleAddUpiDetails, upidetails, upibankDetails, handleSendInternalTransaction }}>
+        <AccountContext.Provider value={{
+            handleAddAccount,
+            accountDetails,
+            getKeyPhrase,
+            walletkeyphrase,
+            setWalletKeyPhrase,
+            handleCreateWallet,
+            handleUpdateweb3WalletAddress,
+            web3wallet,
+            handleGetWeb3Wallet,
+            handleGetAllTransaction,
+            transaction,
+            updateIsPrimary,
+            handleGetAccountDetail,
+            handleAddUpiDetails,
+            upidetails,
+            upibankDetails,
+            handleSendInternalTransaction,
+            handleWalletAddressTransaction
+        }}>
             {children}
         </AccountContext.Provider>
     )

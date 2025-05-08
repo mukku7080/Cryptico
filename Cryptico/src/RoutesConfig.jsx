@@ -39,6 +39,7 @@ import NotFound from './CustomComponents/NotFound/NotFound';
 import EmailVerification from './CustomComponents/LoginSignup/EmailVerification';
 import EmailProtectedRoute from './CustomComponents/AuthContext/EmailProtectedRoute';
 import TradePartnerProfile from './CustomComponents/Afterlogin/TradePartnerProfile';
+import SendEth from './CustomComponents/Wallet/SendEth';
 // import BitcoinWallet1 from './CustomComponents/Testwallet/BitCoinWallet1';
 
 
@@ -49,6 +50,8 @@ const RoutesConfig = () => {
             <Route path='/login' element={<Loginnew />} />
             <Route path='/signup' element={<Signupnew />} />
             <Route path='/testing' element={<Testing />} />
+
+
             <Route path='*' element={<NotFound />} />
             {/* <Route path='/bitcoinTesting' element={<BitcoinWallet1 />} /> */}
             {/* <Route path='/phoneVerification' element={<OtpVerification />} /> */}

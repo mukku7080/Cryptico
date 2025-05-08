@@ -135,6 +135,18 @@ export const sendInternalTransfer = async (userDetail) => {
     }
 
 }
+export const WalletAddressTransaction = async (userDetail) => {
+    try {
+        const response = await axiosInstance.post('/transaction/transaction-using-address', userDetail)
+        return response.data;
+    }
+    catch (error) {
+        throw error.response ? error.response.data : error.message;
+
+    }
+
+}
+
 
 
 

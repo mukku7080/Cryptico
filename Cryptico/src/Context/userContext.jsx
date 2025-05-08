@@ -11,7 +11,7 @@ const UserProvider = ({ children }) => {
 
 
     useEffect(() => {
-        handleUserDetail();
+        const res = handleUserDetail();
     }, [location.pathname])
 
 
@@ -61,7 +61,7 @@ const UserProvider = ({ children }) => {
             throw error;
         }
     }
-   
+
 
 
     return (

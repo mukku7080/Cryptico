@@ -174,7 +174,7 @@ const BuyNew = () => {
                                 <Flex>
                                     <Flex direction={'column'} w={'full'} borderBottom={'1px solid #dcdcdc'} borderLeft={'1px solid #dcdcdc'} borderRight={'1px solid #dcdcdc'} borderTop={'none'} borderBottomRadius={5} >
                                         {/* Table Heading */}
-                                        <Flex sx={grayGradient} w={'full'} bg={'gray.200'} p={4} fontWeight={500} gap={10}>
+                                        <Flex w={'full'} bg={'gray.200'} p={4} fontWeight={500} gap={10}>
                                             <Flex flex={1} >
                                                 <Box>Buy From</Box>
                                             </Flex>
@@ -582,12 +582,12 @@ export const OfferList = ({ index, data }) => {
                     </Flex>
 
                     <Flex gap={2} p={2} >
-                        <Flex gap={2} wrap={'wrap'} fontSize={{ base: '12px', md: '16px' }}>
+                        <Flex gap={2} wrap={'wrap'} fontSize={{ base: '14px', md: '16px' }}>
 
                             <Box color={'green'} display={'flex'} alignItems={'center'} gap={2}>
 
                                 <FaRegThumbsUp />
-                                <Box > 5421</Box>
+                                <Box > 51</Box>
 
                             </Box>
                             <Box color={'red.500'} display={'flex'} alignItems={'center'} gap={2}>
@@ -599,37 +599,6 @@ export const OfferList = ({ index, data }) => {
                         </Flex>
                     </Flex>
 
-                    {/* payWith mobile View */}
-                    <Flex direction={'column'} flex={2} display={{ base: 'flex', md: 'none' }} gap={3}>
-                        <Flex fontWeight={600} gap={2} >
-                            <Flex wrap={'wrap'} >
-                                {parsedData?.payment_method}
-                            </Flex>
-                            <Flex maxW={'70px'} border={'1px solid green'} color={'green'} px={1} fontSize={'10px'} fontWeight={'bold'} justifyContent={'center'} borderRadius={5} alignItems={'center'}>
-                                <Box as='span'>
-
-                                    VERIFIED
-                                </Box>
-                            </Flex>
-                        </Flex>
-                        <Flex wrap={'wrap'} color={'gray'} fontSize={'10px'}> {data?.offer_terms}</Flex>
-                        <Flex gap={2} flexWrap={'wrap'}  >
-                            {
-                                data?.offer_tags.length > 0 && data?.offer_tags.map((tag, index) => (
-
-                                    <Box
-                                        p={1}
-                                        key={index}
-                                        fontSize={'10px'}
-                                        borderRadius={5}
-                                        bg={'gray.100'}
-                                    >{tag}</Box>
-                                ))
-                            }
-
-                        </Flex>
-                    </Flex>
-                    {/* payWith mobile View End*/}
 
 
 
@@ -641,7 +610,7 @@ export const OfferList = ({ index, data }) => {
                         <Flex wrap={'wrap'} >
                             {parsedData?.payment_method}
                         </Flex>
-                        <Flex maxW={'80px'} border={'1px solid green'} color={'green'} px={2} fontSize={'10px'} fontWeight={'bold'} gap={2} justifyContent={'center'} borderRadius={5} alignItems={'center'}>
+                        <Flex maxW={'80px'} border={'1px solid green'} color={'green'} px={2} fontSize={'10px'} fontWeight={'bold'} gap={2} justifyContent={'center'} borderRadius={3} alignItems={'center'}>
                             <FaCheck />
                             <Box as='span'>
 
@@ -658,7 +627,7 @@ export const OfferList = ({ index, data }) => {
                                     p={1}
                                     key={index}
                                     fontSize={'12px'}
-                                    borderRadius={5}
+                                    borderRadius={3}
                                     bg={'gray.100'}
                                 >{tag}</Box>
                             ))
@@ -718,92 +687,124 @@ export const OfferList = ({ index, data }) => {
 
                     </Flex>
 
-
-
-
                 </Flex>
             </Flex>
 
+
+
             {/* Row2 */}
-            <Flex w={'full'} gap={{ base: 2, sm: 10 }} bg={'orange.50'} py={2}  >
+            <Flex w={'full'} direction={'column'} gap={1}>
+                {/* Pay With Mobile view row */}
+                <Flex mt={5} flex={2} p={4} bg={'gray.50'} justifyContent={'space-between'} display={{ base: 'flex', md: 'none' }} gap={3}>
+                    <Flex fontWeight={600} gap={2} >
+                        <Flex wrap={'wrap'} mt={2} >
+                            {parsedData?.payment_method.toUpperCase()}
+                        </Flex>
+                        <Flex maxW={'70px'} border={'1px solid #f0fff4'} boxShadow={'lg'} color={'green'} px={1} fontSize={'10px'} fontWeight={'bold'} justifyContent={'center'} borderRadius={5} alignItems={'center'}>
 
-                {/* Buy from */}
-                <Flex direction={'column'} flex={1}  >
 
-                    <Flex fontSize={'14px'} gap={1} justifyContent={'start'} alignItems={'start'} color={'gray'} px={2}>
-                        <Box w={'20px'} h={'20px'}>
-
-                            <Flex boxSize={3} mt={1} bg={'orange.400'} borderRadius={'50%'}></Flex>
-                        </Box>
-                        {data?.user?.last_seen_at}
+                            VERIFIED
+                        </Flex>
                     </Flex>
+                    <Flex gap={2} flexWrap={'wrap'} direction={'column'}   >
+                        <Flex wrap={'wrap'} color={'gray'} fontSize={'10px'}> {data?.offer_terms}</Flex>
+                        {
+                            data?.offer_tags.length > 0 && data?.offer_tags.map((tag, index) => (
 
+                                <Box
+                                    p={1}
+                                    key={index}
+                                    fontSize={'10px'}
+                                    borderRadius={5}
+                                    bg={'gray.100'}
+                                >{tag}</Box>
+                            ))
+                        }
 
+                    </Flex>
                 </Flex>
+                {/* Pay With Mobile view row end*/}
 
-                {/* Pay With */}
+                <Flex w={'full'} gap={{ base: 2, sm: 10 }} bg={'orange.50'} py={2}  >
 
+                    {/* Buy from */}
+                    <Flex direction={'column'} flex={1}  >
 
-                <Flex direction={'row'} flex={2} display={{ base: 'none', md: 'flex' }} gap={3} fontSize={'14px'} color={'gray'} bg={'red.100'} p={1} borderRadius={5}>
+                        <Flex fontSize={'14px'} gap={1} justifyContent={'start'} alignItems={'start'} color={'gray'} px={2}>
+                            <Box w={'20px'} h={'20px'}>
 
-                    <Box as='span'  >
-                        <Flex gap={2} justifyContent={'start'} alignItems={'start'}  >
-                            <Flex mt={1} >
-
-                                <AiOutlineExclamationCircle color='orange' />
-                            </Flex>
-
-                            <Box as='span'  >
-                                <Link >
-                                    <Box as='span' textDecoration={'underline'} color={'black'}>
-
-                                        Show your full name
-                                    </Box>
-                                </Link>
-
-                                <Box as='span' textDecoration={'none'}>
-
-                                    &nbsp; to buy cryptocurrency from {data?.user?.username}
-
-
-                                </Box>
+                                <Flex boxSize={3} mt={1} bg={'orange.400'} borderRadius={'50%'}></Flex>
                             </Box>
+                            {data?.user?.last_seen_at}
                         </Flex>
-                    </Box>
-
-                </Flex>
-                {/* Trade speed */}
-                <Flex flex={1}>
-
-                </Flex>
 
 
-                {/* pricePerBitcoin */}
-                <Flex flex={2} justifyContent={'end'} alignItems={'center'}>
-                    <Flex direction={'column'} justifyContent={'end'} alignContent={'flex-end'} alignItems={'end'} gap={2} pr={2}>
+                    </Flex>
+
+                    {/* Pay With */}
 
 
-                        <Flex gap={4} flexWrap={'wrap'} justifyContent={'end'} alignItems={'center'}>
-                            <Flex direction={'column'} fontSize={'13px'}>
+                    <Flex direction={'row'} flex={2} display={{ base: 'none', md: 'flex' }} gap={3} fontSize={'14px'} color={'gray'} bg={'red.100'} p={1} borderRadius={5}>
 
-                                <Box textAlign={'end'}>
+                        <Box as='span'  >
+                            <Flex gap={2} justifyContent={'start'} alignItems={'start'}  >
+                                <Flex mt={1} >
 
-                                    {`Min purchase: ${data?.min_trade_limit} INR`}
-                                </Box>
-                                <Box textAlign={'end'}>
+                                    <AiOutlineExclamationCircle color='orange' />
+                                </Flex>
 
-                                    {`Max purchase: ${data?.max_trade_limit} INR`}
+                                <Box as='span'  >
+                                    <Link >
+                                        <Box as='span' textDecoration={'underline'} color={'black'}>
+
+                                            Show your full name
+                                        </Box>
+                                    </Link>
+
+                                    <Box as='span' textDecoration={'none'}>
+
+                                        &nbsp; to buy cryptocurrency from {data?.user?.username}
+
+
+                                    </Box>
                                 </Box>
                             </Flex>
-                            <Flex alignItems={'center'} gap={2} >
-                                <Button size={'sm'} variant='outline' bg={'transparent'}><CiStar /></Button>
-                                <Button sx={gradientButtonStyle} size={'sm'} onClick={() => navigate('/buyOffer', { state: { data: data } })}>Buy</Button>
-                            </Flex>
+                        </Box>
 
-                        </Flex>
+                    </Flex>
+                    {/* Trade speed */}
+                    <Flex flex={1}>
+
                     </Flex>
 
 
+                    {/* pricePerBitcoin */}
+                    <Flex flex={2} justifyContent={'end'} alignItems={'center'}>
+                        <Flex direction={'column'} justifyContent={'end'} alignContent={'flex-end'} alignItems={'end'} gap={2} pr={2}>
+
+
+                            <Flex gap={4} flexWrap={'wrap'} justifyContent={'end'} alignItems={'center'}>
+                                <Flex direction={'column'} fontSize={'13px'}>
+
+                                    <Box textAlign={'end'}>
+
+                                        {`Min purchase: ${data?.min_trade_limit} INR`}
+                                    </Box>
+                                    <Box textAlign={'end'}>
+
+                                        {`Max purchase: ${data?.max_trade_limit} INR`}
+                                    </Box>
+                                </Flex>
+                                <Flex alignItems={'center'} gap={2} >
+                                    <Button size={'sm'} variant='outline' bg={'transparent'}><CiStar /></Button>
+                                    <Button sx={gradientButtonStyle} size={'sm'} onClick={() => navigate('/buyOffer', { state: { data: data } })}>Buy</Button>
+                                </Flex>
+
+                            </Flex>
+                        </Flex>
+
+
+                    </Flex>
                 </Flex>
             </Flex>
 

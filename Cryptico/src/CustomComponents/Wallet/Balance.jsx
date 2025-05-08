@@ -25,12 +25,23 @@ import CreateTronWallet from './CreateTronWallet';
 import { wrap } from 'framer-motion';
 import { useOffer } from '../../Context/OfferContext';
 import { useOtherDetail } from '../../Context/otherContext';
+import * as bitcoin from 'bitcoinjs-lib';
+import { isAddress } from 'ethers/lib/utils';
+import decryptWithKey from '../Decryption/Decryption';
+import { useUser } from '../../Context/userContext';
+import { setUserId } from 'firebase/analytics';
+import SendBnd from '../AddressTransaction/SendBnd';
 
 const Balance = () => {
     const navigate = useNavigate()
     const { web3wallet, handleGetWeb3Wallet } = useAccount();
     const [isloading, setLoading] = useState(true);
     const setWeb3wallet = useWalletStore((state) => state.setWeb3wallet);
+    const { priceRef } = useOtherDetail();
+    const [totalamount, setTotalAmount] = useState(0);
+    const [totalBtc, setTotalBtc] = useState();
+    const cryptoOption = useCryptoOption();
+
     useEffect(() => {
         if (web3wallet) {
             setWeb3wallet(web3wallet);
@@ -45,8 +56,18 @@ const Balance = () => {
     useEffect(() => {
         handleGetWeb3Wallet();
     }, [])
-    const cryptoOption = useCryptoOption();
+    useEffect(() => {
+        const total = cryptoOption.reduce((sum, item) => {
+            const balance = Number(item?.currentPrice) * Number(item?.blc);
+            return sum + balance;
+        }, 0);
+
+        setTotalAmount(total);
+        setTotalBtc(total / (priceRef?.current?.bitcoin?.inr));
+    }, [cryptoOption]);
+
     const data = web3wallet?.data || {}
+
 
     const count = Object.keys(data).length;
 
@@ -71,13 +92,13 @@ const Balance = () => {
                         <Flex justifyContent={'space-between'}  >
 
                             <Flex direction={'column'} gap={2} p={4} flex={1}>
-                                <Box>
+                                <Box fontSize={'14px'} fontWeight={500}>
                                     Total Holding
                                 </Box>
-                                <Heading size={'md'}>0 BTC</Heading>
+                                <Heading size={'md'}>{Number(totalBtc).toFixed(8)}</Heading>
                                 <Flex alignItems={'center'} gap={2}>
                                     <LuEqualApproximately />
-                                    <Box as='span'> 0 INR</Box>
+                                    <Box as='span'>{Number(totalamount).toFixed(2)}</Box>
                                 </Flex>
                             </Flex>
 
@@ -116,7 +137,7 @@ const Balance = () => {
                                         {/* TableHeading start -------------------------------------------------------------------------------------------------------------- */}
                                         {
                                             count > 0 &&
-                                            <Flex w={'full'} p={2} gap={10} >
+                                            <Flex w={'full'} p={{ base: 0, sm: 2 }} gap={10} >
                                                 <Flex flex={1.2} color={'gray'} direction={'column'} gap={10}>
                                                     <Flex fontSize={'12px'}>
                                                         <Flex flex={1}  >
@@ -140,8 +161,7 @@ const Balance = () => {
                                             cryptoOption.map((item, optionIndex) => (
                                                 item.status &&
 
-
-                                                <Flex key={optionIndex} w={'full'} p={2} gap={10}>
+                                                <Flex key={optionIndex} w={'full'} p={{ base: 0, sm: 2 }} gap={10}>
                                                     <Flex flex={1.2} color={'gray'} direction={'column'} >
 
                                                         {/* Left Side Table Data */}
@@ -153,15 +173,16 @@ const Balance = () => {
                                                                         <Image boxSize={5} src={item.logo} alt={item.name} />
                                                                     </Box>
                                                                     <Flex direction={'column'}>
-                                                                        <Flex gap={2}>
+                                                                        <Flex gap={2} flexWrap={'wrap'}>
+
                                                                             <Heading size={'md'}>
                                                                                 {item.shrotName}
                                                                             </Heading>
-                                                                            <Box display={'flex'} alignItems={'center'} as='span' color={'gray.300'} fontWeight={500}>
+                                                                            <Box fontSize={'14px'} display={'flex'} alignItems={'center'} as='span' color={'gray.300'} fontWeight={500}>
                                                                                 {item.name}
                                                                             </Box>
                                                                         </Flex>
-                                                                        <Box>{item.pricePerCoin}</Box>
+                                                                        <Box display={{ base: 'none', sm: 'flex' }}>{item.pricePerCoin}</Box>
                                                                     </Flex>
                                                                 </Flex>
                                                             </Flex>
@@ -169,14 +190,14 @@ const Balance = () => {
                                                                 <Flex gap={2}>
                                                                     <Flex direction={'column'} textAlign={'end'}>
 
-                                                                        <Box fontWeight={600} color={'black'}>
-                                                                            {item.blc}
-                                                                        </Box>
-                                                                        <Flex gap={1} display={{ base: 'flex', xl: 'none' }} justifyContent={'end'} >
-                                                                            <Box pt={1}>
+                                                                        <Heading size={'md'} color={'gray.500'}>
+                                                                            {Number(item.blc).toFixed(8)}
+                                                                        </Heading>
+                                                                        <Flex gap={1} display={{ base: 'flex', xl: 'none' }} justifyContent={'end'} fontSize={'14px'} >
+                                                                            {/* <Box pt={1}>
                                                                                 <LuEqualApproximately />
-                                                                            </Box>
-                                                                            {`  ${(item.currentPrice * item.blc).toFixed(2)} INR`}
+                                                                            </Box> */}
+                                                                            {`≈ ${(item.currentPrice * item.blc).toFixed(2)} INR`}
                                                                         </Flex>
                                                                     </Flex>
                                                                     <Flex display={{ base: 'flex', md: 'none' }}>
@@ -185,20 +206,18 @@ const Balance = () => {
                                                                     </Flex>
                                                                 </Flex>
                                                             </Flex>
-                                                            <Flex flex={.5} justifyContent={'center'} alignItems={'center'} direction={'column'} gap={1} fontSize={'12px'} display={{ base: 'none', xl: 'flex' }}>
+                                                            <Flex flex={.5} justifyContent={'center'} alignItems={'center'} direction={'column'} gap={1} fontSize={'14px'} display={{ base: 'none', xl: 'flex' }}>
 
                                                                 <Flex>
 
-                                                                    <Box pt={1}>
-                                                                        <LuEqualApproximately />
-                                                                    </Box>
-                                                                    {(item.currentPrice * item.blc).toFixed(2)}
+
+                                                                    {`≈ ${(item.currentPrice * item.blc).toFixed(2)}`}
                                                                 </Flex>
 
                                                             </Flex>
                                                         </Flex>
-                                                        {/* Left Side Table Data End */}
                                                     </Flex>
+                                                    {/* Left Side Table Data End */}
 
 
                                                     {/* Right side Table Data Start */}
@@ -432,10 +451,10 @@ export const LatestTransactions = () => {
                                                                 </Flex>
                                                             </Flex>
                                                             <Flex display={{ base: 'none', md: 'Flex' }} direction={'column'} flex={1.2} gap={2}>
-                                                                <Box maxW={'250px'}>
+                                                                <Box maxW={'250px'} fontWeight={450}>
 
                                                                     {
-                                                                        item.method === "receive" ? `receive from ${item.from_address}` : `send to ${item.from_address}`
+                                                                        item.method === "receive" ? `receive to ${item.to_address.slice(0, 6)}**********************${item.to_address.slice(-5)}` : `send to ${item.to_address}`
                                                                     }
                                                                 </Box>
                                                                 <Flex display={{ base: 'flex', lg: 'none' }}>
@@ -878,7 +897,7 @@ export const Receive4 = () => {
     const { web3wallet } = useAccount();
 
     const handleCopyTron = () => {
-        navigator.clipboard.writeText().then(() => {
+        navigator.clipboard.writeText(web3wallet?.data?.tron?.length > 0 ? web3wallet?.data?.tron[0]?.wallet_address : 'No Tron wallet address available').then(() => {
             setCopied(true);
             setTimeout(() => {
                 setCopied(false);
@@ -888,7 +907,7 @@ export const Receive4 = () => {
         })
     }
     const handleCopyEth = () => {
-        navigator.clipboard.writeText(web3wallet?.data?.ethereum?.length > 0 ? web3wallet?.data?.ethereum[1]?.wallet_address : 'No Bitcoin wallet address available').then(() => {
+        navigator.clipboard.writeText(web3wallet?.data?.ethereum?.length > 0 ? web3wallet?.data?.ethereum[1]?.wallet_address : 'No ETh wallet address available').then(() => {
             setCopied(true);
             setTimeout(() => {
                 setCopied(false);
@@ -1060,8 +1079,9 @@ export const Receive4 = () => {
 }
 
 export const Send1 = () => {
+    const { user } = useUser();
     const { handleOtherUserDetail, otherUserDetail, setOtherUserDetail } = useAuth();
-    const { handleSendInternalTransaction } = useAccount()
+    const { handleSendInternalTransaction, handleWalletAddressTransaction } = useAccount()
     const cryptoOption = useCryptoOption();
     const [headername, setHeaderName] = useState(cryptoOption[0].name);
     const [headerlogo, setHeaderLogo] = useState(cryptoOption[0].logo);
@@ -1070,6 +1090,7 @@ export const Send1 = () => {
     const [network, setNetwork] = useState(cryptoOption[0].network);
     const [isbyaddress, setIsByAddress] = useState(true);
     const [inputValue, setInputValue] = useState("");
+    const [walletAddress, setWalletAddress] = useState("");
     const [suggestions, setSuggestions] = useState([]);
     const [isopen, setIsOpen] = useState(false);
     const [amount, setAmount] = useState(0);
@@ -1079,15 +1100,28 @@ export const Send1 = () => {
     const [isBtc, setBtc] = useState(true);
     const { priceRef } = useOtherDetail();
     const [isUserValid, setUserValid] = useState(false);
-
+    const [isWalletValid, setWalletValid] = useState(false);
+    const [userid, setUserId] = useState();
+    const resetState = () => {
+        setHeaderName(cryptoOption[0].name);
+        setHeaderLogo(cryptoOption[0].logo);
+    }
     const assetValue = isBtc ? amount : amount / priceRef.current?.[CoinSymbolMap[asset]]?.inr;
     const Dto = {
         username: inputValue,
-        address: '',
         network: network,
         asset: asset,
         assetValue: assetValue
     }
+    const AddressDto = {
+        toAddress: walletAddress,
+        network: network,
+        asset: asset,
+        assetValue: assetValue
+    }
+    useEffect(() => {
+        setUserId(user?.user_id);
+    }, [user])
     useEffect(() => {
         const fetchdata = async () => {
             try {
@@ -1115,10 +1149,7 @@ export const Send1 = () => {
         fetchdata();
     }, [inputValue]);
 
-    const resetState = () => {
-        setHeaderName(cryptoOption[0].name);
-        setHeaderLogo(cryptoOption[0].logo);
-    }
+
     useOutsideClick({
         ref: wrapperRef,
         handler: () => setIsOpen(false),
@@ -1134,6 +1165,10 @@ export const Send1 = () => {
         const value = e.target.value;
         setInputValue(value);
     };
+    const handleWalletAddress = (e) => {
+        const value = e.target.value;
+        setWalletAddress(value);
+    };
 
     const handleSelect = (name) => {
         setInputValue(name);
@@ -1145,10 +1180,56 @@ export const Send1 = () => {
     }
 
     const handleSubmit = async () => {
-        await handleSendInternalTransaction(Dto);
+        try {
+
+            if (isWalletValid) {
+                const res = await handleWalletAddressTransaction(AddressDto);
+
+                if (res.status === true) {
+
+                    const response = await decryptWithKey(res.data, userid)
+                    const privateKey = await decryptWithKey(response?.senderWalletData?.wallet_key, userid);
+                    const sendBnb = await SendBnd(privateKey, walletAddress, response?.transactionData?.paid_amount);
+                    console.log(sendBnb);
 
 
+                }
+            }
+            else {
+
+                await handleSendInternalTransaction(Dto);
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
     }
+
+    useEffect(() => {
+        setWalletValid(isValidWalletAddress(walletAddress, asset));
+    }, [walletAddress, asset]);
+
+    function isValidWalletAddress(address, coin) {
+        switch (coin.toLowerCase()) {
+            case 'btc':
+                try {
+                    bitcoin.address.toOutputScript(address);
+                    return true;
+                } catch (e) {
+                    return false;
+                }
+
+            case 'eth':
+            case 'bnb':
+            case 'usdt': // all use Ethereum-style addresses
+                return isAddress(address);
+
+            default:
+                return false;
+        }
+    }
+
+
     return (
         <>
 
@@ -1157,7 +1238,7 @@ export const Send1 = () => {
                 <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>Send</Flex>
 
             </Flex>
-            <Modal isOpen={isOpen} onClose={onClose} onCloseComplete={resetState} size={{ base: 'xs', md: 'lg' }}>
+            <Modal isOpen={isOpen} onClose={onClose} onCloseComplete={resetState} size={{ base: 'sm', md: 'lg' }}>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader bg={'orange.50'} borderTopRadius={5}>
@@ -1188,11 +1269,12 @@ export const Send1 = () => {
                                     isbyaddress ?
 
                                         <FormControl p={4} borderRadius={5}>
-                                            <Input fontWeight={'700'}
+                                            <Input
                                                 px={0}
                                                 border={'none'}
                                                 _hover={{ border: 'none' }}
                                                 _focus={{ boxShadow: 'none' }}
+                                                onChange={handleWalletAddress}
                                                 placeholder='Paste or Enter wallet address here '
                                             />
                                         </FormControl>
@@ -1255,8 +1337,9 @@ export const Send1 = () => {
                             </Flex>
 
 
+                            {/* Amount Section start----------------------------------- */}
                             {
-                                isUserValid ?
+                                (isUserValid || isWalletValid) ?
                                     <Card bg={'gray.100'} gap={1}>
                                         <Flex justifyContent={'space-between'} p={4}>
 
@@ -1343,6 +1426,8 @@ export const Send1 = () => {
                                     </FormControl>
 
                             }
+                            {/* Amount Section End----------------------------------- */}
+
                             <Button fontWeight={600} fontSize={'18px'} _hover={{ bg: 'gray.100' }} bg={'gray.100'} p={10} onClick={handleSubmit}  >
                                 <Flex gap={2} alignItems={'center'} justifyContent={'center'}>
                                     Continue
@@ -1463,7 +1548,7 @@ export const Send2 = () => {
                 <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>Send</Flex>
 
             </Flex>
-            <Modal isOpen={isOpen} onClose={onClose} onCloseComplete={resetState} size={{ base: 'xs', md: 'lg' }}>
+            <Modal isOpen={isOpen} onClose={onClose} onCloseComplete={resetState} size={{ base: 'sm', md: 'lg' }}>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader bg={'orange.50'} borderTopRadius={5}>
@@ -1773,7 +1858,7 @@ export const Send3 = () => {
                 <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>Send</Flex>
 
             </Flex>
-            <Modal isOpen={isOpen} onClose={onClose} onCloseComplete={resetState} size={{ base: 'xs', md: 'lg' }}>
+            <Modal isOpen={isOpen} onClose={onClose} onCloseComplete={resetState} size={{ base: 'sm', md: 'lg' }}>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader bg={'orange.50'} borderTopRadius={5}>
@@ -2078,7 +2163,7 @@ export const Send4 = () => {
                 <Flex fontSize={'12px'} color={'gray'} fontWeight={500}>Send</Flex>
 
             </Flex>
-            <Modal isOpen={isOpen} onClose={onClose} onCloseComplete={resetState} size={{ base: 'xs', md: 'lg' }}>
+            <Modal isOpen={isOpen} onClose={onClose} onCloseComplete={resetState} size={{ base: 'sm', md: 'lg' }}>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader bg={'orange.50'} borderTopRadius={5}>
@@ -2331,6 +2416,8 @@ export const SelectToken = ({ index, setHeaderName, setHeaderLogo, setAsset, set
         </>
     )
 }
+
+
 
 const cryptoStatus = [
     { name: 'Convert', icon: <SiConvertio />, to: 'convert' },

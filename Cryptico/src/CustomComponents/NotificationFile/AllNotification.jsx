@@ -55,7 +55,7 @@ const AllNotification = () => {
                                                         </Box>
                                                     }
                                                 </Flex>
-                                                <Flex flex={0.6}>{item.message}</Flex>
+                                                <Flex flexWrap={'wrap'} whiteSpace={'wrap'} flex={0.6}>{item.message}</Flex>
                                                 <Flex flex={0.2} color={'gray'} justifyContent={'end'}>{item.time_duration}</Flex>
                                             </Flex>
 
