@@ -1,4 +1,4 @@
-import { Box, Button, Card, Divider, Flex, Heading, Icon, Image, Menu, MenuButton, MenuList, MenuItem, Circle, Modal, ModalOverlay, ModalContent, ModalFooter, useDisclosure, ModalHeader, ModalCloseButton, ModalBody, ButtonGroup, Tag, ScaleFade, Fade, Tooltip, FormControl, Input, List, ListItem, useOutsideClick, Avatar, InputGroup, InputRightAddon } from '@chakra-ui/react'
+import { Box, Button, Card, Divider, Flex, Heading, Icon, Image, Menu, MenuButton, MenuList, MenuItem, Circle, Modal, ModalOverlay, ModalContent, ModalFooter, useDisclosure, ModalHeader, ModalCloseButton, ModalBody, ButtonGroup, Tag, ScaleFade, Fade, Tooltip, FormControl, Input, List, ListItem, useOutsideClick, Avatar, InputGroup, InputRightAddon, FormLabel, InputRightElement, IconButton, useToast } from '@chakra-ui/react'
 import React, { useEffect, useRef, useState } from 'react'
 import { LuEqualApproximately } from "react-icons/lu";
 import { AiOutlineExclamationCircle } from "react-icons/ai";
@@ -31,6 +31,8 @@ import decryptWithKey from '../Decryption/Decryption';
 import { useUser } from '../../Context/userContext';
 import { setUserId } from 'firebase/analytics';
 import SendBnd from '../AddressTransaction/SendBnd';
+import Sendeth from '../AddressTransaction/Sendeth';
+import { IoMdEye, IoMdEyeOff } from 'react-icons/io';
 
 const Balance = () => {
     const navigate = useNavigate()
@@ -1081,7 +1083,7 @@ export const Receive4 = () => {
 export const Send1 = () => {
     const { user } = useUser();
     const { handleOtherUserDetail, otherUserDetail, setOtherUserDetail } = useAuth();
-    const { handleSendInternalTransaction, handleWalletAddressTransaction } = useAccount()
+    const { handleSendInternalTransaction, handleWalletAddressTransaction, handleUpdateWalletAddressTransaction, handleFeeCalculation } = useAccount()
     const cryptoOption = useCryptoOption();
     const [headername, setHeaderName] = useState(cryptoOption[0].name);
     const [headerlogo, setHeaderLogo] = useState(cryptoOption[0].logo);
@@ -1098,26 +1100,51 @@ export const Send1 = () => {
     const [currentPrice, setCurrentPrice] = useState(cryptoOption[0].currentPrice);
     const allUsersRef = useRef([]);
     const [isBtc, setBtc] = useState(true);
+    const factor = Math.pow(10, 2);
     const { priceRef } = useOtherDetail();
     const [isUserValid, setUserValid] = useState(false);
     const [isWalletValid, setWalletValid] = useState(false);
     const [userid, setUserId] = useState();
+    const [isContinue, setIsContinue] = useState(false);
+    const [isSend, setSend] = useState(true);
+    const [availableBlc, setAvailableBalance] = useState(0);
+    const [isloading, setIsLoading] = useState(false);
+    const toast = useToast();
+    const [transferFee, setTransferFee] = useState(0);
+    const [totalAssetValue, setTotalAssetValue] = useState(0);
+
+
     const resetState = () => {
         setHeaderName(cryptoOption[0].name);
         setHeaderLogo(cryptoOption[0].logo);
+        setAsset(cryptoOption[0].asset);
+        setNetwork(cryptoOption[0].network);
     }
     const assetValue = isBtc ? amount : amount / priceRef.current?.[CoinSymbolMap[asset]]?.inr;
+    const assetInrValue = amount * priceRef.current?.[CoinSymbolMap[asset]]?.inr;
+    // const transferFee = (amount * 0.02) / 100;
+    const transferFeeInr = transferFee * priceRef.current?.[CoinSymbolMap[asset]]?.inr;
+    // const totalAssetValue = Number(assetValue) + Number(transferFee);
+    const totalAssetInrValue = (Number(totalAssetValue)) * Number(priceRef.current?.[CoinSymbolMap[asset]]?.inr);
+
     const Dto = {
         username: inputValue,
         network: network,
         asset: asset,
-        assetValue: assetValue
+        assetValue: assetValue,
+    }
+    const feeCalculationDto = {
+        asset: asset,
+        network: network,
+        assetValue: assetValue,
     }
     const AddressDto = {
         toAddress: walletAddress,
         network: network,
         asset: asset,
-        assetValue: assetValue
+        assetValue: assetValue,
+        totalAsset: Number(totalAssetValue)
+
     }
     useEffect(() => {
         setUserId(user?.user_id);
@@ -1178,9 +1205,19 @@ export const Send1 = () => {
         setAmount(e.target.value);
 
     }
+    const handleContinue = async () => {
+        const response = await handleFeeCalculation(feeCalculationDto);
+        if (response.status === true) {
+            setTransferFee(response?.data?.transferFee);
+            setTotalAssetValue(response?.data?.totalAsset);
+            setIsContinue(true);
+        }
+
+    }
 
     const handleSubmit = async () => {
         try {
+            setIsLoading(true);
 
             if (isWalletValid) {
                 const res = await handleWalletAddressTransaction(AddressDto);
@@ -1188,15 +1225,41 @@ export const Send1 = () => {
                 if (res.status === true) {
 
                     const response = await decryptWithKey(res.data, userid)
+                    console.log(response);
+
                     const privateKey = await decryptWithKey(response?.senderWalletData?.wallet_key, userid);
-                    const sendBnb = await SendBnd(privateKey, walletAddress, response?.transactionData?.paid_amount);
-                    console.log(sendBnb);
-
-
+                    let txResponse;
+                    if (asset === 'bnb') {
+                        txResponse = await SendBnd(privateKey, walletAddress, response?.transactionData?.paid_amount);
+                    }
+                    if (asset === 'eth') {
+                        txResponse = await Sendeth(privateKey, walletAddress, response?.transactionData?.paid_amount)
+                    }
+                    if (txResponse.transactionHash) {
+                        const txnRequestDto = {
+                            "txnId": response?.transactionData?.txn_id,
+                            "txnHashId": txResponse?.transactionHash,
+                            "status": txResponse?.status === 1 ? "success" : "failed",
+                        }
+                        const updateResponse = await handleUpdateWalletAddressTransaction(txnRequestDto);
+                        if (updateResponse.status === true) {
+                            setIsLoading(false);
+                            onClose();
+                            setAmount(0);
+                            setWalletAddress('');
+                            toast({
+                                title: "Transaction Success",
+                                status: "success",
+                                duration: 2000,
+                                isClosable: true,
+                                position: 'top-right'
+                            })
+                        }
+                        console.log(updateResponse);
+                    }
                 }
             }
             else {
-
                 await handleSendInternalTransaction(Dto);
             }
         }
@@ -1250,192 +1313,272 @@ export const Send1 = () => {
                             <ModalCloseButton mt={2} />
                         </Flex>
                     </ModalHeader>
-                    <ModalBody>
-                        <Flex direction={'column'} gap={5} my={5}>
+                    {
+                        !isContinue ?
 
-                            <SelectToken index={0} setHeaderName={setHeaderName} setHeaderLogo={setHeaderLogo} setAsset={setAsset} setNetwork={setNetwork} setCurrentPrice={setCurrentPrice} />
+                            <ModalBody>
+                                <Flex direction={'column'} gap={5} my={5}>
 
-                            <Flex direction={'column'} bg={'gray.100'} borderRadius={5} py={4}>
+                                    <SelectToken index={0} setHeaderName={setHeaderName} setHeaderLogo={setHeaderLogo} setAsset={setAsset} setNetwork={setNetwork} setCurrentPrice={setCurrentPrice} setAvailableBalance={setAvailableBalance} />
 
-                                <Flex justifyContent={'space-between'} p={4} >
-                                    <Heading size={'md'}>Send to </Heading>
-                                    <ButtonGroup size={'sm'} >
-                                        <Button bg={isbyaddress ? 'orange' : 'gray.300'} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} fontSize={'12px'} onClick={() => setIsByAddress(true)}>Address</Button>
-                                        <Button bg={isbyaddress ? 'gray.300' : 'orange'} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} fontSize={'12px'} onClick={() => setIsByAddress(false)}>Cryptico User</Button>
-                                    </ButtonGroup>
+                                    <Flex direction={'column'} bg={'gray.100'} borderRadius={5} py={4}>
 
-                                </Flex>
-                                {
-                                    isbyaddress ?
-
-                                        <FormControl p={4} borderRadius={5}>
-                                            <Input
-                                                px={0}
-                                                border={'none'}
-                                                _hover={{ border: 'none' }}
-                                                _focus={{ boxShadow: 'none' }}
-                                                onChange={handleWalletAddress}
-                                                placeholder='Paste or Enter wallet address here '
-                                            />
-                                        </FormControl>
-                                        :
-                                        <FormControl p={4} borderRadius={5}>
-                                            <Box ref={wrapperRef}>
-                                                <Input
-                                                    px={0}
-                                                    border={'none'}
-                                                    _hover={{ border: 'none' }}
-                                                    _focus={{ boxShadow: 'none' }}
-                                                    placeholder='Enter username '
-                                                    value={inputValue}
-                                                    onChange={handleChange}
-
-                                                />
-
-                                                {isopen && suggestions?.length > 0 && (
-                                                    <Box
-                                                        px={4}
-                                                        position="absolute"
-                                                        top="100%"
-                                                        left="0"
-                                                        right="0"
-                                                        bg="gray.100"
-                                                        borderRadius="md"
-                                                        mt={1}
-                                                        zIndex="dropdown"
-                                                        boxShadow="md"
-                                                    >
-                                                        <List spacing={0}>
-                                                            {suggestions?.map((item, index) => (
-                                                                <Flex mb={2} >
-                                                                    <Avatar name={item.username} src={item.profile_image}></Avatar>
-                                                                    <ListItem mt={1}
-                                                                        key={index}
-                                                                        px={3}
-                                                                        py={2}
-                                                                        fontSize={'14px'}
-                                                                        fontWeight={500}
-                                                                        _hover={{ bg: "gray.100", cursor: "pointer" }}
-                                                                        onClick={() => handleSelect(item.username)}
-                                                                    >
-                                                                        Cryptico user &nbsp;
-                                                                        <Box as='span' color='orange' _hover={{ textDecoration: 'underline' }} >
-
-                                                                            {item.username}
-
-                                                                        </Box>
-                                                                    </ListItem>
-                                                                </Flex>
-
-                                                            ))}
-                                                        </List>
-                                                    </Box>
-                                                )}
-                                            </Box>
-                                        </FormControl>
-                                }
-                            </Flex>
-
-
-                            {/* Amount Section start----------------------------------- */}
-                            {
-                                (isUserValid || isWalletValid) ?
-                                    <Card bg={'gray.100'} gap={1}>
-                                        <Flex justifyContent={'space-between'} p={4}>
-
-                                            <Heading size={'md'}>Amount to send</Heading>
-                                            <Box>Available : 00</Box>
+                                        <Flex justifyContent={'space-between'} p={4} >
+                                            <Heading size={'md'}>Send to </Heading>
+                                            <ButtonGroup size={'sm'} >
+                                                <Button bg={isbyaddress ? 'orange' : 'gray.300'} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} fontSize={'12px'} onClick={() => setIsByAddress(true)}>Address</Button>
+                                                <Button bg={isbyaddress ? 'gray.300' : 'orange'} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} fontSize={'12px'} onClick={() => setIsByAddress(false)}>Cryptico User</Button>
+                                            </ButtonGroup>
 
                                         </Flex>
+                                        {
+                                            isbyaddress ?
+
+                                                <FormControl p={4} borderRadius={5}>
+                                                    <Input
+                                                        px={0}
+                                                        border={'none'}
+                                                        value={walletAddress}
+                                                        _hover={{ border: 'none' }}
+                                                        _focus={{ boxShadow: 'none' }}
+                                                        onChange={handleWalletAddress}
+                                                        placeholder='Paste or Enter wallet address here '
+                                                    />
+                                                </FormControl>
+                                                :
+                                                <FormControl p={4} borderRadius={5}>
+                                                    <Box ref={wrapperRef}>
+                                                        <Input
+                                                            px={0}
+                                                            border={'none'}
+                                                            _hover={{ border: 'none' }}
+                                                            _focus={{ boxShadow: 'none' }}
+                                                            placeholder='Enter username '
+                                                            value={inputValue}
+                                                            onChange={handleChange}
+
+                                                        />
+
+                                                        {isopen && suggestions?.length > 0 && (
+                                                            <Box
+                                                                px={4}
+                                                                position="absolute"
+                                                                top="100%"
+                                                                left="0"
+                                                                right="0"
+                                                                bg="gray.100"
+                                                                borderRadius="md"
+                                                                mt={1}
+                                                                zIndex="dropdown"
+                                                                boxShadow="md"
+                                                            >
+                                                                <List spacing={0}>
+                                                                    {suggestions?.map((item, index) => (
+                                                                        <Flex mb={2} >
+                                                                            <Avatar name={item.username} src={item.profile_image}></Avatar>
+                                                                            <ListItem mt={1}
+                                                                                key={index}
+                                                                                px={3}
+                                                                                py={2}
+                                                                                fontSize={'14px'}
+                                                                                fontWeight={500}
+                                                                                _hover={{ bg: "gray.100", cursor: "pointer" }}
+                                                                                onClick={() => handleSelect(item.username)}
+                                                                            >
+                                                                                Cryptico user &nbsp;
+                                                                                <Box as='span' color='orange' _hover={{ textDecoration: 'underline' }} >
+
+                                                                                    {item.username}
+
+                                                                                </Box>
+                                                                            </ListItem>
+                                                                        </Flex>
+
+                                                                    ))}
+                                                                </List>
+                                                            </Box>
+                                                        )}
+                                                    </Box>
+                                                </FormControl>
+                                        }
+                                    </Flex>
 
 
-                                        <FormControl px={4}>
-                                            <InputGroup>
+                                    {/* Amount Section start----------------------------------- */}
+                                    {
+                                        (isUserValid || isWalletValid) ?
+                                            <Card bg={'gray.100'} gap={1}>
+                                                <Flex justifyContent={'space-between'} p={4}>
 
+                                                    <Heading size={'md'}>Amount to send</Heading>
+                                                    <Box>Available : {Number(availableBlc).toFixed(8)}</Box>
+
+                                                </Flex>
+
+
+                                                <FormControl px={4}>
+                                                    <InputGroup>
+
+                                                        {
+                                                            isBtc ?
+                                                                <>
+                                                                    <Input
+                                                                        type='number'
+                                                                        fontSize={'22px'}
+                                                                        border={'none'}
+                                                                        onChange={handleAmount}
+                                                                        fontWeight={700}
+                                                                        value={amount === 0 || amount === '' ? '' : amount}
+                                                                        py={10}
+                                                                        placeholder={amount > 0 ? availableBlc : '0.00000000'}
+                                                                        _hover={{ border: 'none' }}
+                                                                        _focus={{ boxShadow: 'none' }}
+                                                                    ></Input>
+
+                                                                    <InputRightAddon color={'gray'} fontSize={'16px'} border={'none'} fontWeight={700} py={10}>{asset.toLocaleUpperCase()}</InputRightAddon>
+                                                                </>
+
+                                                                :
+                                                                <>
+                                                                    <Input
+                                                                        type='number'
+                                                                        fontSize={'22px'}
+                                                                        border={'none'}
+                                                                        value={amount}
+                                                                        onChange={handleAmount}
+                                                                        fontWeight={700}
+                                                                        py={10}
+                                                                        placeholder='≈ 0.00'
+                                                                        _hover={{ border: 'none' }}
+                                                                        _focus={{ boxShadow: 'none' }}
+                                                                    ></Input>
+
+                                                                    <InputRightAddon color={'gray'} fontSize={'16px'} border={'none'} fontWeight={700} py={10}>INR</InputRightAddon>
+                                                                </>
+
+                                                        }
+                                                    </InputGroup>
+                                                </FormControl>
                                                 {
                                                     isBtc ?
-                                                        <>
-                                                            <Input
-                                                                type='number'
-                                                                fontSize={'22px'}
-                                                                border={'none'}
-                                                                onChange={handleAmount}
-                                                                fontWeight={700}
-                                                                py={10}
-                                                                placeholder='0.00000000'
-                                                                _hover={{ border: 'none' }}
-                                                                _focus={{ boxShadow: 'none' }}
-                                                            ></Input>
-
-                                                            <InputRightAddon color={'gray'} fontSize={'16px'} border={'none'} fontWeight={700} py={10}>{asset.toLocaleUpperCase()}</InputRightAddon>
-                                                        </>
-
+                                                        <Box borderRadius={5} fontWeight={500} m={4} w={'auto'} p={4} py={2} bg={'#e8f0fe'}>{`${amount * priceRef?.current?.[CoinSymbolMap[asset]]?.inr}`} INR</Box>
                                                         :
-                                                        <>
-                                                            <Input
-                                                                type='number'
-                                                                fontSize={'22px'}
-                                                                border={'none'}
-                                                                onChange={handleAmount}
-                                                                fontWeight={700}
-                                                                py={10}
-                                                                placeholder='≈ 0.00'
-                                                                _hover={{ border: 'none' }}
-                                                                _focus={{ boxShadow: 'none' }}
-                                                            ></Input>
+                                                        <Box borderRadius={5} fontWeight={500} m={4} w={'auto'} p={4} py={2} bg={'#e8f0fe'}>{`${(amount / priceRef?.current?.[CoinSymbolMap[asset]]?.inr).toFixed(8)}`}  {asset.toLocaleUpperCase()}</Box>
 
-                                                            <InputRightAddon color={'gray'} fontSize={'16px'} border={'none'} fontWeight={700} py={10}>INR</InputRightAddon>
-                                                        </>
 
                                                 }
-                                            </InputGroup>
-                                        </FormControl>
-                                        {
-                                            isBtc ?
-                                                <Box borderRadius={5} fontWeight={500} m={4} w={'auto'} p={4} py={2} bg={'#e8f0fe'}>{`${amount * priceRef?.current?.[CoinSymbolMap[asset]]?.inr}`} INR</Box>
-                                                :
-                                                <Box borderRadius={5} fontWeight={500} m={4} w={'auto'} p={4} py={2} bg={'#e8f0fe'}>{`${(amount / priceRef?.current?.[CoinSymbolMap[asset]]?.inr).toFixed(8)}`}  {asset.toLocaleUpperCase()}</Box>
+                                                <Flex justifyContent={'space-between'} p={4}>
+                                                    <ButtonGroup gap={1}>
+                                                        <Button size={'sm'} bg={'gray.200'} onClick={() => setAmount(0)}>min</Button>
+                                                        <Button size={'sm'} bg={'gray.200'} onClick={() => setAmount(availableBlc)}>max</Button>
+                                                    </ButtonGroup>
+                                                    <ButtonGroup gap={1}>
+                                                        <Button isActive={isBtc} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} size={'sm'} bg={'gray.200'} onClick={() => setBtc(true)}>{asset.toLocaleUpperCase()}</Button>
+                                                        <Button _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} size={'sm'} bg={'gray.200'} onClick={() => setBtc(false)}>INR</Button>
+                                                    </ButtonGroup>
+                                                </Flex>
+                                            </Card>
+                                            :
+                                            <FormControl bg={'gray.100'}>
+                                                <Input
+                                                    disabled
+                                                    type='number'
+                                                    fontSize={'22px'}
+                                                    border={'none'}
+                                                    onChange={handleAmount}
+                                                    fontWeight={700}
+                                                    py={10}
+                                                    placeholder='Amount to send'
+                                                    _hover={{ border: 'none' }}
+                                                    _focus={{ boxShadow: 'none' }}
+                                                ></Input>
+                                            </FormControl>
 
+                                    }
+                                    {/* Amount Section End----------------------------------- */}
 
-                                        }
-                                        <Flex justifyContent={'space-between'} p={4}>
-                                            <ButtonGroup gap={1}>
-                                                <Button size={'sm'} bg={'gray.200'}>min</Button>
-                                                <Button size={'sm'} bg={'gray.200'}>max</Button>
-                                            </ButtonGroup>
-                                            <ButtonGroup gap={1}>
-                                                <Button isActive={isBtc} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} size={'sm'} bg={'gray.200'} onClick={() => setBtc(true)}>{asset.toLocaleUpperCase()}</Button>
-                                                <Button _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} size={'sm'} bg={'gray.200'} onClick={() => setBtc(false)}>INR</Button>
-                                            </ButtonGroup>
+                                    <Button isDisabled={Number(amount) > 0 ? false : true} fontWeight={600} fontSize={'18px'} _hover={{ bg: 'gray.100' }} bg={'gray.100'} p={10} onClick={handleContinue}   >
+                                        <Flex gap={2} alignItems={'center'} justifyContent={'center'}>
+                                            Continue
+                                            <FaArrowRightLong />
                                         </Flex>
-                                    </Card>
-                                    :
-                                    <FormControl bg={'gray.100'}>
-                                        <Input
-                                            disabled
-                                            type='number'
-                                            fontSize={'22px'}
-                                            border={'none'}
-                                            onChange={handleAmount}
-                                            fontWeight={700}
-                                            py={10}
-                                            placeholder='Amount to send'
-                                            _hover={{ border: 'none' }}
-                                            _focus={{ boxShadow: 'none' }}
-                                        ></Input>
-                                    </FormControl>
-
-                            }
-                            {/* Amount Section End----------------------------------- */}
-
-                            <Button fontWeight={600} fontSize={'18px'} _hover={{ bg: 'gray.100' }} bg={'gray.100'} p={10} onClick={handleSubmit}  >
-                                <Flex gap={2} alignItems={'center'} justifyContent={'center'}>
-                                    Continue
-                                    <FaArrowRightLong />
+                                    </Button>
                                 </Flex>
-                            </Button>
-                        </Flex>
-                    </ModalBody>
+                            </ModalBody>
+                            :
+                            <ModalBody>
+                                <Flex direction={'column'} gap={5} py={2} my={5} bg={'#F8F8F8'}>
+                                    <Flex justifyContent={'center'} alignItems={'center'} direction={'column'} className='first-part'>
+                                        <Box mb={2} color={'gray'} fontWeight={500}>You are sending</Box>
+                                        <Box fontSize={'22px'} fontWeight={650} size={'lg'} >{`${Number(assetValue).toFixed(8)} ${asset.toUpperCase()}`}</Box>
+                                        <Box mb={3}>{`≈ ${Number(assetInrValue).toFixed(2)}INR`}</Box>
+                                        <Box>to Address</Box>
+                                        <Box fontSize={'14px'} fontWeight={500}>{walletAddress}</Box>
+
+                                    </Flex>
+                                    <Divider></Divider>
+                                    <Flex direction={'column'} className='second-part' p={6} gap={5}>
+                                        <Flex className='s1' justifyContent={'space-between'}>
+                                            <Flex direction={'column'}>
+                                                <Box fontSize={'14px'} p={1} bg={'gray.200'} borderRadius={5}>
+
+                                                    {asset.toLocaleUpperCase()} network fee
+                                                </Box>
+                                                <Box fontSize={'12px'}>-----</Box>
+                                            </Flex>
+                                            <Box fontSize={'14px'} fontWeight={500}>------</Box>
+                                        </Flex>
+                                        <Flex className='s2' justifyContent={'space-between'}>
+                                            <Flex direction={'column'}>
+                                                <Box fontSize={'14px'}>
+
+                                                    Cryptico fee
+                                                </Box>
+                                                <Box fontSize={'12px'}>{`≈ ${Number(transferFeeInr).toFixed(2)} INR`}</Box>
+                                            </Flex>
+                                            <Box fontSize={'14px'} fontWeight={500}>{`${Number(transferFee).toFixed(8)} ${asset.toUpperCase()}`}</Box>
+                                        </Flex>
+                                        <Flex className='s3' justifyContent={'space-between'}>
+                                            <Flex direction={'column'}>
+                                                <Box fontWeight={500}>
+
+                                                    Total
+                                                </Box>
+                                                <Box fontSize={'12px'}>To be deducted from your Cryptico Wallet</Box>
+                                            </Flex>
+                                            <Flex direction={'column'} textAlign={'end'}>
+
+                                                <Box fontSize={'14px'} fontWeight={500}>{`${Number(totalAssetValue).toFixed(8)} ${asset.toUpperCase()}`}</Box>
+                                                <Box fontSize={'12px'}>{`≈ ${Number(totalAssetInrValue).toFixed(2)} INR`}</Box>
+                                            </Flex>
+                                        </Flex>
+
+
+
+
+                                    </Flex>
+                                    <Flex className='third-part' p={4} gap={5} direction={'column'}>
+                                        <VerifyPassword setSend={setSend} />
+                                        <Flex w={'full'} gap={5}>
+                                            <Button bg={'blue.100'} color={'blue.400'} flex={0.3} size={'lg'} py={8} onClick={() => setIsContinue(false)}>Back</Button>
+
+                                            <Button isLoading={isloading} spinner={null} loadingText='Processing...' isDisabled={isSend} bg={'orange.100'} color={'orange.400'} flex={0.7} size={'lg'} py={8} onClick={handleSubmit}>Send</Button>
+
+                                        </Flex>
+                                        {
+                                            isloading &&
+                                            <>
+
+                                                <Heading color={'blue.600'} px={2} size={'sm'}>During Transaction, Please do not press back or close the browser.</Heading>
+                                                <Heading color={'red.600'} px={2} size={'sm'}>Important: Stay on this screen to ensure successful completion.</Heading>
+                                            </>
+                                        }
+                                    </Flex>
+
+                                </Flex>
+
+                            </ModalBody>
+                    }
 
                 </ModalContent>
                 <ModalFooter>
@@ -1447,11 +1590,10 @@ export const Send1 = () => {
     )
 }
 
-
-
 export const Send2 = () => {
+    const { user } = useUser();
     const { handleOtherUserDetail, otherUserDetail, setOtherUserDetail } = useAuth();
-    const { handleSendInternalTransaction } = useAccount()
+    const { handleSendInternalTransaction, handleWalletAddressTransaction, handleUpdateWalletAddressTransaction, handleFeeCalculation } = useAccount()
     const cryptoOption = useCryptoOption();
     const [headername, setHeaderName] = useState(cryptoOption[1].name);
     const [headerlogo, setHeaderLogo] = useState(cryptoOption[1].logo);
@@ -1460,6 +1602,7 @@ export const Send2 = () => {
     const [network, setNetwork] = useState(cryptoOption[1].network);
     const [isbyaddress, setIsByAddress] = useState(true);
     const [inputValue, setInputValue] = useState("");
+    const [walletAddress, setWalletAddress] = useState("");
     const [suggestions, setSuggestions] = useState([]);
     const [isopen, setIsOpen] = useState(false);
     const [amount, setAmount] = useState(0);
@@ -1467,18 +1610,55 @@ export const Send2 = () => {
     const [currentPrice, setCurrentPrice] = useState(cryptoOption[1].currentPrice);
     const allUsersRef = useRef([]);
     const [isBtc, setBtc] = useState(true);
+    const factor = Math.pow(10, 2);
     const { priceRef } = useOtherDetail();
     const [isUserValid, setUserValid] = useState(false);
+    const [isWalletValid, setWalletValid] = useState(false);
+    const [userid, setUserId] = useState();
+    const [isContinue, setIsContinue] = useState(false);
+    const [isSend, setSend] = useState(true);
+    const [availableBlc, setAvailableBalance] = useState(0);
+    const [isloading, setIsLoading] = useState(false);
+    const toast = useToast();
+    const [transferFee, setTransferFee] = useState(0);
+    const [totalAssetValue, setTotalAssetValue] = useState(0);
 
+
+    const resetState = () => {
+        setHeaderName(cryptoOption[1].name);
+        setHeaderLogo(cryptoOption[1].logo);
+        setAsset(cryptoOption[1].asset);
+        setNetwork(cryptoOption[1].network);
+    }
     const assetValue = isBtc ? amount : amount / priceRef.current?.[CoinSymbolMap[asset]]?.inr;
+    const assetInrValue = amount * priceRef.current?.[CoinSymbolMap[asset]]?.inr;
+    // const transferFee = (amount * 0.02) / 100;
+    const transferFeeInr = transferFee * priceRef.current?.[CoinSymbolMap[asset]]?.inr;
+    // const totalAssetValue = Number(assetValue) + Number(transferFee);
+    const totalAssetInrValue = (Number(totalAssetValue)) * Number(priceRef.current?.[CoinSymbolMap[asset]]?.inr);
+
     const Dto = {
         username: inputValue,
-        address: '',
         network: network,
         asset: asset,
-        assetValue: assetValue
+        assetValue: assetValue,
     }
+    const feeCalculationDto = {
+        asset: asset,
+        network: network,
+        assetValue: assetValue,
+    }
+    const AddressDto = {
+        toAddress: walletAddress,
+        network: network,
+        asset: asset,
+        assetValue: assetValue,
+        totalAsset: Number(totalAssetValue)
 
+    }
+    useEffect(() => {
+        setUserId(user?.user_id);
+    }, [user])
     useEffect(() => {
         const fetchdata = async () => {
             try {
@@ -1506,10 +1686,7 @@ export const Send2 = () => {
         fetchdata();
     }, [inputValue]);
 
-    const resetState = () => {
-        setHeaderName(cryptoOption[1].name);
-        setHeaderLogo(cryptoOption[1].logo);
-    }
+
     useOutsideClick({
         ref: wrapperRef,
         handler: () => setIsOpen(false),
@@ -1525,6 +1702,10 @@ export const Send2 = () => {
         const value = e.target.value;
         setInputValue(value);
     };
+    const handleWalletAddress = (e) => {
+        const value = e.target.value;
+        setWalletAddress(value);
+    };
 
     const handleSelect = (name) => {
         setInputValue(name);
@@ -1534,12 +1715,94 @@ export const Send2 = () => {
         setAmount(e.target.value);
 
     }
-
-    const handleSubmit = async () => {
-        await handleSendInternalTransaction(Dto);
-
+    const handleContinue = async () => {
+        const response = await handleFeeCalculation(feeCalculationDto);
+        if (response.status === true) {
+            setTransferFee(response?.data?.transferFee);
+            setTotalAssetValue(response?.data?.totalAsset);
+            setIsContinue(true);
+        }
 
     }
+
+    const handleSubmit = async () => {
+        try {
+            setIsLoading(true);
+
+            if (isWalletValid) {
+                const res = await handleWalletAddressTransaction(AddressDto);
+
+                if (res.status === true) {
+
+                    const response = await decryptWithKey(res.data, userid)
+                    console.log(response);
+
+                    const privateKey = await decryptWithKey(response?.senderWalletData?.wallet_key, userid);
+                    let txResponse;
+                    if (asset === 'bnb') {
+                        txResponse = await SendBnd(privateKey, walletAddress, response?.transactionData?.paid_amount);
+                    }
+                    if (asset === 'eth') {
+                        txResponse = await Sendeth(privateKey, walletAddress, response?.transactionData?.paid_amount)
+                    }
+                    if (txResponse.transactionHash) {
+                        const txnRequestDto = {
+                            "txnId": response?.transactionData?.txn_id,
+                            "txnHashId": txResponse?.transactionHash,
+                            "status": txResponse?.status === 1 ? "success" : "failed",
+                        }
+                        const updateResponse = await handleUpdateWalletAddressTransaction(txnRequestDto);
+                        if (updateResponse.status === true) {
+                            setIsLoading(false);
+                            onClose();
+                            setAmount(0);
+                            setWalletAddress('');
+                            toast({
+                                title: "Transaction Success",
+                                status: "success",
+                                duration: 2000,
+                                isClosable: true,
+                                position: 'top-right'
+                            })
+                        }
+                        console.log(updateResponse);
+                    }
+                }
+            }
+            else {
+                await handleSendInternalTransaction(Dto);
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        setWalletValid(isValidWalletAddress(walletAddress, asset));
+    }, [walletAddress, asset]);
+
+    function isValidWalletAddress(address, coin) {
+        switch (coin.toLowerCase()) {
+            case 'btc':
+                try {
+                    bitcoin.address.toOutputScript(address);
+                    return true;
+                } catch (e) {
+                    return false;
+                }
+
+            case 'eth':
+            case 'bnb':
+            case 'usdt': // all use Ethereum-style addresses
+                return isAddress(address);
+
+            default:
+                return false;
+        }
+    }
+
+
     return (
         <>
 
@@ -1560,196 +1823,272 @@ export const Send2 = () => {
                             <ModalCloseButton mt={2} />
                         </Flex>
                     </ModalHeader>
-                    <ModalBody>
-                        <Flex direction={'column'} gap={5} my={5}>
-                            {/* <Flex as={Button} py={8} w={'full'} borderRadius={5} bg={'gray.100'} _hover={{ bg: 'gray.100' }} justifyContent={'space-between'}  >
-                                <Flex gap={2}>
-                                    <Image boxSize={5} src='/imagelogo/bitcoin-btc-logo.png'></Image>
-                                    Bitcoin
-                                </Flex>
-                                <MdKeyboardArrowRight />
+                    {
+                        !isContinue ?
 
-                            </Flex> */}
+                            <ModalBody>
+                                <Flex direction={'column'} gap={5} my={5}>
 
-                            <SelectToken index={1} setHeaderName={setHeaderName} setHeaderLogo={setHeaderLogo} setAsset={setAsset} setNetwork={setNetwork} setCurrentPrice={setCurrentPrice} />
+                                    <SelectToken index={1} setHeaderName={setHeaderName} setHeaderLogo={setHeaderLogo} setAsset={setAsset} setNetwork={setNetwork} setCurrentPrice={setCurrentPrice} setAvailableBalance={setAvailableBalance} />
 
-                            <Flex direction={'column'} bg={'gray.100'} borderRadius={5} py={4}>
+                                    <Flex direction={'column'} bg={'gray.100'} borderRadius={5} py={4}>
 
-                                <Flex justifyContent={'space-between'} p={4} >
-                                    <Heading size={'md'}>Send to </Heading>
-                                    <ButtonGroup size={'sm'} >
-                                        <Button bg={isbyaddress ? 'orange' : 'gray.300'} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} fontSize={'12px'} onClick={() => setIsByAddress(true)}>Address</Button>
-                                        <Button bg={isbyaddress ? 'gray.300' : 'orange'} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} fontSize={'12px'} onClick={() => setIsByAddress(false)}>Cryptico User</Button>
-                                    </ButtonGroup>
-
-                                </Flex>
-                                {
-                                    isbyaddress ?
-
-                                        <FormControl p={4} borderRadius={5}>
-                                            <Input fontWeight={'700'}
-                                                px={0}
-                                                border={'none'}
-                                                _hover={{ border: 'none' }}
-                                                _focus={{ boxShadow: 'none' }}
-                                                placeholder='Paste or Enter wallet address here '
-                                            />
-                                        </FormControl>
-                                        :
-                                        <FormControl p={4} borderRadius={5}>
-                                            <Box ref={wrapperRef}>
-                                                <Input
-                                                    px={0}
-                                                    border={'none'}
-                                                    _hover={{ border: 'none' }}
-                                                    _focus={{ boxShadow: 'none' }}
-                                                    placeholder='Enter username '
-                                                    value={inputValue}
-                                                    onChange={handleChange}
-
-                                                />
-
-                                                {isopen && suggestions?.length > 0 && (
-                                                    <Box
-                                                        px={4}
-                                                        position="absolute"
-                                                        top="100%"
-                                                        left="0"
-                                                        right="0"
-                                                        bg="gray.100"
-                                                        borderRadius="md"
-                                                        mt={1}
-                                                        zIndex="dropdown"
-                                                        boxShadow="md"
-                                                    >
-                                                        <List spacing={0}>
-                                                            {suggestions?.map((item, index) => (
-                                                                <Flex mb={2} >
-                                                                    <Avatar name={item.username} src={item.profile_image}></Avatar>
-                                                                    <ListItem mt={1}
-                                                                        key={index}
-                                                                        px={3}
-                                                                        py={2}
-                                                                        fontSize={'14px'}
-                                                                        fontWeight={500}
-                                                                        _hover={{ bg: "gray.100", cursor: "pointer" }}
-                                                                        onClick={() => handleSelect(item.username)}
-                                                                    >
-                                                                        Cryptico user &nbsp;
-                                                                        <Box as='span' color='orange' _hover={{ textDecoration: 'underline' }} >
-
-                                                                            {item.username}
-
-                                                                        </Box>
-                                                                    </ListItem>
-                                                                </Flex>
-
-                                                            ))}
-                                                        </List>
-                                                    </Box>
-                                                )}
-                                            </Box>
-                                        </FormControl>
-                                }
-                            </Flex>
-
-
-                            {
-                                isUserValid ?
-                                    <Card bg={'gray.100'} gap={1}>
-                                        <Flex justifyContent={'space-between'} p={4}>
-
-                                            <Heading size={'md'}>Amount to send</Heading>
-                                            <Box>Available : 00</Box>
+                                        <Flex justifyContent={'space-between'} p={4} >
+                                            <Heading size={'md'}>Send to </Heading>
+                                            <ButtonGroup size={'sm'} >
+                                                <Button bg={isbyaddress ? 'orange' : 'gray.300'} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} fontSize={'12px'} onClick={() => setIsByAddress(true)}>Address</Button>
+                                                <Button bg={isbyaddress ? 'gray.300' : 'orange'} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} fontSize={'12px'} onClick={() => setIsByAddress(false)}>Cryptico User</Button>
+                                            </ButtonGroup>
 
                                         </Flex>
+                                        {
+                                            isbyaddress ?
+
+                                                <FormControl p={4} borderRadius={5}>
+                                                    <Input
+                                                        px={0}
+                                                        border={'none'}
+                                                        value={walletAddress}
+                                                        _hover={{ border: 'none' }}
+                                                        _focus={{ boxShadow: 'none' }}
+                                                        onChange={handleWalletAddress}
+                                                        placeholder='Paste or Enter wallet address here '
+                                                    />
+                                                </FormControl>
+                                                :
+                                                <FormControl p={4} borderRadius={5}>
+                                                    <Box ref={wrapperRef}>
+                                                        <Input
+                                                            px={0}
+                                                            border={'none'}
+                                                            _hover={{ border: 'none' }}
+                                                            _focus={{ boxShadow: 'none' }}
+                                                            placeholder='Enter username '
+                                                            value={inputValue}
+                                                            onChange={handleChange}
+
+                                                        />
+
+                                                        {isopen && suggestions?.length > 0 && (
+                                                            <Box
+                                                                px={4}
+                                                                position="absolute"
+                                                                top="100%"
+                                                                left="0"
+                                                                right="0"
+                                                                bg="gray.100"
+                                                                borderRadius="md"
+                                                                mt={1}
+                                                                zIndex="dropdown"
+                                                                boxShadow="md"
+                                                            >
+                                                                <List spacing={0}>
+                                                                    {suggestions?.map((item, index) => (
+                                                                        <Flex mb={2} >
+                                                                            <Avatar name={item.username} src={item.profile_image}></Avatar>
+                                                                            <ListItem mt={1}
+                                                                                key={index}
+                                                                                px={3}
+                                                                                py={2}
+                                                                                fontSize={'14px'}
+                                                                                fontWeight={500}
+                                                                                _hover={{ bg: "gray.100", cursor: "pointer" }}
+                                                                                onClick={() => handleSelect(item.username)}
+                                                                            >
+                                                                                Cryptico user &nbsp;
+                                                                                <Box as='span' color='orange' _hover={{ textDecoration: 'underline' }} >
+
+                                                                                    {item.username}
+
+                                                                                </Box>
+                                                                            </ListItem>
+                                                                        </Flex>
+
+                                                                    ))}
+                                                                </List>
+                                                            </Box>
+                                                        )}
+                                                    </Box>
+                                                </FormControl>
+                                        }
+                                    </Flex>
 
 
-                                        <FormControl px={4}>
-                                            <InputGroup>
+                                    {/* Amount Section start----------------------------------- */}
+                                    {
+                                        (isUserValid || isWalletValid) ?
+                                            <Card bg={'gray.100'} gap={1}>
+                                                <Flex justifyContent={'space-between'} p={4}>
 
+                                                    <Heading size={'md'}>Amount to send</Heading>
+                                                    <Box>Available : {Number(availableBlc).toFixed(8)}</Box>
+
+                                                </Flex>
+
+
+                                                <FormControl px={4}>
+                                                    <InputGroup>
+
+                                                        {
+                                                            isBtc ?
+                                                                <>
+                                                                    <Input
+                                                                        type='number'
+                                                                        fontSize={'22px'}
+                                                                        border={'none'}
+                                                                        onChange={handleAmount}
+                                                                        fontWeight={700}
+                                                                        value={amount === 0 || amount === '' ? '' : amount}
+                                                                        py={10}
+                                                                        placeholder={amount > 0 ? availableBlc : '0.00000000'}
+                                                                        _hover={{ border: 'none' }}
+                                                                        _focus={{ boxShadow: 'none' }}
+                                                                    ></Input>
+
+                                                                    <InputRightAddon color={'gray'} fontSize={'16px'} border={'none'} fontWeight={700} py={10}>{asset.toLocaleUpperCase()}</InputRightAddon>
+                                                                </>
+
+                                                                :
+                                                                <>
+                                                                    <Input
+                                                                        type='number'
+                                                                        fontSize={'22px'}
+                                                                        border={'none'}
+                                                                        value={amount}
+                                                                        onChange={handleAmount}
+                                                                        fontWeight={700}
+                                                                        py={10}
+                                                                        placeholder='≈ 0.00'
+                                                                        _hover={{ border: 'none' }}
+                                                                        _focus={{ boxShadow: 'none' }}
+                                                                    ></Input>
+
+                                                                    <InputRightAddon color={'gray'} fontSize={'16px'} border={'none'} fontWeight={700} py={10}>INR</InputRightAddon>
+                                                                </>
+
+                                                        }
+                                                    </InputGroup>
+                                                </FormControl>
                                                 {
                                                     isBtc ?
-                                                        <>
-                                                            <Input
-                                                                type='number'
-                                                                fontSize={'22px'}
-                                                                border={'none'}
-                                                                onChange={handleAmount}
-                                                                fontWeight={700}
-                                                                py={10}
-                                                                placeholder='0.00000000'
-                                                                _hover={{ border: 'none' }}
-                                                                _focus={{ boxShadow: 'none' }}
-                                                            ></Input>
-
-                                                            <InputRightAddon color={'gray'} fontSize={'16px'} border={'none'} fontWeight={700} py={10}>{asset.toLocaleUpperCase()}</InputRightAddon>
-                                                        </>
-
+                                                        <Box borderRadius={5} fontWeight={500} m={4} w={'auto'} p={4} py={2} bg={'#e8f0fe'}>{`${amount * priceRef?.current?.[CoinSymbolMap[asset]]?.inr}`} INR</Box>
                                                         :
-                                                        <>
-                                                            <Input
-                                                                type='number'
-                                                                fontSize={'22px'}
-                                                                border={'none'}
-                                                                onChange={handleAmount}
-                                                                fontWeight={700}
-                                                                py={10}
-                                                                placeholder='≈ 0.00'
-                                                                _hover={{ border: 'none' }}
-                                                                _focus={{ boxShadow: 'none' }}
-                                                            ></Input>
+                                                        <Box borderRadius={5} fontWeight={500} m={4} w={'auto'} p={4} py={2} bg={'#e8f0fe'}>{`${(amount / priceRef?.current?.[CoinSymbolMap[asset]]?.inr).toFixed(8)}`}  {asset.toLocaleUpperCase()}</Box>
 
-                                                            <InputRightAddon color={'gray'} fontSize={'16px'} border={'none'} fontWeight={700} py={10}>INR</InputRightAddon>
-                                                        </>
 
                                                 }
-                                            </InputGroup>
-                                        </FormControl>
-                                        {
-                                            isBtc ?
-                                                <Box borderRadius={5} fontWeight={500} m={4} w={'auto'} p={4} py={2} bg={'#e8f0fe'}>{`${amount * priceRef?.current?.[CoinSymbolMap[asset]]?.inr}`} INR</Box>
-                                                :
-                                                <Box borderRadius={5} fontWeight={500} m={4} w={'auto'} p={4} py={2} bg={'#e8f0fe'}>{`${(amount / priceRef?.current?.[CoinSymbolMap[asset]]?.inr).toFixed(8)}`}  {asset.toLocaleUpperCase()}</Box>
+                                                <Flex justifyContent={'space-between'} p={4}>
+                                                    <ButtonGroup gap={1}>
+                                                        <Button size={'sm'} bg={'gray.200'} onClick={() => setAmount(0)}>min</Button>
+                                                        <Button size={'sm'} bg={'gray.200'} onClick={() => setAmount(availableBlc)}>max</Button>
+                                                    </ButtonGroup>
+                                                    <ButtonGroup gap={1}>
+                                                        <Button isActive={isBtc} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} size={'sm'} bg={'gray.200'} onClick={() => setBtc(true)}>{asset.toLocaleUpperCase()}</Button>
+                                                        <Button _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} size={'sm'} bg={'gray.200'} onClick={() => setBtc(false)}>INR</Button>
+                                                    </ButtonGroup>
+                                                </Flex>
+                                            </Card>
+                                            :
+                                            <FormControl bg={'gray.100'}>
+                                                <Input
+                                                    disabled
+                                                    type='number'
+                                                    fontSize={'22px'}
+                                                    border={'none'}
+                                                    onChange={handleAmount}
+                                                    fontWeight={700}
+                                                    py={10}
+                                                    placeholder='Amount to send'
+                                                    _hover={{ border: 'none' }}
+                                                    _focus={{ boxShadow: 'none' }}
+                                                ></Input>
+                                            </FormControl>
 
+                                    }
+                                    {/* Amount Section End----------------------------------- */}
 
-                                        }
-                                        <Flex justifyContent={'space-between'} p={4}>
-                                            <ButtonGroup gap={1}>
-                                                <Button size={'sm'} bg={'gray.200'}>min</Button>
-                                                <Button size={'sm'} bg={'gray.200'}>max</Button>
-                                            </ButtonGroup>
-                                            <ButtonGroup gap={1}>
-                                                <Button isActive={isBtc} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} size={'sm'} bg={'gray.200'} onClick={() => setBtc(true)}>{asset.toLocaleUpperCase()}</Button>
-                                                <Button _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} size={'sm'} bg={'gray.200'} onClick={() => setBtc(false)}>INR</Button>
-                                            </ButtonGroup>
+                                    <Button isDisabled={Number(amount) > 0 ? false : true} fontWeight={600} fontSize={'18px'} _hover={{ bg: 'gray.100' }} bg={'gray.100'} p={10} onClick={handleContinue}   >
+                                        <Flex gap={2} alignItems={'center'} justifyContent={'center'}>
+                                            Continue
+                                            <FaArrowRightLong />
                                         </Flex>
-                                    </Card>
-                                    :
-                                    <FormControl bg={'gray.100'}>
-                                        <Input
-                                            disabled
-                                            type='number'
-                                            fontSize={'22px'}
-                                            border={'none'}
-                                            onChange={handleAmount}
-                                            fontWeight={700}
-                                            py={10}
-                                            placeholder='Amount to send'
-                                            _hover={{ border: 'none' }}
-                                            _focus={{ boxShadow: 'none' }}
-                                        ></Input>
-                                    </FormControl>
-
-                            }
-                            <Button fontWeight={600} fontSize={'18px'} _hover={{ bg: 'gray.100' }} bg={'gray.100'} p={10} onClick={handleSubmit}  >
-                                <Flex gap={2} alignItems={'center'} justifyContent={'center'}>
-                                    Continue
-                                    <FaArrowRightLong />
+                                    </Button>
                                 </Flex>
-                            </Button>
-                        </Flex>
-                    </ModalBody>
+                            </ModalBody>
+                            :
+                            <ModalBody>
+                                <Flex direction={'column'} gap={5} py={2} my={5} bg={'#F8F8F8'}>
+                                    <Flex justifyContent={'center'} alignItems={'center'} direction={'column'} className='first-part'>
+                                        <Box mb={2} color={'gray'} fontWeight={500}>You are sending</Box>
+                                        <Box fontSize={'22px'} fontWeight={650} size={'lg'} >{`${Number(assetValue).toFixed(8)} ${asset.toUpperCase()}`}</Box>
+                                        <Box mb={3}>{`≈ ${Number(assetInrValue).toFixed(2)}INR`}</Box>
+                                        <Box>to Address</Box>
+                                        <Box fontSize={'14px'} fontWeight={500}>{walletAddress}</Box>
+
+                                    </Flex>
+                                    <Divider></Divider>
+                                    <Flex direction={'column'} className='second-part' p={6} gap={5}>
+                                        <Flex className='s1' justifyContent={'space-between'}>
+                                            <Flex direction={'column'}>
+                                                <Box fontSize={'14px'} p={1} bg={'gray.200'} borderRadius={5}>
+
+                                                    {asset.toLocaleUpperCase()} network fee
+                                                </Box>
+                                                <Box fontSize={'12px'}>-----</Box>
+                                            </Flex>
+                                            <Box fontSize={'14px'} fontWeight={500}>------</Box>
+                                        </Flex>
+                                        <Flex className='s2' justifyContent={'space-between'}>
+                                            <Flex direction={'column'}>
+                                                <Box fontSize={'14px'}>
+
+                                                    Cryptico fee
+                                                </Box>
+                                                <Box fontSize={'12px'}>{`≈ ${Number(transferFeeInr).toFixed(2)} INR`}</Box>
+                                            </Flex>
+                                            <Box fontSize={'14px'} fontWeight={500}>{`${Number(transferFee).toFixed(8)} ${asset.toUpperCase()}`}</Box>
+                                        </Flex>
+                                        <Flex className='s3' justifyContent={'space-between'}>
+                                            <Flex direction={'column'}>
+                                                <Box fontWeight={500}>
+
+                                                    Total
+                                                </Box>
+                                                <Box fontSize={'12px'}>To be deducted from your Cryptico Wallet</Box>
+                                            </Flex>
+                                            <Flex direction={'column'} textAlign={'end'}>
+
+                                                <Box fontSize={'14px'} fontWeight={500}>{`${Number(totalAssetValue).toFixed(8)} ${asset.toUpperCase()}`}</Box>
+                                                <Box fontSize={'12px'}>{`≈ ${Number(totalAssetInrValue).toFixed(2)} INR`}</Box>
+                                            </Flex>
+                                        </Flex>
+
+
+
+
+                                    </Flex>
+                                    <Flex className='third-part' p={4} gap={5} direction={'column'}>
+                                        <VerifyPassword setSend={setSend} />
+                                        <Flex w={'full'} gap={5}>
+                                            <Button bg={'blue.100'} color={'blue.400'} flex={0.3} size={'lg'} py={8} onClick={() => setIsContinue(false)}>Back</Button>
+
+                                            <Button isLoading={isloading} spinner={null} loadingText='Processing...' isDisabled={isSend} bg={'orange.100'} color={'orange.400'} flex={0.7} size={'lg'} py={8} onClick={handleSubmit}>Send</Button>
+
+                                        </Flex>
+                                        {
+                                            isloading &&
+                                            <>
+
+                                                <Heading color={'blue.600'} px={2} size={'sm'}>During Transaction, Please do not press back or close the browser.</Heading>
+                                                <Heading color={'red.600'} px={2} size={'sm'}>Important: Stay on this screen to ensure successful completion.</Heading>
+                                            </>
+                                        }
+                                    </Flex>
+
+                                </Flex>
+
+                            </ModalBody>
+                    }
 
                 </ModalContent>
                 <ModalFooter>
@@ -1760,9 +2099,11 @@ export const Send2 = () => {
         </>
     )
 }
+
 export const Send3 = () => {
+    const { user } = useUser();
     const { handleOtherUserDetail, otherUserDetail, setOtherUserDetail } = useAuth();
-    const { handleSendInternalTransaction } = useAccount()
+    const { handleSendInternalTransaction, handleWalletAddressTransaction, handleUpdateWalletAddressTransaction, handleFeeCalculation } = useAccount()
     const cryptoOption = useCryptoOption();
     const [headername, setHeaderName] = useState(cryptoOption[2].name);
     const [headerlogo, setHeaderLogo] = useState(cryptoOption[2].logo);
@@ -1771,6 +2112,7 @@ export const Send3 = () => {
     const [network, setNetwork] = useState(cryptoOption[2].network);
     const [isbyaddress, setIsByAddress] = useState(true);
     const [inputValue, setInputValue] = useState("");
+    const [walletAddress, setWalletAddress] = useState("");
     const [suggestions, setSuggestions] = useState([]);
     const [isopen, setIsOpen] = useState(false);
     const [amount, setAmount] = useState(0);
@@ -1778,16 +2120,55 @@ export const Send3 = () => {
     const [currentPrice, setCurrentPrice] = useState(cryptoOption[2].currentPrice);
     const allUsersRef = useRef([]);
     const [isBtc, setBtc] = useState(true);
+    const factor = Math.pow(10, 2);
     const { priceRef } = useOtherDetail();
     const [isUserValid, setUserValid] = useState(false);
+    const [isWalletValid, setWalletValid] = useState(false);
+    const [userid, setUserId] = useState();
+    const [isContinue, setIsContinue] = useState(false);
+    const [isSend, setSend] = useState(true);
+    const [availableBlc, setAvailableBalance] = useState(0);
+    const [isloading, setIsLoading] = useState(false);
+    const toast = useToast();
+    const [transferFee, setTransferFee] = useState(0);
+    const [totalAssetValue, setTotalAssetValue] = useState(0);
+
+
+    const resetState = () => {
+        setHeaderName(cryptoOption[2].name);
+        setHeaderLogo(cryptoOption[2].logo);
+        setAsset(cryptoOption[2].asset);
+        setNetwork(cryptoOption[2].network);
+    }
     const assetValue = isBtc ? amount : amount / priceRef.current?.[CoinSymbolMap[asset]]?.inr;
+    const assetInrValue = amount * priceRef.current?.[CoinSymbolMap[asset]]?.inr;
+    // const transferFee = (amount * 0.02) / 100;
+    const transferFeeInr = transferFee * priceRef.current?.[CoinSymbolMap[asset]]?.inr;
+    // const totalAssetValue = Number(assetValue) + Number(transferFee);
+    const totalAssetInrValue = (Number(totalAssetValue)) * Number(priceRef.current?.[CoinSymbolMap[asset]]?.inr);
+
     const Dto = {
         username: inputValue,
-        address: '',
         network: network,
         asset: asset,
-        assetValue: assetValue
+        assetValue: assetValue,
     }
+    const feeCalculationDto = {
+        asset: asset,
+        network: network,
+        assetValue: assetValue,
+    }
+    const AddressDto = {
+        toAddress: walletAddress,
+        network: network,
+        asset: asset,
+        assetValue: assetValue,
+        totalAsset: Number(totalAssetValue)
+
+    }
+    useEffect(() => {
+        setUserId(user?.user_id);
+    }, [user])
     useEffect(() => {
         const fetchdata = async () => {
             try {
@@ -1815,10 +2196,7 @@ export const Send3 = () => {
         fetchdata();
     }, [inputValue]);
 
-    const resetState = () => {
-        setHeaderName(cryptoOption[1].name);
-        setHeaderLogo(cryptoOption[1].logo);
-    }
+
     useOutsideClick({
         ref: wrapperRef,
         handler: () => setIsOpen(false),
@@ -1834,6 +2212,10 @@ export const Send3 = () => {
         const value = e.target.value;
         setInputValue(value);
     };
+    const handleWalletAddress = (e) => {
+        const value = e.target.value;
+        setWalletAddress(value);
+    };
 
     const handleSelect = (name) => {
         setInputValue(name);
@@ -1843,15 +2225,96 @@ export const Send3 = () => {
         setAmount(e.target.value);
 
     }
-
-    const handleSubmit = async () => {
-        await handleSendInternalTransaction(Dto);
-
+    const handleContinue = async () => {
+        const response = await handleFeeCalculation(feeCalculationDto);
+        if (response.status === true) {
+            setTransferFee(response?.data?.transferFee);
+            setTotalAssetValue(response?.data?.totalAsset);
+            setIsContinue(true);
+        }
 
     }
+
+    const handleSubmit = async () => {
+        try {
+            setIsLoading(true);
+
+            if (isWalletValid) {
+                const res = await handleWalletAddressTransaction(AddressDto);
+
+                if (res.status === true) {
+
+                    const response = await decryptWithKey(res.data, userid)
+                    console.log(response);
+
+                    const privateKey = await decryptWithKey(response?.senderWalletData?.wallet_key, userid);
+                    let txResponse;
+                    if (asset === 'bnb') {
+                        txResponse = await SendBnd(privateKey, walletAddress, response?.transactionData?.paid_amount);
+                    }
+                    if (asset === 'eth') {
+                        txResponse = await Sendeth(privateKey, walletAddress, response?.transactionData?.paid_amount)
+                    }
+                    if (txResponse.transactionHash) {
+                        const txnRequestDto = {
+                            "txnId": response?.transactionData?.txn_id,
+                            "txnHashId": txResponse?.transactionHash,
+                            "status": txResponse?.status === 1 ? "success" : "failed",
+                        }
+                        const updateResponse = await handleUpdateWalletAddressTransaction(txnRequestDto);
+                        if (updateResponse.status === true) {
+                            setIsLoading(false);
+                            onClose();
+                            setAmount(0);
+                            setWalletAddress('');
+                            toast({
+                                title: "Transaction Success",
+                                status: "success",
+                                duration: 2000,
+                                isClosable: true,
+                                position: 'top-right'
+                            })
+                        }
+                        console.log(updateResponse);
+                    }
+                }
+            }
+            else {
+                await handleSendInternalTransaction(Dto);
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        setWalletValid(isValidWalletAddress(walletAddress, asset));
+    }, [walletAddress, asset]);
+
+    function isValidWalletAddress(address, coin) {
+        switch (coin.toLowerCase()) {
+            case 'btc':
+                try {
+                    bitcoin.address.toOutputScript(address);
+                    return true;
+                } catch (e) {
+                    return false;
+                }
+
+            case 'eth':
+            case 'bnb':
+            case 'usdt': // all use Ethereum-style addresses
+                return isAddress(address);
+
+            default:
+                return false;
+        }
+    }
+
+
     return (
         <>
-
 
             <Flex cursor={'pointer'} direction={{ base: 'row', md: 'column' }} gap={{ base: 2, md: 0 }} onClick={onOpen}  >
                 <Flex display={'flex'} alignItems={'center'} justifyContent={'center'}><TbSend /></Flex>
@@ -1870,189 +2333,272 @@ export const Send3 = () => {
                             <ModalCloseButton mt={2} />
                         </Flex>
                     </ModalHeader>
-                    <ModalBody>
-                        <Flex direction={'column'} gap={5} my={5}>
+                    {
+                        !isContinue ?
 
-                            <SelectToken index={2} setHeaderName={setHeaderName} setHeaderLogo={setHeaderLogo} setAsset={setAsset} setNetwork={setNetwork} setCurrentPrice={setCurrentPrice} />
+                            <ModalBody>
+                                <Flex direction={'column'} gap={5} my={5}>
 
-                            <Flex direction={'column'} bg={'gray.100'} borderRadius={5} py={4}>
+                                    <SelectToken index={2} setHeaderName={setHeaderName} setHeaderLogo={setHeaderLogo} setAsset={setAsset} setNetwork={setNetwork} setCurrentPrice={setCurrentPrice} setAvailableBalance={setAvailableBalance} />
 
-                                <Flex justifyContent={'space-between'} p={4} >
-                                    <Heading size={'md'}>Send to </Heading>
-                                    <ButtonGroup size={'sm'} >
-                                        <Button bg={isbyaddress ? 'orange' : 'gray.300'} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} fontSize={'12px'} onClick={() => setIsByAddress(true)}>Address</Button>
-                                        <Button bg={isbyaddress ? 'gray.300' : 'orange'} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} fontSize={'12px'} onClick={() => setIsByAddress(false)}>Cryptico User</Button>
-                                    </ButtonGroup>
+                                    <Flex direction={'column'} bg={'gray.100'} borderRadius={5} py={4}>
 
-                                </Flex>
-                                {
-                                    isbyaddress ?
-
-                                        <FormControl p={4} borderRadius={5}>
-                                            <Input fontWeight={'700'}
-                                                px={0}
-                                                border={'none'}
-                                                _hover={{ border: 'none' }}
-                                                _focus={{ boxShadow: 'none' }}
-                                                placeholder='Paste or Enter wallet address here '
-                                            />
-                                        </FormControl>
-                                        :
-                                        <FormControl p={4} borderRadius={5}>
-                                            <Box ref={wrapperRef}>
-                                                <Input
-                                                    px={0}
-                                                    border={'none'}
-                                                    _hover={{ border: 'none' }}
-                                                    _focus={{ boxShadow: 'none' }}
-                                                    placeholder='Enter username '
-                                                    value={inputValue}
-                                                    onChange={handleChange}
-
-                                                />
-
-                                                {isopen && suggestions?.length > 0 && (
-                                                    <Box
-                                                        px={4}
-                                                        position="absolute"
-                                                        top="100%"
-                                                        left="0"
-                                                        right="0"
-                                                        bg="gray.100"
-                                                        borderRadius="md"
-                                                        mt={1}
-                                                        zIndex="dropdown"
-                                                        boxShadow="md"
-                                                    >
-                                                        <List spacing={0}>
-                                                            {suggestions?.map((item, index) => (
-                                                                <Flex mb={2} >
-                                                                    <Avatar name={item.username} src={item.profile_image}></Avatar>
-                                                                    <ListItem mt={1}
-                                                                        key={index}
-                                                                        px={3}
-                                                                        py={2}
-                                                                        fontSize={'14px'}
-                                                                        fontWeight={500}
-                                                                        _hover={{ bg: "gray.100", cursor: "pointer" }}
-                                                                        onClick={() => handleSelect(item.username)}
-                                                                    >
-                                                                        Cryptico user &nbsp;
-                                                                        <Box as='span' color='orange' _hover={{ textDecoration: 'underline' }} >
-
-                                                                            {item.username}
-
-                                                                        </Box>
-                                                                    </ListItem>
-                                                                </Flex>
-
-                                                            ))}
-                                                        </List>
-                                                    </Box>
-                                                )}
-                                            </Box>
-                                        </FormControl>
-                                }
-                            </Flex>
-
-                            {
-                                isUserValid ?
-                                    <Card bg={'gray.100'} gap={1}>
-                                        <Flex justifyContent={'space-between'} p={4}>
-
-                                            <Heading size={'md'}>Amount to send</Heading>
-                                            <Box>Available : 00</Box>
+                                        <Flex justifyContent={'space-between'} p={4} >
+                                            <Heading size={'md'}>Send to </Heading>
+                                            <ButtonGroup size={'sm'} >
+                                                <Button bg={isbyaddress ? 'orange' : 'gray.300'} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} fontSize={'12px'} onClick={() => setIsByAddress(true)}>Address</Button>
+                                                <Button bg={isbyaddress ? 'gray.300' : 'orange'} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} fontSize={'12px'} onClick={() => setIsByAddress(false)}>Cryptico User</Button>
+                                            </ButtonGroup>
 
                                         </Flex>
+                                        {
+                                            isbyaddress ?
+
+                                                <FormControl p={4} borderRadius={5}>
+                                                    <Input
+                                                        px={0}
+                                                        border={'none'}
+                                                        value={walletAddress}
+                                                        _hover={{ border: 'none' }}
+                                                        _focus={{ boxShadow: 'none' }}
+                                                        onChange={handleWalletAddress}
+                                                        placeholder='Paste or Enter wallet address here '
+                                                    />
+                                                </FormControl>
+                                                :
+                                                <FormControl p={4} borderRadius={5}>
+                                                    <Box ref={wrapperRef}>
+                                                        <Input
+                                                            px={0}
+                                                            border={'none'}
+                                                            _hover={{ border: 'none' }}
+                                                            _focus={{ boxShadow: 'none' }}
+                                                            placeholder='Enter username '
+                                                            value={inputValue}
+                                                            onChange={handleChange}
+
+                                                        />
+
+                                                        {isopen && suggestions?.length > 0 && (
+                                                            <Box
+                                                                px={4}
+                                                                position="absolute"
+                                                                top="100%"
+                                                                left="0"
+                                                                right="0"
+                                                                bg="gray.100"
+                                                                borderRadius="md"
+                                                                mt={1}
+                                                                zIndex="dropdown"
+                                                                boxShadow="md"
+                                                            >
+                                                                <List spacing={0}>
+                                                                    {suggestions?.map((item, index) => (
+                                                                        <Flex mb={2} >
+                                                                            <Avatar name={item.username} src={item.profile_image}></Avatar>
+                                                                            <ListItem mt={1}
+                                                                                key={index}
+                                                                                px={3}
+                                                                                py={2}
+                                                                                fontSize={'14px'}
+                                                                                fontWeight={500}
+                                                                                _hover={{ bg: "gray.100", cursor: "pointer" }}
+                                                                                onClick={() => handleSelect(item.username)}
+                                                                            >
+                                                                                Cryptico user &nbsp;
+                                                                                <Box as='span' color='orange' _hover={{ textDecoration: 'underline' }} >
+
+                                                                                    {item.username}
+
+                                                                                </Box>
+                                                                            </ListItem>
+                                                                        </Flex>
+
+                                                                    ))}
+                                                                </List>
+                                                            </Box>
+                                                        )}
+                                                    </Box>
+                                                </FormControl>
+                                        }
+                                    </Flex>
 
 
-                                        <FormControl px={4}>
-                                            <InputGroup>
+                                    {/* Amount Section start----------------------------------- */}
+                                    {
+                                        (isUserValid || isWalletValid) ?
+                                            <Card bg={'gray.100'} gap={1}>
+                                                <Flex justifyContent={'space-between'} p={4}>
 
+                                                    <Heading size={'md'}>Amount to send</Heading>
+                                                    <Box>Available : {Number(availableBlc).toFixed(8)}</Box>
+
+                                                </Flex>
+
+
+                                                <FormControl px={4}>
+                                                    <InputGroup>
+
+                                                        {
+                                                            isBtc ?
+                                                                <>
+                                                                    <Input
+                                                                        type='number'
+                                                                        fontSize={'22px'}
+                                                                        border={'none'}
+                                                                        onChange={handleAmount}
+                                                                        fontWeight={700}
+                                                                        value={amount === 0 || amount === '' ? '' : amount}
+                                                                        py={10}
+                                                                        placeholder={amount > 0 ? availableBlc : '0.00000000'}
+                                                                        _hover={{ border: 'none' }}
+                                                                        _focus={{ boxShadow: 'none' }}
+                                                                    ></Input>
+
+                                                                    <InputRightAddon color={'gray'} fontSize={'16px'} border={'none'} fontWeight={700} py={10}>{asset.toLocaleUpperCase()}</InputRightAddon>
+                                                                </>
+
+                                                                :
+                                                                <>
+                                                                    <Input
+                                                                        type='number'
+                                                                        fontSize={'22px'}
+                                                                        border={'none'}
+                                                                        value={amount}
+                                                                        onChange={handleAmount}
+                                                                        fontWeight={700}
+                                                                        py={10}
+                                                                        placeholder='≈ 0.00'
+                                                                        _hover={{ border: 'none' }}
+                                                                        _focus={{ boxShadow: 'none' }}
+                                                                    ></Input>
+
+                                                                    <InputRightAddon color={'gray'} fontSize={'16px'} border={'none'} fontWeight={700} py={10}>INR</InputRightAddon>
+                                                                </>
+
+                                                        }
+                                                    </InputGroup>
+                                                </FormControl>
                                                 {
                                                     isBtc ?
-                                                        <>
-                                                            <Input
-                                                                type='number'
-                                                                fontSize={'22px'}
-                                                                border={'none'}
-                                                                onChange={handleAmount}
-                                                                fontWeight={700}
-                                                                py={10}
-                                                                placeholder='0.00000000'
-                                                                _hover={{ border: 'none' }}
-                                                                _focus={{ boxShadow: 'none' }}
-                                                            ></Input>
-
-                                                            <InputRightAddon color={'gray'} fontSize={'16px'} border={'none'} fontWeight={700} py={10}>{asset.toLocaleUpperCase()}</InputRightAddon>
-                                                        </>
-
+                                                        <Box borderRadius={5} fontWeight={500} m={4} w={'auto'} p={4} py={2} bg={'#e8f0fe'}>{`${amount * priceRef?.current?.[CoinSymbolMap[asset]]?.inr}`} INR</Box>
                                                         :
-                                                        <>
-                                                            <Input
-                                                                type='number'
-                                                                fontSize={'22px'}
-                                                                border={'none'}
-                                                                onChange={handleAmount}
-                                                                fontWeight={700}
-                                                                py={10}
-                                                                placeholder='≈ 0.00'
-                                                                _hover={{ border: 'none' }}
-                                                                _focus={{ boxShadow: 'none' }}
-                                                            ></Input>
+                                                        <Box borderRadius={5} fontWeight={500} m={4} w={'auto'} p={4} py={2} bg={'#e8f0fe'}>{`${(amount / priceRef?.current?.[CoinSymbolMap[asset]]?.inr).toFixed(8)}`}  {asset.toLocaleUpperCase()}</Box>
 
-                                                            <InputRightAddon color={'gray'} fontSize={'16px'} border={'none'} fontWeight={700} py={10}>INR</InputRightAddon>
-                                                        </>
 
                                                 }
-                                            </InputGroup>
-                                        </FormControl>
-                                        {
-                                            isBtc ?
-                                                <Box borderRadius={5} fontWeight={500} m={4} w={'auto'} p={4} py={2} bg={'#e8f0fe'}>{`${amount * priceRef?.current?.[CoinSymbolMap[asset]]?.inr}`} INR</Box>
-                                                :
-                                                <Box borderRadius={5} fontWeight={500} m={4} w={'auto'} p={4} py={2} bg={'#e8f0fe'}>{`${(amount / priceRef?.current?.[CoinSymbolMap[asset]]?.inr).toFixed(8)}`}  {asset.toLocaleUpperCase()}</Box>
+                                                <Flex justifyContent={'space-between'} p={4}>
+                                                    <ButtonGroup gap={1}>
+                                                        <Button size={'sm'} bg={'gray.200'} onClick={() => setAmount(0)}>min</Button>
+                                                        <Button size={'sm'} bg={'gray.200'} onClick={() => setAmount(availableBlc)}>max</Button>
+                                                    </ButtonGroup>
+                                                    <ButtonGroup gap={1}>
+                                                        <Button isActive={isBtc} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} size={'sm'} bg={'gray.200'} onClick={() => setBtc(true)}>{asset.toLocaleUpperCase()}</Button>
+                                                        <Button _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} size={'sm'} bg={'gray.200'} onClick={() => setBtc(false)}>INR</Button>
+                                                    </ButtonGroup>
+                                                </Flex>
+                                            </Card>
+                                            :
+                                            <FormControl bg={'gray.100'}>
+                                                <Input
+                                                    disabled
+                                                    type='number'
+                                                    fontSize={'22px'}
+                                                    border={'none'}
+                                                    onChange={handleAmount}
+                                                    fontWeight={700}
+                                                    py={10}
+                                                    placeholder='Amount to send'
+                                                    _hover={{ border: 'none' }}
+                                                    _focus={{ boxShadow: 'none' }}
+                                                ></Input>
+                                            </FormControl>
 
+                                    }
+                                    {/* Amount Section End----------------------------------- */}
 
-                                        }
-                                        <Flex justifyContent={'space-between'} p={4}>
-                                            <ButtonGroup gap={1}>
-                                                <Button size={'sm'} bg={'gray.200'}>min</Button>
-                                                <Button size={'sm'} bg={'gray.200'}>max</Button>
-                                            </ButtonGroup>
-                                            <ButtonGroup gap={1}>
-                                                <Button isActive={isBtc} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} size={'sm'} bg={'gray.200'} onClick={() => setBtc(true)}>{asset.toLocaleUpperCase()}</Button>
-                                                <Button _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} size={'sm'} bg={'gray.200'} onClick={() => setBtc(false)}>INR</Button>
-                                            </ButtonGroup>
+                                    <Button isDisabled={Number(amount) > 0 ? false : true} fontWeight={600} fontSize={'18px'} _hover={{ bg: 'gray.100' }} bg={'gray.100'} p={10} onClick={handleContinue}   >
+                                        <Flex gap={2} alignItems={'center'} justifyContent={'center'}>
+                                            Continue
+                                            <FaArrowRightLong />
                                         </Flex>
-                                    </Card>
-                                    :
-                                    <FormControl bg={'gray.100'}>
-                                        <Input
-                                            disabled
-                                            type='number'
-                                            fontSize={'22px'}
-                                            border={'none'}
-                                            onChange={handleAmount}
-                                            fontWeight={700}
-                                            py={10}
-                                            placeholder='Amount to send'
-                                            _hover={{ border: 'none' }}
-                                            _focus={{ boxShadow: 'none' }}
-                                        ></Input>
-                                    </FormControl>
-
-                            }
-
-
-                            <Button fontWeight={600} fontSize={'18px'} _hover={{ bg: 'gray.100' }} bg={'gray.100'} p={10} onClick={handleSubmit}  >
-                                <Flex gap={2} alignItems={'center'} justifyContent={'center'}>
-                                    Continue
-                                    <FaArrowRightLong />
+                                    </Button>
                                 </Flex>
-                            </Button>
-                        </Flex>
-                    </ModalBody>
+                            </ModalBody>
+                            :
+                            <ModalBody>
+                                <Flex direction={'column'} gap={5} py={2} my={5} bg={'#F8F8F8'}>
+                                    <Flex justifyContent={'center'} alignItems={'center'} direction={'column'} className='first-part'>
+                                        <Box mb={2} color={'gray'} fontWeight={500}>You are sending</Box>
+                                        <Box fontSize={'22px'} fontWeight={650} size={'lg'} >{`${Number(assetValue).toFixed(8)} ${asset.toUpperCase()}`}</Box>
+                                        <Box mb={3}>{`≈ ${Number(assetInrValue).toFixed(2)}INR`}</Box>
+                                        <Box>to Address</Box>
+                                        <Box fontSize={'14px'} fontWeight={500}>{walletAddress}</Box>
+
+                                    </Flex>
+                                    <Divider></Divider>
+                                    <Flex direction={'column'} className='second-part' p={6} gap={5}>
+                                        <Flex className='s1' justifyContent={'space-between'}>
+                                            <Flex direction={'column'}>
+                                                <Box fontSize={'14px'} p={1} bg={'gray.200'} borderRadius={5}>
+
+                                                    {asset.toLocaleUpperCase()} network fee
+                                                </Box>
+                                                <Box fontSize={'12px'}>-----</Box>
+                                            </Flex>
+                                            <Box fontSize={'14px'} fontWeight={500}>------</Box>
+                                        </Flex>
+                                        <Flex className='s2' justifyContent={'space-between'}>
+                                            <Flex direction={'column'}>
+                                                <Box fontSize={'14px'}>
+
+                                                    Cryptico fee
+                                                </Box>
+                                                <Box fontSize={'12px'}>{`≈ ${Number(transferFeeInr).toFixed(2)} INR`}</Box>
+                                            </Flex>
+                                            <Box fontSize={'14px'} fontWeight={500}>{`${Number(transferFee).toFixed(8)} ${asset.toUpperCase()}`}</Box>
+                                        </Flex>
+                                        <Flex className='s3' justifyContent={'space-between'}>
+                                            <Flex direction={'column'}>
+                                                <Box fontWeight={500}>
+
+                                                    Total
+                                                </Box>
+                                                <Box fontSize={'12px'}>To be deducted from your Cryptico Wallet</Box>
+                                            </Flex>
+                                            <Flex direction={'column'} textAlign={'end'}>
+
+                                                <Box fontSize={'14px'} fontWeight={500}>{`${Number(totalAssetValue).toFixed(8)} ${asset.toUpperCase()}`}</Box>
+                                                <Box fontSize={'12px'}>{`≈ ${Number(totalAssetInrValue).toFixed(2)} INR`}</Box>
+                                            </Flex>
+                                        </Flex>
+
+
+
+
+                                    </Flex>
+                                    <Flex className='third-part' p={4} gap={5} direction={'column'}>
+                                        <VerifyPassword setSend={setSend} />
+                                        <Flex w={'full'} gap={5}>
+                                            <Button bg={'blue.100'} color={'blue.400'} flex={0.3} size={'lg'} py={8} onClick={() => setIsContinue(false)}>Back</Button>
+
+                                            <Button isLoading={isloading} spinner={null} loadingText='Processing...' isDisabled={isSend} bg={'orange.100'} color={'orange.400'} flex={0.7} size={'lg'} py={8} onClick={handleSubmit}>Send</Button>
+
+                                        </Flex>
+                                        {
+                                            isloading &&
+                                            <>
+
+                                                <Heading color={'blue.600'} px={2} size={'sm'}>During Transaction, Please do not press back or close the browser.</Heading>
+                                                <Heading color={'red.600'} px={2} size={'sm'}>Important: Stay on this screen to ensure successful completion.</Heading>
+                                            </>
+                                        }
+                                    </Flex>
+
+                                </Flex>
+
+                            </ModalBody>
+                    }
 
                 </ModalContent>
                 <ModalFooter>
@@ -2064,9 +2610,11 @@ export const Send3 = () => {
     )
 }
 
+
 export const Send4 = () => {
+    const { user } = useUser();
     const { handleOtherUserDetail, otherUserDetail, setOtherUserDetail } = useAuth();
-    const { handleSendInternalTransaction } = useAccount()
+    const { handleSendInternalTransaction, handleWalletAddressTransaction, handleUpdateWalletAddressTransaction, handleFeeCalculation } = useAccount()
     const cryptoOption = useCryptoOption();
     const [headername, setHeaderName] = useState(cryptoOption[3].name);
     const [headerlogo, setHeaderLogo] = useState(cryptoOption[3].logo);
@@ -2075,6 +2623,7 @@ export const Send4 = () => {
     const [network, setNetwork] = useState(cryptoOption[3].network);
     const [isbyaddress, setIsByAddress] = useState(true);
     const [inputValue, setInputValue] = useState("");
+    const [walletAddress, setWalletAddress] = useState("");
     const [suggestions, setSuggestions] = useState([]);
     const [isopen, setIsOpen] = useState(false);
     const [amount, setAmount] = useState(0);
@@ -2082,18 +2631,55 @@ export const Send4 = () => {
     const [currentPrice, setCurrentPrice] = useState(cryptoOption[3].currentPrice);
     const allUsersRef = useRef([]);
     const [isBtc, setBtc] = useState(true);
+    const factor = Math.pow(10, 2);
     const { priceRef } = useOtherDetail();
     const [isUserValid, setUserValid] = useState(false);
+    const [isWalletValid, setWalletValid] = useState(false);
+    const [userid, setUserId] = useState();
+    const [isContinue, setIsContinue] = useState(false);
+    const [isSend, setSend] = useState(true);
+    const [availableBlc, setAvailableBalance] = useState(0);
+    const [isloading, setIsLoading] = useState(false);
+    const toast = useToast();
+    const [transferFee, setTransferFee] = useState(0);
+    const [totalAssetValue, setTotalAssetValue] = useState(0);
 
+
+    const resetState = () => {
+        setHeaderName(cryptoOption[3].name);
+        setHeaderLogo(cryptoOption[3].logo);
+        setAsset(cryptoOption[3].asset);
+        setNetwork(cryptoOption[3].network);
+    }
     const assetValue = isBtc ? amount : amount / priceRef.current?.[CoinSymbolMap[asset]]?.inr;
+    const assetInrValue = amount * priceRef.current?.[CoinSymbolMap[asset]]?.inr;
+    // const transferFee = (amount * 0.02) / 100;
+    const transferFeeInr = transferFee * priceRef.current?.[CoinSymbolMap[asset]]?.inr;
+    // const totalAssetValue = Number(assetValue) + Number(transferFee);
+    const totalAssetInrValue = (Number(totalAssetValue)) * Number(priceRef.current?.[CoinSymbolMap[asset]]?.inr);
+
     const Dto = {
         username: inputValue,
-        address: '',
         network: network,
         asset: asset,
-        assetValue: assetValue
+        assetValue: assetValue,
     }
+    const feeCalculationDto = {
+        asset: asset,
+        network: network,
+        assetValue: assetValue,
+    }
+    const AddressDto = {
+        toAddress: walletAddress,
+        network: network,
+        asset: asset,
+        assetValue: assetValue,
+        totalAsset: Number(totalAssetValue)
 
+    }
+    useEffect(() => {
+        setUserId(user?.user_id);
+    }, [user])
     useEffect(() => {
         const fetchdata = async () => {
             try {
@@ -2121,10 +2707,7 @@ export const Send4 = () => {
         fetchdata();
     }, [inputValue]);
 
-    const resetState = () => {
-        setHeaderName(cryptoOption[3].name);
-        setHeaderLogo(cryptoOption[3].logo);
-    }
+
     useOutsideClick({
         ref: wrapperRef,
         handler: () => setIsOpen(false),
@@ -2140,6 +2723,10 @@ export const Send4 = () => {
         const value = e.target.value;
         setInputValue(value);
     };
+    const handleWalletAddress = (e) => {
+        const value = e.target.value;
+        setWalletAddress(value);
+    };
 
     const handleSelect = (name) => {
         setInputValue(name);
@@ -2149,12 +2736,94 @@ export const Send4 = () => {
         setAmount(e.target.value);
 
     }
-
-    const handleSubmit = async () => {
-        await handleSendInternalTransaction(Dto);
-
+    const handleContinue = async () => {
+        const response = await handleFeeCalculation(feeCalculationDto);
+        if (response.status === true) {
+            setTransferFee(response?.data?.transferFee);
+            setTotalAssetValue(response?.data?.totalAsset);
+            setIsContinue(true);
+        }
 
     }
+
+    const handleSubmit = async () => {
+        try {
+            setIsLoading(true);
+
+            if (isWalletValid) {
+                const res = await handleWalletAddressTransaction(AddressDto);
+
+                if (res.status === true) {
+
+                    const response = await decryptWithKey(res.data, userid)
+                    console.log(response);
+
+                    const privateKey = await decryptWithKey(response?.senderWalletData?.wallet_key, userid);
+                    let txResponse;
+                    if (asset === 'bnb') {
+                        txResponse = await SendBnd(privateKey, walletAddress, response?.transactionData?.paid_amount);
+                    }
+                    if (asset === 'eth') {
+                        txResponse = await Sendeth(privateKey, walletAddress, response?.transactionData?.paid_amount)
+                    }
+                    if (txResponse.transactionHash) {
+                        const txnRequestDto = {
+                            "txnId": response?.transactionData?.txn_id,
+                            "txnHashId": txResponse?.transactionHash,
+                            "status": txResponse?.status === 1 ? "success" : "failed",
+                        }
+                        const updateResponse = await handleUpdateWalletAddressTransaction(txnRequestDto);
+                        if (updateResponse.status === true) {
+                            setIsLoading(false);
+                            onClose();
+                            setAmount(0);
+                            setWalletAddress('');
+                            toast({
+                                title: "Transaction Success",
+                                status: "success",
+                                duration: 2000,
+                                isClosable: true,
+                                position: 'top-right'
+                            })
+                        }
+                        console.log(updateResponse);
+                    }
+                }
+            }
+            else {
+                await handleSendInternalTransaction(Dto);
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        setWalletValid(isValidWalletAddress(walletAddress, asset));
+    }, [walletAddress, asset]);
+
+    function isValidWalletAddress(address, coin) {
+        switch (coin.toLowerCase()) {
+            case 'btc':
+                try {
+                    bitcoin.address.toOutputScript(address);
+                    return true;
+                } catch (e) {
+                    return false;
+                }
+
+            case 'eth':
+            case 'bnb':
+            case 'usdt': // all use Ethereum-style addresses
+                return isAddress(address);
+
+            default:
+                return false;
+        }
+    }
+
+
     return (
         <>
 
@@ -2175,196 +2844,272 @@ export const Send4 = () => {
                             <ModalCloseButton mt={2} />
                         </Flex>
                     </ModalHeader>
-                    <ModalBody>
-                        <Flex direction={'column'} gap={5} my={5}>
-                            {/* <Flex as={Button} py={8} w={'full'} borderRadius={5} bg={'gray.100'} _hover={{ bg: 'gray.100' }} justifyContent={'space-between'}  >
-                                <Flex gap={2}>
-                                    <Image boxSize={5} src='/imagelogo/bitcoin-btc-logo.png'></Image>
-                                    Bitcoin
-                                </Flex>
-                                <MdKeyboardArrowRight />
+                    {
+                        !isContinue ?
 
-                            </Flex> */}
+                            <ModalBody>
+                                <Flex direction={'column'} gap={5} my={5}>
 
-                            <SelectToken index={3} setHeaderName={setHeaderName} setHeaderLogo={setHeaderLogo} setAsset={setAsset} setNetwork={setNetwork} setCurrentPrice={setCurrentPrice} />
+                                    <SelectToken index={3} setHeaderName={setHeaderName} setHeaderLogo={setHeaderLogo} setAsset={setAsset} setNetwork={setNetwork} setCurrentPrice={setCurrentPrice} setAvailableBalance={setAvailableBalance} />
 
-                            <Flex direction={'column'} bg={'gray.100'} borderRadius={5} py={4}>
+                                    <Flex direction={'column'} bg={'gray.100'} borderRadius={5} py={4}>
 
-                                <Flex justifyContent={'space-between'} p={4} >
-                                    <Heading size={'md'}>Send to </Heading>
-                                    <ButtonGroup size={'sm'} >
-                                        <Button bg={isbyaddress ? 'orange' : 'gray.300'} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} fontSize={'12px'} onClick={() => setIsByAddress(true)}>Address</Button>
-                                        <Button bg={isbyaddress ? 'gray.300' : 'orange'} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} fontSize={'12px'} onClick={() => setIsByAddress(false)}>Cryptico User</Button>
-                                    </ButtonGroup>
-
-                                </Flex>
-                                {
-                                    isbyaddress ?
-
-                                        <FormControl p={4} borderRadius={5}>
-                                            <Input fontWeight={'700'}
-                                                px={0}
-                                                border={'none'}
-                                                _hover={{ border: 'none' }}
-                                                _focus={{ boxShadow: 'none' }}
-                                                placeholder='Paste or Enter wallet address here '
-                                            />
-                                        </FormControl>
-                                        :
-                                        <FormControl p={4} borderRadius={5}>
-                                            <Box ref={wrapperRef}>
-                                                <Input
-                                                    px={0}
-                                                    border={'none'}
-                                                    _hover={{ border: 'none' }}
-                                                    _focus={{ boxShadow: 'none' }}
-                                                    placeholder='Enter username '
-                                                    value={inputValue}
-                                                    onChange={handleChange}
-
-                                                />
-
-                                                {isopen && suggestions?.length > 0 && (
-                                                    <Box
-                                                        px={4}
-                                                        position="absolute"
-                                                        top="100%"
-                                                        left="0"
-                                                        right="0"
-                                                        bg="gray.100"
-                                                        borderRadius="md"
-                                                        mt={1}
-                                                        zIndex="dropdown"
-                                                        boxShadow="md"
-                                                    >
-                                                        <List spacing={0}>
-                                                            {suggestions?.map((item, index) => (
-                                                                <Flex mb={2} >
-                                                                    <Avatar name={item.username} src={item.profile_image}></Avatar>
-                                                                    <ListItem mt={1}
-                                                                        key={index}
-                                                                        px={3}
-                                                                        py={2}
-                                                                        fontSize={'14px'}
-                                                                        fontWeight={500}
-                                                                        _hover={{ bg: "gray.100", cursor: "pointer" }}
-                                                                        onClick={() => handleSelect(item.username)}
-                                                                    >
-                                                                        Cryptico user &nbsp;
-                                                                        <Box as='span' color='orange' _hover={{ textDecoration: 'underline' }} >
-
-                                                                            {item.username}
-
-                                                                        </Box>
-                                                                    </ListItem>
-                                                                </Flex>
-
-                                                            ))}
-                                                        </List>
-                                                    </Box>
-                                                )}
-                                            </Box>
-                                        </FormControl>
-                                }
-                            </Flex>
-
-
-                            {
-                                isUserValid ?
-                                    <Card bg={'gray.100'} gap={1}>
-                                        <Flex justifyContent={'space-between'} p={4}>
-
-                                            <Heading size={'md'}>Amount to send</Heading>
-                                            <Box>Available : 00</Box>
+                                        <Flex justifyContent={'space-between'} p={4} >
+                                            <Heading size={'md'}>Send to </Heading>
+                                            <ButtonGroup size={'sm'} >
+                                                <Button bg={isbyaddress ? 'orange' : 'gray.300'} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} fontSize={'12px'} onClick={() => setIsByAddress(true)}>Address</Button>
+                                                <Button bg={isbyaddress ? 'gray.300' : 'orange'} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} fontSize={'12px'} onClick={() => setIsByAddress(false)}>Cryptico User</Button>
+                                            </ButtonGroup>
 
                                         </Flex>
+                                        {
+                                            isbyaddress ?
+
+                                                <FormControl p={4} borderRadius={5}>
+                                                    <Input
+                                                        px={0}
+                                                        border={'none'}
+                                                        value={walletAddress}
+                                                        _hover={{ border: 'none' }}
+                                                        _focus={{ boxShadow: 'none' }}
+                                                        onChange={handleWalletAddress}
+                                                        placeholder='Paste or Enter wallet address here '
+                                                    />
+                                                </FormControl>
+                                                :
+                                                <FormControl p={4} borderRadius={5}>
+                                                    <Box ref={wrapperRef}>
+                                                        <Input
+                                                            px={0}
+                                                            border={'none'}
+                                                            _hover={{ border: 'none' }}
+                                                            _focus={{ boxShadow: 'none' }}
+                                                            placeholder='Enter username '
+                                                            value={inputValue}
+                                                            onChange={handleChange}
+
+                                                        />
+
+                                                        {isopen && suggestions?.length > 0 && (
+                                                            <Box
+                                                                px={4}
+                                                                position="absolute"
+                                                                top="100%"
+                                                                left="0"
+                                                                right="0"
+                                                                bg="gray.100"
+                                                                borderRadius="md"
+                                                                mt={1}
+                                                                zIndex="dropdown"
+                                                                boxShadow="md"
+                                                            >
+                                                                <List spacing={0}>
+                                                                    {suggestions?.map((item, index) => (
+                                                                        <Flex mb={2} >
+                                                                            <Avatar name={item.username} src={item.profile_image}></Avatar>
+                                                                            <ListItem mt={1}
+                                                                                key={index}
+                                                                                px={3}
+                                                                                py={2}
+                                                                                fontSize={'14px'}
+                                                                                fontWeight={500}
+                                                                                _hover={{ bg: "gray.100", cursor: "pointer" }}
+                                                                                onClick={() => handleSelect(item.username)}
+                                                                            >
+                                                                                Cryptico user &nbsp;
+                                                                                <Box as='span' color='orange' _hover={{ textDecoration: 'underline' }} >
+
+                                                                                    {item.username}
+
+                                                                                </Box>
+                                                                            </ListItem>
+                                                                        </Flex>
+
+                                                                    ))}
+                                                                </List>
+                                                            </Box>
+                                                        )}
+                                                    </Box>
+                                                </FormControl>
+                                        }
+                                    </Flex>
 
 
-                                        <FormControl px={4}>
-                                            <InputGroup>
+                                    {/* Amount Section start----------------------------------- */}
+                                    {
+                                        (isUserValid || isWalletValid) ?
+                                            <Card bg={'gray.100'} gap={1}>
+                                                <Flex justifyContent={'space-between'} p={4}>
 
+                                                    <Heading size={'md'}>Amount to send</Heading>
+                                                    <Box>Available : {Number(availableBlc).toFixed(8)}</Box>
+
+                                                </Flex>
+
+
+                                                <FormControl px={4}>
+                                                    <InputGroup>
+
+                                                        {
+                                                            isBtc ?
+                                                                <>
+                                                                    <Input
+                                                                        type='number'
+                                                                        fontSize={'22px'}
+                                                                        border={'none'}
+                                                                        onChange={handleAmount}
+                                                                        fontWeight={700}
+                                                                        value={amount === 0 || amount === '' ? '' : amount}
+                                                                        py={10}
+                                                                        placeholder={amount > 0 ? availableBlc : '0.00000000'}
+                                                                        _hover={{ border: 'none' }}
+                                                                        _focus={{ boxShadow: 'none' }}
+                                                                    ></Input>
+
+                                                                    <InputRightAddon color={'gray'} fontSize={'16px'} border={'none'} fontWeight={700} py={10}>{asset.toLocaleUpperCase()}</InputRightAddon>
+                                                                </>
+
+                                                                :
+                                                                <>
+                                                                    <Input
+                                                                        type='number'
+                                                                        fontSize={'22px'}
+                                                                        border={'none'}
+                                                                        value={amount}
+                                                                        onChange={handleAmount}
+                                                                        fontWeight={700}
+                                                                        py={10}
+                                                                        placeholder='≈ 0.00'
+                                                                        _hover={{ border: 'none' }}
+                                                                        _focus={{ boxShadow: 'none' }}
+                                                                    ></Input>
+
+                                                                    <InputRightAddon color={'gray'} fontSize={'16px'} border={'none'} fontWeight={700} py={10}>INR</InputRightAddon>
+                                                                </>
+
+                                                        }
+                                                    </InputGroup>
+                                                </FormControl>
                                                 {
                                                     isBtc ?
-                                                        <>
-                                                            <Input
-                                                                type='number'
-                                                                fontSize={'22px'}
-                                                                border={'none'}
-                                                                onChange={handleAmount}
-                                                                fontWeight={700}
-                                                                py={10}
-                                                                placeholder='0.00000000'
-                                                                _hover={{ border: 'none' }}
-                                                                _focus={{ boxShadow: 'none' }}
-                                                            ></Input>
-
-                                                            <InputRightAddon color={'gray'} fontSize={'16px'} border={'none'} fontWeight={700} py={10}>{asset.toLocaleUpperCase()}</InputRightAddon>
-                                                        </>
-
+                                                        <Box borderRadius={5} fontWeight={500} m={4} w={'auto'} p={4} py={2} bg={'#e8f0fe'}>{`${amount * priceRef?.current?.[CoinSymbolMap[asset]]?.inr}`} INR</Box>
                                                         :
-                                                        <>
-                                                            <Input
-                                                                type='number'
-                                                                fontSize={'22px'}
-                                                                border={'none'}
-                                                                onChange={handleAmount}
-                                                                fontWeight={700}
-                                                                py={10}
-                                                                placeholder='≈ 0.00'
-                                                                _hover={{ border: 'none' }}
-                                                                _focus={{ boxShadow: 'none' }}
-                                                            ></Input>
+                                                        <Box borderRadius={5} fontWeight={500} m={4} w={'auto'} p={4} py={2} bg={'#e8f0fe'}>{`${(amount / priceRef?.current?.[CoinSymbolMap[asset]]?.inr).toFixed(8)}`}  {asset.toLocaleUpperCase()}</Box>
 
-                                                            <InputRightAddon color={'gray'} fontSize={'16px'} border={'none'} fontWeight={700} py={10}>INR</InputRightAddon>
-                                                        </>
 
                                                 }
-                                            </InputGroup>
-                                        </FormControl>
-                                        {
-                                            isBtc ?
-                                                <Box borderRadius={5} fontWeight={500} m={4} w={'auto'} p={4} py={2} bg={'#e8f0fe'}>{`${amount * priceRef?.current?.[CoinSymbolMap[asset]]?.inr}`} INR</Box>
-                                                :
-                                                <Box borderRadius={5} fontWeight={500} m={4} w={'auto'} p={4} py={2} bg={'#e8f0fe'}>{`${(amount / priceRef?.current?.[CoinSymbolMap[asset]]?.inr).toFixed(8)}`}  {asset.toLocaleUpperCase()}</Box>
+                                                <Flex justifyContent={'space-between'} p={4}>
+                                                    <ButtonGroup gap={1}>
+                                                        <Button size={'sm'} bg={'gray.200'} onClick={() => setAmount(0)}>min</Button>
+                                                        <Button size={'sm'} bg={'gray.200'} onClick={() => setAmount(availableBlc)}>max</Button>
+                                                    </ButtonGroup>
+                                                    <ButtonGroup gap={1}>
+                                                        <Button isActive={isBtc} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} size={'sm'} bg={'gray.200'} onClick={() => setBtc(true)}>{asset.toLocaleUpperCase()}</Button>
+                                                        <Button _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} size={'sm'} bg={'gray.200'} onClick={() => setBtc(false)}>INR</Button>
+                                                    </ButtonGroup>
+                                                </Flex>
+                                            </Card>
+                                            :
+                                            <FormControl bg={'gray.100'}>
+                                                <Input
+                                                    disabled
+                                                    type='number'
+                                                    fontSize={'22px'}
+                                                    border={'none'}
+                                                    onChange={handleAmount}
+                                                    fontWeight={700}
+                                                    py={10}
+                                                    placeholder='Amount to send'
+                                                    _hover={{ border: 'none' }}
+                                                    _focus={{ boxShadow: 'none' }}
+                                                ></Input>
+                                            </FormControl>
 
+                                    }
+                                    {/* Amount Section End----------------------------------- */}
 
-                                        }
-                                        <Flex justifyContent={'space-between'} p={4}>
-                                            <ButtonGroup gap={1}>
-                                                <Button size={'sm'} bg={'gray.200'}>min</Button>
-                                                <Button size={'sm'} bg={'gray.200'}>max</Button>
-                                            </ButtonGroup>
-                                            <ButtonGroup gap={1}>
-                                                <Button isActive={isBtc} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} size={'sm'} bg={'gray.200'} onClick={() => setBtc(true)}>{asset.toLocaleUpperCase()}</Button>
-                                                <Button _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} size={'sm'} bg={'gray.200'} onClick={() => setBtc(false)}>INR</Button>
-                                            </ButtonGroup>
+                                    <Button isDisabled={Number(amount) > 0 ? false : true} fontWeight={600} fontSize={'18px'} _hover={{ bg: 'gray.100' }} bg={'gray.100'} p={10} onClick={handleContinue}   >
+                                        <Flex gap={2} alignItems={'center'} justifyContent={'center'}>
+                                            Continue
+                                            <FaArrowRightLong />
                                         </Flex>
-                                    </Card>
-                                    :
-                                    <FormControl bg={'gray.100'}>
-                                        <Input
-                                            disabled
-                                            type='number'
-                                            fontSize={'22px'}
-                                            border={'none'}
-                                            onChange={handleAmount}
-                                            fontWeight={700}
-                                            py={10}
-                                            placeholder='Amount to send'
-                                            _hover={{ border: 'none' }}
-                                            _focus={{ boxShadow: 'none' }}
-                                        ></Input>
-                                    </FormControl>
-
-                            }
-                            <Button fontWeight={600} fontSize={'18px'} _hover={{ bg: 'gray.100' }} bg={'gray.100'} p={10} onClick={handleSubmit}  >
-                                <Flex gap={2} alignItems={'center'} justifyContent={'center'}>
-                                    Continue
-                                    <FaArrowRightLong />
+                                    </Button>
                                 </Flex>
-                            </Button>
-                        </Flex>
-                    </ModalBody>
+                            </ModalBody>
+                            :
+                            <ModalBody>
+                                <Flex direction={'column'} gap={5} py={2} my={5} bg={'#F8F8F8'}>
+                                    <Flex justifyContent={'center'} alignItems={'center'} direction={'column'} className='first-part'>
+                                        <Box mb={2} color={'gray'} fontWeight={500}>You are sending</Box>
+                                        <Box fontSize={'22px'} fontWeight={650} size={'lg'} >{`${Number(assetValue).toFixed(8)} ${asset.toUpperCase()}`}</Box>
+                                        <Box mb={3}>{`≈ ${Number(assetInrValue).toFixed(2)}INR`}</Box>
+                                        <Box>to Address</Box>
+                                        <Box fontSize={'14px'} fontWeight={500}>{walletAddress}</Box>
+
+                                    </Flex>
+                                    <Divider></Divider>
+                                    <Flex direction={'column'} className='second-part' p={6} gap={5}>
+                                        <Flex className='s1' justifyContent={'space-between'}>
+                                            <Flex direction={'column'}>
+                                                <Box fontSize={'14px'} p={1} bg={'gray.200'} borderRadius={5}>
+
+                                                    {asset.toLocaleUpperCase()} network fee
+                                                </Box>
+                                                <Box fontSize={'12px'}>-----</Box>
+                                            </Flex>
+                                            <Box fontSize={'14px'} fontWeight={500}>------</Box>
+                                        </Flex>
+                                        <Flex className='s2' justifyContent={'space-between'}>
+                                            <Flex direction={'column'}>
+                                                <Box fontSize={'14px'}>
+
+                                                    Cryptico fee
+                                                </Box>
+                                                <Box fontSize={'12px'}>{`≈ ${Number(transferFeeInr).toFixed(2)} INR`}</Box>
+                                            </Flex>
+                                            <Box fontSize={'14px'} fontWeight={500}>{`${Number(transferFee).toFixed(8)} ${asset.toUpperCase()}`}</Box>
+                                        </Flex>
+                                        <Flex className='s3' justifyContent={'space-between'}>
+                                            <Flex direction={'column'}>
+                                                <Box fontWeight={500}>
+
+                                                    Total
+                                                </Box>
+                                                <Box fontSize={'12px'}>To be deducted from your Cryptico Wallet</Box>
+                                            </Flex>
+                                            <Flex direction={'column'} textAlign={'end'}>
+
+                                                <Box fontSize={'14px'} fontWeight={500}>{`${Number(totalAssetValue).toFixed(8)} ${asset.toUpperCase()}`}</Box>
+                                                <Box fontSize={'12px'}>{`≈ ${Number(totalAssetInrValue).toFixed(2)} INR`}</Box>
+                                            </Flex>
+                                        </Flex>
+
+
+
+
+                                    </Flex>
+                                    <Flex className='third-part' p={4} gap={5} direction={'column'}>
+                                        <VerifyPassword setSend={setSend} />
+                                        <Flex w={'full'} gap={5}>
+                                            <Button bg={'blue.100'} color={'blue.400'} flex={0.3} size={'lg'} py={8} onClick={() => setIsContinue(false)}>Back</Button>
+
+                                            <Button isLoading={isloading} spinner={null} loadingText='Processing...' isDisabled={isSend} bg={'orange.100'} color={'orange.400'} flex={0.7} size={'lg'} py={8} onClick={handleSubmit}>Send</Button>
+
+                                        </Flex>
+                                        {
+                                            isloading &&
+                                            <>
+
+                                                <Heading color={'blue.600'} px={2} size={'sm'}>During Transaction, Please do not press back or close the browser.</Heading>
+                                                <Heading color={'red.600'} px={2} size={'sm'}>Important: Stay on this screen to ensure successful completion.</Heading>
+                                            </>
+                                        }
+                                    </Flex>
+
+                                </Flex>
+
+                            </ModalBody>
+                    }
 
                 </ModalContent>
                 <ModalFooter>
@@ -2378,7 +3123,8 @@ export const Send4 = () => {
 
 
 
-export const SelectToken = ({ index, setHeaderName, setHeaderLogo, setAsset, setNetwork, setCurrentPrice }) => {
+
+export const SelectToken = ({ index, setHeaderName, setHeaderLogo, setAsset, setNetwork, setCurrentPrice, setAvailableBalance }) => {
     const cryptoOption = useCryptoOption();
     const [option, setOption] = useState(cryptoOption[index].name);
     const [logo, setlogo] = useState(cryptoOption[index].logo);
@@ -2405,6 +3151,7 @@ export const SelectToken = ({ index, setHeaderName, setHeaderLogo, setAsset, set
                                 setAsset(data.asset);
                                 setNetwork(data.network);
                                 setCurrentPrice(data.currentPrice);
+                                setAvailableBalance(data.blc);
 
 
                             }} gap={3} _hover={{ bg: "blue.100" }}><Image boxSize={5} src={data.logo}></Image>{data.name}</MenuItem>
@@ -2417,6 +3164,115 @@ export const SelectToken = ({ index, setHeaderName, setHeaderLogo, setAsset, set
     )
 }
 
+const VerifyPassword = ({ blockChainType = {}, onClose, setSend }) => {
+    // const { blockchain, network, asset } = blockChainType;
+    const [password, setPassword] = useState('');
+    const { handlePasswordMatch, passwordmatch } = useAuth();
+    const [showpassword, setShowPassword] = useState(false);
+    const [isLoading, setLoading] = useState(false);
+    const [isProceeding, setProceeding] = useState(false);
+    const { handleCreateWallet, handleUpdateweb3WalletAddress, handleGetWeb3Wallet } = useAccount();
+    const [isInputDisabled, setIsInputDisabled] = useState(false);
+    const [isPassWordMessageShow, setPasswordMessageShow] = useState(false);
+    const [passworSEMessage, setPasswordSEMessage] = useState('');
+    const [addresses, setAddresses] = useState([]);
+    const [privateKeys, setPrivateKeys] = useState([]);
+    // const [createWalletErrorMessage, setCreateWalletErrorMessage] = useState(false);
+    const { user } = useUser();
+    const handleClick = async () => {
+        setLoading(true);
+        try {
+            const res = await handlePasswordMatch(password);
+            if (res.passwordVerified) {
+                setSend(false);
+                setIsInputDisabled(true);
+                setPasswordMessageShow(true);
+                console.log(res?.message);
+                setPasswordSEMessage(res?.message);
+                setLoading(false);
+            }
+            else {
+                setPasswordSEMessage(res?.message);
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+        finally {
+            setLoading(false);
+        }
+
+    }
+
+    return (
+        <>
+
+            <Flex w={'full'} direction={'column'} gap={5}>
+
+                <Flex w={'full'} gap={3} direction={{ base: 'column', sm: 'row' }} >
+                    <FormControl isRequired>
+                        <FormLabel>password</FormLabel>
+                        <InputGroup>
+
+                            <Input w={'full'} name="password" isDisabled={isInputDisabled} placeholder='Enter Password' value={password} type={showpassword ? "text" : "password"} _focus={{ boxShadow: '0px', border: '0px' }} onChange={(e) => setPassword(e.target.value)} />
+
+                            <InputRightElement >
+                                <IconButton
+                                    bg={'transparent'}
+                                    h="1.75rem"
+                                    size=""
+                                    // border={'1px solid #c05621'}
+                                    px={4}
+                                    py={3}
+                                    onClick={() => setShowPassword((prev) => !prev)}
+                                    icon={showpassword ? <IoMdEye /> : <IoMdEyeOff />}
+                                    aria-label="Toggle Password Visibility"
+                                    _hover={{ bg: 'transparent' }}
+                                />
+                            </InputRightElement>
+                        </InputGroup>
+                    </FormControl>
+                    <Flex justifyContent={'space-between'} alignSelf={'end'} direction={'column'} >
+
+                        <Button
+                            isLoading={isLoading}
+                            isDisabled={isInputDisabled}
+                            loadingText='wait..' onClick={handleClick}
+                            alignSelf={'center'}
+                            spinner={null}
+                            textAlign={'center'}
+                            sx={gradientButtonStyle}
+                            size={'md'}
+                            // variant={'outline'}
+                            w={'80px'}
+                        >
+                            Verify
+                        </Button>
+
+                    </Flex>
+
+
+                </Flex>
+                {
+                    isPassWordMessageShow ?
+                        passwordmatch?.passwordVerified === true &&
+                        <Box color='green.500' fontWeight={700}>{passworSEMessage}</Box>
+
+                        :
+                        <Box color={'red.500'}>{passworSEMessage}</Box>
+
+                }
+
+
+
+            </Flex>
+
+
+
+
+        </>
+    )
+}
 
 
 const cryptoStatus = [

@@ -146,6 +146,28 @@ export const WalletAddressTransaction = async (userDetail) => {
     }
 
 }
+export const UpdateWalletAddressTransaction = async (userDetail) => {
+    try {
+        const response = await axiosInstance.post('/transaction/update-transaction', userDetail)
+        return response.data;
+    }
+    catch (error) {
+        throw error.response ? error.response.data : error.message;
+
+    }
+
+}
+export const FeeCalculation = async (feeDetail) => {
+    try {
+        const response = await axiosInstance.post('/transaction/fee-calculation', feeDetail)
+        return response.data;
+    }
+    catch (error) {
+        throw error.response ? error.response.data : error.message;
+
+    }
+
+}
 
 
 

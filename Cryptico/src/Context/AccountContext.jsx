@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from 'react'
-import { addAccount, createWebWallet, getPaymentDetails, getTransactionDetail, getWalletKeyPhrase, getWeb3Wallet, updateWeb3WalletAddress, updateIsPrimaryAccount, AddUpiDetails, sendInternalTransfer, WalletAddressTransaction } from '../api/accountService';
+import { addAccount, createWebWallet, getPaymentDetails, getTransactionDetail, getWalletKeyPhrase, getWeb3Wallet, updateWeb3WalletAddress, updateIsPrimaryAccount, AddUpiDetails, sendInternalTransfer, WalletAddressTransaction, UpdateWalletAddressTransaction, FeeCalculation } from '../api/accountService';
 
 const AccountContext = createContext();
 
@@ -121,6 +121,16 @@ const AccountProvider = ({ children }) => {
         return response;
 
     }
+    const handleUpdateWalletAddressTransaction = async (userDetail) => {
+        const response = await UpdateWalletAddressTransaction(userDetail);
+        return response;
+
+    }
+    const handleFeeCalculation = async (feeDetail) => {
+        const response = await FeeCalculation(feeDetail);
+        return response;
+
+    }
 
 
     return (
@@ -142,7 +152,10 @@ const AccountProvider = ({ children }) => {
             upidetails,
             upibankDetails,
             handleSendInternalTransaction,
-            handleWalletAddressTransaction
+            handleWalletAddressTransaction,
+            handleUpdateWalletAddressTransaction,
+            FeeCalculation,
+            handleFeeCalculation
         }}>
             {children}
         </AccountContext.Provider>
