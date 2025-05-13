@@ -24,23 +24,19 @@ import ForgetPassword from './CustomComponents/LoginSignup/ForgetPassword';
 import Redirect from './CustomComponents/LoginSignup/Redirect';
 import MyOffers from './CustomComponents/Afterlogin/UserDashboard/MyOffers';
 import Verification from './CustomComponents/SettingsPage/Verification';
-import SecurityQuestionForm from './CustomComponents/SettingsPage/SecurityQuestionForm';
 import SecurityQuestion from './CustomComponents/SettingsPage/SecurityQuestion';
 import Security from './CustomComponents/SettingsPage/Security';
 import BuyOffer from './CustomComponents/Buy&Sell/BuyOffer';
 import SellOffer from './CustomComponents/Buy&Sell/SellOffer';
 import InviteFriend from './CustomComponents/Afterlogin/UserDashboard/InviteFriend';
-import ForgetPassowrd from './CustomComponents/LoginSignup/ForgetPassword';
 import ForgetPasswrod from './CustomComponents/LoginSignup/ForgetPassword';
 import Testing from './CustomComponents/Wallet/Testing';
-import OtpVerification from './CustomComponents/LoginSignup/OtpVerification';
 import AllNotification from './CustomComponents/NotificationFile/AllNotification';
 import NotFound from './CustomComponents/NotFound/NotFound';
 import EmailVerification from './CustomComponents/LoginSignup/EmailVerification';
-import EmailProtectedRoute from './CustomComponents/AuthContext/EmailProtectedRoute';
 import TradePartnerProfile from './CustomComponents/Afterlogin/TradePartnerProfile';
-import SendEth from './CustomComponents/Wallet/SendEth';
-import Sendeth from './CustomComponents/AddressTransaction/Sendeth';
+import SendUsdt from './CustomComponents/AddressTransaction/SendUSDT';
+import SendBitcoin from './CustomComponents/AddressTransaction/SendBtc';
 // import BitcoinWallet1 from './CustomComponents/Testwallet/BitCoinWallet1';
 
 
@@ -51,7 +47,9 @@ const RoutesConfig = () => {
             <Route path='/login' element={<Loginnew />} />
             <Route path='/signup' element={<Signupnew />} />
             <Route path='/testing' element={<Testing />} />
-            <Route path='/sendEth' element={<Sendeth />} />
+            <Route path='/sendusdt' element={<SendUsdt />} />
+            <Route path='/sendbtc' element={<SendBitcoin />} />
+
 
 
             <Route path='*' element={<NotFound />} />

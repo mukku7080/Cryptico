@@ -148,7 +148,7 @@ const PasswordVerification = ({ blockChainType = {}, onClose }) => {
         // const mnemonic = finalDecryption;
 
         const seed = await bip39.mnemonicToSeed(mnemonic);
-        const root = bip32.fromSeed(seed, bitcoin.networks.bitcoin);
+        const root = bip32.fromSeed(seed, bitcoin.networks.testnet);
 
         let generatedAddresses = [];
         let generatedPrivateKeys = [];
@@ -160,7 +160,7 @@ const PasswordVerification = ({ blockChainType = {}, onClose }) => {
         // Generate Bech32 (bc1...) address
         const { address } = bitcoin.payments.p2wpkh({
             pubkey: Buffer.from(keyPair.publicKey),
-            network: bitcoin.networks.bitcoin,
+            network: bitcoin.networks.testnet,
         });
 
         // Get private key in Wallet Import Format (WIF)

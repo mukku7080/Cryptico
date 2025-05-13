@@ -30,9 +30,12 @@ import { isAddress } from 'ethers/lib/utils';
 import decryptWithKey from '../Decryption/Decryption';
 import { useUser } from '../../Context/userContext';
 import { setUserId } from 'firebase/analytics';
-import SendBnd from '../AddressTransaction/SendBnd';
+import SendBnb from '../AddressTransaction/SendBnb';
 import Sendeth from '../AddressTransaction/Sendeth';
 import { IoMdEye, IoMdEyeOff } from 'react-icons/io';
+import SendUsdt from '../AddressTransaction/SendUSDT';
+import SendUsdtNew from '../AddressTransaction/SendUsdtNew';
+import useSendUsdtNew from '../AddressTransaction/SendUsdtNew';
 
 const Balance = () => {
     const navigate = useNavigate()
@@ -97,10 +100,10 @@ const Balance = () => {
                                 <Box fontSize={'14px'} fontWeight={500}>
                                     Total Holding
                                 </Box>
-                                <Heading size={'md'}>{Number(totalBtc).toFixed(8)}</Heading>
+                                <Heading size={'md'}>{Number(totalBtc).toFixed(8)}&nbsp;BTC</Heading>
                                 <Flex alignItems={'center'} gap={2}>
                                     <LuEqualApproximately />
-                                    <Box as='span'>{Number(totalamount).toFixed(2)}</Box>
+                                    <Box as='span'>{Number(totalamount).toFixed(2)}&nbsp;INR</Box>
                                 </Flex>
                             </Flex>
 
@@ -1014,7 +1017,7 @@ export const Receive4 = () => {
                                             <Heading size={'lg'}>Your TRC-20 address</Heading>
                                             <Flex direction={'column'}>
 
-                                                <Box border={'1px solid #dcdcdc'} borderRadius={5} bg={'red.50'} fontWeight={500} p={4} color={'gray.500'}>Wallet not create yet!</Box>
+                                                <Box border={'1px solid #dcdcdc'} borderRadius={5} bg={'red.50'} fontWeight={500} p={4} color={'gray.500'}>Wallet not created yet!</Box>
                                             </Flex>
                                             {/* <Tooltip label={copied ? "Copied!" : "Copy to clipboard"} bg={'gray.100'} color={'black'} closeDelay={500} hasArrow>
                                                 <Button mb={5} colorScheme='orange' w={'150px'} onClick={handleCopyTron}>Copy address</Button>
@@ -1081,6 +1084,7 @@ export const Receive4 = () => {
 }
 
 export const Send1 = () => {
+    const { status, sendusdt } = useSendUsdtNew();
     const { user } = useUser();
     const { handleOtherUserDetail, otherUserDetail, setOtherUserDetail } = useAuth();
     const { handleSendInternalTransaction, handleWalletAddressTransaction, handleUpdateWalletAddressTransaction, handleFeeCalculation } = useAccount()
@@ -1218,7 +1222,6 @@ export const Send1 = () => {
     const handleSubmit = async () => {
         try {
             setIsLoading(true);
-
             if (isWalletValid) {
                 const res = await handleWalletAddressTransaction(AddressDto);
 
@@ -1230,11 +1233,15 @@ export const Send1 = () => {
                     const privateKey = await decryptWithKey(response?.senderWalletData?.wallet_key, userid);
                     let txResponse;
                     if (asset === 'bnb') {
-                        txResponse = await SendBnd(privateKey, walletAddress, response?.transactionData?.paid_amount);
+                        txResponse = await SendBnb(privateKey, walletAddress, response?.transactionData?.paid_amount);
                     }
                     if (asset === 'eth') {
                         txResponse = await Sendeth(privateKey, walletAddress, response?.transactionData?.paid_amount)
                     }
+                    if (asset === 'usdt') {
+                        txResponse = await sendusdt(privateKey, walletAddress, response?.transactionData?.paid_amount)
+                    }
+                    console.log(txResponse);
                     if (txResponse.transactionHash) {
                         const txnRequestDto = {
                             "txnId": response?.transactionData?.txn_id,
@@ -1247,6 +1254,7 @@ export const Send1 = () => {
                             onClose();
                             setAmount(0);
                             setWalletAddress('');
+                            setIsContinue(false);
                             toast({
                                 title: "Transaction Success",
                                 status: "success",
@@ -1497,7 +1505,7 @@ export const Send1 = () => {
                                     }
                                     {/* Amount Section End----------------------------------- */}
 
-                                    <Button isDisabled={Number(amount) > 0 ? false : true} fontWeight={600} fontSize={'18px'} _hover={{ bg: 'gray.100' }} bg={'gray.100'} p={10} onClick={handleContinue}   >
+                                    <Button isLoading={isContinue} isDisabled={Number(amount) > 0 ? false : true} fontWeight={600} fontSize={'18px'} _hover={{ bg: 'gray.200' }} bg={'gray.100'} p={10} onClick={handleContinue}   >
                                         <Flex gap={2} alignItems={'center'} justifyContent={'center'}>
                                             Continue
                                             <FaArrowRightLong />
@@ -1565,14 +1573,14 @@ export const Send1 = () => {
                                             <Button isLoading={isloading} spinner={null} loadingText='Processing...' isDisabled={isSend} bg={'orange.100'} color={'orange.400'} flex={0.7} size={'lg'} py={8} onClick={handleSubmit}>Send</Button>
 
                                         </Flex>
-                                        {
+                                        {/* {
                                             isloading &&
                                             <>
 
                                                 <Heading color={'blue.600'} px={2} size={'sm'}>During Transaction, Please do not press back or close the browser.</Heading>
                                                 <Heading color={'red.600'} px={2} size={'sm'}>Important: Stay on this screen to ensure successful completion.</Heading>
                                             </>
-                                        }
+                                        } */}
                                     </Flex>
 
                                 </Flex>
@@ -1586,11 +1594,29 @@ export const Send1 = () => {
                     <Button>Save</Button>
                 </ModalFooter>
             </Modal>
+
+            {/* After Processing the loader appear */}
+            {
+                isloading &&
+                <Modal isOpen={isloading} onClose={() => setIsLoading(false)} isCentered size="full">
+                    <ModalOverlay bg="blackAlpha.700" />
+                    <ModalContent bg="transparent" boxShadow="none">
+                        <ModalBody flexDirection={'column'} gap={3} display="flex" justifyContent="center" alignItems="center" h="100vh" >
+                            <Image src="/imagelogo/loading.gif" alt="Sending transaction..." boxSize="150px" />
+                            <Heading color={'blue.600'} px={2} size={'md'}>During Transaction, Please do not press back or close the browser.</Heading>
+                            <Heading color={'red.700'} px={2} size={'md'}>Important: Stay on this screen to ensure successful completion.</Heading>
+                        </ModalBody>
+                    </ModalContent>
+                </Modal>
+            }
+
+
         </>
     )
 }
 
 export const Send2 = () => {
+    const { status, sendusdt } = useSendUsdtNew();
     const { user } = useUser();
     const { handleOtherUserDetail, otherUserDetail, setOtherUserDetail } = useAuth();
     const { handleSendInternalTransaction, handleWalletAddressTransaction, handleUpdateWalletAddressTransaction, handleFeeCalculation } = useAccount()
@@ -1740,10 +1766,13 @@ export const Send2 = () => {
                     const privateKey = await decryptWithKey(response?.senderWalletData?.wallet_key, userid);
                     let txResponse;
                     if (asset === 'bnb') {
-                        txResponse = await SendBnd(privateKey, walletAddress, response?.transactionData?.paid_amount);
+                        txResponse = await SendBnb(privateKey, walletAddress, response?.transactionData?.paid_amount);
                     }
                     if (asset === 'eth') {
                         txResponse = await Sendeth(privateKey, walletAddress, response?.transactionData?.paid_amount)
+                    }
+                    if (asset === 'usdt') {
+                        txResponse = await sendusdt(privateKey, walletAddress, response?.transactionData?.paid_amount)
                     }
                     if (txResponse.transactionHash) {
                         const txnRequestDto = {
@@ -1757,6 +1786,7 @@ export const Send2 = () => {
                             onClose();
                             setAmount(0);
                             setWalletAddress('');
+                            setIsContinue(false);
                             toast({
                                 title: "Transaction Success",
                                 status: "success",
@@ -2096,11 +2126,26 @@ export const Send2 = () => {
                     <Button>Save</Button>
                 </ModalFooter>
             </Modal>
+            {/* After Processing the loader appear */}
+            {
+                isloading &&
+                <Modal isOpen={isloading} onClose={() => setIsLoading(false)} isCentered size="full">
+                    <ModalOverlay bg="blackAlpha.700" />
+                    <ModalContent bg="transparent" boxShadow="none">
+                        <ModalBody flexDirection={'column'} gap={3} display="flex" justifyContent="center" alignItems="center" h="100vh" >
+                            <Image src="/imagelogo/loading.gif" alt="Sending transaction..." boxSize="150px" />
+                            <Heading color={'blue.600'} px={2} size={'md'}>During Transaction, Please do not press back or close the browser.</Heading>
+                            <Heading color={'red.700'} px={2} size={'md'}>Important: Stay on this screen to ensure successful completion.</Heading>
+                        </ModalBody>
+                    </ModalContent>
+                </Modal>
+            }
         </>
     )
 }
 
 export const Send3 = () => {
+    const { status, sendusdt } = useSendUsdtNew();
     const { user } = useUser();
     const { handleOtherUserDetail, otherUserDetail, setOtherUserDetail } = useAuth();
     const { handleSendInternalTransaction, handleWalletAddressTransaction, handleUpdateWalletAddressTransaction, handleFeeCalculation } = useAccount()
@@ -2250,10 +2295,13 @@ export const Send3 = () => {
                     const privateKey = await decryptWithKey(response?.senderWalletData?.wallet_key, userid);
                     let txResponse;
                     if (asset === 'bnb') {
-                        txResponse = await SendBnd(privateKey, walletAddress, response?.transactionData?.paid_amount);
+                        txResponse = await SendBnb(privateKey, walletAddress, response?.transactionData?.paid_amount);
                     }
                     if (asset === 'eth') {
                         txResponse = await Sendeth(privateKey, walletAddress, response?.transactionData?.paid_amount)
+                    }
+                    if (asset === 'usdt') {
+                        txResponse = await sendusdt(privateKey, walletAddress, response?.transactionData?.paid_amount)
                     }
                     if (txResponse.transactionHash) {
                         const txnRequestDto = {
@@ -2267,6 +2315,7 @@ export const Send3 = () => {
                             onClose();
                             setAmount(0);
                             setWalletAddress('');
+                            setIsContinue(false);
                             toast({
                                 title: "Transaction Success",
                                 status: "success",
@@ -2606,12 +2655,27 @@ export const Send3 = () => {
                     <Button>Save</Button>
                 </ModalFooter>
             </Modal>
+            {/* After Processing the loader appear */}
+            {
+                isloading &&
+                <Modal isOpen={isloading} onClose={() => setIsLoading(false)} isCentered size="full">
+                    <ModalOverlay bg="blackAlpha.700" />
+                    <ModalContent bg="transparent" boxShadow="none">
+                        <ModalBody flexDirection={'column'} gap={3} display="flex" justifyContent="center" alignItems="center" h="100vh" >
+                            <Image src="/imagelogo/loading.gif" alt="Sending transaction..." boxSize="150px" />
+                            <Heading color={'blue.600'} px={2} size={'md'}>During Transaction, Please do not press back or close the browser.</Heading>
+                            <Heading color={'red.700'} px={2} size={'md'}>Important: Stay on this screen to ensure successful completion.</Heading>
+                        </ModalBody>
+                    </ModalContent>
+                </Modal>
+            }
         </>
     )
 }
 
 
 export const Send4 = () => {
+    const { status, sendusdt } = useSendUsdtNew();
     const { user } = useUser();
     const { handleOtherUserDetail, otherUserDetail, setOtherUserDetail } = useAuth();
     const { handleSendInternalTransaction, handleWalletAddressTransaction, handleUpdateWalletAddressTransaction, handleFeeCalculation } = useAccount()
@@ -2761,10 +2825,13 @@ export const Send4 = () => {
                     const privateKey = await decryptWithKey(response?.senderWalletData?.wallet_key, userid);
                     let txResponse;
                     if (asset === 'bnb') {
-                        txResponse = await SendBnd(privateKey, walletAddress, response?.transactionData?.paid_amount);
+                        txResponse = await SendBnb(privateKey, walletAddress, response?.transactionData?.paid_amount);
                     }
                     if (asset === 'eth') {
                         txResponse = await Sendeth(privateKey, walletAddress, response?.transactionData?.paid_amount)
+                    }
+                    if (asset === 'usdt') {
+                        txResponse = await sendusdt(privateKey, walletAddress, response?.transactionData?.paid_amount)
                     }
                     if (txResponse.transactionHash) {
                         const txnRequestDto = {
@@ -2778,6 +2845,7 @@ export const Send4 = () => {
                             onClose();
                             setAmount(0);
                             setWalletAddress('');
+                            setIsContinue(false);
                             toast({
                                 title: "Transaction Success",
                                 status: "success",
@@ -3117,6 +3185,20 @@ export const Send4 = () => {
                     <Button>Save</Button>
                 </ModalFooter>
             </Modal>
+            {/* After Processing the loader appear */}
+            {
+                isloading &&
+                <Modal isOpen={isloading} onClose={() => setIsLoading(false)} isCentered size="full">
+                    <ModalOverlay bg="blackAlpha.700" />
+                    <ModalContent bg="transparent" boxShadow="none">
+                        <ModalBody flexDirection={'column'} gap={3} display="flex" justifyContent="center" alignItems="center" h="100vh" >
+                            <Image src="/imagelogo/loading.gif" alt="Sending transaction..." boxSize="150px" />
+                            <Heading color={'blue.600'} px={2} size={'md'}>During Transaction, Please do not press back or close the browser.</Heading>
+                            <Heading color={'red.700'} px={2} size={'md'}>Important: Stay on this screen to ensure successful completion.</Heading>
+                        </ModalBody>
+                    </ModalContent>
+                </Modal>
+            }
         </>
     )
 }
