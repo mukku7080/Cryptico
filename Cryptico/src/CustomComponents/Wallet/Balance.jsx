@@ -1268,7 +1268,23 @@ export const Send1 = () => {
                 }
             }
             else {
-                await handleSendInternalTransaction(Dto);
+                const response = await handleSendInternalTransaction(Dto);
+                console.log(response);
+                if (response.status === true) {
+                    setIsLoading(false);
+                    onClose();
+                    setAmount(0);
+                    setWalletAddress('');
+                    setIsContinue(false);
+                    toast({
+                        title: "Transaction Success",
+                        status: "success",
+                        duration: 2000,
+                        isClosable: true,
+                        position: 'top-right'
+                    })
+
+                }
             }
         }
         catch (error) {
@@ -1334,10 +1350,9 @@ export const Send1 = () => {
                                         <Flex justifyContent={'space-between'} p={4} >
                                             <Heading size={'md'}>Send to </Heading>
                                             <ButtonGroup size={'sm'} >
-                                                <Button bg={isbyaddress ? 'orange' : 'gray.300'} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} fontSize={'12px'} onClick={() => setIsByAddress(true)}>Address</Button>
-                                                <Button bg={isbyaddress ? 'gray.300' : 'orange'} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} fontSize={'12px'} onClick={() => setIsByAddress(false)}>Cryptico User</Button>
+                                                <Button bg={isbyaddress ? 'orange' : 'gray.300'} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} fontSize={'12px'} onClick={() => { setIsByAddress(true); setInputValue(null) }}>Address</Button>
+                                                <Button bg={isbyaddress ? 'gray.300' : 'orange'} _active={{ bg: 'orange' }} _focus={{ bg: 'orange' }} fontSize={'12px'} onClick={() => { setIsByAddress(false); setWalletAddress(null) }}>Cryptico User</Button>
                                             </ButtonGroup>
-
                                         </Flex>
                                         {
                                             isbyaddress ?
@@ -1520,16 +1535,24 @@ export const Send1 = () => {
                                         <Box mb={2} color={'gray'} fontWeight={500}>You are sending</Box>
                                         <Box fontSize={'22px'} fontWeight={650} size={'lg'} >{`${Number(assetValue).toFixed(8)} ${asset.toUpperCase()}`}</Box>
                                         <Box mb={3}>{`≈ ${Number(assetInrValue).toFixed(2)}INR`}</Box>
-                                        <Box>to Address</Box>
-                                        <Box fontSize={'14px'} fontWeight={500}>{walletAddress}</Box>
-
+                                        {
+                                            inputValue ?
+                                                <Box fontWeight={500}>To Cryptico User</Box>
+                                                :
+                                                <Box fontWeight={500}>To Address</Box>
+                                        }
+                                        {
+                                            inputValue ?
+                                                <Box fontSize={'14px'} fontWeight={500}>{inputValue}</Box>
+                                                :
+                                                <Box fontSize={'14px'} fontWeight={500}>{walletAddress}</Box>
+                                        }
                                     </Flex>
                                     <Divider></Divider>
                                     <Flex direction={'column'} className='second-part' p={6} gap={5}>
                                         <Flex className='s1' justifyContent={'space-between'}>
                                             <Flex direction={'column'}>
                                                 <Box fontSize={'14px'} p={1} bg={'gray.200'} borderRadius={5}>
-
                                                     {asset.toLocaleUpperCase()} network fee
                                                 </Box>
                                                 <Box fontSize={'12px'}>-----</Box>
@@ -2673,7 +2696,6 @@ export const Send3 = () => {
     )
 }
 
-
 export const Send4 = () => {
     const { status, sendusdt } = useSendUsdtNew();
     const { user } = useUser();
@@ -3202,9 +3224,6 @@ export const Send4 = () => {
         </>
     )
 }
-
-
-
 
 export const SelectToken = ({ index, setHeaderName, setHeaderLogo, setAsset, setNetwork, setCurrentPrice, setAvailableBalance }) => {
     const cryptoOption = useCryptoOption();

@@ -35,6 +35,7 @@ function App() {
           <OtherDetailProvider>
             <OfferProvider>
               <AccountProvider>
+                {/* <TradeDataProvider> */}
                 <Container maxW={'container.xxl'} margin={0} padding={0} bg={bgColor} display={'flex'} flexDirection={'column'}>
                   {/* <Box  zIndex={1}> */}
                   <motion.div
@@ -54,6 +55,7 @@ function App() {
                   )}
                   <Footer />
                 </Container>
+                {/* </TradeDataProvider> */}
               </AccountProvider>
             </OfferProvider>
           </OtherDetailProvider>

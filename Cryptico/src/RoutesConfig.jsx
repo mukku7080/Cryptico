@@ -37,6 +37,7 @@ import EmailVerification from './CustomComponents/LoginSignup/EmailVerification'
 import TradePartnerProfile from './CustomComponents/Afterlogin/TradePartnerProfile';
 import SendUsdt from './CustomComponents/AddressTransaction/SendUSDT';
 import SendBitcoin from './CustomComponents/AddressTransaction/SendBtc';
+import TradeStart from './CustomComponents/Buy&Sell/TradeStart';
 // import BitcoinWallet1 from './CustomComponents/Testwallet/BitCoinWallet1';
 
 
@@ -72,6 +73,7 @@ const RoutesConfig = () => {
             <Route path="/trade-partner-profile" element={<ProtectedRoute><TradePartnerProfile /></ProtectedRoute>} />
             <Route path='/buy' element={<ProtectedRoute><BuyNew /></ProtectedRoute>} />
             <Route path='/buyOffer' element={<ProtectedRoute><BuyOffer /></ProtectedRoute>} />
+            <Route path='/tradeStart' element={<ProtectedRoute><TradeStart /></ProtectedRoute>} />
             <Route path='/sellOffer' element={<ProtectedRoute><SellOffer /></ProtectedRoute>} />
             <Route path='/sell' element={<ProtectedRoute><SellNew /></ProtectedRoute>} />
             <Route path='/createOffers' element={<ProtectedRoute><CreateOffers /></ProtectedRoute>} />

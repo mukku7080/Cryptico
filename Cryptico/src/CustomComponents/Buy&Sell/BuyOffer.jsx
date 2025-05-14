@@ -27,16 +27,21 @@ import { LuSquareArrowOutUpRight } from 'react-icons/lu'
 import { MdCheck, MdStar, MdStarOutline } from 'react-icons/md'
 import { useOffer } from '../../Context/OfferContext'
 import { useUser } from '../../Context/userContext'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { color } from 'framer-motion'
 
 const BuyOffer = () => {
-    const location = useLocation();
-    const [data, setData] = useState(location.state?.data);
-    useEffect(() => {
 
-        setData(location.state?.data);
-    }, [location.state?.data])
+    const location = useLocation();
+    const navigate = useNavigate();
+    const data = location.state?.data;
+    localStorage.setItem('tradevalue', JSON.stringify(data));
+    const handleBuy = () => {
+        navigate('/tradeStart', { state: { data } });
+        console.log(data);
+    };
+
+
     const [amount, setAmount] = useState(data?.min_trade_limit);
     return (
         <>
@@ -93,7 +98,7 @@ const BuyOffer = () => {
                                 <AiOutlineExclamationCircle />
                                 <Box>you get <b>1452.00</b> worth of Bitcoin</Box>
                             </Flex>
-                            <Button borderRadius={4} type='submit' w={'full'} bg={'orange.300'} _hover={{ bg: 'orange.100' }}>Buy Now</Button>
+                            <Button borderRadius={4} type='submit' w={'full'} bg={'orange.300'} _hover={{ bg: 'orange.100' }} onClick={() => navigate('/tradeStart', { state: { data } })}>Buy Now</Button>
                         </form>
                         <Flex alignSelf={'center'} flexWrap={'wrap'}>
                             Reserve Bitcoin for this trade and start live chat with &nbsp;
@@ -358,7 +363,7 @@ const Feedback = () => {
 
 
 
-const OfferTerms = () => {
+export const OfferTerms = () => {
     return (
         <>
             <Flex direction={'column'} w={'full'} gap={5}>
