@@ -29,16 +29,20 @@ import { useOffer } from '../../Context/OfferContext'
 import { useUser } from '../../Context/userContext'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { color } from 'framer-motion'
+import { useTradeData } from '../DataContext/TradeDataContext'
 
 const BuyOffer = () => {
 
     const location = useLocation();
     const navigate = useNavigate();
+    const { setTradeData } = useTradeData();
     const data = location.state?.data;
-    localStorage.setItem('tradevalue', JSON.stringify(data));
+    setTradeData(data);
+    useEffect(() => {
+        localStorage.setItem('chatUser', JSON.stringify(data));
+    }, [data])
     const handleBuy = () => {
-        navigate('/tradeStart', { state: { data } });
-        console.log(data);
+        navigate('/tradeStart');
     };
 
 
@@ -98,7 +102,7 @@ const BuyOffer = () => {
                                 <AiOutlineExclamationCircle />
                                 <Box>you get <b>1452.00</b> worth of Bitcoin</Box>
                             </Flex>
-                            <Button borderRadius={4} type='submit' w={'full'} bg={'orange.300'} _hover={{ bg: 'orange.100' }} onClick={() => navigate('/tradeStart', { state: { data } })}>Buy Now</Button>
+                            <Button borderRadius={4} w={'full'} bg={'orange.300'} _hover={{ bg: 'orange.100' }} onClick={handleBuy}>Buy Now</Button>
                         </form>
                         <Flex alignSelf={'center'} flexWrap={'wrap'}>
                             Reserve Bitcoin for this trade and start live chat with &nbsp;

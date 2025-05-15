@@ -1,15 +1,18 @@
 // // TradeDataContext.js
-// import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 
-// const TradeDataContext = createContext();
+const TradeDataContext = createContext();
 
-// export const TradeDataProvider = ({ children }) => {
-//     const [tradeData, setTradeData] = useState(null);
-//     return (
-//         <TradeDataContext.Provider value={{ tradeData, setTradeData }}>
-//             {children}
-//         </TradeDataContext.Provider>
-//     );
-// };
+export const TradeDataProvider = ({ children }) => {
+    const [tradeData, setTradeData] = useState(null);
+    useEffect(() => {
+        console.log(tradeData);
+    }, [tradeData])
+    return (
+        <TradeDataContext.Provider value={{ tradeData, setTradeData }}>
+            {children}
+        </TradeDataContext.Provider>
+    );
+};
 
-// export const useTradeData = () => useContext(TradeDataContext);
+export const useTradeData = () => useContext(TradeDataContext);

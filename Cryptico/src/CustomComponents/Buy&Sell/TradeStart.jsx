@@ -30,15 +30,21 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { ImStopwatch } from "react-icons/im";
 import { BsExclamationCircle } from 'react-icons/bs';
-import { OfferTerms } from './BuyOffer';
+import { OfferTerms, timeAgo } from './BuyOffer';
 import { LuSquareArrowOutUpRight } from 'react-icons/lu';
 import { BiDislike, BiLike } from 'react-icons/bi';
 import ChatComponent from '../ChatSection/ChatComponent';
+import { useUser } from '../../Context/userContext';
 
 const TradeStart = () => {
+    const navigate = useNavigate();
     const [ispaid, setIsPaid] = useState(false);
+    // const { tradeData } = useTradeData();
+    const tradeData = JSON.parse(localStorage.getItem('chatUser'));
+    console.log(tradeData);
 
-    const tradeData = JSON.parse(localStorage.getItem('tradevalue'));
+
+
     return (
         <>
             <Flex maxW={'container.xxl'} justifyContent={'start'} alignItems={'center'} paddingTop={{ base: 0, lg: 20 }} minH={'90vh'} direction={'column'} >
@@ -49,7 +55,6 @@ const TradeStart = () => {
                     gap={5}
                     mt={{ base: 0, lg: 0 }}
                     direction={{ base: 'column-reverse', lg: 'row' }}
-
                 >
 
 
@@ -120,7 +125,7 @@ const TradeStart = () => {
                             </Flex>
                         </Flex>
                         <Flex justifyContent={'space-between'}>
-                            <Button variant={'outline'}>View Offer</Button>
+                            <Button variant={'outline'} onClick={() => navigate('/chat')}>View Offer</Button>
                             <Button variant={'outline'}>Take a Tour</Button>
                         </Flex>
 
@@ -144,6 +149,7 @@ const TradeStart = () => {
 export const RightSideContent = ({ tradeData }) => {
     const [index, setIndex] = useState(0);
     const location = useLocation();
+    const { user } = useUser();
 
 
     return (
@@ -222,7 +228,7 @@ export const RightSideContent = ({ tradeData }) => {
                         </Flex>
 
                     </Flex>
-                    <ChatComponent />
+                    <ChatComponent currentUserId={user?.user_id} />
 
 
                 </Card>

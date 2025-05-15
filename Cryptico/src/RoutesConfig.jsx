@@ -38,6 +38,7 @@ import TradePartnerProfile from './CustomComponents/Afterlogin/TradePartnerProfi
 import SendUsdt from './CustomComponents/AddressTransaction/SendUSDT';
 import SendBitcoin from './CustomComponents/AddressTransaction/SendBtc';
 import TradeStart from './CustomComponents/Buy&Sell/TradeStart';
+import Chat from './CustomComponents/Chat';
 // import BitcoinWallet1 from './CustomComponents/Testwallet/BitCoinWallet1';
 
 
@@ -50,6 +51,7 @@ const RoutesConfig = () => {
             <Route path='/testing' element={<Testing />} />
             <Route path='/sendusdt' element={<SendUsdt />} />
             <Route path='/sendbtc' element={<SendBitcoin />} />
+            <Route path='/chat' element={<Chat />} />
 
 
 

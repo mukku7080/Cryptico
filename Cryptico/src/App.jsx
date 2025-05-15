@@ -13,6 +13,7 @@ import BuySellWithNotification from './CustomComponents/Buy&Sell/BuySellWithNoti
 import RoutesConfig from './RoutesConfig'
 import AccountProvider from './Context/AccountContext'
 import OfferProvider from './Context/OfferContext'
+import { TradeDataProvider } from './CustomComponents/DataContext/TradeDataContext'
 function App() {
   const [count, setCount] = useState(0)
   const bgColor = useColorModeValue("#f5f7fa", "gray.900");
@@ -35,27 +36,27 @@ function App() {
           <OtherDetailProvider>
             <OfferProvider>
               <AccountProvider>
-                {/* <TradeDataProvider> */}
-                <Container maxW={'container.xxl'} margin={0} padding={0} bg={bgColor} display={'flex'} flexDirection={'column'}>
-                  {/* <Box  zIndex={1}> */}
-                  <motion.div
-                    initial={{ opacity: 0, y: -20 }} // Start position
-                    animate={{ opacity: 1, y: 0 }}    // End position
-                    transition={{ duration: 0.5, ease: 'easeInOut' }} // Smooth transition
-                    style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000 }}
-                  >
-                    <Navbarnew />
-                    <BuySellWithNotification />
-                  </motion.div>
-                  {/* </Box> */}
-                  {loading && isTopLevelRoute ? (
-                    <PageLoader />
-                  ) : (
-                    <RoutesConfig /> // Render routes without reloading for nested pages
-                  )}
-                  <Footer />
-                </Container>
-                {/* </TradeDataProvider> */}
+                <TradeDataProvider>
+                  <Container maxW={'container.xxl'} margin={0} padding={0} bg={bgColor} display={'flex'} flexDirection={'column'}>
+                    {/* <Box  zIndex={1}> */}
+                    <motion.div
+                      initial={{ opacity: 0, y: -20 }} // Start position
+                      animate={{ opacity: 1, y: 0 }}    // End position
+                      transition={{ duration: 0.5, ease: 'easeInOut' }} // Smooth transition
+                      style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000 }}
+                    >
+                      <Navbarnew />
+                      <BuySellWithNotification />
+                    </motion.div>
+                    {/* </Box> */}
+                    {loading && isTopLevelRoute ? (
+                      <PageLoader />
+                    ) : (
+                      <RoutesConfig /> // Render routes without reloading for nested pages
+                    )}
+                    <Footer />
+                  </Container>
+                </TradeDataProvider>
               </AccountProvider>
             </OfferProvider>
           </OtherDetailProvider>
