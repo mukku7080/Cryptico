@@ -6,7 +6,6 @@ const TradeDataContext = createContext();
 export const TradeDataProvider = ({ children }) => {
     const [tradeData, setTradeData] = useState(null);
     useEffect(() => {
-        console.log(tradeData);
     }, [tradeData])
     return (
         <TradeDataContext.Provider value={{ tradeData, setTradeData }}>

@@ -46,6 +46,7 @@ import { Form, Formik } from 'formik';
 import * as Yup from "yup";
 import { useOffer } from '../../Context/OfferContext';
 import { useAccount } from '../../Context/AccountContext';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -94,6 +95,7 @@ const CreateOffers = () => {
     })
     const { handleAddOffer } = useOffer();
     const toast = useToast();
+    const navigate = useNavigate();
     const [crypto, setCrypto] = useState("Bitcoin");
     const [action, setAction] = useState("Sell");
     const [page, setPage] = useState(0);
@@ -210,7 +212,24 @@ const CreateOffers = () => {
                                                                 {
                                                                     (page === pages.length - 1) ?
 
-                                                                        <Button variant={'outline'} colorScheme='orange' type='submit' isDisabled={!values.term.length > 0} onClick={handleSubmit}  >Create Offers</Button>
+                                                                        <Button
+                                                                            isLoading={isCreateOffer}
+                                                                            loadingText='Creating....'
+                                                                            variant={'outline'}
+                                                                            colorScheme='orange'
+                                                                            type='submit'
+                                                                            isDisabled={!values.term.length > 0}
+                                                                            onClick={() => {
+                                                                                setCreateOffer(true);
+                                                                                setTimeout(() => {
+                                                                                    setCreateOffer(false);
+                                                                                    navigate('/user-dashboard/myOffers');
+                                                                                }, 3000);
+                                                                                handleSubmit();
+                                                                            }}
+                                                                        >
+                                                                            Create Offers
+                                                                        </Button>
                                                                         :
                                                                         <Button variant={'outline'} colorScheme='orange' onClick={nextPage} isDisabled={!isDisable}>Next Step</Button>
                                                                 }

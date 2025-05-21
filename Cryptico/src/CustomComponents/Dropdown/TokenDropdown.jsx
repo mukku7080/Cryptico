@@ -12,7 +12,7 @@ import { MdKeyboardArrowDown } from "react-icons/md";
 import { useOffer } from '../../Context/OfferContext';
 
 
-const TokenDropdown = ({ index }) => {
+const TokenDropdown = ({ index,setIndex }) => {
     const { setQueryParams } = useOffer();
     const safeIndex = index !== undefined ? index : 0;
     const [option, setOption] = useState(cryptoOption[safeIndex]?.name);
@@ -24,6 +24,7 @@ const TokenDropdown = ({ index }) => {
             setOption(cryptoOption[safeIndex].name);
             setLogo(cryptoOption[safeIndex].logo);
             setQueryParams((prev) => ({ ...prev, cryptocurrency: cryptoOption[safeIndex].name.toLocaleLowerCase() }))
+            
         }
     }, [safeIndex]);
 
@@ -47,6 +48,7 @@ const TokenDropdown = ({ index }) => {
                                     setOption(data.name);
                                     setLogo(data.logo);
                                     setQueryParams((prev) => ({ ...prev, cryptocurrency: data.name.toLocaleLowerCase() }))
+                                    setIndex(index);
 
                                 }} gap={3} _hover={{ bg: "blue.100" }}><Image boxSize={5} src={data.logo}></Image>{data.name}
                             </MenuItem>

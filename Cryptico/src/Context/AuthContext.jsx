@@ -1,6 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { login, signup, logout, emailOtp, verifyEmailOtp, loginWithGoogle, SignupWithGoogle, forgetPassword, resetPassword, passwordMatch, enable2FA, getUserDetail } from '../api/authService';
 import { useNavigate } from 'react-router-dom';
+import { useOtherDetail } from './otherContext';
+import { getToken } from 'firebase/messaging';
+import { messaging } from '../CustomComponents/Firebase';
 
 export const AuthContext = createContext();
 
@@ -22,15 +25,18 @@ export const AuthProvider = ({ children }) => {
 
         }
     }, [])
-  
+
 
 
 
     const handleLogin = async ({ email, password }) => {
+
         try {
 
             const response = await login({ email, password });
             setUser(response.user);
+            // requestNotificationPermission();
+
             return response;
         }
         catch (error) {
@@ -171,6 +177,28 @@ export const AuthProvider = ({ children }) => {
         setOtherUserDetail(data);
         return data;
     }
+    const requestNotificationPermission = async () => {
+        try {
+            const permission = await Notification.requestPermission();
+
+            if (permission === 'granted') {
+                const currentToken = await getToken(messaging, {
+                    vapidKey: 'BA0qJktzuT1WyMNVqglcaG8pUT9z8nk4M3wHg7mjBWhDD_9TgeyW6RoYKRCa14sUHgFdmiQqBgX7Rn0qOE1AtDs',
+                });
+
+                if (currentToken) {
+                    console.log('Device token:', currentToken);
+                    // Save this token to your server or database
+                } else {
+                    console.log('No token received.');
+                }
+            } else {
+                console.log('Notification permission not granted');
+            }
+        } catch (error) {
+            console.error('Error getting permission or token:', error);
+        }
+    };
 
 
     return (

@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { AddSecurityQuestions, getAllNotification, getCountrycode, getLoginHistory, getOtherService, getReferalLink, markAsRead, markAsReadById, realTimePrice } from '../api/otherService';
 
+
+
 export const OtherContext = createContext();
 
 const OtherDetailProvider = ({ children }) => {
@@ -124,6 +126,7 @@ const OtherDetailProvider = ({ children }) => {
         priceRef.current = response;
         setPrice(response);
     }
+ 
 
     return (
         <OtherContext.Provider value={{

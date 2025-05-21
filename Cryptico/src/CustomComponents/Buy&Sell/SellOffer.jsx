@@ -18,90 +18,141 @@ import {
     ModalCloseButton,
     Select,
     Textarea,
+    Spinner,
+    Alert,
+    AlertIcon,
+    AlertTitle,
+    AlertDescription,
 } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 import { AiFillExclamationCircle, AiOutlineExclamationCircle, AiOutlineQuestion, AiOutlineQuestionCircle } from 'react-icons/ai'
 import { BiDislike, BiLike } from 'react-icons/bi'
 import { LuSquareArrowOutUpRight } from 'react-icons/lu'
 import { MdCheck, MdStar, MdStarOutline } from 'react-icons/md'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { timeAgo } from './BuyOffer'
+import { useTradeData } from '../DataContext/TradeDataContext'
+import { useUser } from '../../Context/userContext'
+
 
 const SellOffer = () => {
     const location = useLocation();
-    const [data, setData] = useState(location.state?.data);
-    useEffect(() => {
+    const navigate = useNavigate();
+    const { user } = useUser();
 
-        setData(location.state?.data);
-    }, [location.state?.data])
+    const { setTradeData } = useTradeData();
+    const data = location.state?.data;
+    setTradeData(data);
+    useEffect(() => {
+        localStorage.setItem('chatUser', JSON.stringify(data));
+    }, [data])
+    const handleSell = () => {
+        navigate('/tradeStart');
+    };
     const [amount, setAmount] = useState(data?.min_trade_limit);
     return (
         <>
+            {
+                (user?.user_id === data?.user?.user_id) ?
+                    <>
+                        <Alert                        
+                            status='warning'
+                            variant='subtle'
+                            flexDirection='column'
+                            alignItems='center'
+                            justifyContent='center'
+                            textAlign='center'
+                            height='500px'
+                            mt={55}
+                        >
+                            <AlertIcon boxSize='40px' mr={0} />
+                            <AlertTitle mt={4} mb={1} fontSize='xl'>
+                                Oops Sorry !
+                            </AlertTitle>
+                            <AlertDescription maxWidth='sm' fontWeight={500}>
+                                You can not trade with yourself
+                            </AlertDescription>
+                        </Alert>
+                    </>
+                    :
 
-            <Flex className='main' mt={20} direction={'column'} alignItems={'center'} gap={10} minH={'92vh'} alignSelf={'center'}
-                maxW={{ base: "90%", lg: '90%', xl: "65%" }}
-                minW={{ base: "90%", sm: '90%', lg: '90%', xl: "65%" }}
-            >
-                <Flex className='sub-main' direction={'column'} justifyContent={'center'} alignItems={'center'} border={'1px solid #ffedd5'} boxShadow={'lg'} borderRadius={4} bg={'white'} w={'full'} mt={10} >
+                    <Flex className='main' mt={20} direction={'column'} alignItems={'center'} gap={10} minH={'92vh'} alignSelf={'center'}
+                        maxW={{ base: "90%", lg: '90%', xl: "65%" }}
+                        minW={{ base: "90%", sm: '90%', lg: '90%', xl: "65%" }}
+                    >
+                        <Flex
+                            className='sub-main'
+                            direction={'column'}
+                            justifyContent={'center'}
+                            alignItems={'center'}
+                            border={'1px solid #ffedd5'}
+                            boxShadow={'lg'}
+                            borderRadius={4}
+                            bg={'white'}
+                            w={'full'}
+                            mt={10}
+
+                        >
 
 
-                    <Flex direction={'column'} gap={10} w={'full'} p={5}   >
-                        <Heading size={'lg'} alignSelf={'center'}>How much do you want to Sell?</Heading>
-                        <form>
-                            <Flex gap={5} direction={{ base: 'column', lg: 'row' }}>
+                            <Flex direction={'column'} gap={10} w={'full'} p={5}   >
+                                <Heading size={'lg'} alignSelf={'center'}>How much do you want to Sell?</Heading>
+                                <form>
+                                    <Flex gap={5} direction={{ base: 'column', lg: 'row' }}>
 
-                                <FormControl>
-                                    <FormLabel>I will receive</FormLabel>
-                                    <InputGroup border={'1px solid #ffedd5'} borderRadius={4} _hover={{ boxShadow: 'md' }}>
+                                        <FormControl>
+                                            <FormLabel>I will receive</FormLabel>
+                                            <InputGroup border={'1px solid #ffedd5'} borderRadius={4} _hover={{ boxShadow: 'md' }}>
 
-                                        <Input type="number" placeholder="Enter amount" value={amount} border={'none'} focusBorderColor='#ffedd5' _focus={{ boxShadow: 'none' }} _hover={{ border: 'none' }} />
-                                        <InputRightAddon bg={'white'} color={'orange.500'} border={'none'}>INR</InputRightAddon>
+                                                <Input type="number" placeholder="Enter amount" value={amount} border={'none'} focusBorderColor='#ffedd5' _focus={{ boxShadow: 'none' }} _hover={{ border: 'none' }} />
+                                                <InputRightAddon bg={'white'} color={'orange.500'} border={'none'}>INR</InputRightAddon>
 
-                                    </InputGroup>
-                                </FormControl>
+                                            </InputGroup>
+                                        </FormControl>
 
-                                <FormControl>
-                                    <FormLabel>and pay in </FormLabel>
-                                    <InputGroup border={'1px solid #ffedd5'} borderRadius={4} _hover={{ boxShadow: 'md' }}>
+                                        <FormControl>
+                                            <FormLabel>and pay in </FormLabel>
+                                            <InputGroup border={'1px solid #ffedd5'} borderRadius={4} _hover={{ boxShadow: 'md' }}>
 
-                                        <Input type="number" placeholder="Enter amount" border={'none'} focusBorderColor='#ffedd5' _focus={{ boxShadow: 'none' }} _hover={{ border: 'none' }} />
-                                        <InputRightAddon bg={'white'} color={'orange.500'} border={'none'}>INR</InputRightAddon>
+                                                <Input type="number" placeholder="Enter amount" border={'none'} focusBorderColor='#ffedd5' _focus={{ boxShadow: 'none' }} _hover={{ border: 'none' }} />
+                                                <InputRightAddon bg={'white'} color={'orange.500'} border={'none'}>INR</InputRightAddon>
 
-                                    </InputGroup>
-                                </FormControl>
+                                            </InputGroup>
+                                        </FormControl>
+                                    </Flex>
+                                    <Flex gap={4} alignItems={'center'} my={5}>
+                                        <AiOutlineExclamationCircle />
+                                        <Box>you get <b>1452.00</b> worth of Bitcoin</Box>
+                                    </Flex>
+                                    <Button borderRadius={4} w={'full'} bg={'orange.300'} _hover={{ bg: 'orange.100' }} onClick={handleSell}>Sell Now</Button>
+                                </form>
+                                <Flex alignSelf={'center'} flexWrap={'wrap'}>
+                                    Reserve Bitcoin for this trade and start live chat with &nbsp;
+                                    <Link textDecoration={'underline'} color={'orange.300'}>{data?.user?.username}</Link>
+
+                                </Flex>
                             </Flex>
-                            <Flex gap={4} alignItems={'center'} my={5}>
-                                <AiOutlineExclamationCircle />
-                                <Box>you get <b>1452.00</b> worth of Bitcoin</Box>
+                        </Flex>
+
+                        <Flex className='second-section' direction={'column'} w={'full'} justifyContent={'center'} alignItems={'center'}  >
+
+
+                            <Flex gap={10} w={'full'} direction={{ base: 'column', lg: 'row' }}   >
+                                <Flex flex={1}>
+                                    <AboutOffer data={data} />
+
+                                </Flex>
+                                <Flex flex={1}>
+                                    <AboutSeller data={data} />
+
+                                </Flex>
                             </Flex>
-                            <Button borderRadius={4} type='submit' w={'full'} bg={'orange.300'} _hover={{ bg: 'orange.100' }}>Sell Now</Button>
-                        </form>
-                        <Flex alignSelf={'center'} flexWrap={'wrap'}>
-                            Reserve Bitcoin for this trade and start live chat with &nbsp;
-                            <Link textDecoration={'underline'} color={'orange.300'}>{data?.user?.username}</Link>
-
                         </Flex>
+                        <OfferTerms />
+                        <Feedback />
+                        <Problem />
                     </Flex>
-                </Flex>
-
-                <Flex className='second-section' direction={'column'} w={'full'} justifyContent={'center'} alignItems={'center'}  >
-
-
-                    <Flex gap={10} w={'full'} direction={{ base: 'column', lg: 'row' }}   >
-                        <Flex flex={1}>
-                            <AboutOffer data={data} />
-
-                        </Flex>
-                        <Flex flex={1}>
-                            <AboutSeller data={data} />
-
-                        </Flex>
-                    </Flex>
-                </Flex>
-                <OfferTerms />
-                <Feedback />
-                <Problem />
-            </Flex>
+            }
         </>
     )
 }
@@ -177,7 +228,6 @@ const AboutSeller = ({ data }) => {
                     <Flex w={'full'} p={4} gap={4} >
                         <Flex alignItems={'center'} gap={2}>
 
-
                             {
                                 data?.user ?
                                     <Avatar border={'1px solid #dcdcdc'} name={data?.user?.name ? data?.user?.name : data?.user?.email} src={data?.user.profile_image} size={'md'}>
@@ -186,6 +236,8 @@ const AboutSeller = ({ data }) => {
                                     :
                                     <Spinner size={'xl'} />
                             }
+
+
                         </Flex>
                         <Flex direction={'column'}>
 
@@ -193,7 +245,7 @@ const AboutSeller = ({ data }) => {
                             <Flex gap={2} flexWrap={'wrap'} justifyContent={'space-between'}>
                                 {
                                     data?.user?.login_status === 'login' ?
-                                        <Box fontWeight={500} fontSize={'16px'} color={'green'}>Active Now</Box>
+                                        <Box fontWeight={500} fontSize={'16px'} color={'green'}>{data?.user?.last_seen_at}</Box>
                                         :
                                         <Box color={'gray'}>{timeAgo(data?.user?.last_login)}</Box>
                                 }
@@ -223,15 +275,16 @@ const AboutSeller = ({ data }) => {
 
                     </Flex>
 
+
                     <Flex>
 
                         <Flex direction={'column'} p={4} >
-                            <Flex alignItems={'center'} gap={1} color={data?.user?.id_verified_at === '0000-00-00 00:00:00' ? 'red.500' : 'green'}><MdCheck /> ID Verified</Flex>
-                            <Flex alignItems={'center'} gap={1} color={data?.user?.email_verified_at === '0000-00-00 00:00:00' ? 'red.500' : 'green'}> <MdCheck color='green' />Email Verified</Flex>
+                            <Flex alignItems={'center'} fontWeight={500} gap={1} color={data?.user?.id_verified ? 'green.500' : 'red.500'}><MdCheck /> ID Verified</Flex>
+                            <Flex alignItems={'center'} fontWeight={500} gap={1} color={data?.user?.email_verified ? 'green.500' : 'red.500'}> <MdCheck />Email Verified</Flex>
                         </Flex>
                         <Flex direction={'column'} p={4} >
-                            <Flex alignItems={'center'} gap={1} color={data?.user?.address_verified_at ? 'green' : 'red.500'}><MdCheck /> Address Verified</Flex>
-                            <Flex alignItems={'center'} gap={1} color={data?.user?.number_verified_at === '0000-00-00 00:00:00' ? 'red.500' : 'green'}> <MdCheck />Phone Verified</Flex>
+                            <Flex alignItems={'center'} fontWeight={500} gap={1} color={data?.user?.address_verified_at ? 'green' : 'red.500'}><MdCheck /> Address Verified</Flex>
+                            <Flex alignItems={'center'} fontWeight={500} gap={1} color={data?.user?.number_verified_at ? 'green.500' : 'red.500'}> <MdCheck />Phone Verified</Flex>
 
                         </Flex>
 

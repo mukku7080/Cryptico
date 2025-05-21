@@ -19,6 +19,10 @@ import {
     Select,
     Textarea,
     Spinner,
+    Alert,
+    AlertIcon,
+    AlertTitle,
+    AlertDescription,
 } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 import { AiFillExclamationCircle, AiOutlineExclamationCircle, AiOutlineQuestion, AiOutlineQuestionCircle } from 'react-icons/ai'
@@ -30,111 +34,169 @@ import { useUser } from '../../Context/userContext'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { color } from 'framer-motion'
 import { useTradeData } from '../DataContext/TradeDataContext'
+import { useTradeProvider } from '../../Context/TradeContext'
+import { useOtherDetail } from '../../Context/otherContext'
 
 const BuyOffer = () => {
 
     const location = useLocation();
     const navigate = useNavigate();
+    const { user } = useUser();
     const { setTradeData } = useTradeData();
+    const { handleTradeInitiate } = useTradeProvider();
+    const { priceRef } = useOtherDetail();
     const data = location.state?.data;
+    const [assetValue, setAssetValue] = useState();
     setTradeData(data);
     useEffect(() => {
         localStorage.setItem('chatUser', JSON.stringify(data));
     }, [data])
+    const [amount, setAmount] = useState(data?.min_trade_limit);
+
+
+    useEffect(() => {
+        const assetPriceInINR = priceRef.current?.[data?.cryptocurrency === 'binance' ? 'binancecoin' : data?.cryptocurrency]?.inr;
+        convertINRToAsset(amount, assetPriceInINR);
+    }, [assetValue, amount]);
+    function convertINRToAsset(amount, assetPriceInINR) {
+        if (!amount || !assetPriceInINR || assetPriceInINR === 0) {
+            setAssetValue(0);
+            return;
+        }
+        const assetAmount = amount / assetPriceInINR;
+        setAssetValue(parseFloat(assetAmount.toFixed(8)));
+    }
+
+
+    const initiateDto = {
+        ad_id: data?.crypto_ad_id,
+        amount: amount,
+        currency: 'inr',
+        assetValue: assetValue,
+        trade_type: 'buy',
+    }
+    console.log("data", data);
     const handleBuy = () => {
+        handleTradeInitiate(initiateDto);
         navigate('/tradeStart');
+
     };
 
 
-    const [amount, setAmount] = useState(data?.min_trade_limit);
+
     return (
         <>
-            {/* <Image src='imagelogo/buybackground5.png' w={'80%'} alignSelf={'center'} position={'absolute'} mt={24}></Image> */}
+            {
+                (user?.user_id === data?.user?.user_id) ?
+                    <>
+                        <Alert
+                            status='warning'
+                            variant='subtle'
+                            flexDirection='column'
+                            alignItems='center'
+                            justifyContent='center'
+                            textAlign='center'
+                            height='500px'
+                            mt={55}
+                        >
+                            <AlertIcon boxSize='40px' mr={0} />
+                            <AlertTitle mt={4} mb={1} fontSize='xl'>
+                                Oops Sorry !
+                            </AlertTitle>
+                            <AlertDescription maxWidth='sm' fontWeight={500}>
+                                You can not trade with yourself
+                            </AlertDescription>
+                        </Alert>
+                    </>
+                    :
+
+                    <Flex className='main' mt={20} direction={'column'} alignItems={'center'} gap={10} minH={'92vh'} alignSelf={'center'}
+                        maxW={{ base: "90%", lg: '90%', xl: "65%" }}
+                        minW={{ base: "90%", sm: '90%', lg: '90%', xl: "65%" }}
+                    >
+                        {/* <Flex position={'relative'} top={70} w={'80%'} alignSelf={'center'}><Heading color={'white'} textAlign={'center'}>Sell Bitcoin with IMPS Transfer (INR) — Safe payment and own Acc</Heading> </Flex> */}
+
+                        <Flex className='sub-main'
+                            direction={'column'}
+                            justifyContent={'center'}
+                            alignItems={'center'}
+                            border={'1px solid #ffedd5'}
+                            borderRadius={4}
+                            bg={'white'}
+                            w={'full'}
+                            mt={10}
+                            boxShadow={'lg'}
+                        //   position={'relative'}
+                        //    top={100}
+                        >
 
 
-            <Flex className='main' mt={20} direction={'column'} alignItems={'center'} gap={10} minH={'92vh'} alignSelf={'center'}
-                maxW={{ base: "90%", lg: '90%', xl: "65%" }}
-                minW={{ base: "90%", sm: '90%', lg: '90%', xl: "65%" }}
-            >
-                {/* <Flex position={'relative'} top={70} w={'80%'} alignSelf={'center'}><Heading color={'white'} textAlign={'center'}>Sell Bitcoin with IMPS Transfer (INR) — Safe payment and own Acc</Heading> </Flex> */}
+                            <Flex direction={'column'} gap={10} w={'full'} p={5}   >
+                                <Box fontWeight={700} fontSize={'24px'} alignSelf={'center'}>How much do you want to Buy</Box>
+                                <form>
+                                    <Flex gap={5} direction={{ base: 'column', lg: 'row' }}>
 
-                <Flex className='sub-main'
-                    direction={'column'}
-                    justifyContent={'center'}
-                    alignItems={'center'}
-                    border={'1px solid #ffedd5'}
-                    borderRadius={4}
-                    bg={'white'}
-                    w={'full'}
-                    mt={10}
-                    boxShadow={'lg'}
-                //   position={'relative'}
-                //    top={100}
-                >
+                                        <FormControl>
+                                            <FormLabel>I will pay</FormLabel>
+                                            <InputGroup border={'1px solid #ffedd5'} borderRadius={4} _hover={{ boxShadow: 'md' }}>
 
+                                                <Input type="number" placeholder="Enter amount" value={amount} onChange={(e) => setAmount(e.target.value)} border={'none'} focusBorderColor='#ffedd5' _focus={{ boxShadow: 'none' }} _hover={{ border: 'none' }} />
+                                                <InputRightAddon bg={'white'} color={'orange.500'} border={'none'} fontWeight={500}>INR</InputRightAddon>
 
-                    <Flex direction={'column'} gap={10} w={'full'} p={5}   >
-                        <Box fontWeight={700} fontSize={'24px'} alignSelf={'center'}>How much do you want to Buy</Box>
-                        <form>
-                            <Flex gap={5} direction={{ base: 'column', lg: 'row' }}>
+                                            </InputGroup>
+                                        </FormControl>
 
-                                <FormControl>
-                                    <FormLabel>I will pay</FormLabel>
-                                    <InputGroup border={'1px solid #ffedd5'} borderRadius={4} _hover={{ boxShadow: 'md' }}>
+                                        <FormControl>
+                                            <FormLabel>and recive</FormLabel>
+                                            <InputGroup border={'1px solid #ffedd5'} borderRadius={4} _hover={{ boxShadow: 'md' }}>
 
-                                        <Input type="number" placeholder="Enter amount" value={amount} onChange={(e) => setAmount(e.target.value)} border={'none'} focusBorderColor='#ffedd5' _focus={{ boxShadow: 'none' }} _hover={{ border: 'none' }} />
-                                        <InputRightAddon bg={'white'} color={'orange.500'} border={'none'}>INR</InputRightAddon>
+                                                <Input type="number" placeholder="Enter amount" value={assetValue  ?? ""} border={'none'} focusBorderColor='#ffedd5' _focus={{ boxShadow: 'none' }} _hover={{ border: 'none' }} />
+                                                <InputRightAddon bg={'white'} color={'orange.500'} border={'none'} fontWeight={500}>{AssetNameMap[data.cryptocurrency]}</InputRightAddon>
 
-                                    </InputGroup>
-                                </FormControl>
+                                            </InputGroup>
+                                        </FormControl>
+                                    </Flex>
+                                    <Flex gap={4} alignItems={'center'} my={5}>
+                                        <AiOutlineExclamationCircle />
+                                        <Box>you get <b>1452.00</b> worth of Bitcoin</Box>
+                                    </Flex>
+                                    <Button borderRadius={4} w={'full'} bg={'orange.300'} _hover={{ bg: 'orange.100' }} onClick={handleBuy}>Buy Now</Button>
+                                </form>
 
-                                <FormControl>
-                                    <FormLabel>and recive</FormLabel>
-                                    <InputGroup border={'1px solid #ffedd5'} borderRadius={4} _hover={{ boxShadow: 'md' }}>
-
-                                        <Input type="number" placeholder="Enter amount" border={'none'} focusBorderColor='#ffedd5' _focus={{ boxShadow: 'none' }} _hover={{ border: 'none' }} />
-                                        <InputRightAddon bg={'white'} color={'orange.500'} border={'none'}>INR</InputRightAddon>
-
-                                    </InputGroup>
-                                </FormControl>
+                                <Flex alignSelf={'center'} flexWrap={'wrap'}>
+                                    Reserve Bitcoin for this trade and start live chat with &nbsp;
+                                    <Link textDecoration={'underline'} color={'orange.300'}>{data?.user?.username}</Link>
+                                </Flex>
                             </Flex>
-                            <Flex gap={4} alignItems={'center'} my={5}>
-                                <AiOutlineExclamationCircle />
-                                <Box>you get <b>1452.00</b> worth of Bitcoin</Box>
+                        </Flex>
+
+                        <Flex className='second-section'
+                            direction={'column'}
+                            w={'full'}
+                            justifyContent={'center'}
+                            alignItems={'center'}
+                        // mt={10}
+                        >
+
+
+                            <Flex gap={10} w={'full'} direction={{ base: 'column', lg: 'row' }}   >
+                                <Flex flex={1}>
+                                    <AboutOffer data={data} />
+
+                                </Flex>
+                                <Flex flex={1}>
+                                    <AboutSeller data={data} />
+
+                                </Flex>
                             </Flex>
-                            <Button borderRadius={4} w={'full'} bg={'orange.300'} _hover={{ bg: 'orange.100' }} onClick={handleBuy}>Buy Now</Button>
-                        </form>
-                        <Flex alignSelf={'center'} flexWrap={'wrap'}>
-                            Reserve Bitcoin for this trade and start live chat with &nbsp;
-                            <Link textDecoration={'underline'} color={'orange.300'}>{data?.user?.username}</Link>
                         </Flex>
+                        <OfferTerms />
+                        <Feedback />
+                        <Problem />
                     </Flex>
-                </Flex>
-
-                <Flex className='second-section'
-                    direction={'column'}
-                    w={'full'}
-                    justifyContent={'center'}
-                    alignItems={'center'}
-                // mt={10}
-                >
+            }
 
 
-                    <Flex gap={10} w={'full'} direction={{ base: 'column', lg: 'row' }}   >
-                        <Flex flex={1}>
-                            <AboutOffer data={data} />
-
-                        </Flex>
-                        <Flex flex={1}>
-                            <AboutSeller data={data} />
-
-                        </Flex>
-                    </Flex>
-                </Flex>
-                <OfferTerms />
-                <Feedback />
-                <Problem />
-            </Flex>
         </>
     )
 }
@@ -537,5 +599,10 @@ const tradeRules = [
     "No third-party payments are accepted.",
     "Payment screenshot is also needed."
 ];
-
+export const AssetNameMap = {
+    bitcoin: 'BTC',
+    ethereum: 'ETH',
+    binance: 'BNB',
+    tether: 'USDT'
+}
 export default BuyOffer

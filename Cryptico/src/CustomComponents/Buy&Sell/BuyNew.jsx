@@ -42,6 +42,7 @@ import TokenDropdown from '../Dropdown/TokenDropdown';
 import { useOffer } from '../../Context/OfferContext';
 import { gradientButtonStyle } from '../Wallet/CreateWallet';
 import { grayGradient } from '../../Styles/Gradient';
+import { useOtherDetail } from '../../Context/otherContext';
 
 
 const BuyNew = () => {
@@ -50,6 +51,8 @@ const BuyNew = () => {
     const { handleGetOffer, offers, queryParams, setQueryParams } = useOffer();
     const [isloading, setIsLoading] = useState(true);
     const [isFindOfferLoading, setFindOfferLoading] = useState(false);
+    const [searchParams] = useSearchParams();
+
     const OfferFilter = {
         user_id: '',
         txn_type: 'sell',
@@ -62,20 +65,14 @@ const BuyNew = () => {
         per_page: 10,
     }
     useEffect(() => {
-        // setQueryParams(() => ({
-        //     user_id: null,
-        //     txn_type: 'sell',
-        //     cryptocurrency: 'bitcoin',
-        //     paymentMethod: null,
-        //     maxAmount: null,
-        //     offerLocation: null,
-        //     traderLocation: null,
-        //     activeTrader: false,
-        //     per_page: 10
-        // }));
-        handleGetOffer(OfferFilter);
-
-
+        const queryValue = searchParams.get('index');
+        // Check if the value is not null and is a valid number
+        if (queryValue !== null) {
+            OfferFilter.cryptocurrency = CryptoEnumMap[queryValue];
+            handleFindOffer();
+        } else {
+            handleGetOffer(OfferFilter);
+        }
     }, []);
 
     useEffect(() => {
@@ -101,25 +98,16 @@ const BuyNew = () => {
 
     const handleFindOffer = async () => {
         setFindOfferLoading(true);
-        const resp = await handleGetOffer(queryParams);
+        const resp = await handleGetOffer(OfferFilter);
         if (resp) {
-            setSelectedCrypto(queryParams.cryptocurrency);
+            setSelectedCrypto(OfferFilter.cryptocurrency);
             setFindOfferLoading(false);
         }
-
     }
     setTimeout(() => {
         setIsLoading(false);
     }, 3000);
     const [selectedCrypto, setSelectedCrypto] = useState(OfferFilter.cryptocurrency);
-
-
-
-
-
-
-
-
     return (
         <>
             <Flex maxW={'container.xxl'} justifyContent={'start'} alignItems={'center'} paddingTop={{ base: 0, lg: 20 }} minH={'90vh'} direction={'column'} >
@@ -256,11 +244,15 @@ export const LeftSideContent = ({ handleFindOffer, isFindOfferLoading }) => {
     const { setQueryParams } = useOffer();
     const [searchParams] = useSearchParams();
     const [index, setIndex] = useState(0);
+    const { priceRef } = useOtherDetail();
     useEffect(() => {
         const queryValue = searchParams.get('index');
         // Check if the value is not null and is a valid number
         if (queryValue !== null) {
             setIndex(queryValue);
+            setQueryParams((prev) => ({ ...prev, cryptocurrency: cryptoOption[queryValue].name.toLocaleLowerCase() }))
+
+            // handleFindOffer();
         } else {
             setIndex(0);
         }
@@ -288,11 +280,10 @@ export const LeftSideContent = ({ handleFindOffer, isFindOfferLoading }) => {
                     gap={5}>
 
                     <Flex display={{ base: 'none', lg: 'flex' }} direction={'column'} gap={5}>
-                        <TokenDropdown index={index} />
+                        <TokenDropdown index={index} setIndex={setIndex} />
                         <Flex gap={4} color={'gray'}>
-                            <Box>1 BTC = 458254.23 INR</Box>
+                            <Box>1 {`${IndexSymbolMap[index]} = ${Number(priceRef?.current?.[PriceMap[index] === 3 ? 'binancecoin' : PriceMap[index]]?.inr).toFixed(2)} INR`}</Box>
                             <Box display={'flex'} alignItems={'center'}>
-
                                 <FaArrowTrendUp />
                             </Box>
                         </Flex>
@@ -553,9 +544,12 @@ export const MoreFilter = ({ handleFindOffer, isFindOfferLoading }) => {
 }
 
 
-export const OfferList = ({ index, data }) => {
+export const OfferList = ({ index, data, type }) => {
     const navigate = useNavigate();
     const parsedData = JSON.parse(data?.payment_method);
+    const { priceRef } = useOtherDetail();
+    console.log(data);
+
     return (
         <Flex w={'full'} borderBottom={'1px solid #dcdcdc'} borderBottomRadius={0} direction={'column'} gap={5} >
             {/* Row1 */}
@@ -653,7 +647,7 @@ export const OfferList = ({ index, data }) => {
                 <Flex flex={2} justifyContent={'end'} alignItems={'start'}>
                     <Flex direction={'column'} justifyContent={'end'} alignContent={'flex-end'} alignItems={'end'} gap={2}>
 
-                        <Heading size={'md'} textAlign={'end'}>9,199,002.07 INR</Heading>
+                        <Heading size={'md'} textAlign={'end'}>{`${Number(priceRef?.current?.[data?.cryptocurrency === 'binance' ? 'binancecoin' : data?.cryptocurrency]?.inr).toFixed(2)} INR`}</Heading>
                         <Flex gap={3} fontSize={'14px'} textAlign={'end'}>
                             <Flex display={'flex'} alignItems={'center'} gap={1}>
                                 <Flex gap={2} alignItems={'center'}>
@@ -792,12 +786,18 @@ export const OfferList = ({ index, data }) => {
                                     </Box>
                                     <Box textAlign={'end'}>
 
-                                        {`Max purchase: ${data?.max_trade_limit} INR`}
+                                        {`Max purchase: ${Number(data?.remaining_trade_limit).toFixed(2)} INR`}
                                     </Box>
                                 </Flex>
                                 <Flex alignItems={'center'} gap={2} >
                                     <Button size={'sm'} variant='outline' bg={'transparent'}><CiStar /></Button>
-                                    <Button sx={gradientButtonStyle} size={'sm'} onClick={() => navigate('/buyOffer', { state: { data: data } })}>Buy</Button>
+                                    {
+                                        type === 'sell' ?
+                                            <Button sx={gradientButtonStyle} size={'sm'} onClick={() => navigate('/sellOffer', { state: { data: data } })}>Sell</Button>
+
+                                            :
+                                            <Button sx={gradientButtonStyle} size={'sm'} onClick={() => navigate('/buyOffer', { state: { data: data } })}>Buy</Button>
+                                    }
                                 </Flex>
 
                             </Flex>
@@ -840,5 +840,23 @@ export const CoinNameMap = {
     ethereum: 'Ethereum',
     binance: 'Binance',
     tether: 'Tether'
+}
+export const IndexSymbolMap = {
+    0: 'BTC',
+    1: 'ETH',
+    2: 'BNB',
+    3: 'USDT'
+}
+export const PriceMap = {
+    0: 'bitcoin',
+    1: 'ethereum',
+    2: 'binancecoin',
+    3: 'tether'
+}
+export const CryptoEnumMap = {
+    0: 'bitcoin',
+    1: 'ethereum',
+    2: 'binance',
+    3: 'tether'
 }
 export default BuyNew

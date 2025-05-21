@@ -23,6 +23,9 @@ import {
     ModalBody,
     ModalFooter,
     ModalCloseButton,
+    Image,
+    Input,
+    IconButton,
 
 } from '@chakra-ui/react';
 
@@ -35,13 +38,20 @@ import { LuSquareArrowOutUpRight } from 'react-icons/lu';
 import { BiDislike, BiLike } from 'react-icons/bi';
 import ChatComponent from '../ChatSection/ChatComponent';
 import { useUser } from '../../Context/userContext';
+import ReportBehaviour from '../ChatSection/ReportBehaviour';
+import { getDatabase, ref, onDisconnect, set, onValue } from 'firebase/database';
+import { getFirestore, doc, onSnapshot, setDoc, serverTimestamp } from 'firebase/firestore';
+import { AttachmentIcon } from '@chakra-ui/icons';
+
+
 
 const TradeStart = () => {
     const navigate = useNavigate();
     const [ispaid, setIsPaid] = useState(false);
     // const { tradeData } = useTradeData();
     const tradeData = JSON.parse(localStorage.getItem('chatUser'));
-    console.log(tradeData);
+
+
 
 
 
@@ -54,7 +64,7 @@ const TradeStart = () => {
                     w={'100%'}
                     gap={5}
                     mt={{ base: 0, lg: 0 }}
-                    direction={{ base: 'column-reverse', lg: 'row' }}
+                    direction={{ base: 'column', lg: 'row' }}
                 >
 
 
@@ -72,21 +82,50 @@ const TradeStart = () => {
                                 </Flex>
                                 <Divider />
 
-                                <Flex>
-                                    <Flex direction={'column'} borderBottomRadius={5} fontWeight={500} gap={5} >
-                                        <Box>
-                                            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sequi deserunt provident dolorum reprehenderit quaerat dolor quod aspernatur ipsum voluptates in!
-                                        </Box>
-                                        <PaidModal setIsPaid={setIsPaid} />
+                                {
+                                    !ispaid ?
+                                        <>
+                                            <Flex>
+                                                <Flex direction={'column'} borderBottomRadius={5} fontWeight={500} gap={5} >
 
-                                    </Flex>
-                                </Flex>
+                                                    <Box>
+                                                        <b>
+
+                                                            Once you've made the payemnet,&nbsp;
+                                                        </b>
+                                                        be sure to click paid within the given time limit. Otherwise the trade will be automatically canceled and the Bitcoin will be returned to the seller'se wallet.
+                                                    </Box>
+                                                    <PaidModal setIsPaid={setIsPaid} />
+
+                                                </Flex>
+                                            </Flex>
+                                        </>
+                                        :
+                                        <Flex gap={5}>
+                                            <Image boxSize={50} src='/imagelogo/argue.png'></Image>
+                                            <Flex direction={'column'} gap={4}>
+                                                <Box>
+                                                    Click <b>Dispute</b> to report an unresponseive trade partener or any other issue you may have.
+                                                </Box>
+                                                <Button disabled>Start a Dispute</Button>
+                                            </Flex>
+
+                                        </Flex>
+                                }
                                 <Divider />
-                                <Button isDisabled={!ispaid} w={'200px'}>Report Bad Behaviour</Button>
-                                <Divider />
+
+                                {
+                                    ispaid &&
+                                    <>
+                                        <ReportBehaviour />
+                                        <Divider />
+                                    </>
+                                }
+
+
                                 <CompExample />
                                 <Divider />
-                                <Flex justifyContent={'space-between'} color={'gray.300'}>
+                                <Flex justifyContent={'space-between'} gap={{ base: 4, sm: 0 }} direction={{ base: 'column-reverse', sm: 'row' }} color={'gray.300'}>
 
                                     <Button boxShadow={'md'} variant={'outline'}>Cancel Trade</Button>
                                     <Flex gap={2}>
@@ -94,7 +133,7 @@ const TradeStart = () => {
 
                                             <BsExclamationCircle />
                                         </Box>
-                                        <Box fontWeight={500}>  You have't paid yet!</Box>
+                                        <Box fontWeight={500}>  {ispaid ? 'You have paid already' : `You have't paid yet!`}</Box>
                                     </Flex>
                                 </Flex>
                             </Flex>
@@ -103,8 +142,8 @@ const TradeStart = () => {
                         <OfferTerms />
 
                         <Heading size={'md'}>Trade Information</Heading>
-                        <Flex gap={10} mb={5} direction={{ base: 'column', sm: 'row' }} justifyContent={'space-between'}>
-                            <Flex className='flex1' direction={{ base: 'row', lg: 'column' }} justifyContent={'space-between'}>
+                        <Flex gap={10} mb={5} direction={{ base: 'column', sm: 'row' }} borderTop={'1px solid #dcdcdc'} justifyContent={'space-between'} p={4}>
+                            <Flex className='flex1' direction={{ base: 'row', sm: 'column' }} justifyContent={'space-between'}>
                                 <Heading size={'sm'} color={'#fe532e'}>Rate</Heading>
                                 <Box>455888 inr</Box>
 
@@ -124,7 +163,7 @@ const TradeStart = () => {
 
                             </Flex>
                         </Flex>
-                        <Flex justifyContent={'space-between'}>
+                        <Flex justifyContent={'space-between'} >
                             <Button variant={'outline'} onClick={() => navigate('/chat')}>View Offer</Button>
                             <Button variant={'outline'}>Take a Tour</Button>
                         </Flex>
@@ -150,6 +189,85 @@ export const RightSideContent = ({ tradeData }) => {
     const [index, setIndex] = useState(0);
     const location = useLocation();
     const { user } = useUser();
+    const [isOnline, setIsOnline] = useState(false);
+    const db = getDatabase();
+    const firestore = getFirestore();
+    // Realtime DB ref to track online status
+    const userStatusDatabaseRef = ref(db, `/status/${user?.user_id}`);
+
+    // Firestore doc for public status
+    const userStatusFirestoreRef = doc(firestore, `users/${user?.user_id}`);
+
+    // Define online/offline state
+    const isOfflineForDatabase = {
+        state: 'offline',
+        last_changed: serverTimestamp(),
+    };
+
+    const isOnlineForDatabase = {
+        state: 'online',
+        last_changed: serverTimestamp(),
+    };
+
+    const isOfflineForFirestore = {
+        online: false,
+        lastSeen: serverTimestamp(),
+    };
+
+    const isOnlineForFirestore = {
+        online: true,
+        lastSeen: serverTimestamp(),
+    };
+
+    // Monitor connection
+    const connectedRef = ref(db, '.info/connected');
+    onValue(connectedRef, (snapshot) => {
+        if (snapshot.val() === false) return;
+
+        onDisconnect(userStatusDatabaseRef).set(isOfflineForDatabase).then(() => {
+            set(userStatusDatabaseRef, isOnlineForDatabase);
+            setDoc(userStatusFirestoreRef, isOnlineForFirestore, { merge: true });
+        });
+    });
+
+    useEffect(() => {
+        const userRef = doc(firestore, 'users', String(tradeData?.user?.user_id));
+        const unsubscribe = onSnapshot(userRef, (docSnap) => {
+            const data = docSnap.data();
+            setIsOnline(data?.online || false);
+        });
+
+        return () => unsubscribe();
+    }, [tradeData?.user?.user_id]);
+    //     if (!user?.user_id) return;
+
+    //     const statusRef = ref(db, `/status/${user.user_id}`);
+    //     const unsubscribe = onValue(statusRef, (snapshot) => {
+    //         const status = snapshot.val();
+    //         if (!status) return;
+
+    //         if (status.state === 'offline') {
+    //             setDoc(userStatusFirestoreRef, {
+    //                 online: false,
+    //                 lastSeen: fsServerTimestamp(),
+    //             }, { merge: true });
+    //         } else if (status.state === 'online') {
+    //             setDoc(userStatusFirestoreRef, {
+    //                 online: true,
+    //                 lastSeen: fsServerTimestamp(),
+    //             }, { merge: true });
+    //         }
+    //     });
+
+    //     return () => unsubscribe();
+    // }, [user?.user_id]);
+    useEffect(() => {
+        return () => {
+            // Component is unmounting (e.g., chat closing)
+            setDoc(userStatusFirestoreRef, isOfflineForFirestore, { merge: true });
+        };
+    }, [user?.user_id]);
+
 
 
     return (
@@ -167,11 +285,14 @@ export const RightSideContent = ({ tradeData }) => {
         >
             <Flex w={'full'} direction={'column'} >
                 <Card boxShadow={'lg'}
-                    borderRadius={{ md: 0, lg: 5 }}
+                    borderRadius={{ base: 5, lg: 5 }}
                     border={'1px solid #dcdcdc'}
                     h='auto'
                     p={{ base: 4, sm: 4, md: 6, xl: 4 }}
-                    gap={5}>
+                    gap={5}
+                    m={{ base: 2, md: 0 }}
+                >
+
                     <Flex justifyContent={'space-between'}>
 
                         <Flex direction={'column'} gap={5}>
@@ -181,7 +302,7 @@ export const RightSideContent = ({ tradeData }) => {
                                     {
                                         tradeData?.user ?
                                             <Avatar border={'1px solid #dcdcdc'} name={tradeData?.user?.name ? tradeData?.user?.name : tradeData?.user?.email} src={tradeData?.user.profile_image} size={'md'}>
-                                                <AvatarBadge boxSize='1em' bg={tradeData?.user?.login_status === 'login' ? 'green.200' : 'orange.200'} ></AvatarBadge>
+                                                <AvatarBadge boxSize='1em' bg={isOnline ? 'green.200' : 'orange.200'} ></AvatarBadge>
                                             </Avatar>
                                             :
                                             <Spinner size={'xl'} />
@@ -194,12 +315,11 @@ export const RightSideContent = ({ tradeData }) => {
                                     <Flex as={Link} href='/profile' alignItems={'center'} gap={2}>{tradeData?.user?.username} <LuSquareArrowOutUpRight /></Flex>
                                     <Flex gap={2} flexWrap={'wrap'} justifyContent={'space-between'}>
                                         {
-                                            tradeData?.user?.login_status === 'login' ?
-                                                <Box fontWeight={500} fontSize={'16px'} color={'green'}>{tradeData?.user?.last_seen_at}</Box>
+                                            isOnline ?
+                                                <Box fontWeight={500} fontSize={'16px'} color={'green'}>online</Box>
                                                 :
-                                                <Box color={'gray'}>{timeAgo(tradeData?.user?.last_login)}</Box>
+                                                <Box color={'gray'}>offline</Box>
                                         }
-                                        <Box px={2} bg={'orange.300'} w={'60px'} borderRadius={5} fontSize={'14px'}>badge</Box>
                                     </Flex>
                                 </Flex>
                             </Flex>
@@ -228,7 +348,7 @@ export const RightSideContent = ({ tradeData }) => {
                         </Flex>
 
                     </Flex>
-                    <ChatComponent currentUserId={user?.user_id} />
+                    <ChatComponent currentUserId={user?.user_id} tradeData={tradeData} />
 
 
                 </Card>
@@ -289,6 +409,20 @@ const PaidModal = ({ setIsPaid }) => {
 
         return () => clearInterval(timer); // Cleanup on unmount
     }, []);
+    const handleFileChange = (e) => {
+        const selected = e.target.files[0];
+        if (selected) {
+            setFile(selected);
+            if (selected.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onloadend = () => setPreview(reader.result);
+                reader.readAsDataURL(selected);
+            } else {
+                setPreview(null);
+            }
+            setCapturedImage(null); // Clear camera image
+        }
+    };
 
     const formatTime = (seconds) => {
         const hrs = String(Math.floor(seconds / 3600)).padStart(2, '0');
@@ -323,6 +457,16 @@ const PaidModal = ({ setIsPaid }) => {
                                 Clicking Paid without paying the vendor will damage your reputation on the plateform and get you blocked.
                             </Box>
                         </Flex>
+                        <Input
+                            type="file"
+                            display="none"
+                            id="chat-file"
+                            onChange={handleFileChange}
+                        />
+
+                        <label htmlFor="chat-file">
+                            <IconButton as="span" icon={<AttachmentIcon />} aria-label="Attach file" />
+                        </label>
 
                     </ModalBody>
                     <ModalFooter justifyContent={'space-between'}>

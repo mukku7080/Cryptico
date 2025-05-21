@@ -455,7 +455,7 @@ const NAV_ITEMS = [
             {
                 label: 'Buy BNB',
                 logo: '/imagelogo/bnb-bnb-logo.png',
-                subLabel: 'Search for offer to buy USDC',
+                subLabel: 'Search for offer to buy Binance',
                 href: '/buy?index=2',
             }, {
                 label: 'Buy Tether',
@@ -483,9 +483,9 @@ const NAV_ITEMS = [
                 href: '/sell?index=1',
             },
             {
-                label: 'Sell USDC',
+                label: 'Sell BNB',
                 logo: '/imagelogo/bnb-bnb-logo.png',
-                subLabel: 'Search for offer to sell USDC',
+                subLabel: 'Search for offer to sell Binance',
                 href: '/sell?index=2',
             }, {
                 label: 'Sell Tether',

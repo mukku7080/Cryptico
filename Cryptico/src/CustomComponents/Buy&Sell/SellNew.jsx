@@ -44,18 +44,20 @@ import { motion } from 'framer-motion';
 import { gradientButtonStyle } from '../Wallet/CreateWallet';
 import { useOffer } from '../../Context/OfferContext';
 import { grayGradient } from '../../Styles/Gradient';
-import { LeftSideContent, OfferList } from './BuyNew';
+import { CryptoEnumMap, LeftSideContent, OfferList } from './BuyNew';
 const MotionFlex = motion(Flex);
 
 const SellNew = () => {
     const { handleGetOffer, offers, queryParams, setQueryParams } = useOffer();
     const [isloading, setIsLoading] = useState(true);
     const [isFindOfferLoading, setFindOfferLoading] = useState(false);
+    const [searchParams] = useSearchParams();
+
 
     const OfferFilter = {
         user_id: '',
         txn_type: 'buy',
-        cryptocurrency: 'bitcoin',
+        cryptocurrency: queryParams.cryptocurrency,
         paymentMethod: '',
         maxAmount: '',
         offerLocation: '',
@@ -67,7 +69,7 @@ const SellNew = () => {
         setQueryParams(() => ({
             user_id: null,
             txn_type: 'buy',
-            cryptocurrency: 'bitcoin',
+            cryptocurrency: queryParams.cryptocurrency,
             paymentMethod: null,
             maxAmount: null,
             offerLocation: null,
@@ -76,8 +78,16 @@ const SellNew = () => {
             per_page: 10
         }));
         handleGetOffer(OfferFilter);
-
-
+    }, []);
+    useEffect(() => {
+        const queryValue = searchParams.get('index');
+        // Check if the value is not null and is a valid number
+        if (queryValue !== null) {
+            OfferFilter.cryptocurrency = CryptoEnumMap[queryValue];
+            handleFindOffer();
+        } else {
+            handleGetOffer(OfferFilter);
+        }
     }, []);
 
     useEffect(() => {
@@ -103,20 +113,16 @@ const SellNew = () => {
 
     const handleFindOffer = async () => {
         setFindOfferLoading(true);
-        const resp = await handleGetOffer(queryParams);
+        const resp = await handleGetOffer(OfferFilter);
         if (resp) {
-            setSelectedCrypto(queryParams.cryptocurrency);
+            setSelectedCrypto(OfferFilter.cryptocurrency);
             setFindOfferLoading(false);
         }
-
     }
     setTimeout(() => {
         setIsLoading(false);
     }, 3000);
     const [selectedCrypto, setSelectedCrypto] = useState(OfferFilter.cryptocurrency);
-
-
-
     return (
         <>
             <Flex maxW={'container.xxl'} justifyContent={'center'} alignItems={'center'} paddingTop={{ base: 0, lg: 20 }} minH={'90vh'} direction={'column'} >
@@ -134,7 +140,6 @@ const SellNew = () => {
                     <LeftSideContent handleFindOffer={handleFindOffer} isFindOfferLoading={isFindOfferLoading} />
 
                     {/* Left Side nav column end */}
-
 
                     {/* RightSide start */}
                     {/* <Flex w={'full'} justifyContent={'center'} alignItems={'center'} direction={'column'} > */}
@@ -221,7 +226,7 @@ const SellNew = () => {
                                                 offers?.length > 0 ?
                                                     offers?.map((data, index) => (
 
-                                                        <OfferList key={index} data={data} />
+                                                        <OfferList key={index} data={data} type={'sell'} />
                                                     ))
                                                     :
                                                     <Flex w={'full'} justifyContent={'center'} alignItems={'center'} gap={5} p={10}>

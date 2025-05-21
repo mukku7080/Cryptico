@@ -146,7 +146,6 @@ const PasswordVerification = ({ blockChainType = {}, onClose }) => {
         const finalDecryption = await decryptWithKey(decrypted.phrase, decrypted.key);
         const mnemonic = finalDecryption;
         const resp = await TronWalletGenerator(mnemonic, walletid);
-        console.log(resp);
         const values = {
             "wallet_id": walletid,
             "wallet_address": resp.address,
@@ -319,20 +318,6 @@ const SelectBlockChain = ({ index, setHeaderName, setHeaderLogo, setblockChainTy
         </>
     )
 }
-const cryptoOption = [
-
-    {
-        name: 'Tether',
-        logo: '/imagelogo/tether-usdt-logo.png',
-        blockchainDetail: {
-            blockchain: "tron",
-            network: "trc20",
-            asset: "usdt"
-        },
-    },
-]
-
-
 export const gradientButtonStyle = {
     backgroundImage: 'linear-gradient(to right, #FF512F 0%, #F09819 51%, #FF512F 100%)',
     // margin: '10px',
@@ -350,4 +335,19 @@ export const gradientButtonStyle = {
         textDecoration: 'none',
     },
 };
+const cryptoOption = [
+
+    {
+        name: 'Tether',
+        logo: '/imagelogo/tether-usdt-logo.png',
+        blockchainDetail: {
+            blockchain: "tron",
+            network: "trc20",
+            asset: "usdt"
+        },
+    },
+]
+
+
+
 export default CreateTronWallet;

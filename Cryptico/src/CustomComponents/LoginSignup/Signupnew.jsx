@@ -260,7 +260,7 @@ const Signupnew = () => {
                                                         <Input
                                                             name="password"
                                                             type={showPassword ? "text" : "password"}
-                                                            placeholder="Passwrod"
+                                                            placeholder="Password"
                                                             bg={bgcolor}
                                                             _focus={{ bgcolor }}
                                                             value={values.password}
